@@ -689,35 +689,35 @@ const ACHIEVEMENTS = [
     icon: "🎯",
     title: "First Steps",
     desc: "Complete your first quiz",
-    check: (s) => s.quizzesCompleted >= 1,
+    check: (s: any) => s.quizzesCompleted >= 1,
   },
   {
     id: "words_25",
     icon: "📚",
     title: "Word Collector",
     desc: "Save 25 words to your vocabulary bank",
-    check: (s) => s.savedWordsCount >= 25,
+    check: (s: any) => s.savedWordsCount >= 25,
   },
   {
     id: "quiz_perfect",
     icon: "🏆",
     title: "Flawless",
     desc: "Score 100% on a quiz",
-    check: (s) => s.perfectQuizzes >= 1,
+    check: (s: any) => s.perfectQuizzes >= 1,
   },
   {
     id: "words_100",
     icon: "🏺",
     title: "Vocabulary Keeper",
     desc: "Save 100 words to your vocabulary bank",
-    check: (s) => s.savedWordsCount >= 100,
+    check: (s: any) => s.savedWordsCount >= 100,
   },
   {
     id: "level_5",
     icon: "⭐",
     title: "Rising Nomad",
     desc: "Reach Level 5 (500 XP)",
-    check: (s) => s.xp >= 500,
+    check: (s: any) => s.xp >= 500,
   },
 ];
 
@@ -1029,17 +1029,17 @@ function ReaderScreen({ selectedLevel, setSelectedLevel, onQuizGate, t, onReward
     );
   }
 
-  const text = STORY.levels[selectedLevel];
+  const text = STORY.levels[selectedLevel as keyof typeof STORY.levels];
   const tokens = text.split(/(\s+)/);
-  const wordIndices = tokens.reduce((acc, tok, i) => {
+  const wordIndices = tokens.reduce((acc: number[], tok: string, i: number) => {
     if (/[a-zA-Z]/.test(tok)) acc.push(i);
     return acc;
-  }, []);
+  }, [] as number[]);
 
   const handleWordClick = (word: string) => {
     const cleanWord = word.replace(/[^a-zA-Z]/g, "").toLowerCase();
     setActiveWord(word);
-    setTranslation(WORD_TRANSLATIONS[cleanWord] || "Аудармасы әзірге жоқ");
+    setTranslation(WORD_TRANSLATIONS[cleanWord as keyof typeof WORD_TRANSLATIONS] || "Аудармасы әзірге жоқ");
     safePlayVoice(word);
   };
 
@@ -1242,7 +1242,7 @@ function ReaderScreen({ selectedLevel, setSelectedLevel, onQuizGate, t, onReward
           <div className="flex items-center gap-2 shrink-0">
             {(() => {
               const cleanWord = activeWord.replace(/[^a-zA-Z]/g, "").toLowerCase();
-              const alreadySaved = savedWords && savedWords.some((w) => w.word === cleanWord);
+              const alreadySaved = savedWords && savedWords.some((w: any) => w.word === cleanWord);
               return (
                 <button
                   onClick={() => !alreadySaved && onSaveWord && onSaveWord(cleanWord, translation)}
@@ -1266,7 +1266,7 @@ function ReaderScreen({ selectedLevel, setSelectedLevel, onQuizGate, t, onReward
 
       <div className="glass-luxury-card p-5 leading-relaxed relative border-[#C5A059]/30 max-h-[320px] overflow-y-auto">
         <p className="font-body text-sm text-[#F8F5EE] leading-7">
-          {tokens.map((tok, i) => {
+          {tokens.map((tok: string, i: number) => {
             const isWord = /[a-zA-Z]/.test(tok);
             if (!isWord) return <span key={i} className="text-[#F8F5EE]/50">{tok}</span>;
             const isCurrentlyRead = i === readAlongTokenIndex;
@@ -1364,7 +1364,7 @@ function ReaderScreen({ selectedLevel, setSelectedLevel, onQuizGate, t, onReward
    review from feeling monotonous — a big reason Duolingo mixes exercise
    types instead of repeating the same drill.
    ========================================================================== */
-function MatchingGame({ savedWords, onReward, t }: any) {
+function MatchingGame({ savedWords, onReward }: any) {
   const GRID_SIZE = 6; // 6 words = 12 tiles, fits a mobile screen cleanly
   const [round, setRound] = useState(0);
   const [tiles, setTiles] = useState<any[]>([]);
@@ -1504,7 +1504,7 @@ function MatchingGame({ savedWords, onReward, t }: any) {
    flip-cards. "Again/Hard/Good/Easy" adjusts each word's mastery — weaker
    words resurface first, which is how real spaced repetition works.
    ========================================================================== */
-function FlashcardsScreen({ savedWords, onUpdateWord, t }: any) {
+function FlashcardsScreen({ savedWords, onUpdateWord }: any) {
   const [index, setIndex] = useState(0);
   const [flipped, setFlipped] = useState(false);
   const [sessionDone, setSessionDone] = useState(false);
@@ -1535,7 +1535,7 @@ function FlashcardsScreen({ savedWords, onUpdateWord, t }: any) {
   // Words still being learned surface first (real SRS priority ordering).
   // "Practice Weak Words" narrows the queue to only mastery < 2 — a focused
   // drill instead of re-reviewing words already comfortably known.
-  const baseQueue = practiceWeakOnly ? savedWords.filter((w) => (w.mastery || 0) < 2) : savedWords;
+  const baseQueue = practiceWeakOnly ? savedWords.filter((w: any) => (w.mastery || 0) < 2) : savedWords;
   const queue = [...baseQueue].sort((a, b) => (a.mastery || 0) - (b.mastery || 0));
 
   if (practiceWeakOnly && queue.length === 0) {
