@@ -3,6 +3,7 @@ import {
   Pause, Mic, MicOff, ChevronRight, BookOpen, Trophy, 
   Home as HomeIcon, Play, ArrowRight, CheckCircle2, Globe, Video, ArrowLeft, Sparkles, User, Share2, Flame, Volume2, X, Download, Compass, ShieldAlert, Layers
 } from "lucide-react";
+
 /* ============================================================================
    ROBUST NOMADIC ETHNO-LUXURY DESIGN SYSTEM & SAFE HOOKS
    ========================================================================== */
@@ -571,7 +572,7 @@ const DICT = {
   }
 };
 
-const BackgroundVideo = ({ src, opacity = 50, videoKey }) => {
+const BackgroundVideo = ({ src, opacity = 50, videoKey }: any) => {
   const [error, setError] = useState(false);
   return (
     <div className="absolute inset-0 w-full h-full overflow-hidden pointer-events-none" style={{ zIndex: 0 }}>
@@ -601,7 +602,7 @@ const BackgroundVideo = ({ src, opacity = 50, videoKey }) => {
    feedback loops are what make reinforcement learning "stick" psychologically
    (operant conditioning: the reward must be felt right after the action).
 ---------------------------------------------------------------------------- */
-const XpToast = ({ toast }) => {
+const XpToast = ({ toast }: any) => {
   if (!toast) return null;
   return (
     <span
@@ -669,7 +670,7 @@ const LevelUpModal = ({ show, rank, onClose }: any) => {
   );
 };
 
-const KazakhOrnament = ({ className = "w-6 h-6 text-amber-200" }) => (
+const KazakhOrnament = ({ className = "w-6 h-6 text-amber-200" }: any) => (
   <svg viewBox="0 0 100 100" className={className} fill="currentColor" xmlns="http://www.w3.org/2000/svg">
     <path d="M50 5 C30 25, 10 30, 10 50 C10 70, 30 75, 50 95 C70 75, 90 70, 90 50 C90 30, 70 25, 50 5 Z M50 25 C40 38, 30 40, 30 50 C30 60, 40 62, 50 75 C60 62, 70 60, 70 50 C70 40, 60 38, 50 25 Z" />
   </svg>
@@ -775,7 +776,7 @@ const STORY = {
 /* ============================================================================
    1. INTRO SCREEN
    ========================================================================== */
-function IntroScreen({ onFinish, t }) {
+function IntroScreen({ onFinish, t }: any) {
   return (
     <div className="relative min-h-screen w-full bg-[#09090D] flex flex-col justify-between p-6 overflow-hidden animate-pop-in">
       <BackgroundVideo src={BG_VIDEO_ASSETS.intro} opacity={60} videoKey="intro-bg" />
@@ -827,7 +828,7 @@ function IntroScreen({ onFinish, t }) {
    effort increase measurably as a person perceives themselves getting
    closer to a goal. Seeing the ring fill in is what drives that perception.
 ---------------------------------------------------------------------------- */
-const DailyGoalRing = ({ current, goal }) => {
+const DailyGoalRing = ({ current, goal }: any) => {
   const radius = 30;
   const circumference = 2 * Math.PI * radius;
   const progress = Math.max(0, Math.min(current / goal, 1));
@@ -861,7 +862,7 @@ const DailyGoalRing = ({ current, goal }) => {
   );
 };
 
-function HomeScreen({ onStartRead, t, sessionXp = 0, dailyGoal = 50 }) {
+function HomeScreen({ onStartRead, t, sessionXp = 0, dailyGoal = 50 }: any) {
   const [videoError, setVideoError] = useState(false);
 
   return (
@@ -1035,7 +1036,7 @@ function ReaderScreen({ selectedLevel, setSelectedLevel, onQuizGate, t, onReward
     return acc;
   }, []);
 
-  const handleWordClick = (word) => {
+  const handleWordClick = (word: string) => {
     const cleanWord = word.replace(/[^a-zA-Z]/g, "").toLowerCase();
     setActiveWord(word);
     setTranslation(WORD_TRANSLATIONS[cleanWord] || "Аудармасы әзірге жоқ");
@@ -1046,7 +1047,7 @@ function ReaderScreen({ selectedLevel, setSelectedLevel, onQuizGate, t, onReward
   // precise word-by-word timing without depending on flaky browser
   // "boundary event" support, and degrades gracefully with a timer fallback
   // if speech synthesis isn't available at all.
-  const speakWordAt = (pos) => {
+  const speakWordAt = (pos: number) => {
     if (!isPlayingRef.current) return;
     if (pos >= wordIndices.length) {
       isPlayingRef.current = false;
@@ -1503,7 +1504,7 @@ function MatchingGame({ savedWords, onReward, t }: any) {
    flip-cards. "Again/Hard/Good/Easy" adjusts each word's mastery — weaker
    words resurface first, which is how real spaced repetition works.
    ========================================================================== */
-function FlashcardsScreen({ savedWords, onUpdateWord, t }) {
+function FlashcardsScreen({ savedWords, onUpdateWord, t }: any) {
   const [index, setIndex] = useState(0);
   const [flipped, setFlipped] = useState(false);
   const [sessionDone, setSessionDone] = useState(false);
@@ -1604,7 +1605,7 @@ function FlashcardsScreen({ savedWords, onUpdateWord, t }) {
 
   const current = queue[index];
 
-  const handleReviewResult = (rating) => {
+  const handleReviewResult = (rating: string) => {
     onUpdateWord(current.word, rating);
     setFlipped(false);
     if (index + 1 >= queue.length) setSessionDone(true);
@@ -1708,7 +1709,7 @@ function FlashcardsScreen({ savedWords, onUpdateWord, t }) {
 /* ============================================================================
    4. QUIZ SCREEN
    ========================================================================== */
-function QuizScreen({ onReward, t, selectedLevel, onQuizFinish }: any) {
+function QuizScreen({ onReward, t, onQuizFinish }: any) {
   const [qIndex, setQIndex] = useState(0);
   const [selected, setSelected] = useState<number | null>(null);
   const [submitted, setSubmitted] = useState(false);
@@ -1967,11 +1968,11 @@ function QuizScreen({ onReward, t, selectedLevel, onQuizFinish }: any) {
           <>
             <span className="text-[9px] text-[#C5A059] uppercase tracking-widest font-bold block">FILL IN THE BLANK</span>
             <p className="font-body text-sm font-semibold text-[#F8F5EE] leading-relaxed">
-              {question.sentence.split("___")[0]}
+              {(question.sentence || "").split("___")[0]}
               <span className="inline-block min-w-[54px] border-b-2 border-[#C5A059] mx-1 text-center text-[#C5A059]">
                 {submitted && selected !== null ? question.options[selected] : "\u00A0"}
               </span>
-              {question.sentence.split("___")[1]}
+              {(question.sentence || "").split("___")[1]}
             </p>
           </>
         ) : (
@@ -2102,7 +2103,7 @@ function SpeakScreen({ onReward, t }: any) {
 /* ============================================================================
    6. PROFILE & PASSPORT SCREEN WITH CULTURAL ARTIFACTS
    ========================================================================== */
-function ProfileScreen({ xp, t, savedWordsCount = 0, unlockedAchievements = [] }) {
+function ProfileScreen({ xp, t, savedWordsCount = 0, unlockedAchievements = [] }: any) {
   const [showBuklet, setShowBuklet] = useState(false);
 
   const userName = "Ibrahim Nomad";
@@ -2287,21 +2288,21 @@ export default function KazakhTalesApp() {
     { id: string; icon: string; title: string; desc: string; check: (s: any) => boolean }[]
   >([]);
 
-  const t = DICT[lang];
+  const t = DICT[lang as keyof typeof DICT];
 
-  const addXp = (amount) => {
+  const addXp = (amount: number) => {
     if (!amount) return;
-    setXp((prev) => prev + amount);
-    setSessionXp((prev) => prev + amount);
+    setXp((prev: number) => prev + amount);
+    setSessionXp((prev: number) => prev + amount);
 
     setXpToast({ amount, key: Date.now() + Math.random() });
     if (xpToastTimer.current) clearTimeout(xpToastTimer.current);
     xpToastTimer.current = setTimeout(() => setXpToast(null), 1300);
   };
 
-  const handleQuizFinish = (correctCount, total) => {
-    setQuizzesCompleted((c) => c + 1);
-    if (correctCount === total) setPerfectQuizzes((c) => c + 1);
+  const handleQuizFinish = (correctCount: number, total: number) => {
+    setQuizzesCompleted((c: number) => c + 1);
+    if (correctCount === total) setPerfectQuizzes((c: number) => c + 1);
   };
 
   // Detect rank-up threshold crossings whenever xp changes.
