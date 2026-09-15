@@ -3,7 +3,6 @@ import {
   Pause, Mic, MicOff, ChevronRight, BookOpen, Trophy, 
   Home as HomeIcon, Play, ArrowRight, CheckCircle2, Globe, Video, ArrowLeft, Sparkles, User, Share2, Flame, Volume2, X, Download, Compass, ShieldAlert, Layers
 } from "lucide-react";
-
 /* ============================================================================
    ROBUST NOMADIC ETHNO-LUXURY DESIGN SYSTEM & SAFE HOOKS
    ========================================================================== */
@@ -161,10 +160,10 @@ const FontLoader = () => (
    Claude), you can safely re-add localStorage there — see the commented
    version at the bottom of this file.
 ---------------------------------------------------------------------------- */
-const useSafeState = (initialValue) => useState(initialValue);
+const useSafeState = (initialValue: any) => useState(initialValue);
 
 // Fail-safe Voice Synthesizer with browser checks
-const safePlayVoice = (text, onFallback) => {
+const safePlayVoice = (text: string, onFallback?: () => void) => {
   try {
     if (!("speechSynthesis" in window)) {
       if (onFallback) onFallback("Speech synthesis not supported on this browser.");
@@ -622,8 +621,8 @@ const XpToast = ({ toast }) => {
    ones) are the strongest known driver of sustained engagement (variable
    reinforcement schedules).
 ---------------------------------------------------------------------------- */
-const LevelUpModal = ({ show, rank, onClose }) => {
-  const [confetti, setConfetti] = useState([]);
+const LevelUpModal = ({ show, rank, onClose }: any) => {
+  const [confetti, setConfetti] = useState<{ id: number; left: number; delay: number; color: string }[]>([]);
   // Keep the latest onClose in a ref so the timer effect below only needs to
   // depend on `show` — avoids restarting the confetti animation every time
   // the parent re-renders with a fresh inline onClose function.
@@ -724,7 +723,7 @@ const ACHIEVEMENTS = [
 // Top-of-screen banner for a newly unlocked badge — deliberately NOT a
 // full-screen modal like LevelUpModal, so it never blocks the screen the
 // person was already on and can't collide with the level-up celebration.
-const AchievementBanner = ({ achievement, onDone }) => {
+const AchievementBanner = ({ achievement, onDone }: any) => {
   const onDoneRef = useRef(onDone);
   useEffect(() => {
     onDoneRef.current = onDone;
@@ -938,14 +937,14 @@ function HomeScreen({ onStartRead, t, sessionXp = 0, dailyGoal = 50 }) {
 /* ============================================================================
    3. READER SCREEN WITH INTERACTIVE CHOICE
    ========================================================================== */
-function ReaderScreen({ selectedLevel, setSelectedLevel, onQuizGate, t, onReward, savedWords, onSaveWord }) {
+function ReaderScreen({ selectedLevel, setSelectedLevel, onQuizGate, t, onReward, savedWords, onSaveWord }: any) {
   const [isPlaying, setIsPlaying] = useState(true);
-  const [activeWord, setActiveWord] = useState(null);
+  const [activeWord, setActiveWord] = useState<string | null>(null);
   const [translation, setTranslation] = useState("");
   const [showChoiceModal, setShowChoiceModal] = useState(false);
   const [choiceMade, setChoiceMade] = useState(false);
   const [videoError, setVideoError] = useState(false);
-  const videoRef = useRef(null);
+  const videoRef = useRef<HTMLVideoElement | null>(null);
 
   /* --------------------------------------------------------------------------
      READ ALONG — the text slowly narrates itself word-by-word, highlighting
@@ -955,9 +954,9 @@ function ReaderScreen({ selectedLevel, setSelectedLevel, onQuizGate, t, onReward
      fluency (paired listening + visual tracking).
      -------------------------------------------------------------------------- */
   const [isReadAlongPlaying, setIsReadAlongPlaying] = useState(false);
-  const [readAlongTokenIndex, setReadAlongTokenIndex] = useState(null);
+  const [readAlongTokenIndex, setReadAlongTokenIndex] = useState<number | null>(null);
   const isPlayingRef = useRef(false);
-  const wordRefs = useRef({});
+  const wordRefs = useRef<Record<number, HTMLElement | null>>({});
 
   // Reading speed for Read-Along. 0.65 stays the default "deliberate pace"
   // this feature was built for; the ref mirrors the state so the recursive
@@ -1364,13 +1363,13 @@ function ReaderScreen({ selectedLevel, setSelectedLevel, onQuizGate, t, onReward
    review from feeling monotonous — a big reason Duolingo mixes exercise
    types instead of repeating the same drill.
    ========================================================================== */
-function MatchingGame({ savedWords, onReward, t }) {
+function MatchingGame({ savedWords, onReward, t }: any) {
   const GRID_SIZE = 6; // 6 words = 12 tiles, fits a mobile screen cleanly
   const [round, setRound] = useState(0);
-  const [tiles, setTiles] = useState([]);
-  const [selectedTile, setSelectedTile] = useState(null);
-  const [matchedIds, setMatchedIds] = useState([]);
-  const [wrongPair, setWrongPair] = useState([]);
+  const [tiles, setTiles] = useState<any[]>([]);
+  const [selectedTile, setSelectedTile] = useState<any>(null);
+  const [matchedIds, setMatchedIds] = useState<any[]>([]);
+  const [wrongPair, setWrongPair] = useState<any[]>([]);
   const [roundComplete, setRoundComplete] = useState(false);
 
   const buildRound = () => {
@@ -1391,7 +1390,7 @@ function MatchingGame({ savedWords, onReward, t }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [round, savedWords.length]);
 
-  const handleTileTap = (tile) => {
+  const handleTileTap = (tile: any) => {
     if (matchedIds.includes(tile.pairId) || wrongPair.length > 0) return;
 
     if (!selectedTile) {
@@ -1709,9 +1708,9 @@ function FlashcardsScreen({ savedWords, onUpdateWord, t }) {
 /* ============================================================================
    4. QUIZ SCREEN
    ========================================================================== */
-function QuizScreen({ onReward, t, selectedLevel, onQuizFinish }) {
+function QuizScreen({ onReward, t, selectedLevel, onQuizFinish }: any) {
   const [qIndex, setQIndex] = useState(0);
-  const [selected, setSelected] = useState(null);
+  const [selected, setSelected] = useState<number | null>(null);
   const [submitted, setSubmitted] = useState(false);
   const [correctCount, setCorrectCount] = useState(0);
   const [finished, setFinished] = useState(false);
@@ -2037,9 +2036,9 @@ function QuizScreen({ onReward, t, selectedLevel, onQuizFinish }) {
 /* ============================================================================
    5. SPEAK SCREEN
    ========================================================================== */
-function SpeakScreen({ onReward, t }) {
+function SpeakScreen({ onReward, t }: any) {
   const [recording, setRecording] = useState(false);
-  const [score, setScore] = useState(null);
+  const [score, setScore] = useState<number | null>(null);
 
   const targetPhrase = "He is renowned across the steppe for his sharp wit.";
 
@@ -2250,7 +2249,7 @@ function ProfileScreen({ xp, t, savedWordsCount = 0, unlockedAchievements = [] }
 export default function KazakhTalesApp() {
   const [stage, setStage] = useSafeState("intro");
   const [tab, setTab] = useState("home");
-  const [selectedLevel, setSelectedLevel] = useState(null);
+  const [selectedLevel, setSelectedLevel] = useState<string | null>(null);
   const [xp, setXp] = useSafeState(140);
   const [lang, setLang] = useSafeState("kk");
   // Personal vocabulary bank: words tapped while reading, with a simple
@@ -2266,8 +2265,8 @@ export default function KazakhTalesApp() {
   const DAILY_GOAL = 50;
 
   // Floating "+XP" toast state, keyed so each pop restarts the animation.
-  const [xpToast, setXpToast] = useState(null);
-  const xpToastTimer = useRef(null);
+  const [xpToast, setXpToast] = useState<{ amount: number; key: number } | null>(null);
+  const xpToastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Rank-up (level-up) celebration, fired when total XP crosses a 100-point
   // threshold. prevXpRef tracks the last known xp so we can detect the
@@ -2283,8 +2282,10 @@ export default function KazakhTalesApp() {
   // re-trigger the celebration banner on every render.
   const [quizzesCompleted, setQuizzesCompleted] = useState(0);
   const [perfectQuizzes, setPerfectQuizzes] = useState(0);
-  const [unlockedAchievements, setUnlockedAchievements] = useState([]);
-  const [achievementQueue, setAchievementQueue] = useState([]);
+  const [unlockedAchievements, setUnlockedAchievements] = useState<string[]>([]);
+  const [achievementQueue, setAchievementQueue] = useState<
+    { id: string; icon: string; title: string; desc: string; check: (s: any) => boolean }[]
+  >([]);
 
   const t = DICT[lang];
 
@@ -2336,9 +2337,9 @@ export default function KazakhTalesApp() {
     };
   }, []);
 
-  const handleSaveWord = (word, translation) => {
-    setSavedWords((prev) => {
-      if (prev.some((w) => w.word === word)) return prev;
+  const handleSaveWord = (word: string, translation: string) => {
+    setSavedWords((prev: any[]) => {
+      if (prev.some((w: any) => w.word === word)) return prev;
       addXp(5); // small reward for building vocabulary, reinforces the habit
       return [...prev, { word, translation, mastery: 0 }];
     });
@@ -2346,9 +2347,9 @@ export default function KazakhTalesApp() {
 
   // Confidence-based mastery update (SM-2-lite). Rating is one of
   // "again" | "hard" | "good" | "easy" from the flashcard review buttons.
-  const handleUpdateWordMastery = (word, rating) => {
-    setSavedWords((prev) =>
-      prev.map((w) => {
+  const handleUpdateWordMastery = (word: string, rating: string) => {
+    setSavedWords((prev: any[]) =>
+      prev.map((w: any) => {
         if (w.word !== word) return w;
         const current = w.mastery || 0;
         let next = current;
@@ -2365,7 +2366,7 @@ export default function KazakhTalesApp() {
 
   // Profile tab intentionally has NO video — static gradient background only.
   const isProfileTab = tab === "profile";
-  const currentVideoBg = BG_VIDEO_ASSETS[tab] || BG_VIDEO_ASSETS.home;
+  const currentVideoBg = BG_VIDEO_ASSETS[tab as keyof typeof BG_VIDEO_ASSETS] || BG_VIDEO_ASSETS.home;
 
   if (stage === "intro") {
     return <IntroScreen onFinish={() => setStage("main")} t={t} />;
@@ -2427,7 +2428,9 @@ export default function KazakhTalesApp() {
               onSaveWord={handleSaveWord}
             />
           )}
-          {tab === "quiz" && <QuizScreen onReward={addXp} t={t} onQuizFinish={handleQuizFinish} />}
+          {tab === "quiz" && (
+            <QuizScreen onReward={addXp} t={t} selectedLevel={selectedLevel} onQuizFinish={handleQuizFinish} />
+          )}
           {tab === "words" && (
             <div className="animate-pop-in">
               <div className="px-5 pt-1 pb-3">
