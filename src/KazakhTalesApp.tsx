@@ -1,7 +1,7 @@
-import React, { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 import {
-  Pause, Mic, MicOff, ChevronRight, BookOpen, Trophy, 
-  Home as HomeIcon, Play, ArrowRight, CheckCircle2, Globe, Video, ArrowLeft, Sparkles, User, Share2, Flame, Volume2, X, Download, Compass, ShieldAlert, Layers
+  Pause, Mic, MicOff, ChevronRight, BookOpen, Trophy,
+  Home as HomeIcon, Play, ArrowRight, CheckCircle2, Globe, Video, ArrowLeft, Sparkles, User, Share2, Flame, Volume2, X, Download, Compass, Layers
 } from "lucide-react";
 
 /* ============================================================================
@@ -152,19 +152,36 @@ const FontLoader = () => (
 );
 
 /* ----------------------------------------------------------------------------
-   NOTE ON PERSISTENCE:
-   localStorage/sessionStorage are NOT reliable inside Claude Artifacts / some
-   sandboxed preview environments (they throw or silently no-op). Since this
-   component needs to run both in your own Vite/VS Code project AND may be
-   previewed elsewhere, we swap persisted state for plain in-memory React
-   state. If you specifically want persistence in your OWN Vite app (outside
-   Claude), you can safely re-add localStorage there — see the commented
-   version at the bottom of this file.
+   PERSISTED STATE:
+   This app runs as a real deployed Vite site (not a sandboxed preview), so
+   progress is worth keeping across reloads — otherwise XP, streaks, saved
+   vocabulary and achievements would reset every visit, which defeats the
+   point of a streak/XP system. Reads and writes are wrapped in try/catch
+   since localStorage can still throw in some contexts (private browsing,
+   disabled storage, embedded iframes), and the hook degrades to in-memory
+   state in that case instead of crashing the app.
 ---------------------------------------------------------------------------- */
-const useSafeState = (initialValue: any) => useState(initialValue);
+const usePersistedState = <T,>(key: string, initialValue: T) => {
+  const [state, setState] = useState<T>(() => {
+    try {
+      const item = window.localStorage.getItem(key);
+      return item !== null ? JSON.parse(item) : initialValue;
+    } catch {
+      return initialValue;
+    }
+  });
+  useEffect(() => {
+    try {
+      window.localStorage.setItem(key, JSON.stringify(state));
+    } catch {
+      // storage unavailable — state still works for the current session
+    }
+  }, [key, state]);
+  return [state, setState] as const;
+};
 
 // Fail-safe Voice Synthesizer with browser checks
-const safePlayVoice = (text: string, onFallback?: () => void) => {
+const safePlayVoice = (text: string, onFallback?: (reason: string) => void) => {
   try {
     if (!("speechSynthesis" in window)) {
       if (onFallback) onFallback("Speech synthesis not supported on this browser.");
@@ -1159,6 +1176,7 @@ function ReaderScreen({ selectedLevel, setSelectedLevel, onQuizGate, t, onReward
         {!videoError && (
           <button
             onClick={toggleVideo}
+            aria-label={isPlaying ? "Pause background video" : "Play background video"}
             className="absolute bottom-2.5 right-2.5 p-2 bg-[#09090D]/80 border border-[#C5A059]/40 text-[#C5A059] hover:border-[#C5A059] transition-all"
           >
             {isPlaying ? <Pause size={13} /> : <Play size={13} />}
@@ -1206,7 +1224,7 @@ function ReaderScreen({ selectedLevel, setSelectedLevel, onQuizGate, t, onReward
           </div>
 
           {readAlongTokenIndex !== null && (
-            <button onClick={handleRestartReadAlong} className="text-[#F8F5EE]/40 hover:text-[#F8F5EE]" title="Restart from the beginning">
+            <button onClick={handleRestartReadAlong} className="text-[#F8F5EE]/40 hover:text-[#F8F5EE]" title="Restart from the beginning" aria-label="Restart read-along from the beginning">
               <ArrowLeft size={13} />
             </button>
           )}
@@ -1257,7 +1275,7 @@ function ReaderScreen({ selectedLevel, setSelectedLevel, onQuizGate, t, onReward
                 </button>
               );
             })()}
-            <button onClick={() => setActiveWord(null)} className="text-[#F8F5EE]/50 hover:text-[#F8F5EE]">
+            <button onClick={() => setActiveWord(null)} aria-label="Dismiss word translation" className="text-[#F8F5EE]/50 hover:text-[#F8F5EE]">
               <X size={14} />
             </button>
           </div>
@@ -1272,17 +1290,19 @@ function ReaderScreen({ selectedLevel, setSelectedLevel, onQuizGate, t, onReward
             const isCurrentlyRead = i === readAlongTokenIndex;
             return (
               <span key={i} className="relative inline-block mx-0.5">
-                <span
+                <button
+                  type="button"
                   ref={(el) => { wordRefs.current[i] = el; }}
                   onClick={() => handleWordClick(tok)}
-                  className={`px-1 py-0.5 rounded font-semibold cursor-pointer transition-all duration-300 ${
+                  aria-label={`Hear and translate "${tok}"`}
+                  className={`px-1 py-0.5 rounded font-semibold font-body text-sm transition-all duration-300 ${
                     isCurrentlyRead
                       ? "bg-[#C5A059] text-[#09090D] shadow-[0_2px_10px_-2px_rgba(197,160,89,0.6)]"
                       : "text-[#F8F5EE] hover:text-[#C5A059] hover:bg-[#C5A059]/15 border-b border-[#C5A059]/40"
                   }`}
                 >
                   {tok}
-                </span>
+                </button>
               </span>
             );
           })}
@@ -1307,7 +1327,7 @@ function ReaderScreen({ selectedLevel, setSelectedLevel, onQuizGate, t, onReward
       {showChoiceModal && (
         <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4 animate-pop-in">
           <div className="w-full max-w-[360px] bg-[#0E0E14] border-2 border-[#C5A059] p-5 rounded-lg shadow-2xl space-y-4 text-center relative">
-            <button onClick={() => setShowChoiceModal(false)} className="absolute top-3 right-3 text-[#C5A059]">
+            <button onClick={() => setShowChoiceModal(false)} aria-label="Close" className="absolute top-3 right-3 text-[#C5A059]">
               <X size={18} />
             </button>
 
@@ -1364,7 +1384,21 @@ function ReaderScreen({ selectedLevel, setSelectedLevel, onQuizGate, t, onReward
    review from feeling monotonous — a big reason Duolingo mixes exercise
    types instead of repeating the same drill.
    ========================================================================== */
-function MatchingGame({ savedWords, onReward }: any) {
+// Fisher-Yates shuffle. Array.prototype.sort(() => Math.random() - 0.5) is a
+// common shortcut but is a biased shuffle (comparator-sort based shuffles
+// don't produce a uniform permutation) — this one does.
+function shuffle<T>(arr: T[]): T[] {
+  const result = [...arr];
+  for (let i = result.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [result[i], result[j]] = [result[j], result[i]];
+  }
+  return result;
+}
+
+type SavedWord = { word: string; translation: string; mastery?: number };
+
+function MatchingGame({ savedWords, onReward }: { savedWords: SavedWord[]; onReward: (amount: number) => void }) {
   const GRID_SIZE = 6; // 6 words = 12 tiles, fits a mobile screen cleanly
   const [round, setRound] = useState(0);
   const [tiles, setTiles] = useState<any[]>([]);
@@ -1375,10 +1409,10 @@ function MatchingGame({ savedWords, onReward }: any) {
 
   const buildRound = () => {
     if (!savedWords || savedWords.length < 3) return;
-    const shuffled = [...savedWords].sort(() => Math.random() - 0.5).slice(0, Math.min(GRID_SIZE, savedWords.length));
+    const shuffled = shuffle(savedWords).slice(0, Math.min(GRID_SIZE, savedWords.length));
     const wordTiles = shuffled.map((w, i) => ({ tileId: `w-${i}`, pairId: i, text: w.word, kind: "word" }));
     const transTiles = shuffled.map((w, i) => ({ tileId: `t-${i}`, pairId: i, text: w.translation, kind: "translation" }));
-    const combined = [...wordTiles, ...transTiles].sort(() => Math.random() - 0.5);
+    const combined = shuffle([...wordTiles, ...transTiles]);
     setTiles(combined);
     setMatchedIds([]);
     setSelectedTile(null);
@@ -2077,6 +2111,7 @@ function SpeakScreen({ onReward, t }: any) {
       <div className="flex flex-col items-center justify-center py-4 space-y-3">
         <button
           onClick={toggleRecord}
+          aria-label={recording ? "Stop recording" : "Start recording your pronunciation"}
           className={`w-20 h-20 rounded-full flex items-center justify-center transition-all ${
             recording
               ? "bg-[#B2533E] text-[#F8F5EE] animate-pulse shadow-[0_0_30px_rgba(178,83,62,0.6)]"
@@ -2103,11 +2138,10 @@ function SpeakScreen({ onReward, t }: any) {
 /* ============================================================================
    6. PROFILE & PASSPORT SCREEN WITH CULTURAL ARTIFACTS
    ========================================================================== */
-function ProfileScreen({ xp, t, savedWordsCount = 0, unlockedAchievements = [] }: any) {
+function ProfileScreen({ xp, t, savedWordsCount = 0, unlockedAchievements = [], streakDays = 0 }: any) {
   const [showBuklet, setShowBuklet] = useState(false);
 
   const userName = "Ibrahim Nomad";
-  const streakDays = 7;
 
   return (
     <div className="px-5 pb-6 space-y-5 animate-pop-in">
@@ -2182,8 +2216,9 @@ function ProfileScreen({ xp, t, savedWordsCount = 0, unlockedAchievements = [] }
         <div className="fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex items-center justify-center p-4 animate-pop-in">
           <div className="w-full max-w-[380px] bg-[#0E0E14] border-2 border-[#C5A059] p-6 rounded-lg shadow-2xl relative space-y-5 text-center">
             
-            <button 
+            <button
               onClick={() => setShowBuklet(false)}
+              aria-label="Close"
               className="absolute top-4 right-4 text-[#C5A059] hover:text-white"
             >
               <X size={20} />
@@ -2248,20 +2283,20 @@ function ProfileScreen({ xp, t, savedWordsCount = 0, unlockedAchievements = [] }
    MAIN APP WRAPPER
    ========================================================================== */
 export default function KazakhTalesApp() {
-  const [stage, setStage] = useSafeState("intro");
+  const [stage, setStage] = useState("intro");
   const [tab, setTab] = useState("home");
   const [selectedLevel, setSelectedLevel] = useState<string | null>(null);
-  const [xp, setXp] = useSafeState(140);
-  const [lang, setLang] = useSafeState("kk");
+  const [xp, setXp] = usePersistedState("ertegi_xp", 140);
+  const [lang, setLang] = usePersistedState("ertegi_lang", "kk");
   // Personal vocabulary bank: words tapped while reading, with a simple
   // mastery counter (0-5) that drives spaced-repetition ordering and
   // confidence-based review in FlashcardsScreen.
-  const [savedWords, setSavedWords] = useSafeState([]);
+  const [savedWords, setSavedWords] = usePersistedState<SavedWord[]>("ertegi_words", []);
   const [wordsMode, setWordsMode] = useState("cards"); // "cards" | "match"
 
   // Session-scoped XP toward today's goal — drives the goal-gradient ring
   // on the home screen. Resets naturally each time the app reloads, which is
-  // fine here since we intentionally don't persist state across sessions.
+  // fine here since a "session" is meant to mean "today", not "all time".
   const [sessionXp, setSessionXp] = useState(0);
   const DAILY_GOAL = 50;
 
@@ -2281,12 +2316,32 @@ export default function KazakhTalesApp() {
   // already has (xp, savedWords.length). unlockedAchievements persists which
   // badges have already fired so a stat staying above its threshold doesn't
   // re-trigger the celebration banner on every render.
-  const [quizzesCompleted, setQuizzesCompleted] = useState(0);
-  const [perfectQuizzes, setPerfectQuizzes] = useState(0);
-  const [unlockedAchievements, setUnlockedAchievements] = useState<string[]>([]);
+  const [quizzesCompleted, setQuizzesCompleted] = usePersistedState("ertegi_quizzes_completed", 0);
+  const [perfectQuizzes, setPerfectQuizzes] = usePersistedState("ertegi_perfect_quizzes", 0);
+  const [unlockedAchievements, setUnlockedAchievements] = usePersistedState<string[]>("ertegi_achievements", []);
   const [achievementQueue, setAchievementQueue] = useState<
     { id: string; icon: string; title: string; desc: string; check: (s: any) => boolean }[]
   >([]);
+
+  // --- REAL DAILY STREAK ---
+  // Replaces a hardcoded display value with an actual day-over-day streak:
+  // a visit on the calendar day right after the last one extends it, a
+  // visit on the same day is a no-op, and any bigger gap resets it to 1.
+  const [streakDays, setStreakDays] = usePersistedState("ertegi_streak_days", 0);
+  const [lastActiveDate, setLastActiveDate] = usePersistedState<string | null>("ertegi_last_active", null);
+  useEffect(() => {
+    const dayKey = (d: Date) => d.toISOString().slice(0, 10); // YYYY-MM-DD, UTC-based so it's stable
+    const today = dayKey(new Date());
+    if (lastActiveDate === today) return; // already counted today
+    const gapDays = lastActiveDate
+      ? Math.round((new Date(today).getTime() - new Date(lastActiveDate).getTime()) / 86400000)
+      : null;
+    setStreakDays((prev: number) => (gapDays === 1 ? prev + 1 : 1));
+    setLastActiveDate(today);
+    // Runs once per mount (i.e. once per visit) — deliberately not
+    // re-running on every render, only on load.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const t = DICT[lang as keyof typeof DICT];
 
@@ -2339,11 +2394,16 @@ export default function KazakhTalesApp() {
   }, []);
 
   const handleSaveWord = (word: string, translation: string) => {
-    setSavedWords((prev: any[]) => {
-      if (prev.some((w: any) => w.word === word)) return prev;
-      addXp(5); // small reward for building vocabulary, reinforces the habit
-      return [...prev, { word, translation, mastery: 0 }];
-    });
+    // The "already saved?" check and the addXp side effect both need to run
+    // exactly once per real click. Doing that check+effect *inside* the
+    // setSavedWords updater looks convenient, but React (in StrictMode, in
+    // dev) intentionally invokes updater functions twice to surface exactly
+    // this kind of non-pure side effect — which was silently double-granting
+    // +5 XP on every saved word. Reading the current savedWords here instead
+    // is safe since this only ever runs from a direct click handler.
+    if (savedWords.some((w) => w.word === word)) return;
+    setSavedWords((prev) => [...prev, { word, translation, mastery: 0 }]);
+    addXp(5); // small reward for building vocabulary, reinforces the habit
   };
 
   // Confidence-based mastery update (SM-2-lite). Rating is one of
@@ -2370,7 +2430,15 @@ export default function KazakhTalesApp() {
   const currentVideoBg = BG_VIDEO_ASSETS[tab as keyof typeof BG_VIDEO_ASSETS] || BG_VIDEO_ASSETS.home;
 
   if (stage === "intro") {
-    return <IntroScreen onFinish={() => setStage("main")} t={t} />;
+    // FontLoader has to render here too, not just in the main-stage tree
+    // below — otherwise the Cinzel heritage font never loads in time for
+    // the very first screen a visitor sees, and it falls back to serif.
+    return (
+      <>
+        <FontLoader />
+        <IntroScreen onFinish={() => setStage("main")} t={t} />
+      </>
+    );
   }
 
   return (
@@ -2457,7 +2525,7 @@ export default function KazakhTalesApp() {
               {wordsMode === "cards" ? (
                 <FlashcardsScreen savedWords={savedWords} onUpdateWord={handleUpdateWordMastery} t={t} />
               ) : (
-                <MatchingGame savedWords={savedWords} onReward={addXp} t={t} />
+                <MatchingGame savedWords={savedWords} onReward={addXp} />
               )}
             </div>
           )}
@@ -2468,6 +2536,7 @@ export default function KazakhTalesApp() {
               t={t}
               savedWordsCount={savedWords.length}
               unlockedAchievements={unlockedAchievements}
+              streakDays={streakDays}
             />
           )}
         </div>
@@ -2514,26 +2583,3 @@ export default function KazakhTalesApp() {
   );
 }
 
-/* ----------------------------------------------------------------------------
-   OPTIONAL: localStorage version for your OWN Vite project (outside Claude).
-   If you want progress/xp/lang to survive a page refresh in your real app,
-   replace useSafeState above with this hook instead. Do NOT use this inside
-   Claude Artifacts — only in your local VS Code / deployed Vite app.
-
-   const usePersistedState = (key, initialValue) => {
-     const [state, setState] = useState(() => {
-       try {
-         const item = window.localStorage.getItem(key);
-         return item ? JSON.parse(item) : initialValue;
-       } catch {
-         return initialValue;
-       }
-     });
-     useEffect(() => {
-       try {
-         window.localStorage.setItem(key, JSON.stringify(state));
-       } catch {}
-     }, [key, state]);
-     return [state, setState];
-   };
----------------------------------------------------------------------------- */
