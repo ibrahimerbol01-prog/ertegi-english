@@ -165,7 +165,7 @@ const FontLoader = () => (
 const useSafeState = (initialValue: any) => useState(initialValue);
 
 // Fail-safe Voice Synthesizer with browser checks
-const safePlayVoice = (text: string, oonFallback?: (msg?: string) => voidnFallback?: () => void) => {
+const safePlayVoice = (text: string, onFallback?: (msg?: string) => void) => {
   try {
     if (!("speechSynthesis" in window)) {
       if (onFallback) onFallback("Speech synthesis not supported on this browser.");
