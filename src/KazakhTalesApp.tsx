@@ -8,7 +8,7 @@ import { supabase } from "./lib/supabase";
 /* ============================================================================
    ROBUST NOMADIC ETHNO-LUXURY DESIGN SYSTEM & SAFE HOOKS
    ========================================================================== */
-const FontLoader = () => (
+export const FontLoader = () => (
   <style>{`
     @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
@@ -484,7 +484,7 @@ const WORD_TRANSLATIONS = {
   wasted: "далада қалды (бекерге кетті)"
 };
 
-const DICT = {
+export const DICT = {
   kk: {
     skip: "ÖTKİZİP JÏBERŪ",
     enter: "BASTAU",
@@ -777,7 +777,7 @@ const STORY = {
 /* ============================================================================
    1. INTRO SCREEN
    ========================================================================== */
-function IntroScreen({ onFinish, t }: any) {
+export function IntroScreen({ onFinish, t }: any) {
   return (
     <div className="relative min-h-screen w-full bg-[#09090D] flex flex-col justify-between p-6 overflow-hidden animate-pop-in">
       <BackgroundVideo src={BG_VIDEO_ASSETS.intro} opacity={60} videoKey="intro-bg" />
@@ -2361,7 +2361,7 @@ export default function KazakhTalesApp({ session }: any) {
   // default xp/words and then jarringly overwrite them a moment later.
   const [dataLoaded, setDataLoaded] = useState(false);
 
-  const [stage, setStage] = useSafeState("intro");
+  const [stage, setStage] = useSafeState("main");
   const [tab, setTab] = useState("home");
   const [selectedLevel, setSelectedLevel] = useState<string | null>(null);
   const [xp, setXp] = useSafeState(140);
