@@ -1,7 +1,7 @@
-import React, { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 import {
   Pause, Mic, MicOff, ChevronRight, BookOpen, Trophy, 
-  Home as HomeIcon, Play, ArrowRight, CheckCircle2, Globe, Video, ArrowLeft, Sparkles, User, Share2, Flame, Volume2, X, Download, Compass, ShieldAlert, Layers, LogOut
+  Home as HomeIcon, Play, ArrowRight, CheckCircle2, Globe, Video, ArrowLeft, Sparkles, User, Share2, Flame, Volume2, X, Download, Compass, Layers, LogOut
 } from "lucide-react";
 import { supabase } from "./lib/supabase";
 
@@ -165,7 +165,7 @@ const FontLoader = () => (
 const useSafeState = (initialValue: any) => useState(initialValue);
 
 // Fail-safe Voice Synthesizer with browser checks
-const safePlayVoice = (text: string, onFallback?: () => void) => {
+const safePlayVoice = (text: string, oonFallback?: (msg?: string) => voidnFallback?: () => void) => {
   try {
     if (!("speechSynthesis" in window)) {
       if (onFallback) onFallback("Speech synthesis not supported on this browser.");
