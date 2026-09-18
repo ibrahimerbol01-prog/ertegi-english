@@ -25,6 +25,34 @@ export default function App() {
     return () => listener.subscription.unsubscribe();
   }, []);
 
+  // Google sign-in can't attach our own consent flag to the new user record
+  // directly (that's Google/Supabase's metadata, not ours to fill in ahead
+  // of time), so AuthScreen leaves a short-lived marker before redirecting.
+  // Once a session appears back here, if that marker is present, record the
+  // consent against the profile Supabase's own trigger just created.
+  useEffect(() => {
+    if (!session) return;
+    let pending = false;
+    try {
+      pending = localStorage.getItem("ertegi_privacy_consent_pending") === "1";
+    } catch {
+      // ignore — localStorage may be unavailable
+    }
+    if (!pending) return;
+
+    supabase
+      .from("profiles")
+      .update({ agreed_to_privacy_policy: true, privacy_agreed_at: new Date().toISOString() })
+      .eq("id", session.user.id)
+      .then(() => {
+        try {
+          localStorage.removeItem("ertegi_privacy_consent_pending");
+        } catch {
+          // ignore
+        }
+      });
+  }, [session]);
+
   if (!introSeen) {
     return (
       <>
