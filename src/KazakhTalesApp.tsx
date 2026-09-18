@@ -1,8 +1,9 @@
 import React, { useState, useRef, useEffect } from "react";
 import {
   Pause, Mic, MicOff, ChevronRight, BookOpen, Trophy, 
-  Home as HomeIcon, Play, ArrowRight, CheckCircle2, Globe, Video, ArrowLeft, Sparkles, User, Share2, Flame, Volume2, X, Download, Compass, ShieldAlert, Layers
+  Home as HomeIcon, Play, ArrowRight, CheckCircle2, Globe, Video, ArrowLeft, Sparkles, User, Share2, Flame, Volume2, X, Download, Compass, ShieldAlert, Layers, LogOut
 } from "lucide-react";
+import { supabase } from "./lib/supabase";
 
 /* ============================================================================
    ROBUST NOMADIC ETHNO-LUXURY DESIGN SYSTEM & SAFE HOOKS
@@ -2037,25 +2038,100 @@ function QuizScreen({ onReward, t, onQuizFinish }: any) {
 /* ============================================================================
    5. SPEAK SCREEN
    ========================================================================== */
+// Normalizes two phrases into word tokens and scores how closely they match
+// (order-sensitive, word-by-word) — good enough for pronunciation practice
+// without needing a paid speech-scoring API.
+function scoreTranscript(said: string, target: string): number {
+  const clean = (s: string) => s.toLowerCase().replace(/[^a-z0-9\s]/g, "").split(/\s+/).filter(Boolean);
+  const saidWords = clean(said);
+  const targetWords = clean(target);
+  if (targetWords.length === 0) return 0;
+
+  // Levenshtein distance over the word arrays (not characters) — robust to
+  // one dropped/extra word without tanking the whole score.
+  const m = saidWords.length;
+  const n = targetWords.length;
+  const dp: number[][] = Array.from({ length: m + 1 }, () => new Array(n + 1).fill(0));
+  for (let i = 0; i <= m; i++) dp[i][0] = i;
+  for (let j = 0; j <= n; j++) dp[0][j] = j;
+  for (let i = 1; i <= m; i++) {
+    for (let j = 1; j <= n; j++) {
+      if (saidWords[i - 1] === targetWords[j - 1]) dp[i][j] = dp[i - 1][j - 1];
+      else dp[i][j] = 1 + Math.min(dp[i - 1][j], dp[i][j - 1], dp[i - 1][j - 1]);
+    }
+  }
+  const distance = dp[m][n];
+  const similarity = Math.max(0, 1 - distance / Math.max(m, n));
+  return Math.round(similarity * 100);
+}
+
 function SpeakScreen({ onReward, t }: any) {
   const [recording, setRecording] = useState(false);
   const [score, setScore] = useState<number | null>(null);
+  const [transcript, setTranscript] = useState<string>("");
+  const [speechError, setSpeechError] = useState<string | null>(null);
+  const recognitionRef = useRef<any>(null);
 
   const targetPhrase = "He is renowned across the steppe for his sharp wit.";
 
+  const SpeechRecognitionCtor =
+    typeof window !== "undefined" ? (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition : null;
+
   const toggleRecord = () => {
-    if (!recording) {
-      setRecording(true);
-      setScore(null);
-      setTimeout(() => {
-        setRecording(false);
-        setScore(Math.floor(Math.random() * 12) + 88);
-        onReward(15);
-      }, 3000);
-    } else {
-      setRecording(false);
+    if (recording) {
+      recognitionRef.current?.stop();
+      return;
     }
+
+    if (!SpeechRecognitionCtor) {
+      setSpeechError("Speech recognition isn't supported in this browser — try Chrome on desktop or Android.");
+      return;
+    }
+
+    setSpeechError(null);
+    setScore(null);
+    setTranscript("");
+
+    const recognition = new SpeechRecognitionCtor();
+    recognition.lang = "en-US";
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
+
+    recognition.onstart = () => setRecording(true);
+
+    recognition.onresult = (event: any) => {
+      const said = event.results[0][0].transcript as string;
+      setTranscript(said);
+      const pct = scoreTranscript(said, targetPhrase);
+      setScore(pct);
+      if (pct >= 50) onReward(Math.round(5 + (pct / 100) * 15)); // 5–20 XP scaled by accuracy
+    };
+
+    recognition.onerror = (event: any) => {
+      if (event.error === "no-speech") setSpeechError("Didn't catch that — try speaking a bit louder.");
+      else if (event.error === "not-allowed" || event.error === "service-not-allowed")
+        setSpeechError("Microphone access was blocked — allow it in your browser's site settings and try again.");
+      else setSpeechError("Something went wrong with speech recognition. Please try again.");
+    };
+
+    recognition.onend = () => setRecording(false);
+
+    recognitionRef.current = recognition;
+    recognition.start();
   };
+
+  useEffect(() => {
+    return () => recognitionRef.current?.stop();
+  }, []);
+
+  const feedbackMessage =
+    score === null
+      ? ""
+      : score >= 90
+      ? t.greatIntonation
+      : score >= 70
+      ? "Good — close to the target. Listen again and try once more."
+      : "Keep practicing — tap the quote to hear it again, then try to match it closely.";
 
   return (
     <div className="px-5 pb-6 space-y-5 animate-pop-in">
@@ -2090,10 +2166,17 @@ function SpeakScreen({ onReward, t }: any) {
         </span>
       </div>
 
+      {speechError && (
+        <div className="glass-luxury-card p-4 text-center space-y-1 animate-pop-in border-[#B2533E]/40">
+          <p className="font-body text-xs text-[#B2533E]">{speechError}</p>
+        </div>
+      )}
+
       {score !== null && (
-        <div className="glass-luxury-card p-4 text-center space-y-1 animate-pop-in border-emerald-500/30">
+        <div className="glass-luxury-card p-4 text-center space-y-1.5 animate-pop-in border-emerald-500/30">
           <p className="font-editorial text-xl font-extrabold text-emerald-400">{score}% {t.accuracy}</p>
-          <p className="font-body text-xs text-[#F8F5EE]/90">{t.greatIntonation}</p>
+          {transcript && <p className="font-body text-[10px] text-[#F8F5EE]/50 italic">You said: "{transcript}"</p>}
+          <p className="font-body text-xs text-[#F8F5EE]/90">{feedbackMessage}</p>
         </div>
       )}
     </div>
@@ -2103,10 +2186,9 @@ function SpeakScreen({ onReward, t }: any) {
 /* ============================================================================
    6. PROFILE & PASSPORT SCREEN WITH CULTURAL ARTIFACTS
    ========================================================================== */
-function ProfileScreen({ xp, t, savedWordsCount = 0, unlockedAchievements = [] }: any) {
+function ProfileScreen({ xp, t, savedWordsCount = 0, unlockedAchievements = [], userName = "Learner", onSignOut }: any) {
   const [showBuklet, setShowBuklet] = useState(false);
 
-  const userName = "Ibrahim Nomad";
   const streakDays = 7;
 
   return (
@@ -2116,7 +2198,13 @@ function ProfileScreen({ xp, t, savedWordsCount = 0, unlockedAchievements = [] }
           <span className="px-2 py-0.5 gold-badge text-[8px]">USER PASSPORT</span>
           <h2 className="font-editorial text-base font-bold text-[#F8F5EE] uppercase mt-1">{t.profileTitle}</h2>
         </div>
-        <User className="text-[#C5A059] w-5 h-5" />
+        <button
+          onClick={onSignOut}
+          title="Sign out"
+          className="flex items-center gap-1 text-[9px] font-editorial font-bold text-[#F8F5EE]/50 hover:text-[#B2533E] uppercase tracking-wider"
+        >
+          <LogOut size={14} /> Sign Out
+        </button>
       </div>
 
       <div className="glass-luxury-card p-5 text-center space-y-3 relative overflow-hidden">
@@ -2221,9 +2309,24 @@ function ProfileScreen({ xp, t, savedWordsCount = 0, unlockedAchievements = [] }
 
             <div className="pt-2 flex gap-2">
               <button
-                onClick={() => {
-                  alert("Certificate passport saved successfully!");
-                  setShowBuklet(false);
+                onClick={async () => {
+                  // Real share: the browser's native share sheet (WhatsApp,
+                  // Telegram, Messages, copy link, etc.) when available,
+                  // falling back to a clipboard copy everywhere else — no
+                  // more fake alert(), this actually leaves the app.
+                  const shareText = `🏆 ${userName} is learning English through Kazakh folklore on Ertegi English!\n${xp} XP • ${streakDays}-day streak • ${unlockedAchievements.length}/${ACHIEVEMENTS.length} badges unlocked`;
+                  const shareUrl = window.location.href;
+                  try {
+                    if (navigator.share) {
+                      await navigator.share({ title: "Ertegi English — My Progress", text: shareText, url: shareUrl });
+                    } else {
+                      await navigator.clipboard.writeText(`${shareText}\n${shareUrl}`);
+                      alert("Copied to clipboard — paste it anywhere to share!");
+                    }
+                  } catch (err) {
+                    // AbortError fires when the user just closes the native
+                    // share sheet without picking anything — not a real error.
+                  }
                 }}
                 className="flex-1 py-3 bg-gradient-to-r from-[#C5A059] to-[#9A7B38] text-[#09090D] font-editorial font-black text-[10px] tracking-widest uppercase gold-glow flex items-center justify-center gap-1.5"
               >
@@ -2247,7 +2350,17 @@ function ProfileScreen({ xp, t, savedWordsCount = 0, unlockedAchievements = [] }
 /* ============================================================================
    MAIN APP WRAPPER
    ========================================================================== */
-export default function KazakhTalesApp() {
+export default function KazakhTalesApp({ session }: any) {
+  const userId: string = session.user.id;
+  const userEmail: string = session.user.email || "";
+  const [displayName, setDisplayName] = useState<string>(
+    session.user.user_metadata?.display_name || userEmail.split("@")[0] || "Learner"
+  );
+  // Gates the first render of app content until the person's saved progress
+  // has actually come back from Supabase — otherwise we'd briefly flash the
+  // default xp/words and then jarringly overwrite them a moment later.
+  const [dataLoaded, setDataLoaded] = useState(false);
+
   const [stage, setStage] = useSafeState("intro");
   const [tab, setTab] = useState("home");
   const [selectedLevel, setSelectedLevel] = useState<string | null>(null);
@@ -2290,9 +2403,60 @@ export default function KazakhTalesApp() {
 
   const t = DICT[lang as keyof typeof DICT];
 
+  // Load this person's saved progress from Supabase once on mount: their
+  // profile row (xp, quiz stats), their saved vocabulary, and their
+  // unlocked badges. If the profile row isn't there yet (the sign-up
+  // trigger runs async), fall back to sane defaults rather than blocking.
+  useEffect(() => {
+    let cancelled = false;
+
+    const loadUserData = async () => {
+      const [profileRes, wordsRes, achievementsRes] = await Promise.all([
+        supabase.from("profiles").select("*").eq("id", userId).maybeSingle(),
+        supabase.from("saved_words").select("*").eq("user_id", userId).order("created_at", { ascending: true }),
+        supabase.from("user_achievements").select("achievement_id").eq("user_id", userId),
+      ]);
+
+      if (cancelled) return;
+
+      if (profileRes.data) {
+        setXp(profileRes.data.xp ?? 140);
+        setQuizzesCompleted(profileRes.data.quizzes_completed ?? 0);
+        setPerfectQuizzes(profileRes.data.perfect_quizzes ?? 0);
+        if (profileRes.data.display_name) setDisplayName(profileRes.data.display_name);
+      }
+      if (wordsRes.data) {
+        setSavedWords(
+          wordsRes.data.map((row: any) => ({ word: row.word, translation: row.translation, mastery: row.mastery }))
+        );
+      }
+      if (achievementsRes.data) {
+        setUnlockedAchievements(achievementsRes.data.map((row: any) => row.achievement_id));
+      }
+      setDataLoaded(true);
+    };
+
+    loadUserData().catch(() => setDataLoaded(true)); // don't hard-block the app on a network hiccup
+
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userId]);
+
+  const handleSignOut = () => {
+    supabase.auth.signOut();
+  };
+
   const addXp = (amount: number) => {
     if (!amount) return;
-    setXp((prev: number) => prev + amount);
+    setXp((prev: number) => {
+      const next = prev + amount;
+      // Fire-and-forget: keeps XP updates snappy in the UI; a failed write
+      // here just means next session re-syncs from whatever's on the server.
+      supabase.from("profiles").update({ xp: next }).eq("id", userId).then(() => {});
+      return next;
+    });
     setSessionXp((prev: number) => prev + amount);
 
     setXpToast({ amount, key: Date.now() + Math.random() });
@@ -2301,8 +2465,18 @@ export default function KazakhTalesApp() {
   };
 
   const handleQuizFinish = (correctCount: number, total: number) => {
-    setQuizzesCompleted((c: number) => c + 1);
-    if (correctCount === total) setPerfectQuizzes((c: number) => c + 1);
+    setQuizzesCompleted((c: number) => {
+      const next = c + 1;
+      supabase.from("profiles").update({ quizzes_completed: next }).eq("id", userId).then(() => {});
+      return next;
+    });
+    if (correctCount === total) {
+      setPerfectQuizzes((c: number) => {
+        const next = c + 1;
+        supabase.from("profiles").update({ perfect_quizzes: next }).eq("id", userId).then(() => {});
+        return next;
+      });
+    }
   };
 
   // Detect rank-up threshold crossings whenever xp changes.
@@ -2328,6 +2502,15 @@ export default function KazakhTalesApp() {
     if (newlyUnlocked.length > 0) {
       setUnlockedAchievements((prev) => [...prev, ...newlyUnlocked.map((a) => a.id)]);
       setAchievementQueue((prev) => [...prev, ...newlyUnlocked]);
+      // Persist each newly-crossed badge. Duplicate-safe: the table has a
+      // unique (user_id, achievement_id) constraint, so a re-fired effect
+      // (e.g. React strict-mode double-invoke) just no-ops on conflict.
+      newlyUnlocked.forEach((a) => {
+        supabase
+          .from("user_achievements")
+          .upsert({ user_id: userId, achievement_id: a.id }, { onConflict: "user_id,achievement_id" })
+          .then(() => {});
+      });
     }
   }, [xp, savedWords.length, quizzesCompleted, perfectQuizzes]);
 
@@ -2342,6 +2525,10 @@ export default function KazakhTalesApp() {
     setSavedWords((prev: any[]) => {
       if (prev.some((w: any) => w.word === word)) return prev;
       addXp(5); // small reward for building vocabulary, reinforces the habit
+      supabase
+        .from("saved_words")
+        .upsert({ user_id: userId, word, translation, mastery: 0 }, { onConflict: "user_id,word" })
+        .then(() => {});
       return [...prev, { word, translation, mastery: 0 }];
     });
   };
@@ -2358,6 +2545,7 @@ export default function KazakhTalesApp() {
         else if (rating === "hard") next = Math.max(current - 1, 0);
         else if (rating === "good") next = Math.min(current + 1, 5);
         else if (rating === "easy") next = Math.min(current + 2, 5);
+        supabase.from("saved_words").update({ mastery: next }).eq("user_id", userId).eq("word", word).then(() => {});
         return { ...w, mastery: next };
       })
     );
@@ -2368,6 +2556,10 @@ export default function KazakhTalesApp() {
   // Profile tab intentionally has NO video — static gradient background only.
   const isProfileTab = tab === "profile";
   const currentVideoBg = BG_VIDEO_ASSETS[tab as keyof typeof BG_VIDEO_ASSETS] || BG_VIDEO_ASSETS.home;
+
+  if (!dataLoaded) {
+    return <div className="min-h-screen w-full bg-[#09090D]" />;
+  }
 
   if (stage === "intro") {
     return <IntroScreen onFinish={() => setStage("main")} t={t} />;
@@ -2468,6 +2660,8 @@ export default function KazakhTalesApp() {
               t={t}
               savedWordsCount={savedWords.length}
               unlockedAchievements={unlockedAchievements}
+              userName={displayName}
+              onSignOut={handleSignOut}
             />
           )}
         </div>
