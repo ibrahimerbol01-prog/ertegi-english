@@ -2186,10 +2186,8 @@ function SpeakScreen({ onReward, t }: any) {
 /* ============================================================================
    6. PROFILE & PASSPORT SCREEN WITH CULTURAL ARTIFACTS
    ========================================================================== */
-function ProfileScreen({ xp, t, savedWordsCount = 0, unlockedAchievements = [], userName = "Learner", onSignOut }: any) {
+function ProfileScreen({ xp, t, savedWordsCount = 0, unlockedAchievements = [], userName = "Learner", onSignOut, streakDays = 0 }: any) {
   const [showBuklet, setShowBuklet] = useState(false);
-
-  const streakDays = 7;
 
   return (
     <div className="px-5 pb-6 space-y-5 animate-pop-in">
@@ -2364,8 +2362,14 @@ export default function KazakhTalesApp({ session }: any) {
   const [stage, setStage] = useSafeState("main");
   const [tab, setTab] = useState("home");
   const [selectedLevel, setSelectedLevel] = useState<string | null>(null);
-  const [xp, setXp] = useSafeState(140);
+  const [xp, setXp] = useSafeState(0);
   const [lang, setLang] = useSafeState("kk");
+  // Real day-streak: streakDays is the count, lastActiveDateRef tracks the
+  // last calendar date (YYYY-MM-DD) the person did something XP-worthy.
+  // Both are persisted to profiles.streak_days / profiles.last_active_date
+  // and only ever recomputed via checkAndUpdateStreak() below.
+  const [streakDays, setStreakDays] = useState(0);
+  const lastActiveDateRef = useRef<string | null>(null);
   // Personal vocabulary bank: words tapped while reading, with a simple
   // mastery counter (0-5) that drives spaced-repetition ordering and
   // confidence-based review in FlashcardsScreen.
@@ -2420,9 +2424,11 @@ export default function KazakhTalesApp({ session }: any) {
       if (cancelled) return;
 
       if (profileRes.data) {
-        setXp(profileRes.data.xp ?? 140);
+        setXp(profileRes.data.xp ?? 0);
         setQuizzesCompleted(profileRes.data.quizzes_completed ?? 0);
         setPerfectQuizzes(profileRes.data.perfect_quizzes ?? 0);
+        setStreakDays(profileRes.data.streak_days ?? 0);
+        lastActiveDateRef.current = profileRes.data.last_active_date ?? null;
         if (profileRes.data.display_name) setDisplayName(profileRes.data.display_name);
       }
       if (wordsRes.data) {
@@ -2448,6 +2454,37 @@ export default function KazakhTalesApp({ session }: any) {
     supabase.auth.signOut();
   };
 
+  // Real day-streak logic. Called every time the person does something
+  // XP-worthy (reading, a quiz, flashcards, saving a word, speaking) — not
+  // just on app open — so opening the app alone never counts, only actual
+  // engagement does. Same-day calls are free (no-op after the first).
+  //
+  // - today already logged → do nothing
+  // - last active was exactly yesterday → streak continues, +1
+  // - last active was any earlier day, or never → streak resets to 1
+  //   (this is what makes a 24h+ gap with no activity break the streak)
+  const checkAndUpdateStreak = () => {
+    const today = new Date().toISOString().slice(0, 10); // YYYY-MM-DD, UTC
+    if (lastActiveDateRef.current === today) return;
+
+    let nextStreak = 1;
+    if (lastActiveDateRef.current) {
+      const prevDate = new Date(lastActiveDateRef.current + "T00:00:00Z");
+      const todayDate = new Date(today + "T00:00:00Z");
+      const diffDays = Math.round((todayDate.getTime() - prevDate.getTime()) / 86400000);
+      if (diffDays === 1) nextStreak = streakDays + 1;
+      // diffDays > 1 (or negative/odd clock skew) → streak resets to 1
+    }
+
+    lastActiveDateRef.current = today;
+    setStreakDays(nextStreak);
+    supabase
+      .from("profiles")
+      .update({ streak_days: nextStreak, last_active_date: today })
+      .eq("id", userId)
+      .then(() => {});
+  };
+
   const addXp = (amount: number) => {
     if (!amount) return;
     setXp((prev: number) => {
@@ -2458,6 +2495,7 @@ export default function KazakhTalesApp({ session }: any) {
       return next;
     });
     setSessionXp((prev: number) => prev + amount);
+    checkAndUpdateStreak();
 
     setXpToast({ amount, key: Date.now() + Math.random() });
     if (xpToastTimer.current) clearTimeout(xpToastTimer.current);
@@ -2662,6 +2700,7 @@ export default function KazakhTalesApp({ session }: any) {
               unlockedAchievements={unlockedAchievements}
               userName={displayName}
               onSignOut={handleSignOut}
+              streakDays={streakDays}
             />
           )}
         </div>
