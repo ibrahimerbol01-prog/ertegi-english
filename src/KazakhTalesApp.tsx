@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import {
   Pause, Mic, MicOff, ChevronRight, BookOpen, Trophy, 
-  Home as HomeIcon, Play, ArrowRight, CheckCircle2, Globe, Video, ArrowLeft, Sparkles, User, Share2, Flame, Volume2, X, Download, Compass, Layers, LogOut, MessageCircle, Send
+  Home as HomeIcon, Play, ArrowRight, CheckCircle2, Globe, Video, ArrowLeft, Sparkles, User, Share2, Flame, Volume2, X, Download, Compass, Layers, LogOut, Send
 } from "lucide-react";
 import { supabase } from "./lib/supabase";
 
@@ -806,12 +806,12 @@ const ShoqanChat = () => {
     <>
       <button
         onClick={() => setOpen(true)}
-        className={`fixed bottom-24 right-4 z-[65] w-14 h-14 rounded-full bg-gradient-to-br from-[#C5A059] to-[#9A7B38] text-[#09090D] flex items-center justify-center gold-glow shadow-xl transition-transform ${
+        className={`fixed bottom-24 right-4 z-[65] w-20 h-20 rounded-full overflow-hidden border-[3px] border-[#C5A059] gold-glow shadow-xl transition-transform ${
           open ? "scale-0" : "scale-100"
         }`}
         title="Ask Shoqan"
       >
-        <MessageCircle size={22} />
+        <img src="/shoqan-avatar.jpg" alt="Shoqan" className="w-full h-full object-cover" />
       </button>
 
       {open && (
@@ -819,8 +819,8 @@ const ShoqanChat = () => {
           <div className="w-full sm:max-w-[400px] sm:mb-0 mb-0 max-h-[80vh] h-[75vh] glass-luxury-card flex flex-col rounded-t-[26px] sm:rounded-[26px] overflow-hidden">
             <div className="flex items-center justify-between p-4 border-b border-[#C5A059]/20">
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#C5A059] to-[#9A7B38] flex items-center justify-center">
-                  <Sparkles size={14} className="text-[#09090D]" />
+                <div className="w-8 h-8 rounded-full overflow-hidden border border-[#C5A059]/50 shrink-0">
+                  <img src="/shoqan-avatar.jpg" alt="Shoqan" className="w-full h-full object-cover" />
                 </div>
                 <div>
                   <p className="font-editorial text-xs font-extrabold text-[#F8F5EE] uppercase tracking-wide">Shoqan</p>
