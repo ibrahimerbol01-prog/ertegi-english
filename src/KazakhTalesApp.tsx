@@ -2228,100 +2228,116 @@ function QuizScreen({ onReward, t, onQuizFinish }: any) {
 }
 
 /* ============================================================================
-   5. SPEAK SCREEN
+   5. SPEAK SCREEN — real pronunciation assessment via Azure Speech
    ========================================================================== */
-// Normalizes two phrases into word tokens and scores how closely they match
-// (order-sensitive, word-by-word) — good enough for pronunciation practice
-// without needing a paid speech-scoring API.
-function scoreTranscript(said: string, target: string): number {
-  const clean = (s: string) => s.toLowerCase().replace(/[^a-z0-9\s]/g, "").split(/\s+/).filter(Boolean);
-  const saidWords = clean(said);
-  const targetWords = clean(target);
-  if (targetWords.length === 0) return 0;
-
-  // Levenshtein distance over the word arrays (not characters) — robust to
-  // one dropped/extra word without tanking the whole score.
-  const m = saidWords.length;
-  const n = targetWords.length;
-  const dp: number[][] = Array.from({ length: m + 1 }, () => new Array(n + 1).fill(0));
-  for (let i = 0; i <= m; i++) dp[i][0] = i;
-  for (let j = 0; j <= n; j++) dp[0][j] = j;
-  for (let i = 1; i <= m; i++) {
-    for (let j = 1; j <= n; j++) {
-      if (saidWords[i - 1] === targetWords[j - 1]) dp[i][j] = dp[i - 1][j - 1];
-      else dp[i][j] = 1 + Math.min(dp[i - 1][j], dp[i][j - 1], dp[i - 1][j - 1]);
-    }
-  }
-  const distance = dp[m][n];
-  const similarity = Math.max(0, 1 - distance / Math.max(m, n));
-  return Math.round(similarity * 100);
-}
-
 function SpeakScreen({ onReward, t }: any) {
   const [recording, setRecording] = useState(false);
-  const [score, setScore] = useState<number | null>(null);
+  const [scores, setScores] = useState<{
+    accuracy: number;
+    fluency: number;
+    completeness: number;
+    pronunciation: number;
+  } | null>(null);
   const [transcript, setTranscript] = useState<string>("");
   const [speechError, setSpeechError] = useState<string | null>(null);
-  const recognitionRef = useRef<any>(null);
+  const recognizerRef = useRef<any>(null);
 
   const targetPhrase = "He is renowned across the steppe for his sharp wit.";
 
-  const SpeechRecognitionCtor =
-    typeof window !== "undefined" ? (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition : null;
-
-  const toggleRecord = () => {
+  const toggleRecord = async () => {
     if (recording) {
-      recognitionRef.current?.stop();
-      return;
-    }
-
-    if (!SpeechRecognitionCtor) {
-      setSpeechError("Speech recognition isn't supported in this browser — try Chrome on desktop or Android.");
+      try {
+        recognizerRef.current?.stopContinuousRecognitionAsync?.();
+      } catch {
+        // ignore
+      }
       return;
     }
 
     setSpeechError(null);
-    setScore(null);
+    setScores(null);
     setTranscript("");
 
-    const recognition = new SpeechRecognitionCtor();
-    recognition.lang = "en-US";
-    recognition.interimResults = false;
-    recognition.maxAlternatives = 1;
+    try {
+      const tokenRes = await fetch("/api/azure-token");
+      const tokenData = await tokenRes.json();
+      if (!tokenRes.ok) throw new Error(tokenData?.error || "Couldn't reach the pronunciation service.");
 
-    recognition.onstart = () => setRecording(true);
+      // Loaded lazily so the ~2MB SDK only downloads once someone actually
+      // opens this screen, not as part of the app's main bundle.
+      const SpeechSDK = await import("microsoft-cognitiveservices-speech-sdk");
 
-    recognition.onresult = (event: any) => {
-      const said = event.results[0][0].transcript as string;
-      setTranscript(said);
-      const pct = scoreTranscript(said, targetPhrase);
-      setScore(pct);
-      if (pct >= 50) onReward(Math.round(5 + (pct / 100) * 15)); // 5–20 XP scaled by accuracy
-    };
+      const speechConfig = SpeechSDK.SpeechConfig.fromAuthorizationToken(tokenData.token, tokenData.region);
+      speechConfig.speechRecognitionLanguage = "en-US";
 
-    recognition.onerror = (event: any) => {
-      if (event.error === "no-speech") setSpeechError("Didn't catch that — try speaking a bit louder.");
-      else if (event.error === "not-allowed" || event.error === "service-not-allowed")
-        setSpeechError("Microphone access was blocked — allow it in your browser's site settings and try again.");
-      else setSpeechError("Something went wrong with speech recognition. Please try again.");
-    };
+      const audioConfig = SpeechSDK.AudioConfig.fromDefaultMicrophoneInput();
 
-    recognition.onend = () => setRecording(false);
+      // HundredMark grading (0-100, matches the rest of the app's scoring),
+      // word-level granularity, with miscue detection (enableMiscue) so
+      // inserted/omitted words are reflected in the completeness score.
+      const pronunciationConfig = new SpeechSDK.PronunciationAssessmentConfig(
+        targetPhrase,
+        SpeechSDK.PronunciationAssessmentGradingSystem.HundredMark,
+        SpeechSDK.PronunciationAssessmentGranularity.Word,
+        true
+      );
 
-    recognitionRef.current = recognition;
-    recognition.start();
+      const recognizer = new SpeechSDK.SpeechRecognizer(speechConfig, audioConfig);
+      pronunciationConfig.applyTo(recognizer);
+      recognizerRef.current = recognizer;
+      setRecording(true);
+
+      recognizer.recognizeOnceAsync(
+        (result: any) => {
+          setRecording(false);
+          if (result.reason === SpeechSDK.ResultReason.RecognizedSpeech) {
+            const assessment = SpeechSDK.PronunciationAssessmentResult.fromResult(result);
+            setTranscript(result.text);
+            const next = {
+              accuracy: Math.round(assessment.accuracyScore),
+              fluency: Math.round(assessment.fluencyScore),
+              completeness: Math.round(assessment.completenessScore),
+              pronunciation: Math.round(assessment.pronunciationScore),
+            };
+            setScores(next);
+            if (next.pronunciation >= 50) onReward(Math.round(5 + (next.pronunciation / 100) * 15));
+          } else if (result.reason === SpeechSDK.ResultReason.NoMatch) {
+            setSpeechError("Didn't catch that — try speaking a bit louder and closer to the mic.");
+          } else {
+            setSpeechError("Something went wrong with speech recognition. Please try again.");
+          }
+          recognizer.close();
+        },
+        () => {
+          setRecording(false);
+          setSpeechError("Something went wrong reaching the speech service. Please try again.");
+          recognizer.close();
+        }
+      );
+    } catch (err: any) {
+      setRecording(false);
+      setSpeechError(err?.message || "Couldn't start pronunciation practice — check your microphone permissions.");
+    }
   };
 
   useEffect(() => {
-    return () => recognitionRef.current?.stop();
+    return () => {
+      try {
+        recognizerRef.current?.close?.();
+      } catch {
+        // ignore
+      }
+    };
   }, []);
 
+  const overallScore = scores?.pronunciation ?? null;
+
   const feedbackMessage =
-    score === null
+    overallScore === null
       ? ""
-      : score >= 90
+      : overallScore >= 90
       ? t.greatIntonation
-      : score >= 70
+      : overallScore >= 70
       ? "Good — close to the target. Listen again and try once more."
       : "Keep practicing — tap the quote to hear it again, then try to match it closely.";
 
@@ -2364,20 +2380,30 @@ function SpeakScreen({ onReward, t }: any) {
         </div>
       )}
 
-      {score !== null && (
-        <div className="glass-luxury-card p-4 text-center space-y-1.5 animate-pop-in border-emerald-500/30">
-          <p className="font-editorial text-xl font-extrabold text-emerald-400">{score}% {t.accuracy}</p>
+      {scores !== null && (
+        <div className="glass-luxury-card p-4 text-center space-y-2 animate-pop-in border-emerald-500/30">
+          <p className="font-editorial text-xl font-extrabold text-emerald-400">{scores.pronunciation}% {t.accuracy}</p>
           {transcript && <p className="font-body text-[10px] text-[#F8F5EE]/50 italic">You said: "{transcript}"</p>}
-          <p className="font-body text-xs text-[#F8F5EE]/90">{feedbackMessage}</p>
+          <div className="grid grid-cols-3 gap-2 pt-1">
+            <div>
+              <p className="font-editorial text-sm font-bold text-[#C5A059]">{scores.accuracy}%</p>
+              <p className="text-[8px] text-[#F8F5EE]/50 uppercase tracking-wider">Accuracy</p>
+            </div>
+            <div>
+              <p className="font-editorial text-sm font-bold text-[#C5A059]">{scores.fluency}%</p>
+              <p className="text-[8px] text-[#F8F5EE]/50 uppercase tracking-wider">Fluency</p>
+            </div>
+            <div>
+              <p className="font-editorial text-sm font-bold text-[#C5A059]">{scores.completeness}%</p>
+              <p className="text-[8px] text-[#F8F5EE]/50 uppercase tracking-wider">Completeness</p>
+            </div>
+          </div>
+          <p className="font-body text-xs text-[#F8F5EE]/90 pt-1">{feedbackMessage}</p>
         </div>
       )}
     </div>
   );
 }
-
-/* ============================================================================
-   6. PROFILE & PASSPORT SCREEN WITH CULTURAL ARTIFACTS
-   ========================================================================== */
 function ProfileScreen({ xp, t, savedWordsCount = 0, unlockedAchievements = [], userName = "Learner", onSignOut, streakDays = 0 }: any) {
   const [showBuklet, setShowBuklet] = useState(false);
 
