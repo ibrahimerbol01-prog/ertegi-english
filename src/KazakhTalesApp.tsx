@@ -770,6 +770,66 @@ const ShoqanChat = () => {
   const [chatError, setChatError] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement | null>(null);
 
+  // Draggable bubble position — persisted across reloads so the person only
+  // has to move it out of the way once. Defaults to the bottom-right corner
+  // on first visit, same spot the button used to be fixed at.
+  const BUBBLE_SIZE = 80;
+  const [pos, setPos] = useState(() => {
+    try {
+      const saved = localStorage.getItem("shoqan_bubble_pos");
+      if (saved) return JSON.parse(saved);
+    } catch {
+      // ignore — fall through to default
+    }
+    return {
+      x: (typeof window !== "undefined" ? window.innerWidth : 400) - BUBBLE_SIZE - 16,
+      y: (typeof window !== "undefined" ? window.innerHeight : 800) - BUBBLE_SIZE - 96,
+    };
+  });
+  const dragRef = useRef({ dragging: false, moved: false, startX: 0, startY: 0, origX: 0, origY: 0 });
+
+  const clampPos = (x: number, y: number) => {
+    const margin = 8;
+    const maxX = window.innerWidth - BUBBLE_SIZE - margin;
+    const maxY = window.innerHeight - BUBBLE_SIZE - margin;
+    return { x: Math.min(Math.max(margin, x), maxX), y: Math.min(Math.max(margin, y), maxY) };
+  };
+
+  // Keep the bubble on-screen if the viewport changes (rotation, resize).
+  useEffect(() => {
+    const onResize = () => setPos((p: { x: number; y: number }) => clampPos(p.x, p.y));
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
+
+  const handlePointerDown = (e: React.PointerEvent<HTMLButtonElement>) => {
+    dragRef.current = { dragging: true, moved: false, startX: e.clientX, startY: e.clientY, origX: pos.x, origY: pos.y };
+    e.currentTarget.setPointerCapture(e.pointerId);
+  };
+
+  const handlePointerMove = (e: React.PointerEvent<HTMLButtonElement>) => {
+    if (!dragRef.current.dragging) return;
+    const dx = e.clientX - dragRef.current.startX;
+    const dy = e.clientY - dragRef.current.startY;
+    if (Math.abs(dx) > 4 || Math.abs(dy) > 4) dragRef.current.moved = true;
+    setPos(clampPos(dragRef.current.origX + dx, dragRef.current.origY + dy));
+  };
+
+  const handlePointerUp = () => {
+    if (!dragRef.current.dragging) return;
+    dragRef.current.dragging = false;
+    if (dragRef.current.moved) {
+      // A real drag, not a tap — save where it was left, don't open the chat.
+      try {
+        localStorage.setItem("shoqan_bubble_pos", JSON.stringify(pos));
+      } catch {
+        // ignore
+      }
+    } else {
+      setOpen(true);
+    }
+  };
+
   useEffect(() => {
     if (open && scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
@@ -805,13 +865,17 @@ const ShoqanChat = () => {
   return (
     <>
       <button
-        onClick={() => setOpen(true)}
-        className={`fixed bottom-24 right-4 z-[65] w-20 h-20 rounded-full overflow-hidden border-[3px] border-[#C5A059] gold-glow shadow-xl transition-transform ${
+        onPointerDown={handlePointerDown}
+        onPointerMove={handlePointerMove}
+        onPointerUp={handlePointerUp}
+        onPointerCancel={handlePointerUp}
+        style={{ left: pos.x, top: pos.y }}
+        className={`fixed z-[65] w-20 h-20 rounded-full overflow-hidden border-[3px] border-[#C5A059] gold-glow shadow-xl transition-transform touch-none cursor-grab active:cursor-grabbing ${
           open ? "scale-0" : "scale-100"
         }`}
-        title="Ask Shoqan"
+        title="Ask Shoqan — drag to move, tap to open"
       >
-        <img src="/shoqan-avatar.jpg" alt="Shoqan" className="w-full h-full object-cover" />
+        <img src="/shoqan-avatar.jpg" alt="Shoqan" className="w-full h-full object-cover pointer-events-none" draggable={false} />
       </button>
 
       {open && (
