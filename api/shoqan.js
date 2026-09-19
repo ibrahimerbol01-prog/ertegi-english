@@ -27,7 +27,7 @@ STRICT BOUNDARIES:
 - Keep answers short and conversational — this is a mobile chat bubble, not an essay. Two to four sentences unless the person clearly wants a longer explanation (e.g. asked to explain a grammar rule in depth).
 - Match the person's language: if they write in Kazakh or Russian, you can reply in that language when helpful for a language-learning context, but keep explanations of English grammar/vocabulary clear.`;
 
-module.exports = async function handler(req, res) {
+export default async function handler(req, res) {
   if (req.method !== "POST") {
     res.status(405).json({ error: "Method not allowed" });
     return;
