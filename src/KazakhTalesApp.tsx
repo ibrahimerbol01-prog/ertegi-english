@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import {
   Pause, Mic, MicOff, ChevronRight, BookOpen, Trophy, 
-  Home as HomeIcon, Play, ArrowRight, CheckCircle2, Globe, Video, ArrowLeft, Sparkles, User, Share2, Flame, Volume2, X, Download, Compass, Layers, LogOut
+  Home as HomeIcon, Play, ArrowRight, CheckCircle2, Globe, Video, ArrowLeft, Sparkles, User, Share2, Flame, Volume2, X, Download, Compass, Layers, LogOut, MessageCircle, Send
 } from "lucide-react";
 import { supabase } from "./lib/supabase";
 
@@ -751,6 +751,134 @@ const AchievementBanner = ({ achievement, onDone }: any) => {
         </div>
       </div>
     </div>
+  );
+};
+
+/* ----------------------------------------------------------------------------
+   SHOQAN — the in-app AI assistant. A floating bubble available on every
+   tab; opens a small chat panel that talks to /api/shoqan (a Vercel
+   serverless function holding the real API key and the system prompt that
+   restricts it to English/Kazakh help and app navigation — see api/shoqan.js).
+   -------------------------------------------------------------------------- */
+const ShoqanChat = () => {
+  const [open, setOpen] = useState(false);
+  const [messages, setMessages] = useState<{ role: "user" | "assistant"; content: string }[]>([
+    { role: "assistant", content: "Sälem! I'm Shoqan 👋 Ask me about English, Kazakh, or how to use Ertegi English." },
+  ]);
+  const [input, setInput] = useState("");
+  const [sending, setSending] = useState(false);
+  const [chatError, setChatError] = useState<string | null>(null);
+  const scrollRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (open && scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    }
+  }, [messages, open]);
+
+  const handleSend = async () => {
+    const text = input.trim();
+    if (!text || sending) return;
+
+    const nextMessages = [...messages, { role: "user" as const, content: text }];
+    setMessages(nextMessages);
+    setInput("");
+    setChatError(null);
+    setSending(true);
+
+    try {
+      const res = await fetch("/api/shoqan", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ messages: nextMessages }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data?.error || "Request failed");
+      setMessages((prev) => [...prev, { role: "assistant", content: data.reply }]);
+    } catch (err) {
+      setChatError("Shoqan couldn't respond just now — try again in a moment.");
+    } finally {
+      setSending(false);
+    }
+  };
+
+  return (
+    <>
+      <button
+        onClick={() => setOpen(true)}
+        className={`fixed bottom-24 right-4 z-[65] w-14 h-14 rounded-full bg-gradient-to-br from-[#C5A059] to-[#9A7B38] text-[#09090D] flex items-center justify-center gold-glow shadow-xl transition-transform ${
+          open ? "scale-0" : "scale-100"
+        }`}
+        title="Ask Shoqan"
+      >
+        <MessageCircle size={22} />
+      </button>
+
+      {open && (
+        <div className="fixed inset-0 z-[75] bg-black/70 backdrop-blur-sm flex items-end sm:items-center justify-center">
+          <div className="w-full sm:max-w-[400px] sm:mb-0 mb-0 max-h-[80vh] h-[75vh] glass-luxury-card flex flex-col rounded-t-[26px] sm:rounded-[26px] overflow-hidden">
+            <div className="flex items-center justify-between p-4 border-b border-[#C5A059]/20">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#C5A059] to-[#9A7B38] flex items-center justify-center">
+                  <Sparkles size={14} className="text-[#09090D]" />
+                </div>
+                <div>
+                  <p className="font-editorial text-xs font-extrabold text-[#F8F5EE] uppercase tracking-wide">Shoqan</p>
+                  <p className="font-body text-[9px] text-[#F8F5EE]/50">English & Kazakh helper</p>
+                </div>
+              </div>
+              <button onClick={() => setOpen(false)} className="text-[#F8F5EE]/50 hover:text-[#F8F5EE]">
+                <X size={18} />
+              </button>
+            </div>
+
+            <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 space-y-3">
+              {messages.map((m, i) => (
+                <div key={i} className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}>
+                  <div
+                    className={`max-w-[80%] p-2.5 text-[11px] font-body leading-relaxed rounded-[14px] ${
+                      m.role === "user"
+                        ? "bg-[#C5A059] text-[#09090D] font-medium"
+                        : "bg-[#14141C] text-[#F8F5EE]/90 border border-[#C5A059]/15"
+                    }`}
+                  >
+                    {m.content}
+                  </div>
+                </div>
+              ))}
+              {sending && (
+                <div className="flex justify-start">
+                  <div className="bg-[#14141C] border border-[#C5A059]/15 p-2.5 rounded-[14px] text-[11px] text-[#F8F5EE]/40 italic">
+                    Shoqan is thinking...
+                  </div>
+                </div>
+              )}
+              {chatError && <p className="text-[10px] text-[#B2533E] text-center">{chatError}</p>}
+            </div>
+
+            <div className="p-3 border-t border-[#C5A059]/20 flex items-center gap-2">
+              <input
+                type="text"
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") handleSend();
+                }}
+                placeholder="Ask about English, Kazakh, or the app..."
+                className="flex-1 p-2.5 bg-[#14141C] border border-[#C5A059]/20 rounded-full text-[11px] font-body text-[#F8F5EE] placeholder:text-[#F8F5EE]/30 outline-none focus:border-[#C5A059]/60"
+              />
+              <button
+                onClick={handleSend}
+                disabled={sending || !input.trim()}
+                className="w-9 h-9 shrink-0 rounded-full bg-gradient-to-br from-[#C5A059] to-[#9A7B38] disabled:opacity-40 text-[#09090D] flex items-center justify-center"
+              >
+                <Send size={15} />
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 };
 
@@ -2612,6 +2740,7 @@ export default function KazakhTalesApp({ session }: any) {
         achievement={achievementQueue[0] || null}
         onDone={() => setAchievementQueue((prev) => prev.slice(1))}
       />
+      <ShoqanChat />
 
       {!isProfileTab && (
         <BackgroundVideo src={currentVideoBg} opacity={50} videoKey={tab} />
