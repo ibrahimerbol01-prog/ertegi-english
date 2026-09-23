@@ -481,7 +481,237 @@ const WORD_TRANSLATIONS = {
   village: "ауыл",
   warm: "жылы",
   was: "болды",
-  wasted: "далада қалды (бекерге кетті)"
+  wasted: "далада қалды (бекерге кетті)",
+
+  // --- Zhirenshe the Wise (added with the second story) ---
+  above: "жоғарыда",
+  advances: "алға жылжиды",
+  advisor: "кеңесші",
+  advisors: "кеңесшілер",
+  after: "кейін",
+  afterward: "содан кейін",
+  all: "барлық",
+  amazed: "таңғалған",
+  another: "тағы бір",
+  answer: "жауап",
+  answering: "жауап беру",
+  answers: "жауап береді",
+  any: "кез келген",
+  anywhere: "кез келген жерге",
+  arduous: "ауыр, машақатты",
+  are: "болып табылады",
+  arrives: "келеді",
+  asking: "сұрау",
+  asks: "сұрайды",
+  assembled: "жиналған",
+  astonished: "таңғалған",
+  astounded: "қатты таңғалған",
+  bad: "жаман",
+  bear: "көтеру, шыдау",
+  because: "себебі",
+  becomes: "болады, айналады",
+  before: "алдында",
+  begins: "бастайды",
+  birth: "туу",
+  born: "туған",
+  breadth: "ені, кеңдігі",
+  briefly: "қысқаша",
+  burden: "ауыртпалық",
+  capable: "қабілетті",
+  carefully: "мұқият",
+  careless: "немқұрайлы",
+  carry: "алып жүру",
+  circumstances: "жағдайлар",
+  claims: "мәлімдейді",
+  considers: "ойланады",
+  constitutes: "құрайды",
+  continues: "жалғасады",
+  counsel: "кеңес",
+  counselor: "кеңесші",
+  court: "сарай",
+  cruel: "қатал",
+  declares: "жариялайды",
+  deeply: "терең",
+  depth: "тереңдік",
+  desire: "тілек, ынта",
+  difficult: "қиын",
+  distinction: "ерекшелік",
+  driven: "итермеленген",
+  each: "әрбір",
+  eager: "ынталы",
+  eclipses: "басып озады",
+  elegance: "әдемілік, нәзіктік",
+  else: "басқа",
+  eventually: "ақыр соңында",
+  every: "әрбір",
+  exhausting: "шаршататын",
+  existence: "өмір сүру",
+  experience: "тәжірибе",
+  explaining: "түсіндіру",
+  extends: "таралады",
+  extent: "дәреже, көлем",
+  extraordinary: "ерекше",
+  fastest: "ең жылдам",
+  final: "соңғы",
+  finally: "ақырында",
+  first: "бірінші",
+  fleeting: "өткінші",
+  follows: "соңынан ереді",
+  force: "күш",
+  formidable: "күрделі, қиын",
+  forward: "алға",
+  front: "алдыңғы жақ",
+  full: "толық",
+  gauge: "өлшеу",
+  generation: "ұрпақ",
+  genuine: "шынайы",
+  go: "бару",
+  greater: "үлкенірек",
+  grow: "өседі",
+  happy: "қуанышты",
+  hard: "қиын, қатты",
+  hardest: "ең қиын",
+  heart: "жүрек",
+  hearts: "жүректер",
+  heaviest: "ең ауыр",
+  hesitation: "екіұдайлық",
+  honored: "құрметті",
+  human: "адами",
+  humankind: "адамзат",
+  humble: "қарапайым",
+  hurtful: "ауыртатын",
+  imaginable: "елестетуге болатын",
+  impossible: "мүмкін емес",
+  impressed: "әсерленген",
+  indispensable: "таптырмайтын, қажетті",
+  inquires: "сұрайды",
+  inquiry: "сұрау",
+  insight: "түсінік, парасат",
+  intellect: "парасат",
+  intelligence: "зеректік",
+  into: "ішіне",
+  itself: "өзі",
+  judgment: "пайымдау",
+  just: "тек қана",
+  khan: "хан",
+  kingdom: "хандық, патшалық",
+  know: "білу",
+  known: "белгілі",
+  labor: "еңбек",
+  last: "соңғы",
+  lingers: "ұзақ сақталады",
+  long: "ұзақ",
+  many: "көп",
+  measure: "өлшеу",
+  moment: "сәт",
+  my: "менің",
+  observing: "байқай отырып",
+  only: "тек",
+  onward: "әрі қарай",
+  other: "басқа",
+  others: "басқалар",
+  "others'": "басқалардың",
+  pain: "ауырсыну",
+  passing: "өтіп жатқан",
+  pause: "үзіліс",
+  pauses: "үзіліс жасайды",
+  people: "адамдар",
+  person: "адам",
+  place: "орын",
+  pleasure: "ләззат",
+  poses: "қояды",
+  position: "орын, лауазым",
+  possesses: "иеленеді",
+  poverty: "кедейшілік",
+  powerful: "қуатты",
+  proceeds: "жалғастырады",
+  proclaims: "жариялайды",
+  profound: "терең",
+  profundity: "тереңдік",
+  question: "сұрақ",
+  questions: "сұрақтар",
+  quite: "өте",
+  realm: "патшалық, аймақ",
+  reflection: "ойлану",
+  reflects: "ойланады",
+  regarded: "саналады",
+  remarkable: "тамаша, ерекше",
+  renown: "даңқ",
+  replies: "жауап береді",
+  replying: "жауап бере отырып",
+  respected: "құрметті",
+  response: "жауап",
+  responds: "жауап береді",
+  rising: "көтерілу",
+  rivals: "теңдесе алады",
+  satisfaction: "қанағаттану",
+  satisfied: "қанағаттанған",
+  says: "айтады",
+  second: "секунд, екінші",
+  securing: "бекіту",
+  seemingly: "сыртқы көрінісінше",
+  serve: "қызмет ету",
+  serves: "қызмет етеді",
+  settles: "орналасады, тұрақтайды",
+  sheer: "таза, мүлдем",
+  since: "себебі",
+  single: "жалғыз",
+  sleep: "ұйқы",
+  slightest: "ең кішкентай",
+  smiles: "жымиады",
+  sought: "ізделді",
+  span: "аралық, уақыт кезеңі",
+  spoken: "айтылған",
+  struck: "әсерленген",
+  subject: "тақырып",
+  summons: "шақырады",
+  surpasses: "асып түседі",
+  surprised: "таңғалған",
+  sweetest: "ең тәтті",
+  sweetness: "тәттілік",
+  test: "сынау",
+  their: "олардың",
+  then: "сонда",
+  there: "сол жерде",
+  thing: "зат, нәрсе",
+  this: "бұл",
+  though: "дегенмен",
+  thought: "ой",
+  thoughtful: "ойлы",
+  thoughtfully: "ойлана отырып",
+  thoughtless: "ойланбай",
+  three: "үш",
+  through: "арқылы",
+  throughout: "бойы",
+  toil: "ауыр еңбек",
+  travel: "саяхаттау, жету",
+  traversing: "кесіп өту",
+  true: "шынайы",
+  truly: "шынымен",
+  trusted: "сенімді",
+  ultimately: "ақыр соңында",
+  unanswerable: "жауап беруге келмейтін",
+  undiminished: "кемімеген",
+  uttered: "айтылған",
+  valued: "бағаланатын",
+  visibly: "көрінеу",
+  walk: "жүру",
+  weight: "салмақ",
+  what: "не",
+  who: "кім",
+  widely: "кеңінен",
+  widespread: "кең таралған",
+  wisdom: "даналық",
+  wise: "дана",
+  wisest: "ең дана",
+  word: "сөз",
+  work: "жұмыс",
+  works: "жұмыс істейді",
+  world: "әлем",
+  year: "жыл",
+  years: "жылдар",
+  you: "сен, сіз",
+  zhirenshe: "Жиренше (аты)"
 };
 
 export const DICT = {
@@ -513,6 +743,8 @@ export const DICT = {
     sceneAnimation: "CINEMATIC VISUAL SCENE",
     selectLevelTitle: "DEÑGEIDİ TAÑDAÑYZ",
     selectLevelSub: "Ağılşyn tilı deñgeııñızge saqtaıynsha mətındı tañdañyz:",
+    selectStoryTitle: "AÑYZDY TAÑDAÑYZ",
+    selectStorySub: "Oqu üşin bir añyzdy tañdañyz:",
     changeLevel: "DEÑGEI",
     profileTitle: "OQUŞY PROFILİ",
     totalXpLabel: "JINALĞAN XP",
@@ -556,6 +788,8 @@ export const DICT = {
     sceneAnimation: "CINEMATIC SCENE",
     selectLevelTitle: "SELECT DIFFICULTY",
     selectLevelSub: "Choose your target English level to unlock the tailored text:",
+    selectStoryTitle: "SELECT A STORY",
+    selectStorySub: "Choose a legend to read:",
     changeLevel: "LEVEL",
     profileTitle: "LEARNER PASSPORT",
     totalXpLabel: "TOTAL XP EARNED",
@@ -954,17 +1188,129 @@ const LEVEL_DETAILS = [
   { id: "C1", title: "ADVANCED", desc: "Tolıq etno-poetika men akademialyq til", badge: "C1" },
 ];
 
-const STORY = {
-  title: "ALDAR KÖSE & THE RICH MAN'S COAT",
-  sceneLabel: "CHAPTER I · STEPPE LEGENDS",
-  levels: {
-    A1: "Aldar Kose is a poor man. He has no coat. He has no horse. But he is very clever. One day he sees a rich man on the road. The rich man has a big warm coat. Aldar Kose wants the coat. He has an idea. He looks behind the rich man. He shouts, \"Look! A wolf!\" The rich man is scared. He jumps down. He runs away fast. He drops his warm coat on the ground. Aldar Kose takes the coat. He puts it on. Now he is warm. He rides the horse home. He tells his friends the story. They laugh and laugh. They love his clever tricks.",
-    A2: "Aldar Kose is a poor but very clever man. He does not have a coat or a horse. One day, he meets a rich man on the dusty road. The rich man is riding a fine horse and wearing a beautiful warm coat. Aldar Kose really wants that coat, so he thinks of a clever plan. He points behind the rich man and shouts, \"Look! A hungry wolf is coming!\" The rich man is very afraid. He jumps off his horse and runs away as fast as he can. In his panic, he drops his warm coat on the ground. Aldar Kose picks up the coat and puts it on. He rides the horse back to his village, laughing quietly. When the villagers hear the story, they laugh too and praise Aldar Kose for his clever trick.",
-    B1: "Aldar Kose is a poor man, but he is famous for his cleverness. He owns no coat and no horse. One day, while walking along a dusty road, he meets an extremely rich and proud man riding a fine horse and wearing a thick, warm coat. Aldar Kose decides that he wants that coat for himself, so he comes up with a clever plan. He looks over the rich man's shoulder with a frightened expression and shouts that a pack of hungry wolves is running toward them. The rich man panics immediately. He jumps down from his horse, drops his heavy coat so that he can run faster, and disappears down the road without looking back. Aldar Kose calmly picks up the warm coat, puts it on, and climbs onto the horse. He rides back to his village feeling very pleased with himself. That evening, he tells the story to his neighbors, and everyone laughs at how the proud rich man was outsmarted by a poor but clever man.",
-    B2: "Although Aldar Kose owns nothing but the clothes on his back, he is renowned across the steppe for his sharp wit. One dusty afternoon, as he wanders along a lonely road, he comes across an arrogant, wealthy man riding a fine horse and wrapped in a magnificent, thick coat. Aldar Kose immediately decides that he deserves that coat far more than its owner does, and within moments he has invented a plan. Feigning terror, he glances over the rich man's shoulder and cries out that a pack of wolves is racing toward them across the steppe. Convinced by Aldar Kose's performance, the wealthy man panics, leaps from his horse, and tears off his coat so that he can run unhindered. He sprints away without a backward glance, leaving both horse and coat behind. Aldar Kose calmly gathers the abandoned coat, puts it on, mounts the horse, and rides home at a leisurely pace, thoroughly amused by how easily wealth can be separated from foolishness. When he later recounts the tale to his neighbors, the whole village roars with laughter at the rich man's expense.",
-    C1: "Despite possessing neither coat nor horse, Aldar Kose has earned a reputation across the steppe for his cunning wit and silver tongue. One scorching afternoon, as he trudges along a dusty, deserted road, fate delivers him an encounter with an insufferably wealthy merchant, resplendent in a magnificent coat and mounted upon a fine horse. Aldar Kose, ever alert to opportunity, resolves at once that such a coat is wasted on so vain a man, and within moments he has conceived an ingenious scheme. Adopting an expression of pure terror, he glances over the merchant's shoulder and cries that a ravenous pack of wolves is bearing down upon them across the open steppe. Thoroughly convinced, the merchant is overcome with panic; he flings himself from his horse, tears off his heavy coat to lighten his flight, and flees down the road without so much as a backward glance. Aldar Kose, suppressing his laughter, calmly retrieves the abandoned coat, mounts the merchant's horse, and rides home at an unhurried pace, marveling at how easily pride and wealth can be parted from good sense. That evening, as he recounts the tale by the fire, the entire village erupts in laughter, and Aldar Kose's legend as the steppe's most cunning trickster grows a little larger still.",
+const STORIES = [
+  {
+    id: "aldar_kose",
+    title: "ALDAR KÖSE & THE RICH MAN'S COAT",
+    sceneLabel: "CHAPTER I · STEPPE LEGENDS",
+    storyDesc: { en: "A tale of wit and cleverness featuring Aldar Kose and the rich man's coat.", kk: "Aldar Köse men baıdyñ şapany turaly ailakerlik pen tapqyrlyq añyzy." },
+    choicePrompt: "What should Aldar Kose do in this situation?",
+    choiceOptionA: "✨ A) Use a clever joke to trick the wealthy merchant",
+    choiceOptionB: "🐴 B) Walk past him proudly without saying a word",
+    levels: {
+      A1: "Aldar Kose is a poor man. He has no coat. He has no horse. But he is very clever. One day he sees a rich man on the road. The rich man has a big warm coat. Aldar Kose wants the coat. He has an idea. He looks behind the rich man. He shouts, \"Look! A wolf!\" The rich man is scared. He jumps down. He runs away fast. He drops his warm coat on the ground. Aldar Kose takes the coat. He puts it on. Now he is warm. He rides the horse home. He tells his friends the story. They laugh and laugh. They love his clever tricks.",
+      A2: "Aldar Kose is a poor but very clever man. He does not have a coat or a horse. One day, he meets a rich man on the dusty road. The rich man is riding a fine horse and wearing a beautiful warm coat. Aldar Kose really wants that coat, so he thinks of a clever plan. He points behind the rich man and shouts, \"Look! A hungry wolf is coming!\" The rich man is very afraid. He jumps off his horse and runs away as fast as he can. In his panic, he drops his warm coat on the ground. Aldar Kose picks up the coat and puts it on. He rides the horse back to his village, laughing quietly. When the villagers hear the story, they laugh too and praise Aldar Kose for his clever trick.",
+      B1: "Aldar Kose is a poor man, but he is famous for his cleverness. He owns no coat and no horse. One day, while walking along a dusty road, he meets an extremely rich and proud man riding a fine horse and wearing a thick, warm coat. Aldar Kose decides that he wants that coat for himself, so he comes up with a clever plan. He looks over the rich man's shoulder with a frightened expression and shouts that a pack of hungry wolves is running toward them. The rich man panics immediately. He jumps down from his horse, drops his heavy coat so that he can run faster, and disappears down the road without looking back. Aldar Kose calmly picks up the warm coat, puts it on, and climbs onto the horse. He rides back to his village feeling very pleased with himself. That evening, he tells the story to his neighbors, and everyone laughs at how the proud rich man was outsmarted by a poor but clever man.",
+      B2: "Although Aldar Kose owns nothing but the clothes on his back, he is renowned across the steppe for his sharp wit. One dusty afternoon, as he wanders along a lonely road, he comes across an arrogant, wealthy man riding a fine horse and wrapped in a magnificent, thick coat. Aldar Kose immediately decides that he deserves that coat far more than its owner does, and within moments he has invented a plan. Feigning terror, he glances over the rich man's shoulder and cries out that a pack of wolves is racing toward them across the steppe. Convinced by Aldar Kose's performance, the wealthy man panics, leaps from his horse, and tears off his coat so that he can run unhindered. He sprints away without a backward glance, leaving both horse and coat behind. Aldar Kose calmly gathers the abandoned coat, puts it on, mounts the horse, and rides home at a leisurely pace, thoroughly amused by how easily wealth can be separated from foolishness. When he later recounts the tale to his neighbors, the whole village roars with laughter at the rich man's expense.",
+      C1: "Despite possessing neither coat nor horse, Aldar Kose has earned a reputation across the steppe for his cunning wit and silver tongue. One scorching afternoon, as he trudges along a dusty, deserted road, fate delivers him an encounter with an insufferably wealthy merchant, resplendent in a magnificent coat and mounted upon a fine horse. Aldar Kose, ever alert to opportunity, resolves at once that such a coat is wasted on so vain a man, and within moments he has conceived an ingenious scheme. Adopting an expression of pure terror, he glances over the merchant's shoulder and cries that a ravenous pack of wolves is bearing down upon them across the open steppe. Thoroughly convinced, the merchant is overcome with panic; he flings himself from his horse, tears off his heavy coat to lighten his flight, and flees down the road without so much as a backward glance. Aldar Kose, suppressing his laughter, calmly retrieves the abandoned coat, mounts the merchant's horse, and rides home at an unhurried pace, marveling at how easily pride and wealth can be parted from good sense. That evening, as he recounts the tale by the fire, the entire village erupts in laughter, and Aldar Kose's legend as the steppe's most cunning trickster grows a little larger still.",
+    },
+    quizQuestions: [
+
+    {
+      type: "mcq",
+      q: "Why was Aldar Kose famous across the steppe?",
+      options: ["His rich golden coat", "His sharp wit and cleverness", "His large army of horses", "His castle in the mountains"],
+      correct: 1
+    },
+    {
+      type: "mcq",
+      q: "What did Aldar Kose NOT own?",
+      options: ["A coat and a horse", "A house and land", "Books and gold", "Sheep and camels"],
+      correct: 0
+    },
+    {
+      type: "fillblank",
+      sentence: "Aldar Kose shouted, \"Look! A ___ is coming!\"",
+      options: ["merchant", "wolf", "horse", "villager"],
+      correct: 1
+    },
+    {
+      type: "mcq",
+      q: "What trick did Aldar Kose use to get the coat?",
+      options: ["He offered to buy it", "He challenged the man to a race", "He shouted that wolves were coming", "He asked the man's wife for it"],
+      correct: 2
+    },
+    {
+      type: "fillblank",
+      sentence: "The rich man jumped off his horse and ___ away as fast as he could.",
+      options: ["walked", "ran", "rode", "crawled"],
+      correct: 1
+    },
+    {
+      type: "mcq",
+      q: "What did the rich man do when he panicked?",
+      options: ["He hid behind a rock", "He dropped his coat and ran away", "He fought off the wolves", "He called for help"],
+      correct: 1
+    },
+    {
+      type: "mcq",
+      q: "How did the story end?",
+      options: ["The rich man caught Aldar Kose", "Aldar Kose lost the horse too", "Aldar Kose rode home and the village laughed at the story", "The wolves really did appear"],
+      correct: 2
+    },
+    ],
   },
-};
+  {
+    id: "zhirenshe",
+    title: "ZHIRENSHE & THE KHAN'S THREE QUESTIONS",
+    sceneLabel: "CHAPTER II · STEPPE LEGENDS",
+    storyDesc: { en: "A tale of wisdom featuring Zhirenshe, the khan's wisest advisor.", kk: "Jirenşe şeşen men handyñ üş suragy turaly danalyq añyzy." },
+    choicePrompt: "What should Zhirenshe do in this situation?",
+    choiceOptionA: "🧠 A) Answer boldly, trusting his own wisdom",
+    choiceOptionB: "🤫 B) Stay silent and let the khan decide alone",
+    levels: {
+      A1: "Zhirenshe is a poor man, but he is very wise. He works for a khan. One day, the khan wants to test him. The khan asks three hard questions. \"What is the fastest thing in the world?\" Zhirenshe answers, \"Thought is the fastest thing. It can go anywhere in one second.\" The khan is surprised. He asks another question. \"What is the sweetest thing in the world?\" Zhirenshe says, \"Sleep after hard work is the sweetest thing.\" The khan smiles. He asks the last question. \"What is the heaviest thing in the world?\" Zhirenshe thinks for a moment. He says, \"A bad word is the heaviest thing. People carry it in their hearts for many years.\" The khan is very happy. He says, \"You are truly wise, Zhirenshe.\" From that day, Zhirenshe becomes the khan's most trusted advisor.",
+      A2: "Zhirenshe is a poor but extremely wise man who works as an advisor for a powerful khan. One day, the khan decides to test his wisdom with three difficult questions. First, he asks, \"What is the fastest thing in the world?\" Zhirenshe thinks for a moment and answers, \"Thought is the fastest thing, because it can travel anywhere in just one second.\" The khan is quite surprised by this clever answer. Then he asks a second question: \"What is the sweetest thing in the world?\" Zhirenshe replies, \"Sleep after a long day of hard work is the sweetest thing of all.\" The khan smiles with satisfaction. Finally, he asks the hardest question: \"What is the heaviest thing in the world?\" Zhirenshe considers carefully before answering, \"A cruel word is the heaviest thing, because people carry it in their hearts for many long years.\" The khan is deeply impressed and declares, \"You are truly the wisest man in my kingdom, Zhirenshe.\" From that day forward, Zhirenshe becomes the khan's most trusted and respected advisor.",
+      B1: "Zhirenshe is a poor man by birth, but he is famous throughout the steppe for his remarkable wisdom, and he serves as a trusted advisor to a powerful khan. One day, the khan decides to test the true depth of Zhirenshe's intelligence by asking him three seemingly impossible questions in front of the entire court. The first question is, \"What is the fastest thing in the world?\" Without hesitation, Zhirenshe replies that thought is the fastest thing of all, since it can travel to any place in the world in a single second. The khan, visibly impressed, poses his second question: \"What is the sweetest thing in the world?\" Zhirenshe considers the question and answers that sleep after a long day of exhausting labor is the sweetest experience a person can know. Pleased with this answer, the khan asks his final and most difficult question: \"What is the heaviest thing in the world?\" Zhirenshe pauses thoughtfully before replying that a cruel or hurtful word is the heaviest burden of all, because people carry the pain of it in their hearts for many years afterward. Thoroughly amazed by such profound wisdom, the khan declares that Zhirenshe is the wisest man in the entire kingdom, and from that day onward, Zhirenshe becomes his most trusted and honored advisor.",
+      B2: "Although born into poverty, Zhirenshe has earned widespread renown across the steppe for his extraordinary wisdom, eventually rising to serve as one of the khan's most valued advisors. One day, eager to measure the true extent of his advisor's intellect, the khan summons the entire court and poses three seemingly unanswerable questions. \"What is the fastest thing in the world?\" he begins. Without a moment's hesitation, Zhirenshe responds that thought itself is the fastest thing imaginable, capable of traversing the entire world in the span of a single second. Visibly impressed, the khan proceeds to his second question: \"What, then, is the sweetest thing in the world?\" Zhirenshe reflects briefly before explaining that sleep, when it follows a long day of exhausting labor, surpasses every other pleasure in sweetness. Satisfied, the khan poses his final and most formidable question: \"What is the heaviest thing in all the world?\" After a thoughtful pause, Zhirenshe answers that a cruel or thoughtless word is the heaviest burden a person can bear, for its weight lingers in the heart for years, long after it was spoken. Astonished by the depth of such wisdom, the khan proclaims before the entire court that no one in his kingdom possesses greater insight than Zhirenshe. From that day forward, Zhirenshe's counsel is sought above all others, and his reputation as the wisest man on the steppe continues to grow with each passing year.",
+      C1: "Though he was born into humble circumstances, Zhirenshe has, through sheer force of intellect, earned a reputation for wisdom that extends across the entire steppe, ultimately securing his position as the khan's most indispensable advisor. One day, driven by a desire to gauge the true measure of his counselor's insight, the khan summons the full court and poses three questions widely regarded as unanswerable. \"What,\" he inquires, \"is the fastest thing in existence?\" Without the slightest hesitation, Zhirenshe replies that thought itself claims that distinction, capable as it is of traversing the breadth of the world in the span of a single fleeting second. Visibly struck by the elegance of this response, the khan advances to his second inquiry: \"And what, then, is the sweetest thing in the world?\" Zhirenshe pauses only briefly before observing that sleep, when it arrives after a day of arduous toil, eclipses every other pleasure known to humankind. Thoroughly satisfied, the khan poses his final and most formidable question: \"What, above all else, is the heaviest thing in existence?\" After a moment of genuine reflection, Zhirenshe answers that a cruel or careless word constitutes the heaviest burden imaginable, for its weight settles into the human heart and lingers there, undiminished, for years after it was first uttered. Astounded by the profundity of such wisdom, the khan declares before the assembled court that no subject in his realm rivals Zhirenshe in insight or judgment. From that day forward, Zhirenshe's counsel is sought above all others', and his legend as the wisest man ever to walk the steppe continues to grow with every passing generation.",
+    },
+    quizQuestions: [
+      {
+        type: "mcq",
+        q: "What made Zhirenshe famous throughout the kingdom?",
+        options: ["His great wealth", "His remarkable wisdom", "His powerful army", "His fast horse"],
+        correct: 1
+      },
+      {
+        type: "mcq",
+        q: "What was Zhirenshe's role for the khan?",
+        options: ["A soldier", "A trusted advisor", "A merchant", "A farmer"],
+        correct: 1
+      },
+      {
+        type: "fillblank",
+        sentence: "The khan decided to test Zhirenshe with three ___ questions.",
+        options: ["easy", "difficult", "short", "silly"],
+        correct: 1
+      },
+      {
+        type: "mcq",
+        q: "According to Zhirenshe, what is the fastest thing in the world?",
+        options: ["A horse", "Thought", "Light", "The wind"],
+        correct: 1
+      },
+      {
+        type: "mcq",
+        q: "What did Zhirenshe say is the sweetest thing in the world?",
+        options: ["Honey", "Money", "Sleep after hard work", "A kind word"],
+        correct: 2
+      },
+      {
+        type: "fillblank",
+        sentence: "Zhirenshe said a ___ word is the heaviest thing in the world.",
+        options: ["bad", "long", "loud", "foreign"],
+        correct: 0
+      },
+      {
+        type: "mcq",
+        q: "How did the khan react at the end of the story?",
+        options: ["He punished Zhirenshe", "He made Zhirenshe his most trusted advisor", "He sent Zhirenshe away", "He ignored the answers"],
+        correct: 1
+      },
+    ],
+  },
+];
 
 /* ============================================================================
    1. INTRO SCREEN
@@ -1055,7 +1401,7 @@ const DailyGoalRing = ({ current, goal }: any) => {
   );
 };
 
-function HomeScreen({ onStartRead, t, sessionXp = 0, dailyGoal = 50 }: any) {
+function HomeScreen({ onStartRead, t, lang, sessionXp = 0, dailyGoal = 50 }: any) {
   const [videoError, setVideoError] = useState(false);
 
   return (
@@ -1084,45 +1430,48 @@ function HomeScreen({ onStartRead, t, sessionXp = 0, dailyGoal = 50 }: any) {
         <div className="flex items-center justify-between">
           <h3 className="font-editorial text-[11px] tracking-[0.18em] text-[#C5A059] uppercase">{t.collectionTitle}</h3>
           <span className="text-[9px] text-[#C5A059] font-bold bg-[#14141C] px-2.5 py-1 border border-[#C5A059]/30">
-            1/10 UNLOCKED
+            {STORIES.length}/10 UNLOCKED
           </span>
         </div>
 
-        <div 
-          onClick={onStartRead}
-          className="group relative glass-luxury-card glass-card-hover p-4 cursor-pointer transition-all duration-300"
-        >
-          <div className="relative h-48 w-full overflow-hidden mb-4 border border-[#C5A059]/30 bg-[#121218]">
-            {!videoError ? (
-              <video 
-                autoPlay loop muted playsInline
-                src={BG_VIDEO_ASSETS.read}
-                onError={() => setVideoError(true)}
-                className="w-full h-full object-cover contrast-110 saturate-100 group-hover:scale-105 transition-transform duration-700 ease-out" 
-              />
-            ) : (
-              <div className="w-full h-full flex items-center justify-center bg-gradient-to-tr from-[#1E1810] to-[#0A0A0E]">
-                <KazakhOrnament className="w-12 h-12 text-[#C5A059]/40" />
+        {STORIES.map((story: any) => (
+          <div
+            key={story.id}
+            onClick={() => onStartRead(story.id)}
+            className="group relative glass-luxury-card glass-card-hover p-4 cursor-pointer transition-all duration-300"
+          >
+            <div className="relative h-48 w-full overflow-hidden mb-4 border border-[#C5A059]/30 bg-[#121218]">
+              {!videoError ? (
+                <video 
+                  autoPlay loop muted playsInline
+                  src={BG_VIDEO_ASSETS.read}
+                  onError={() => setVideoError(true)}
+                  className="w-full h-full object-cover contrast-110 saturate-100 group-hover:scale-105 transition-transform duration-700 ease-out" 
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center bg-gradient-to-tr from-[#1E1810] to-[#0A0A0E]">
+                  <KazakhOrnament className="w-12 h-12 text-[#C5A059]/40" />
+                </div>
+              )}
+              <div className="absolute inset-0 bg-gradient-to-t from-[#09090D] via-[#09090D]/30 to-transparent opacity-90 pointer-events-none" />
+              <div className="absolute top-3 left-3 flex gap-2">
+                <span className="gold-badge text-[8px] px-2 py-0.5">ADAPTIVE A1–C1</span>
+                <span className="bg-[#09090D]/90 border border-[#C5A059]/40 text-[#C5A059] text-[8px] px-2 py-0.5 font-bold flex items-center gap-1">
+                  <Video size={10} /> CINEMATIC
+                </span>
               </div>
-            )}
-            <div className="absolute inset-0 bg-gradient-to-t from-[#09090D] via-[#09090D]/30 to-transparent opacity-90 pointer-events-none" />
-            <div className="absolute top-3 left-3 flex gap-2">
-              <span className="gold-badge text-[8px] px-2 py-0.5">ADAPTIVE A1–C1</span>
-              <span className="bg-[#09090D]/90 border border-[#C5A059]/40 text-[#C5A059] text-[8px] px-2 py-0.5 font-bold flex items-center gap-1">
-                <Video size={10} /> CINEMATIC
-              </span>
             </div>
+
+            <h4 className="font-editorial text-base font-extrabold text-[#F8F5EE] uppercase tracking-wide">{story.title}</h4>
+            <p className="font-body text-xs text-[#F8F5EE]/70 mt-1 leading-relaxed">
+              {story.storyDesc[lang] || story.storyDesc.en}
+            </p>
+
+            <button className="rounded-full mt-4 w-full py-3.5 bg-gradient-to-r from-[#C5A059] to-[#9A7B38] hover:brightness-110 text-[#09090D] font-editorial font-bold text-xs tracking-[0.15em] uppercase transition-all flex items-center justify-center gap-2 gold-glow">
+              <Play size={13} fill="currentColor" /> {t.startReading}
+            </button>
           </div>
-
-          <h4 className="font-editorial text-base font-extrabold text-[#F8F5EE] uppercase tracking-wide">{STORY.title}</h4>
-          <p className="font-body text-xs text-[#F8F5EE]/70 mt-1 leading-relaxed">
-            {t.storyDesc}
-          </p>
-
-          <button className="rounded-full mt-4 w-full py-3.5 bg-gradient-to-r from-[#C5A059] to-[#9A7B38] hover:brightness-110 text-[#09090D] font-editorial font-bold text-xs tracking-[0.15em] uppercase transition-all flex items-center justify-center gap-2 gold-glow">
-            <Play size={13} fill="currentColor" /> {t.startReading}
-          </button>
-        </div>
+        ))}
       </div>
     </div>
   );
@@ -1131,7 +1480,7 @@ function HomeScreen({ onStartRead, t, sessionXp = 0, dailyGoal = 50 }: any) {
 /* ============================================================================
    3. READER SCREEN WITH INTERACTIVE CHOICE
    ========================================================================== */
-function ReaderScreen({ selectedLevel, setSelectedLevel, onQuizGate, t, onReward, savedWords, onSaveWord }: any) {
+function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, setSelectedLevel, onQuizGate, t, onReward, savedWords, onSaveWord }: any) {
   const [isPlaying, setIsPlaying] = useState(true);
   const [activeWord, setActiveWord] = useState<string | null>(null);
   const [translation, setTranslation] = useState("");
@@ -1187,11 +1536,52 @@ function ReaderScreen({ selectedLevel, setSelectedLevel, onQuizGate, t, onReward
     };
   }, [selectedLevel]);
 
+  if (!selectedStory) {
+    return (
+      <div className="px-5 pb-6 space-y-4 animate-pop-in">
+        <div className="border-b border-[#C5A059]/20 pb-3 flex items-center justify-between">
+          <div>
+            <span className="px-2 py-0.5 terracotta-badge text-[8px]">STORY SELECT</span>
+            <h2 className="font-editorial text-base font-bold text-[#F8F5EE] uppercase mt-1">{t.selectStoryTitle}</h2>
+          </div>
+          <KazakhOrnament className="w-5 h-5 text-[#C5A059]" />
+        </div>
+
+        <p className="font-body text-xs text-[#F8F5EE]/70">{t.selectStorySub}</p>
+
+        <div className="space-y-2.5 pt-2">
+          {STORIES.map((story: any) => (
+            <div
+              key={story.id}
+              onClick={() => setSelectedStory(story.id)}
+              className="group glass-luxury-card glass-card-hover p-4 flex items-center justify-between cursor-pointer transition-all"
+            >
+              <div className="space-y-1 min-w-0">
+                <span className="px-2 py-0.5 gold-badge text-[9px]">{story.sceneLabel}</span>
+                <h3 className="font-editorial text-xs font-bold text-[#F8F5EE] uppercase tracking-wider">{story.title}</h3>
+                <p className="font-body text-[11px] text-[#F8F5EE]/70">{story.storyDesc}</p>
+              </div>
+              <ChevronRight size={16} className="text-[#C5A059] group-hover:translate-x-1 transition-transform shrink-0" />
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  const currentStory = STORIES.find((s: any) => s.id === selectedStory) || STORIES[0];
+
   if (!selectedLevel) {
     return (
       <div className="px-5 pb-6 space-y-4 animate-pop-in">
         <div className="border-b border-[#C5A059]/20 pb-3 flex items-center justify-between">
           <div>
+            <button
+              onClick={() => setSelectedStory(null)}
+              className="text-[9px] text-[#C5A059]/70 hover:text-[#C5A059] flex items-center gap-1 mb-1"
+            >
+              <ArrowLeft size={10} /> {currentStory.title}
+            </button>
             <span className="px-2 py-0.5 terracotta-badge text-[8px]">PHASE 01 · LEVEL SELECT</span>
             <h2 className="font-editorial text-base font-bold text-[#F8F5EE] uppercase mt-1">{t.selectLevelTitle}</h2>
           </div>
@@ -1222,7 +1612,7 @@ function ReaderScreen({ selectedLevel, setSelectedLevel, onQuizGate, t, onReward
     );
   }
 
-  const text = STORY.levels[selectedLevel as keyof typeof STORY.levels];
+  const text = currentStory.levels[selectedLevel as keyof typeof currentStory.levels];
   const tokens = text.split(/(\s+)/);
   const wordIndices = tokens.reduce((acc: number[], tok: string, i: number) => {
     if (/[a-zA-Z]/.test(tok)) acc.push(i);
@@ -1314,8 +1704,8 @@ function ReaderScreen({ selectedLevel, setSelectedLevel, onQuizGate, t, onReward
     <div className="px-5 pb-6 space-y-4 animate-pop-in relative">
       <div className="flex items-center justify-between border-b border-[#C5A059]/20 pb-3">
         <div>
-          <p className="font-editorial text-[9px] tracking-[0.18em] text-[#C5A059] uppercase">{STORY.sceneLabel}</p>
-          <h1 className="font-editorial text-sm font-extrabold text-[#F8F5EE] uppercase tracking-wide">{STORY.title}</h1>
+          <p className="font-editorial text-[9px] tracking-[0.18em] text-[#C5A059] uppercase">{currentStory.sceneLabel}</p>
+          <h1 className="font-editorial text-sm font-extrabold text-[#F8F5EE] uppercase tracking-wide">{currentStory.title}</h1>
         </div>
 
         <button
@@ -1506,7 +1896,7 @@ function ReaderScreen({ selectedLevel, setSelectedLevel, onQuizGate, t, onReward
 
             <KazakhOrnament className="w-7 h-7 mx-auto text-[#C5A059]" />
             <h3 className="font-editorial text-sm font-black text-[#F8F5EE] uppercase tracking-wider">{t.interactiveChoiceTitle}</h3>
-            <p className="font-body text-xs text-[#F8F5EE]/80">{t.choicePrompt}</p>
+            <p className="font-body text-xs text-[#F8F5EE]/80">{currentStory.choicePrompt}</p>
 
             <div className="space-y-2 pt-1">
               <button
@@ -1517,7 +1907,7 @@ function ReaderScreen({ selectedLevel, setSelectedLevel, onQuizGate, t, onReward
                 }}
                 className="w-full p-3 bg-[#14141C] border border-[#C5A059]/40 hover:border-[#C5A059] text-left font-body text-xs text-[#F8F5EE] transition-all"
               >
-                ✨ A) Use a clever joke to trick the wealthy merchant
+                {currentStory.choiceOptionA}
               </button>
               <button
                 onClick={() => {
@@ -1527,7 +1917,7 @@ function ReaderScreen({ selectedLevel, setSelectedLevel, onQuizGate, t, onReward
                 }}
                 className="w-full p-3 bg-[#14141C] border border-[#C5A059]/40 hover:border-[#C5A059] text-left font-body text-xs text-[#F8F5EE] transition-all"
               >
-                🛡️ B) Walk past him proudly without saying a word
+                {currentStory.choiceOptionB}
               </button>
             </div>
 
@@ -1902,7 +2292,7 @@ function FlashcardsScreen({ savedWords, onUpdateWord }: any) {
 /* ============================================================================
    4. QUIZ SCREEN
    ========================================================================== */
-function QuizScreen({ onReward, t, onQuizFinish }: any) {
+function QuizScreen({ onReward, t, onQuizFinish, questions }: any) {
   const [qIndex, setQIndex] = useState(0);
   const [selected, setSelected] = useState<number | null>(null);
   const [submitted, setSubmitted] = useState(false);
@@ -1924,54 +2314,6 @@ function QuizScreen({ onReward, t, onQuizFinish }: any) {
   const QUESTION_TIME = 15; // seconds
   const [timeLeft, setTimeLeft] = useState(QUESTION_TIME);
   const [timedOut, setTimedOut] = useState(false);
-
-  // Mixed question types, exactly like a real Duolingo lesson: standard
-  // comprehension (mcq) plus fill-in-the-blank pulled straight from the
-  // story text, which forces closer, more careful re-reading.
-  const questions = [
-    {
-      type: "mcq",
-      q: "Why was Aldar Kose famous across the steppe?",
-      options: ["His rich golden coat", "His sharp wit and cleverness", "His large army of horses", "His castle in the mountains"],
-      correct: 1
-    },
-    {
-      type: "mcq",
-      q: "What did Aldar Kose NOT own?",
-      options: ["A coat and a horse", "A house and land", "Books and gold", "Sheep and camels"],
-      correct: 0
-    },
-    {
-      type: "fillblank",
-      sentence: "Aldar Kose shouted, \"Look! A ___ is coming!\"",
-      options: ["merchant", "wolf", "horse", "villager"],
-      correct: 1
-    },
-    {
-      type: "mcq",
-      q: "What trick did Aldar Kose use to get the coat?",
-      options: ["He offered to buy it", "He challenged the man to a race", "He shouted that wolves were coming", "He asked the man's wife for it"],
-      correct: 2
-    },
-    {
-      type: "fillblank",
-      sentence: "The rich man jumped off his horse and ___ away as fast as he could.",
-      options: ["walked", "ran", "rode", "crawled"],
-      correct: 1
-    },
-    {
-      type: "mcq",
-      q: "What did the rich man do when he panicked?",
-      options: ["He hid behind a rock", "He dropped his coat and ran away", "He fought off the wolves", "He called for help"],
-      correct: 1
-    },
-    {
-      type: "mcq",
-      q: "How did the story end?",
-      options: ["The rich man caught Aldar Kose", "Aldar Kose lost the horse too", "Aldar Kose rode home and the village laughed at the story", "The wolves really did appear"],
-      correct: 2
-    },
-  ];
 
   const question = questions[qIndex];
 
@@ -2580,6 +2922,7 @@ export default function KazakhTalesApp({ session }: any) {
   const [stage, setStage] = useSafeState("main");
   const [tab, setTab] = useState("home");
   const [selectedLevel, setSelectedLevel] = useState<string | null>(null);
+  const [selectedStory, setSelectedStory] = useState<string | null>(null);
   const [xp, setXp] = useSafeState(0);
   const [lang, setLang] = useSafeState("kk");
   // Real day-streak: streakDays is the count, lastActiveDateRef tracks the
@@ -2866,9 +3209,23 @@ export default function KazakhTalesApp({ session }: any) {
         </div>
 
         <div className="flex-1 overflow-y-auto pt-4">
-          {tab === "home" && <HomeScreen onStartRead={() => setTab("read")} t={t} sessionXp={sessionXp} dailyGoal={DAILY_GOAL} />}
+          {tab === "home" && (
+            <HomeScreen
+              onStartRead={(storyId: string) => {
+                setSelectedStory(storyId);
+                setSelectedLevel(null);
+                setTab("read");
+              }}
+              t={t}
+              lang={lang}
+              sessionXp={sessionXp}
+              dailyGoal={DAILY_GOAL}
+            />
+          )}
           {tab === "read" && (
             <ReaderScreen 
+              selectedStory={selectedStory}
+              setSelectedStory={setSelectedStory}
               selectedLevel={selectedLevel} 
               setSelectedLevel={setSelectedLevel} 
               onQuizGate={() => setTab("quiz")} 
@@ -2879,7 +3236,12 @@ export default function KazakhTalesApp({ session }: any) {
             />
           )}
           {tab === "quiz" && (
-            <QuizScreen onReward={addXp} t={t} selectedLevel={selectedLevel} onQuizFinish={handleQuizFinish} />
+            <QuizScreen
+              onReward={addXp}
+              t={t}
+              onQuizFinish={handleQuizFinish}
+              questions={(STORIES.find((s: any) => s.id === selectedStory) || STORIES[0]).quizQuestions}
+            />
           )}
           {tab === "words" && (
             <div className="animate-pop-in">
