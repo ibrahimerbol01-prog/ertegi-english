@@ -1081,9 +1081,13 @@ const ShoqanChat = () => {
     setSending(true);
 
     try {
+      const { data: { session: s } } = await supabase.auth.getSession();
       const res = await fetch("/api/shoqan", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${s?.access_token ?? ""}`,
+        },
         body: JSON.stringify({ messages: nextMessages }),
       });
       const data = await res.json();
@@ -2515,7 +2519,7 @@ function QuizScreen({ onReward, t, onQuizFinish, questions }: any) {
         )}
 
         <div className="space-y-2">
-          {question.options.map((opt, idx) => {
+          {question.options.map((opt: string, idx: number) => {
             let style = "border-[#C5A059]/20 bg-[#14141C]/80 text-[#F8F5EE]/80 hover:border-[#C5A059]/50";
             let anim = "";
             if (selected === idx) style = "border-[#C5A059] bg-[#C5A059]/15 text-[#C5A059] font-bold";
@@ -2601,7 +2605,10 @@ function SpeakScreen({ onReward, t }: any) {
     setTranscript("");
 
     try {
-      const tokenRes = await fetch("/api/azure-token");
+      const { data: { session: s } } = await supabase.auth.getSession();
+      const tokenRes = await fetch("/api/azure-token", {
+        headers: { Authorization: `Bearer ${s?.access_token ?? ""}` },
+      });
       const tokenData = await tokenRes.json();
       if (!tokenRes.ok) throw new Error(tokenData?.error || "Couldn't reach the pronunciation service.");
 
