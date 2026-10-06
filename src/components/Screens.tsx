@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
-import { 
-  Sparkles, ArrowRight, Play, Video, Pause, Volume2, 
-  ChevronRight, ArrowLeft, X, Compass, Layers, Trophy, CheckCircle2 
+import {
+  Sparkles, ArrowRight, Play, Video, Pause, Volume2,
+  ChevronRight, ArrowLeft, X, Compass, Layers, Trophy, CheckCircle2, Flame
 } from "lucide-react";
 import { 
   BackgroundVideo, KazakhOrnament, DailyGoalRing, 
@@ -775,6 +775,248 @@ export function MatchingGame({ savedWords, onReward }: any) {
           );
         })}
       </div>
+    </div>
+  );
+}
+
+/* --- 6. QUIZ SCREEN --- */
+export function QuizScreen({ onReward, t, onQuizFinish, questions }: {
+  onReward: (xp: number) => void;
+  t: Record<string, string>;
+  onQuizFinish?: (correct: number, total: number) => void;
+  questions: { type?: string; q?: string; sentence?: string; options: string[]; correct: number }[];
+}) {
+  const [qIndex, setQIndex] = useState(0);
+  const [selected, setSelected] = useState<number | null>(null);
+  const [submitted, setSubmitted] = useState(false);
+  const [correctCount, setCorrectCount] = useState(0);
+  const [finished, setFinished] = useState(false);
+
+  const MAX_HEARTS = 3;
+  const [hearts, setHearts] = useState(MAX_HEARTS);
+  const [outOfHearts, setOutOfHearts] = useState(false);
+
+  const QUESTION_TIME = 15;
+  const [timeLeft, setTimeLeft] = useState(QUESTION_TIME);
+  const [timedOut, setTimedOut] = useState(false);
+
+  const question = questions[qIndex];
+
+  const handleCheck = () => {
+    if (selected === null) return;
+    setSubmitted(true);
+    if (selected === question.correct) {
+      const speedBonus = Math.max(0, Math.round((timeLeft / QUESTION_TIME) * 5));
+      onReward(10 + speedBonus);
+      setCorrectCount((c) => c + 1);
+    } else {
+      setHearts((h) => {
+        const next = Math.max(h - 1, 0);
+        if (next === 0) setOutOfHearts(true);
+        return next;
+      });
+    }
+  };
+
+  const handleTimeout = () => {
+    if (submitted) return;
+    setSubmitted(true);
+    setTimedOut(true);
+    setHearts((h) => {
+      const next = Math.max(h - 1, 0);
+      if (next === 0) setOutOfHearts(true);
+      return next;
+    });
+  };
+
+  const handleNext = () => {
+    if (outOfHearts) return;
+    if (qIndex + 1 >= questions.length) {
+      setFinished(true);
+    } else {
+      setQIndex(qIndex + 1);
+      setSelected(null);
+      setSubmitted(false);
+      setTimedOut(false);
+      setTimeLeft(QUESTION_TIME);
+    }
+  };
+
+  const handleRestart = () => {
+    setQIndex(0);
+    setSelected(null);
+    setSubmitted(false);
+    setCorrectCount(0);
+    setFinished(false);
+    setHearts(MAX_HEARTS);
+    setOutOfHearts(false);
+    setTimedOut(false);
+    setTimeLeft(QUESTION_TIME);
+  };
+
+  useEffect(() => {
+    if (submitted || finished || outOfHearts) return;
+    if (timeLeft <= 0) { handleTimeout(); return; }
+    const id = setTimeout(() => setTimeLeft((prev) => prev - 1), 1000);
+    return () => clearTimeout(id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [timeLeft, submitted, finished, outOfHearts]);
+
+  useEffect(() => {
+    if (finished && onQuizFinish) onQuizFinish(correctCount, questions.length);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [finished]);
+
+  const HeartsRow = () => (
+    <div className="flex items-center gap-1">
+      {Array.from({ length: MAX_HEARTS }, (_, i) => (
+        <Flame key={i} size={13} className={i < hearts ? "text-[#B2533E] fill-[#B2533E]" : "text-[#F8F5EE]/15"} />
+      ))}
+    </div>
+  );
+
+  if (outOfHearts) {
+    return (
+      <div className="px-5 pb-6 space-y-5 animate-pop-in">
+        <div className="border-b border-white/[0.06] pb-3 flex justify-between items-center">
+          <div>
+            <span className="px-2 py-0.5 terracotta-badge text-[8px]">QUIZ MODULE</span>
+            <h2 className="font-editorial text-base font-bold text-[#F8F5EE] uppercase mt-1">{t.quizTitle}</h2>
+          </div>
+          <HeartsRow />
+        </div>
+        <div className="glass-luxury-card p-6 text-center space-y-3">
+          <Flame className="mx-auto text-[#B2533E]" size={30} />
+          <p className="font-editorial text-sm font-bold text-[#F8F5EE] uppercase">Out of Hearts</p>
+          <p className="font-body text-xs text-[#F8F5EE]/70">
+            You've run out of hearts for this attempt. Re-read the story to refresh your memory, then try again from the start.
+          </p>
+          <button onClick={handleRestart} className="w-full py-3 bg-gradient-to-r from-[#C5A059] to-[#9A7B38] text-[#09090D] font-editorial font-bold text-[10px] tracking-widest uppercase gold-glow">
+            Restart Quiz
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (finished) {
+    const passed = correctCount >= Math.ceil(questions.length * 0.6);
+    return (
+      <div className="px-5 pb-6 space-y-5 animate-pop-in">
+        <div className="border-b border-white/[0.06] pb-3 flex justify-between items-center">
+          <div>
+            <span className="px-2 py-0.5 gold-badge text-[8px]">QUIZ MODULE</span>
+            <h2 className="font-editorial text-base font-bold text-[#F8F5EE] uppercase mt-1">{t.quizTitle}</h2>
+          </div>
+          <Trophy className="text-[#C5A059] w-5 h-5" />
+        </div>
+        <div className="glass-luxury-card p-6 text-center space-y-3">
+          <Trophy className={`mx-auto ${passed ? "text-[#C5A059]" : "text-[#F8F5EE]/40"}`} size={30} />
+          <p className="font-editorial text-lg font-black text-[#F8F5EE]">{correctCount} / {questions.length}</p>
+          <p className="font-body text-xs text-[#F8F5EE]/70">
+            {passed ? "Great comprehension! You understood the story well." : "Re-read the story and try again — comprehension takes practice."}
+          </p>
+          <button onClick={handleRestart} className="w-full py-3 bg-gradient-to-r from-[#C5A059] to-[#9A7B38] text-[#09090D] font-editorial font-bold text-[10px] tracking-widest uppercase gold-glow">
+            {t.tryAgain}
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="px-5 pb-6 space-y-5 animate-pop-in">
+      <div className="border-b border-white/[0.06] pb-3 flex justify-between items-center">
+        <div>
+          <span className="px-2 py-0.5 gold-badge text-[8px]">QUIZ MODULE</span>
+          <h2 className="font-editorial text-base font-bold text-[#F8F5EE] uppercase mt-1">{t.quizTitle}</h2>
+        </div>
+        <div className="flex items-center gap-2">
+          <HeartsRow />
+          <span className="text-[10px] text-[#C5A059] font-bold bg-[#14141C] px-2.5 py-1 rounded-full border border-[#C5A059]/30">
+            {qIndex + 1} / {questions.length}
+          </span>
+        </div>
+      </div>
+
+      <div className="flex items-center gap-2">
+        <div className="flex-1 h-1.5 bg-[#14141C] rounded-full overflow-hidden border border-[#C5A059]/10">
+          <div
+            className={`h-full rounded-full transition-all duration-1000 ease-linear ${timeLeft <= 5 ? "bg-[#B2533E]" : "bg-gradient-to-r from-[#C5A059] to-[#9A7B38]"}`}
+            style={{ width: `${Math.max(0, (timeLeft / QUESTION_TIME) * 100)}%` }}
+          />
+        </div>
+        <span className={`text-[10px] font-bold tabular-nums w-5 text-right ${timeLeft <= 5 ? "text-[#B2533E]" : "text-[#F8F5EE]/50"}`}>
+          {Math.max(0, timeLeft)}s
+        </span>
+      </div>
+
+      <div className="glass-luxury-card p-5 space-y-4">
+        {question.type === "fillblank" ? (
+          <>
+            <span className="text-[9px] text-[#C5A059] uppercase tracking-widest font-bold block">FILL IN THE BLANK</span>
+            <p className="font-body text-sm font-semibold text-[#F8F5EE] leading-relaxed">
+              {(question.sentence || "").split("___")[0]}
+              <span className="inline-block min-w-[54px] border-b-2 border-[#C5A059] mx-1 text-center text-[#C5A059]">
+                {submitted && selected !== null ? question.options[selected] : " "}
+              </span>
+              {(question.sentence || "").split("___")[1]}
+            </p>
+          </>
+        ) : (
+          <p className="font-body text-xs font-semibold text-[#F8F5EE] leading-relaxed">{question.q}</p>
+        )}
+
+        <div className="space-y-2">
+          {question.options.map((opt: string, idx: number) => {
+            let style = "border-[#C5A059]/20 bg-[#14141C]/80 text-[#F8F5EE]/80 hover:border-[#C5A059]/50";
+            let anim = "";
+            if (selected === idx) style = "border-[#C5A059] bg-[#C5A059]/15 text-[#C5A059] font-bold";
+            if (submitted) {
+              if (idx === question.correct) {
+                style = "border-emerald-500/80 bg-emerald-950/50 text-emerald-300 font-bold";
+                anim = "animate-answer-correct";
+              } else if (selected === idx) {
+                style = "border-red-500/80 bg-red-950/50 text-red-300";
+                anim = "animate-answer-wrong";
+              }
+            }
+            return (
+              <button
+                key={idx}
+                disabled={submitted}
+                onClick={() => setSelected(idx)}
+                className={`w-full text-left p-3.5 border font-body text-xs transition-all flex items-center justify-between ${style} ${anim}`}
+              >
+                <span>{opt}</span>
+                {submitted && idx === question.correct && <CheckCircle2 size={15} className="text-emerald-400" />}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {!submitted ? (
+        <button
+          onClick={handleCheck}
+          disabled={selected === null}
+          className="w-full py-3.5 bg-gradient-to-r from-[#C5A059] to-[#9A7B38] disabled:opacity-40 text-[#09090D] font-editorial font-extrabold text-xs tracking-[0.18em] uppercase gold-glow rounded-full"
+        >
+          {t.checkAnswer}
+        </button>
+      ) : (
+        <div className="p-4 border border-emerald-500/30 bg-emerald-950/30 backdrop-blur-md text-center space-y-2 animate-pop-in">
+          <p className="font-editorial text-xs font-extrabold text-emerald-400 uppercase tracking-wider">
+            {timedOut ? "Time's Up" : selected === question.correct ? t.correctMsg : t.wrongMsg}
+          </p>
+          <button
+            onClick={handleNext}
+            className="text-[10px] font-editorial text-[#C5A059] font-bold uppercase hover:text-[#F8F5EE] flex items-center justify-center gap-1 mx-auto"
+          >
+            {qIndex + 1 >= questions.length ? "See Results" : "Next Question"} <ChevronRight size={12} />
+          </button>
+        </div>
+      )}
     </div>
   );
 }
