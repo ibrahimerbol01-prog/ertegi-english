@@ -2,7 +2,10 @@ import { useEffect, useState } from "react";
 import type { Session } from "@supabase/supabase-js";
 import { supabase } from "./lib/supabase";
 import AuthScreen from "./AuthScreen";
-import KazakhTalesApp, { IntroScreen, FontLoader, DICT } from "./KazakhTalesApp";
+import KazakhTalesApp from "./KazakhTalesApp";
+import { IntroScreen } from "./components/Screens";
+import { FontLoader } from "./components/UIHelpers";
+import { DICT } from "./constants";
 
 export default function App() {
   const [session, setSession] = useState<Session | null>(null);

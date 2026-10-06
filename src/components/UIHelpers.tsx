@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useRef } from "react";
-import { CheckCircle2, X } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
+import { CheckCircle2 } from "lucide-react";
 
 export const FontLoader = () => (
   <style>{`

@@ -1,16 +1,18 @@
-import React, { useState, useRef, useEffect } from "react";
-import { 
-  Sparkles, ArrowRight, Play, Video, Pause, Volume2, 
-  ChevronRight, ArrowLeft, X, Compass, Layers, Trophy, CheckCircle2 
+import { useState, useRef, useEffect } from "react";
+import {
+  Sparkles, ArrowRight, Play, Video, Pause, Volume2,
+  ChevronRight, ArrowLeft, X, Compass, Layers, Trophy, CheckCircle2, Flame,
+  Mic, MicOff, LogOut, Share2, Download
 } from "lucide-react";
 import { 
   BackgroundVideo, KazakhOrnament, DailyGoalRing, 
   safePlayVoice 
 } from "./UIHelpers";
-import { 
-  BG_VIDEO_ASSETS, STORIES, LEVEL_DETAILS, WORD_TRANSLATIONS 
+import {
+  BG_VIDEO_ASSETS, STORIES, LEVEL_DETAILS, WORD_TRANSLATIONS, ACHIEVEMENTS
 } from "../constants";
-import { SavedWord } from "../types";
+import type { SavedWord } from "../types";
+import { supabase } from "../lib/supabase";
 
 /* --- 1. INTRO SCREEN --- */
 export function IntroScreen({ onFinish, t }: any) {
@@ -775,6 +777,592 @@ export function MatchingGame({ savedWords, onReward }: any) {
           );
         })}
       </div>
+    </div>
+  );
+}
+
+/* --- 6. QUIZ SCREEN --- */
+export function QuizScreen({ onReward, t, onQuizFinish, questions }: {
+  onReward: (xp: number) => void;
+  t: Record<string, string>;
+  onQuizFinish?: (correct: number, total: number) => void;
+  questions: { type?: string; q?: string; sentence?: string; options: string[]; correct: number }[];
+}) {
+  const [qIndex, setQIndex] = useState(0);
+  const [selected, setSelected] = useState<number | null>(null);
+  const [submitted, setSubmitted] = useState(false);
+  const [correctCount, setCorrectCount] = useState(0);
+  const [finished, setFinished] = useState(false);
+
+  const MAX_HEARTS = 3;
+  const [hearts, setHearts] = useState(MAX_HEARTS);
+  const [outOfHearts, setOutOfHearts] = useState(false);
+
+  const QUESTION_TIME = 15;
+  const [timeLeft, setTimeLeft] = useState(QUESTION_TIME);
+  const [timedOut, setTimedOut] = useState(false);
+
+  const question = questions[qIndex];
+
+  const handleCheck = () => {
+    if (selected === null) return;
+    setSubmitted(true);
+    if (selected === question.correct) {
+      const speedBonus = Math.max(0, Math.round((timeLeft / QUESTION_TIME) * 5));
+      onReward(10 + speedBonus);
+      setCorrectCount((c) => c + 1);
+    } else {
+      setHearts((h) => {
+        const next = Math.max(h - 1, 0);
+        if (next === 0) setOutOfHearts(true);
+        return next;
+      });
+    }
+  };
+
+  const handleTimeout = () => {
+    if (submitted) return;
+    setSubmitted(true);
+    setTimedOut(true);
+    setHearts((h) => {
+      const next = Math.max(h - 1, 0);
+      if (next === 0) setOutOfHearts(true);
+      return next;
+    });
+  };
+
+  const handleNext = () => {
+    if (outOfHearts) return;
+    if (qIndex + 1 >= questions.length) {
+      setFinished(true);
+    } else {
+      setQIndex(qIndex + 1);
+      setSelected(null);
+      setSubmitted(false);
+      setTimedOut(false);
+      setTimeLeft(QUESTION_TIME);
+    }
+  };
+
+  const handleRestart = () => {
+    setQIndex(0);
+    setSelected(null);
+    setSubmitted(false);
+    setCorrectCount(0);
+    setFinished(false);
+    setHearts(MAX_HEARTS);
+    setOutOfHearts(false);
+    setTimedOut(false);
+    setTimeLeft(QUESTION_TIME);
+  };
+
+  useEffect(() => {
+    if (submitted || finished || outOfHearts) return;
+    if (timeLeft <= 0) { handleTimeout(); return; }
+    const id = setTimeout(() => setTimeLeft((prev) => prev - 1), 1000);
+    return () => clearTimeout(id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [timeLeft, submitted, finished, outOfHearts]);
+
+  useEffect(() => {
+    if (finished && onQuizFinish) onQuizFinish(correctCount, questions.length);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [finished]);
+
+  const HeartsRow = () => (
+    <div className="flex items-center gap-1">
+      {Array.from({ length: MAX_HEARTS }, (_, i) => (
+        <Flame key={i} size={13} className={i < hearts ? "text-[#B2533E] fill-[#B2533E]" : "text-[#F8F5EE]/15"} />
+      ))}
+    </div>
+  );
+
+  if (outOfHearts) {
+    return (
+      <div className="px-5 pb-6 space-y-5 animate-pop-in">
+        <div className="border-b border-white/[0.06] pb-3 flex justify-between items-center">
+          <div>
+            <span className="px-2 py-0.5 terracotta-badge text-[8px]">QUIZ MODULE</span>
+            <h2 className="font-editorial text-base font-bold text-[#F8F5EE] uppercase mt-1">{t.quizTitle}</h2>
+          </div>
+          <HeartsRow />
+        </div>
+        <div className="glass-luxury-card p-6 text-center space-y-3">
+          <Flame className="mx-auto text-[#B2533E]" size={30} />
+          <p className="font-editorial text-sm font-bold text-[#F8F5EE] uppercase">Out of Hearts</p>
+          <p className="font-body text-xs text-[#F8F5EE]/70">
+            You've run out of hearts for this attempt. Re-read the story to refresh your memory, then try again from the start.
+          </p>
+          <button onClick={handleRestart} className="w-full py-3 bg-gradient-to-r from-[#C5A059] to-[#9A7B38] text-[#09090D] font-editorial font-bold text-[10px] tracking-widest uppercase gold-glow">
+            Restart Quiz
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (finished) {
+    const passed = correctCount >= Math.ceil(questions.length * 0.6);
+    return (
+      <div className="px-5 pb-6 space-y-5 animate-pop-in">
+        <div className="border-b border-white/[0.06] pb-3 flex justify-between items-center">
+          <div>
+            <span className="px-2 py-0.5 gold-badge text-[8px]">QUIZ MODULE</span>
+            <h2 className="font-editorial text-base font-bold text-[#F8F5EE] uppercase mt-1">{t.quizTitle}</h2>
+          </div>
+          <Trophy className="text-[#C5A059] w-5 h-5" />
+        </div>
+        <div className="glass-luxury-card p-6 text-center space-y-3">
+          <Trophy className={`mx-auto ${passed ? "text-[#C5A059]" : "text-[#F8F5EE]/40"}`} size={30} />
+          <p className="font-editorial text-lg font-black text-[#F8F5EE]">{correctCount} / {questions.length}</p>
+          <p className="font-body text-xs text-[#F8F5EE]/70">
+            {passed ? "Great comprehension! You understood the story well." : "Re-read the story and try again — comprehension takes practice."}
+          </p>
+          <button onClick={handleRestart} className="w-full py-3 bg-gradient-to-r from-[#C5A059] to-[#9A7B38] text-[#09090D] font-editorial font-bold text-[10px] tracking-widest uppercase gold-glow">
+            {t.tryAgain}
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="px-5 pb-6 space-y-5 animate-pop-in">
+      <div className="border-b border-white/[0.06] pb-3 flex justify-between items-center">
+        <div>
+          <span className="px-2 py-0.5 gold-badge text-[8px]">QUIZ MODULE</span>
+          <h2 className="font-editorial text-base font-bold text-[#F8F5EE] uppercase mt-1">{t.quizTitle}</h2>
+        </div>
+        <div className="flex items-center gap-2">
+          <HeartsRow />
+          <span className="text-[10px] text-[#C5A059] font-bold bg-[#14141C] px-2.5 py-1 rounded-full border border-[#C5A059]/30">
+            {qIndex + 1} / {questions.length}
+          </span>
+        </div>
+      </div>
+
+      <div className="flex items-center gap-2">
+        <div className="flex-1 h-1.5 bg-[#14141C] rounded-full overflow-hidden border border-[#C5A059]/10">
+          <div
+            className={`h-full rounded-full transition-all duration-1000 ease-linear ${timeLeft <= 5 ? "bg-[#B2533E]" : "bg-gradient-to-r from-[#C5A059] to-[#9A7B38]"}`}
+            style={{ width: `${Math.max(0, (timeLeft / QUESTION_TIME) * 100)}%` }}
+          />
+        </div>
+        <span className={`text-[10px] font-bold tabular-nums w-5 text-right ${timeLeft <= 5 ? "text-[#B2533E]" : "text-[#F8F5EE]/50"}`}>
+          {Math.max(0, timeLeft)}s
+        </span>
+      </div>
+
+      <div className="glass-luxury-card p-5 space-y-4">
+        {question.type === "fillblank" ? (
+          <>
+            <span className="text-[9px] text-[#C5A059] uppercase tracking-widest font-bold block">FILL IN THE BLANK</span>
+            <p className="font-body text-sm font-semibold text-[#F8F5EE] leading-relaxed">
+              {(question.sentence || "").split("___")[0]}
+              <span className="inline-block min-w-[54px] border-b-2 border-[#C5A059] mx-1 text-center text-[#C5A059]">
+                {submitted && selected !== null ? question.options[selected] : " "}
+              </span>
+              {(question.sentence || "").split("___")[1]}
+            </p>
+          </>
+        ) : (
+          <p className="font-body text-xs font-semibold text-[#F8F5EE] leading-relaxed">{question.q}</p>
+        )}
+
+        <div className="space-y-2">
+          {question.options.map((opt: string, idx: number) => {
+            let style = "border-[#C5A059]/20 bg-[#14141C]/80 text-[#F8F5EE]/80 hover:border-[#C5A059]/50";
+            let anim = "";
+            if (selected === idx) style = "border-[#C5A059] bg-[#C5A059]/15 text-[#C5A059] font-bold";
+            if (submitted) {
+              if (idx === question.correct) {
+                style = "border-emerald-500/80 bg-emerald-950/50 text-emerald-300 font-bold";
+                anim = "animate-answer-correct";
+              } else if (selected === idx) {
+                style = "border-red-500/80 bg-red-950/50 text-red-300";
+                anim = "animate-answer-wrong";
+              }
+            }
+            return (
+              <button
+                key={idx}
+                disabled={submitted}
+                onClick={() => setSelected(idx)}
+                className={`w-full text-left p-3.5 border font-body text-xs transition-all flex items-center justify-between ${style} ${anim}`}
+              >
+                <span>{opt}</span>
+                {submitted && idx === question.correct && <CheckCircle2 size={15} className="text-emerald-400" />}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {!submitted ? (
+        <button
+          onClick={handleCheck}
+          disabled={selected === null}
+          className="w-full py-3.5 bg-gradient-to-r from-[#C5A059] to-[#9A7B38] disabled:opacity-40 text-[#09090D] font-editorial font-extrabold text-xs tracking-[0.18em] uppercase gold-glow rounded-full"
+        >
+          {t.checkAnswer}
+        </button>
+      ) : (
+        <div className="p-4 border border-emerald-500/30 bg-emerald-950/30 backdrop-blur-md text-center space-y-2 animate-pop-in">
+          <p className="font-editorial text-xs font-extrabold text-emerald-400 uppercase tracking-wider">
+            {timedOut ? "Time's Up" : selected === question.correct ? t.correctMsg : t.wrongMsg}
+          </p>
+          <button
+            onClick={handleNext}
+            className="text-[10px] font-editorial text-[#C5A059] font-bold uppercase hover:text-[#F8F5EE] flex items-center justify-center gap-1 mx-auto"
+          >
+            {qIndex + 1 >= questions.length ? "See Results" : "Next Question"} <ChevronRight size={12} />
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* --- 7. SPEAK SCREEN --- */
+export function SpeakScreen({ onReward, t }: {
+  onReward: (xp: number) => void;
+  t: Record<string, string>;
+}) {
+  const [recording, setRecording] = useState(false);
+  const [scores, setScores] = useState<{
+    accuracy: number;
+    fluency: number;
+    completeness: number;
+    pronunciation: number;
+  } | null>(null);
+  const [transcript, setTranscript] = useState<string>("");
+  const [speechError, setSpeechError] = useState<string | null>(null);
+  const recognizerRef = useRef<{ stopContinuousRecognitionAsync?: () => void; close?: () => void } | null>(null);
+
+  const targetPhrase = "He is renowned across the steppe for his sharp wit.";
+
+  const toggleRecord = async () => {
+    if (recording) {
+      try {
+        recognizerRef.current?.stopContinuousRecognitionAsync?.();
+      } catch {
+        // ignore
+      }
+      return;
+    }
+
+    setSpeechError(null);
+    setScores(null);
+    setTranscript("");
+
+    try {
+      const { data: { session: s } } = await supabase.auth.getSession();
+      const tokenRes = await fetch("/api/azure-token", {
+        headers: { Authorization: `Bearer ${s?.access_token ?? ""}` },
+      });
+      const tokenData = await tokenRes.json();
+      if (!tokenRes.ok) throw new Error(tokenData?.error || "Couldn't reach the pronunciation service.");
+
+      // Loaded lazily so the ~2MB SDK only downloads once someone actually
+      // opens this screen, not as part of the app's main bundle.
+      const SpeechSDK = await import("microsoft-cognitiveservices-speech-sdk");
+
+      const speechConfig = SpeechSDK.SpeechConfig.fromAuthorizationToken(tokenData.token, tokenData.region);
+      speechConfig.speechRecognitionLanguage = "en-US";
+
+      const audioConfig = SpeechSDK.AudioConfig.fromDefaultMicrophoneInput();
+
+      const pronunciationConfig = new SpeechSDK.PronunciationAssessmentConfig(
+        targetPhrase,
+        SpeechSDK.PronunciationAssessmentGradingSystem.HundredMark,
+        SpeechSDK.PronunciationAssessmentGranularity.Word,
+        true
+      );
+
+      const recognizer = new SpeechSDK.SpeechRecognizer(speechConfig, audioConfig);
+      pronunciationConfig.applyTo(recognizer);
+      recognizerRef.current = recognizer;
+      setRecording(true);
+
+      recognizer.recognizeOnceAsync(
+        (result: { reason: number; text: string }) => {
+          setRecording(false);
+          if (result.reason === SpeechSDK.ResultReason.RecognizedSpeech) {
+            const assessment = SpeechSDK.PronunciationAssessmentResult.fromResult(result as Parameters<typeof SpeechSDK.PronunciationAssessmentResult.fromResult>[0]);
+            setTranscript(result.text);
+            const next = {
+              accuracy: Math.round(assessment.accuracyScore),
+              fluency: Math.round(assessment.fluencyScore),
+              completeness: Math.round(assessment.completenessScore),
+              pronunciation: Math.round(assessment.pronunciationScore),
+            };
+            setScores(next);
+            if (next.pronunciation >= 50) onReward(Math.round(5 + (next.pronunciation / 100) * 15));
+          } else if (result.reason === SpeechSDK.ResultReason.NoMatch) {
+            setSpeechError("Didn't catch that — try speaking a bit louder and closer to the mic.");
+          } else {
+            setSpeechError("Something went wrong with speech recognition. Please try again.");
+          }
+          recognizer.close();
+        },
+        () => {
+          setRecording(false);
+          setSpeechError("Something went wrong reaching the speech service. Please try again.");
+          recognizer.close();
+        }
+      );
+    } catch (err: unknown) {
+      setRecording(false);
+      setSpeechError((err instanceof Error ? err.message : null) || "Couldn't start pronunciation practice — check your microphone permissions.");
+    }
+  };
+
+  useEffect(() => {
+    return () => {
+      try {
+        recognizerRef.current?.close?.();
+      } catch {
+        // ignore
+      }
+    };
+  }, []);
+
+  const overallScore = scores?.pronunciation ?? null;
+
+  const feedbackMessage =
+    overallScore === null
+      ? ""
+      : overallScore >= 90
+      ? t.greatIntonation
+      : overallScore >= 70
+      ? "Good — close to the target. Listen again and try once more."
+      : "Keep practicing — tap the quote to hear it again, then try to match it closely.";
+
+  return (
+    <div className="px-5 pb-6 space-y-5 animate-pop-in">
+      <div className="border-b border-[#C5A059]/20 pb-3 flex justify-between items-center">
+        <div>
+          <span className="px-2 py-0.5 terracotta-badge text-[8px]">SPEECH EVALUATION</span>
+          <h2 className="font-editorial text-base font-bold text-[#F8F5EE] uppercase mt-1">{t.speakTitle}</h2>
+        </div>
+        <Mic className="text-[#C5A059] w-5 h-5" />
+      </div>
+
+      <div className="glass-luxury-card p-6 text-center space-y-3">
+        <p className="font-body text-xs text-[#F8F5EE]/70">{t.speakSubtitle}</p>
+        <blockquote
+          className="font-editorial text-sm font-bold text-[#C5A059] uppercase tracking-wide leading-relaxed cursor-pointer"
+          onClick={() => safePlayVoice(targetPhrase)}
+        >
+          "{targetPhrase}" 🔊
+        </blockquote>
+      </div>
+
+      <div className="flex flex-col items-center justify-center py-4 space-y-3">
+        <button
+          onClick={toggleRecord}
+          className={`w-20 h-20 rounded-full flex items-center justify-center transition-all ${
+            recording
+              ? "bg-[#B2533E] text-[#F8F5EE] animate-pulse shadow-[0_0_30px_rgba(178,83,62,0.6)]"
+              : "bg-[#14141C] border border-[#C5A059] text-[#C5A059] hover:bg-[#C5A059] hover:text-[#09090D] gold-glow"
+          }`}
+        >
+          {recording ? <MicOff size={28} /> : <Mic size={28} />}
+        </button>
+        <span className="font-editorial text-[9px] tracking-[0.18em] text-[#C5A059] uppercase">
+          {recording ? t.recording : t.pressMic}
+        </span>
+      </div>
+
+      {speechError && (
+        <div className="glass-luxury-card p-4 text-center space-y-1 animate-pop-in border-[#B2533E]/40">
+          <p className="font-body text-xs text-[#B2533E]">{speechError}</p>
+        </div>
+      )}
+
+      {scores !== null && (
+        <div className="glass-luxury-card p-4 text-center space-y-2 animate-pop-in border-emerald-500/30">
+          <p className="font-editorial text-xl font-extrabold text-emerald-400">{scores.pronunciation}% {t.accuracy}</p>
+          {transcript && <p className="font-body text-[10px] text-[#F8F5EE]/50 italic">You said: "{transcript}"</p>}
+          <div className="grid grid-cols-3 gap-2 pt-1">
+            <div>
+              <p className="font-editorial text-sm font-bold text-[#C5A059]">{scores.accuracy}%</p>
+              <p className="text-[8px] text-[#F8F5EE]/50 uppercase tracking-wider">Accuracy</p>
+            </div>
+            <div>
+              <p className="font-editorial text-sm font-bold text-[#C5A059]">{scores.fluency}%</p>
+              <p className="text-[8px] text-[#F8F5EE]/50 uppercase tracking-wider">Fluency</p>
+            </div>
+            <div>
+              <p className="font-editorial text-sm font-bold text-[#C5A059]">{scores.completeness}%</p>
+              <p className="text-[8px] text-[#F8F5EE]/50 uppercase tracking-wider">Completeness</p>
+            </div>
+          </div>
+          <p className="font-body text-xs text-[#F8F5EE]/90 pt-1">{feedbackMessage}</p>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* --- 8. PROFILE SCREEN --- */
+export function ProfileScreen({ xp, t, savedWordsCount = 0, unlockedAchievements = [], userName = "Learner", onSignOut, streakDays = 0 }: {
+  xp: number;
+  t: Record<string, string>;
+  savedWordsCount?: number;
+  unlockedAchievements?: string[];
+  userName?: string;
+  onSignOut: () => void;
+  streakDays?: number;
+}) {
+  const [showBuklet, setShowBuklet] = useState(false);
+
+  return (
+    <div className="px-5 pb-6 space-y-5 animate-pop-in">
+      <div className="border-b border-[#C5A059]/20 pb-3 flex justify-between items-center">
+        <div>
+          <span className="px-2 py-0.5 gold-badge text-[8px]">USER PASSPORT</span>
+          <h2 className="font-editorial text-base font-bold text-[#F8F5EE] uppercase mt-1">{t.profileTitle}</h2>
+        </div>
+        <button
+          onClick={onSignOut}
+          title="Sign out"
+          className="flex items-center gap-1 text-[9px] font-editorial font-bold text-[#F8F5EE]/50 hover:text-[#B2533E] uppercase tracking-wider"
+        >
+          <LogOut size={14} /> Sign Out
+        </button>
+      </div>
+
+      <div className="glass-luxury-card p-5 text-center space-y-3 relative overflow-hidden">
+        <div className="absolute -top-10 -right-10 w-32 h-32 bg-[#C5A059]/15 rounded-full blur-xl pointer-events-none" />
+
+        <div className="w-20 h-20 mx-auto rounded-full border-2 border-[#C5A059] p-1 bg-[#14141C] flex items-center justify-center shadow-lg gold-glow animate-float">
+          <span className="font-editorial text-2xl font-black text-[#C5A059]">II</span>
+        </div>
+
+        <div>
+          <h3 className="font-editorial text-lg font-extrabold text-[#F8F5EE] uppercase tracking-wide">{userName}</h3>
+          <p className="font-body text-[11px] text-[#C5A059] uppercase tracking-widest mt-0.5">{t.levelStatus}</p>
+        </div>
+
+        <div className="grid grid-cols-3 gap-2 pt-3 border-t border-[#C5A059]/20">
+          <div className="bg-[#14141C]/90 p-2.5 border border-[#C5A059]/20">
+            <span className="text-[9px] text-[#F8F5EE]/60 block">{t.totalXpLabel}</span>
+            <span className="font-editorial text-sm font-extrabold text-[#C5A059]">{xp} XP</span>
+          </div>
+          <div className="bg-[#14141C]/90 p-2.5 border border-[#C5A059]/20">
+            <span className="text-[9px] text-[#F8F5EE]/60 block">{t.streakLabel}</span>
+            <span className="font-editorial text-sm font-extrabold text-amber-400 flex items-center justify-center gap-1">
+              <Flame size={13} /> {streakDays}d
+            </span>
+          </div>
+          <div className="bg-[#14141C]/90 p-2.5 border border-[#C5A059]/20">
+            <span className="text-[9px] text-[#F8F5EE]/60 block">WORDS SAVED</span>
+            <span className="font-editorial text-sm font-extrabold text-[#F8F5EE] flex items-center justify-center gap-1">
+              <Layers size={13} className="text-[#C5A059]" /> {savedWordsCount}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div className="glass-luxury-card p-4 space-y-3">
+        <div className="flex items-center justify-between">
+          <h4 className="font-editorial text-xs font-bold text-[#C5A059] uppercase tracking-wider">🏛️ HERITAGE ARTEFACTS VAULT</h4>
+          <span className="text-[9px] text-[#F8F5EE]/50">{unlockedAchievements.length}/{ACHIEVEMENTS.length}</span>
+        </div>
+        <div className="grid grid-cols-3 gap-2 text-center">
+          {ACHIEVEMENTS.map((a) => {
+            const unlocked = unlockedAchievements.includes(a.id);
+            return (
+              <div
+                key={a.id}
+                title={a.desc}
+                className={`p-2.5 bg-[#14141C] border ${unlocked ? "border-[#C5A059]/40" : "border-[#C5A059]/20 opacity-50"}`}
+              >
+                <span className="text-xl">{a.icon}</span>
+                <span className={`block font-editorial text-[8px] mt-1 ${unlocked ? "text-[#F8F5EE]" : "text-[#F8F5EE]/50"}`}>
+                  {a.title.toUpperCase()}
+                </span>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      <button
+        onClick={() => setShowBuklet(true)}
+        className="rounded-full w-full py-4 bg-gradient-to-r from-[#C5A059] to-[#9A7B38] text-[#09090D] font-editorial font-extrabold text-xs tracking-[0.18em] uppercase gold-glow flex items-center justify-center gap-2"
+      >
+        <Share2 size={16} /> {t.shareBuklet}
+      </button>
+
+      {showBuklet && (
+        <div className="fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex items-center justify-center p-4 animate-pop-in">
+          <div className="w-full max-w-[380px] bg-[#0E0E14] border-2 border-[#C5A059] p-6 rounded-lg shadow-2xl relative space-y-5 text-center">
+            <button onClick={() => setShowBuklet(false)} className="absolute top-4 right-4 text-[#C5A059] hover:text-white">
+              <X size={20} />
+            </button>
+
+            <div className="space-y-1 pt-2">
+              <KazakhOrnament className="w-8 h-8 mx-auto text-[#C5A059]" />
+              <span className="font-editorial text-[10px] tracking-[0.25em] text-[#C5A059] uppercase block">{t.bukletHeader}</span>
+              <h3 className="font-editorial text-lg font-black text-[#F8F5EE] uppercase tracking-wider">ERTEGI ENGLISH DIPLOMA</h3>
+            </div>
+
+            <div className="relative w-28 h-28 mx-auto my-3 rounded-full border-4 border-[#C5A059] p-1 bg-gradient-to-b from-[#1C1C24] to-[#0A0A0E] shadow-[0_0_25px_rgba(197,160,89,0.3)] flex items-center justify-center">
+              <div className="w-full h-full rounded-full bg-[#14141C] flex items-center justify-center border border-[#C5A059]/50 overflow-hidden">
+                <span className="font-editorial text-3xl font-black text-[#C5A059]">II</span>
+              </div>
+              <span className="absolute -bottom-2 bg-[#C5A059] text-[#0E0E14] font-editorial font-extrabold text-[8px] px-2 py-0.5 uppercase tracking-widest">
+                PASSPORT
+              </span>
+            </div>
+
+            <div className="space-y-2 bg-[#14141C] p-3.5 border border-[#C5A059]/30 text-left text-xs font-body text-[#F8F5EE]">
+              <div className="flex justify-between border-b border-[#C5A059]/20 pb-1.5">
+                <span className="text-[#F8F5EE]/60">Learner:</span>
+                <span className="font-bold text-[#C5A059]">{userName}</span>
+              </div>
+              <div className="flex justify-between border-b border-[#C5A059]/20 pb-1.5">
+                <span className="text-[#F8F5EE]/60">Active Streak:</span>
+                <span className="font-bold text-amber-400">🔥 {streakDays} Days</span>
+              </div>
+              <div className="flex justify-between border-b border-[#C5A059]/20 pb-1.5">
+                <span className="text-[#F8F5EE]/60">Total XP:</span>
+                <span className="font-bold text-[#C5A059]">{xp} XP</span>
+              </div>
+            </div>
+
+            <div className="pt-2 flex gap-2">
+              <button
+                onClick={async () => {
+                  const shareText = `🏆 ${userName} is learning English through Kazakh folklore on Ertegi English!\n${xp} XP • ${streakDays}-day streak • ${unlockedAchievements.length}/${ACHIEVEMENTS.length} badges unlocked`;
+                  const shareUrl = window.location.href;
+                  try {
+                    if (navigator.share) {
+                      await navigator.share({ title: "Ertegi English — My Progress", text: shareText, url: shareUrl });
+                    } else {
+                      await navigator.clipboard.writeText(`${shareText}\n${shareUrl}`);
+                      alert("Copied to clipboard — paste it anywhere to share!");
+                    }
+                  } catch {
+                    // AbortError: user dismissed native share sheet — not an error
+                  }
+                }}
+                className="flex-1 py-3 bg-gradient-to-r from-[#C5A059] to-[#9A7B38] text-[#09090D] font-editorial font-black text-[10px] tracking-widest uppercase gold-glow flex items-center justify-center gap-1.5"
+              >
+                <Download size={14} /> {t.downloadBuklet}
+              </button>
+              <button
+                onClick={() => setShowBuklet(false)}
+                className="px-4 py-3 bg-[#14141C] border border-[#C5A059]/40 text-[#F8F5EE] font-editorial font-bold text-[10px] uppercase"
+              >
+                {t.closeBuklet}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

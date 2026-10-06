@@ -26,6 +26,7 @@ export interface SavedWord {
   word: string;
   translation: string;
   reviewCount?: number;
+  mastery?: number;
 }
 
 export interface Achievement {
