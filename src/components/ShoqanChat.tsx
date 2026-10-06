@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { X, Send } from "lucide-react";
+import { supabase } from "../lib/supabase";
 
 export const ShoqanChat = () => {
   const [open, setOpen] = useState(false);
@@ -32,7 +33,7 @@ export const ShoqanChat = () => {
   };
 
   useEffect(() => {
-    const onResize = () => setPos((p) => clampPos(p.x, p.y));
+    const onResize = () => setPos((p: { x: number; y: number }) => clampPos(p.x, p.y));
     window.addEventListener("resize", onResize);
     return () => window.removeEventListener("resize", onResize);
   }, []);
@@ -79,9 +80,13 @@ export const ShoqanChat = () => {
     setSending(true);
 
     try {
+      const { data: { session: s } } = await supabase.auth.getSession();
       const res = await fetch("/api/shoqan", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${s?.access_token ?? ""}`,
+        },
         body: JSON.stringify({ messages: nextMessages }),
       });
       const data = await res.json();

@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 import { 
   Sparkles, ArrowRight, Play, Video, Pause, Volume2, 
   ChevronRight, ArrowLeft, X, Compass, Layers, Trophy, CheckCircle2 
@@ -10,7 +10,7 @@ import {
 import { 
   BG_VIDEO_ASSETS, STORIES, LEVEL_DETAILS, WORD_TRANSLATIONS 
 } from "../constants";
-import { SavedWord } from "../types";
+import type { SavedWord } from "../types";
 
 /* --- 1. INTRO SCREEN --- */
 export function IntroScreen({ onFinish, t }: any) {

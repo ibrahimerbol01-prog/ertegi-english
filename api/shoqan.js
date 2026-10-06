@@ -3,6 +3,9 @@
 // the browser. Shoqan is scoped hard to English/Kazakh language help and
 // in-app navigation; the system prompt below is the only thing enforcing
 // that, so it's deliberately explicit and repeats the boundary at the end.
+import { requireAuth } from "./_auth.js";
+
+const DAILY_LIMIT = 30;
 
 const SYSTEM_PROMPT = `You are Shoqan, the in-app assistant for Ertegi English — a mobile web app that teaches English to Kazakhstani students through Kazakh folklore (the legend of Aldar Kose), told across five CEFR levels (A1-C1).
 
@@ -32,6 +35,31 @@ export default async function handler(req, res) {
     res.status(405).json({ error: "Method not allowed" });
     return;
   }
+
+  const auth = await requireAuth(req, res);
+  if (!auth) return; // requireAuth already wrote the 401
+
+  const { user, admin } = auth;
+
+  // Rate-limit: 30 Shoqan requests per user per UTC day.
+  // ponytail: SELECT then UPDATE has a small race window — acceptable at student scale
+  const today = new Date().toISOString().slice(0, 10);
+  const { data: row } = await admin
+    .from("api_usage_daily")
+    .select("shoqan_count")
+    .eq("user_id", user.id)
+    .eq("date", today)
+    .maybeSingle();
+
+  const count = row?.shoqan_count ?? 0;
+  if (count >= DAILY_LIMIT) {
+    res.status(429).json({ error: "Daily limit reached. Try again tomorrow." });
+    return;
+  }
+
+  await admin
+    .from("api_usage_daily")
+    .upsert({ user_id: user.id, date: today, shoqan_count: count + 1 }, { onConflict: "user_id,date" });
 
   const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey) {
