@@ -1,7 +1,8 @@
 import { useState, useRef, useEffect } from "react";
 import {
   Sparkles, ArrowRight, Play, Video, Pause, Volume2,
-  ChevronRight, ArrowLeft, X, Compass, Layers, Trophy, CheckCircle2, Flame
+  ChevronRight, ArrowLeft, X, Compass, Layers, Trophy, CheckCircle2, Flame,
+  Mic, MicOff
 } from "lucide-react";
 import { 
   BackgroundVideo, KazakhOrnament, DailyGoalRing, 
@@ -11,6 +12,7 @@ import {
   BG_VIDEO_ASSETS, STORIES, LEVEL_DETAILS, WORD_TRANSLATIONS 
 } from "../constants";
 import type { SavedWord } from "../types";
+import { supabase } from "../lib/supabase";
 
 /* --- 1. INTRO SCREEN --- */
 export function IntroScreen({ onFinish, t }: any) {
@@ -1015,6 +1017,188 @@ export function QuizScreen({ onReward, t, onQuizFinish, questions }: {
           >
             {qIndex + 1 >= questions.length ? "See Results" : "Next Question"} <ChevronRight size={12} />
           </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* --- 7. SPEAK SCREEN --- */
+export function SpeakScreen({ onReward, t }: {
+  onReward: (xp: number) => void;
+  t: Record<string, string>;
+}) {
+  const [recording, setRecording] = useState(false);
+  const [scores, setScores] = useState<{
+    accuracy: number;
+    fluency: number;
+    completeness: number;
+    pronunciation: number;
+  } | null>(null);
+  const [transcript, setTranscript] = useState<string>("");
+  const [speechError, setSpeechError] = useState<string | null>(null);
+  const recognizerRef = useRef<{ stopContinuousRecognitionAsync?: () => void; close?: () => void } | null>(null);
+
+  const targetPhrase = "He is renowned across the steppe for his sharp wit.";
+
+  const toggleRecord = async () => {
+    if (recording) {
+      try {
+        recognizerRef.current?.stopContinuousRecognitionAsync?.();
+      } catch {
+        // ignore
+      }
+      return;
+    }
+
+    setSpeechError(null);
+    setScores(null);
+    setTranscript("");
+
+    try {
+      const { data: { session: s } } = await supabase.auth.getSession();
+      const tokenRes = await fetch("/api/azure-token", {
+        headers: { Authorization: `Bearer ${s?.access_token ?? ""}` },
+      });
+      const tokenData = await tokenRes.json();
+      if (!tokenRes.ok) throw new Error(tokenData?.error || "Couldn't reach the pronunciation service.");
+
+      // Loaded lazily so the ~2MB SDK only downloads once someone actually
+      // opens this screen, not as part of the app's main bundle.
+      const SpeechSDK = await import("microsoft-cognitiveservices-speech-sdk");
+
+      const speechConfig = SpeechSDK.SpeechConfig.fromAuthorizationToken(tokenData.token, tokenData.region);
+      speechConfig.speechRecognitionLanguage = "en-US";
+
+      const audioConfig = SpeechSDK.AudioConfig.fromDefaultMicrophoneInput();
+
+      const pronunciationConfig = new SpeechSDK.PronunciationAssessmentConfig(
+        targetPhrase,
+        SpeechSDK.PronunciationAssessmentGradingSystem.HundredMark,
+        SpeechSDK.PronunciationAssessmentGranularity.Word,
+        true
+      );
+
+      const recognizer = new SpeechSDK.SpeechRecognizer(speechConfig, audioConfig);
+      pronunciationConfig.applyTo(recognizer);
+      recognizerRef.current = recognizer;
+      setRecording(true);
+
+      recognizer.recognizeOnceAsync(
+        (result: { reason: number; text: string }) => {
+          setRecording(false);
+          if (result.reason === SpeechSDK.ResultReason.RecognizedSpeech) {
+            const assessment = SpeechSDK.PronunciationAssessmentResult.fromResult(result as Parameters<typeof SpeechSDK.PronunciationAssessmentResult.fromResult>[0]);
+            setTranscript(result.text);
+            const next = {
+              accuracy: Math.round(assessment.accuracyScore),
+              fluency: Math.round(assessment.fluencyScore),
+              completeness: Math.round(assessment.completenessScore),
+              pronunciation: Math.round(assessment.pronunciationScore),
+            };
+            setScores(next);
+            if (next.pronunciation >= 50) onReward(Math.round(5 + (next.pronunciation / 100) * 15));
+          } else if (result.reason === SpeechSDK.ResultReason.NoMatch) {
+            setSpeechError("Didn't catch that — try speaking a bit louder and closer to the mic.");
+          } else {
+            setSpeechError("Something went wrong with speech recognition. Please try again.");
+          }
+          recognizer.close();
+        },
+        () => {
+          setRecording(false);
+          setSpeechError("Something went wrong reaching the speech service. Please try again.");
+          recognizer.close();
+        }
+      );
+    } catch (err: unknown) {
+      setRecording(false);
+      setSpeechError((err instanceof Error ? err.message : null) || "Couldn't start pronunciation practice — check your microphone permissions.");
+    }
+  };
+
+  useEffect(() => {
+    return () => {
+      try {
+        recognizerRef.current?.close?.();
+      } catch {
+        // ignore
+      }
+    };
+  }, []);
+
+  const overallScore = scores?.pronunciation ?? null;
+
+  const feedbackMessage =
+    overallScore === null
+      ? ""
+      : overallScore >= 90
+      ? t.greatIntonation
+      : overallScore >= 70
+      ? "Good — close to the target. Listen again and try once more."
+      : "Keep practicing — tap the quote to hear it again, then try to match it closely.";
+
+  return (
+    <div className="px-5 pb-6 space-y-5 animate-pop-in">
+      <div className="border-b border-[#C5A059]/20 pb-3 flex justify-between items-center">
+        <div>
+          <span className="px-2 py-0.5 terracotta-badge text-[8px]">SPEECH EVALUATION</span>
+          <h2 className="font-editorial text-base font-bold text-[#F8F5EE] uppercase mt-1">{t.speakTitle}</h2>
+        </div>
+        <Mic className="text-[#C5A059] w-5 h-5" />
+      </div>
+
+      <div className="glass-luxury-card p-6 text-center space-y-3">
+        <p className="font-body text-xs text-[#F8F5EE]/70">{t.speakSubtitle}</p>
+        <blockquote
+          className="font-editorial text-sm font-bold text-[#C5A059] uppercase tracking-wide leading-relaxed cursor-pointer"
+          onClick={() => safePlayVoice(targetPhrase)}
+        >
+          "{targetPhrase}" 🔊
+        </blockquote>
+      </div>
+
+      <div className="flex flex-col items-center justify-center py-4 space-y-3">
+        <button
+          onClick={toggleRecord}
+          className={`w-20 h-20 rounded-full flex items-center justify-center transition-all ${
+            recording
+              ? "bg-[#B2533E] text-[#F8F5EE] animate-pulse shadow-[0_0_30px_rgba(178,83,62,0.6)]"
+              : "bg-[#14141C] border border-[#C5A059] text-[#C5A059] hover:bg-[#C5A059] hover:text-[#09090D] gold-glow"
+          }`}
+        >
+          {recording ? <MicOff size={28} /> : <Mic size={28} />}
+        </button>
+        <span className="font-editorial text-[9px] tracking-[0.18em] text-[#C5A059] uppercase">
+          {recording ? t.recording : t.pressMic}
+        </span>
+      </div>
+
+      {speechError && (
+        <div className="glass-luxury-card p-4 text-center space-y-1 animate-pop-in border-[#B2533E]/40">
+          <p className="font-body text-xs text-[#B2533E]">{speechError}</p>
+        </div>
+      )}
+
+      {scores !== null && (
+        <div className="glass-luxury-card p-4 text-center space-y-2 animate-pop-in border-emerald-500/30">
+          <p className="font-editorial text-xl font-extrabold text-emerald-400">{scores.pronunciation}% {t.accuracy}</p>
+          {transcript && <p className="font-body text-[10px] text-[#F8F5EE]/50 italic">You said: "{transcript}"</p>}
+          <div className="grid grid-cols-3 gap-2 pt-1">
+            <div>
+              <p className="font-editorial text-sm font-bold text-[#C5A059]">{scores.accuracy}%</p>
+              <p className="text-[8px] text-[#F8F5EE]/50 uppercase tracking-wider">Accuracy</p>
+            </div>
+            <div>
+              <p className="font-editorial text-sm font-bold text-[#C5A059]">{scores.fluency}%</p>
+              <p className="text-[8px] text-[#F8F5EE]/50 uppercase tracking-wider">Fluency</p>
+            </div>
+            <div>
+              <p className="font-editorial text-sm font-bold text-[#C5A059]">{scores.completeness}%</p>
+              <p className="text-[8px] text-[#F8F5EE]/50 uppercase tracking-wider">Completeness</p>
+            </div>
+          </div>
+          <p className="font-body text-xs text-[#F8F5EE]/90 pt-1">{feedbackMessage}</p>
         </div>
       )}
     </div>
