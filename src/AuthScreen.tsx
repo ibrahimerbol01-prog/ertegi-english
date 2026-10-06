@@ -50,16 +50,16 @@ function PrivacyPolicyModal({ onClose }: { onClose: () => void }) {
           <h3 className="font-editorial text-sm font-extrabold text-[#F8F5EE] uppercase tracking-wide">
             Privacy Policy
           </h3>
-          <button onClick={onClose} className="text-[#F8F5EE]/50 hover:text-[#F8F5EE] text-xl leading-none">
+          <button onClick={onClose} className="p-2 min-h-[44px] min-w-[44px] flex items-center justify-center text-[#F8F5EE]/70 hover:text-[#F8F5EE] text-xl leading-none">
             ×
           </button>
         </div>
-        <div className="overflow-y-auto font-body text-[11px] text-[#F8F5EE]/70 leading-relaxed whitespace-pre-wrap pr-1">
+        <div className="overflow-y-auto font-body text-xs text-[#F8F5EE]/70 leading-relaxed whitespace-pre-wrap pr-1">
           {PRIVACY_POLICY_TEXT}
         </div>
         <button
           onClick={onClose}
-          className="mt-4 w-full py-2.5 bg-gradient-to-r from-[#C5A059] to-[#9A7B38] text-[#09090D] font-editorial font-bold text-[10px] tracking-widest uppercase rounded-full"
+          className="mt-4 w-full py-2.5 bg-gradient-to-r from-[#C5A059] to-[#9A7B38] text-[#09090D] font-editorial font-bold text-xs tracking-[0.1em] uppercase rounded-full"
         >
           Close
         </button>
@@ -147,7 +147,7 @@ export default function AuthScreen() {
           <span className="font-editorial text-lg tracking-[0.2em] text-[#F8F5EE] uppercase font-extrabold">
             Ertegi English
           </span>
-          <p className="font-body text-[11px] text-[#F8F5EE]/50">
+          <p className="font-body text-xs text-[#F8F5EE]/70">
             {mode === "signin" ? "Welcome back" : "Create your account"}
           </p>
         </div>
@@ -226,7 +226,7 @@ export default function AuthScreen() {
                   onChange={(e) => setAgreed(e.target.checked)}
                   className="mt-0.5 w-3.5 h-3.5 accent-[#C5A059] shrink-0"
                 />
-                <span className="text-[10px] font-body text-[#F8F5EE]/60 leading-relaxed">
+                <span className="text-xs font-body text-[#F8F5EE]/70 leading-relaxed">
                   I agree to the{" "}
                   <button
                     type="button"
@@ -239,7 +239,7 @@ export default function AuthScreen() {
               </label>
             )}
 
-            {error && <p className="text-[10px] font-body text-[#B2533E] leading-relaxed">{error}</p>}
+            {error && <p className="text-xs font-body text-[#B2533E] leading-relaxed">{error}</p>}
 
             <button
               type="submit"
@@ -252,7 +252,7 @@ export default function AuthScreen() {
         )}
 
         {!confirmSent && (
-          <p className="text-center text-[11px] font-body text-[#F8F5EE]/50">
+          <p className="text-center text-xs font-body text-[#F8F5EE]/70">
             {mode === "signin" ? "No account yet?" : "Already have an account?"}{" "}
             <button
               onClick={() => {

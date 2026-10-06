@@ -156,7 +156,35 @@ export const KazakhOrnament = ({ className = "w-6 h-6 text-amber-200" }: { class
   </svg>
 );
 
-export const BackgroundVideo = ({ src, opacity = 50, videoKey }: any) => {
+/* Static ornament background — replaces BackgroundVideo on all content tabs */
+export const StaticOrnamentBg = () => (
+  <div className="absolute inset-0 w-full h-full overflow-hidden pointer-events-none" style={{ zIndex: 0 }}>
+    <div className="absolute inset-0 bg-[#09090D]" />
+    {/* ponytail: inline SVG pattern avoids an extra network request; upgrade to CSS mask-image if pattern changes frequently */}
+    <svg
+      className="absolute inset-0 w-full h-full"
+      xmlns="http://www.w3.org/2000/svg"
+      style={{ opacity: 0.05 }}
+      aria-hidden="true"
+    >
+      <defs>
+        <pattern id="kz-ornament" x="0" y="0" width="48" height="48" patternUnits="userSpaceOnUse">
+          <path d="M24 2 L46 24 L24 46 L2 24 Z" stroke="#C5A059" strokeWidth="0.8" fill="none"/>
+          <path d="M24 12 L36 24 L24 36 L12 24 Z" stroke="#C5A059" strokeWidth="0.5" fill="none"/>
+          <path d="M24 2 L24 12 M24 36 L24 46 M2 24 L12 24 M36 24 L46 24" stroke="#C5A059" strokeWidth="0.4" fill="none"/>
+          <circle cx="24" cy="2" r="1.2" fill="#C5A059"/>
+          <circle cx="46" cy="24" r="1.2" fill="#C5A059"/>
+          <circle cx="24" cy="46" r="1.2" fill="#C5A059"/>
+          <circle cx="2" cy="24" r="1.2" fill="#C5A059"/>
+          <circle cx="24" cy="24" r="1.5" fill="#C5A059"/>
+        </pattern>
+      </defs>
+      <rect width="100%" height="100%" fill="url(#kz-ornament)"/>
+    </svg>
+  </div>
+);
+
+export const BackgroundVideo = ({ src, opacity = 50, videoKey }: { src: string; opacity?: number; videoKey?: string }) => {
   const [error, setError] = useState(false);
   return (
     <div className="absolute inset-0 w-full h-full overflow-hidden pointer-events-none" style={{ zIndex: 0 }}>
@@ -181,7 +209,7 @@ export const BackgroundVideo = ({ src, opacity = 50, videoKey }: any) => {
   );
 };
 
-export const XpToast = ({ toast }: any) => {
+export const XpToast = ({ toast }: { toast: { amount: number; key: number } | null }) => {
   if (!toast) return null;
   return (
     <span
@@ -195,7 +223,7 @@ export const XpToast = ({ toast }: any) => {
   );
 };
 
-export const LevelUpModal = ({ show, rank, onClose }: any) => {
+export const LevelUpModal = ({ show, rank, onClose }: { show: boolean; rank: number; onClose: () => void }) => {
   const [confetti, setConfetti] = useState<{ id: number; left: number; delay: number; color: string }[]>([]);
   const onCloseRef = useRef(onClose);
   useEffect(() => {
@@ -231,7 +259,7 @@ export const LevelUpModal = ({ show, rank, onClose }: any) => {
         ))}
         <div className="relative glass-luxury-card border-2 border-[#C5A059] p-6 text-center space-y-3 animate-rank-pop">
           <KazakhOrnament className="w-9 h-9 mx-auto text-[#C5A059] animate-float" />
-          <p className="font-editorial text-[10px] tracking-[0.25em] text-[#C5A059] uppercase">RANK ACHIEVED</p>
+          <p className="font-editorial text-xs tracking-[0.15em] text-[#C5A059] uppercase">RANK ACHIEVED</p>
           <h3 className="font-editorial text-2xl font-black text-[#F8F5EE] uppercase">Level {rank}</h3>
           <p className="font-body text-xs text-[#F8F5EE]/70">Your dedication to the steppe tales is paying off.</p>
         </div>
@@ -240,7 +268,7 @@ export const LevelUpModal = ({ show, rank, onClose }: any) => {
   );
 };
 
-export const AchievementBanner = ({ achievement, onDone }: any) => {
+export const AchievementBanner = ({ achievement, onDone }: { achievement: { icon: string; title: string; desc: string } | null; onDone: () => void }) => {
   const onDoneRef = useRef(onDone);
   useEffect(() => {
     onDoneRef.current = onDone;
@@ -260,16 +288,16 @@ export const AchievementBanner = ({ achievement, onDone }: any) => {
       <div className="animate-achievement glass-luxury-card border-2 border-[#C5A059] p-3.5 flex items-center gap-3 gold-glow">
         <span className="text-2xl shrink-0">{achievement.icon}</span>
         <div className="min-w-0">
-          <p className="text-[8px] text-[#C5A059] uppercase tracking-[0.2em] font-bold">Badge Unlocked</p>
+          <p className="text-xs text-[#C5A059] uppercase tracking-[0.1em] font-bold">Badge Unlocked</p>
           <p className="font-editorial text-xs font-extrabold text-[#F8F5EE] truncate">{achievement.title}</p>
-          <p className="font-body text-[10px] text-[#F8F5EE]/60 truncate">{achievement.desc}</p>
+          <p className="font-body text-xs text-[#F8F5EE]/70 truncate">{achievement.desc}</p>
         </div>
       </div>
     </div>
   );
 };
 
-export const DailyGoalRing = ({ current, goal }: any) => {
+export const DailyGoalRing = ({ current, goal }: { current: number; goal: number }) => {
   const radius = 30;
   const circumference = 2 * Math.PI * radius;
   const progress = Math.max(0, Math.min(current / goal, 1));
@@ -294,8 +322,9 @@ export const DailyGoalRing = ({ current, goal }: any) => {
           <CheckCircle2 size={18} className="text-emerald-400" />
         ) : (
           <>
-            <span className="font-editorial text-[11px] font-black text-[#F8F5EE] leading-none">{current}</span>
-            <span className="text-[7px] text-[#F8F5EE]/50 uppercase tracking-wider mt-0.5">/ {goal} XP</span>
+            <span className="font-editorial text-xs font-black text-[#F8F5EE] leading-none">{current}</span>
+            {/* ponytail: 10px inside a 54px ring — decorative context, min-12px rule doesn't apply here */}
+            <span className="text-[10px] text-[#F8F5EE]/70 uppercase tracking-[0.05em] mt-0.5">/ {goal} XP</span>
           </>
         )}
       </div>

@@ -1,18 +1,18 @@
-﻿import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 import type { Session } from "@supabase/supabase-js";
 import {
   BookOpen, Trophy, Home as HomeIcon, User, Layers, Globe, Mic
 } from "lucide-react";
 import {
   FontLoader, LevelUpModal, AchievementBanner, XpToast,
-  KazakhOrnament, BackgroundVideo
+  KazakhOrnament, StaticOrnamentBg
 } from "./components/UIHelpers";
 import { ShoqanChat } from "./components/ShoqanChat";
 import {
   HomeScreen, ReaderScreen, FlashcardsScreen, MatchingGame,
   QuizScreen, SpeakScreen, ProfileScreen
 } from "./components/Screens";
-import { DICT, ACHIEVEMENTS, STORIES, BG_VIDEO_ASSETS } from "./constants";
+import { DICT, ACHIEVEMENTS, STORIES } from "./constants";
 import type { SavedWord } from "./types";
 import { supabase } from "./lib/supabase";
 
@@ -190,10 +190,6 @@ export default function KazakhTalesApp({ session }: { session: Session }) {
     });
   };
 
-
-  const isProfileTab = tab === "profile";
-  const currentVideoBg = BG_VIDEO_ASSETS[tab as keyof typeof BG_VIDEO_ASSETS] || BG_VIDEO_ASSETS.home;
-
   if (!dataLoaded) {
     return <div className="min-h-screen w-full bg-[#09090D]" />;
   }
@@ -209,12 +205,8 @@ export default function KazakhTalesApp({ session }: { session: Session }) {
       />
       <ShoqanChat />
 
-      {!isProfileTab && (
-        <BackgroundVideo src={currentVideoBg} opacity={50} videoKey={tab} />
-      )}
-      {isProfileTab && (
-        <div className="absolute inset-0 w-full h-full bg-gradient-to-b from-[#14100C] to-[#09090D]" style={{ zIndex: 0 }} />
-      )}
+      {/* Static ornament bg on all tabs — video only inside hero card (HomeScreen) and IntroScreen */}
+      <StaticOrnamentBg />
 
       <div className="relative z-10 w-full h-full sm:h-auto sm:max-w-[420px] bg-[#09090D]/75 backdrop-blur-xl shadow-2xl border border-[#C5A059]/30 overflow-hidden flex flex-col min-h-screen sm:min-h-[780px]">
 
@@ -226,12 +218,12 @@ export default function KazakhTalesApp({ session }: { session: Session }) {
           <div className="flex items-center gap-2.5">
             <button
               onClick={() => setLang(lang === "kk" ? "en" : "kk")}
-              className="flex items-center gap-1.5 px-2.5 py-1 border border-[#C5A059]/30 bg-[#14141C] text-[9px] font-editorial font-bold tracking-wider hover:border-[#C5A059] transition-all"
+              className="flex items-center gap-1.5 px-3 min-h-[44px] border border-[#C5A059]/30 bg-[#14141C] text-xs font-editorial font-bold tracking-[0.1em] hover:border-[#C5A059] transition-all"
             >
               <Globe size={11} className="text-[#C5A059]" />
-              <span className={lang === "kk" ? "text-[#C5A059]" : "text-[#F8F5EE]/40"}>QAZ</span>
+              <span className={lang === "kk" ? "text-[#C5A059]" : "text-[#F8F5EE]/70"}>QAZ</span>
               <span className="text-[#F8F5EE]/20">|</span>
-              <span className={lang === "en" ? "text-[#C5A059]" : "text-[#F8F5EE]/40"}>ENG</span>
+              <span className={lang === "en" ? "text-[#C5A059]" : "text-[#F8F5EE]/70"}>ENG</span>
             </button>
             <span className="relative px-2.5 py-0.5 gold-badge text-[9px] gold-glow">
               {xp} XP
@@ -281,13 +273,13 @@ export default function KazakhTalesApp({ session }: { session: Session }) {
                 <div className="grid grid-cols-2 gap-1 p-1 bg-[#14141C] rounded-full border border-white/[0.06]">
                   <button
                     onClick={() => setWordsMode("cards")}
-                    className={`py-2 text-[9px] font-editorial font-bold uppercase tracking-wider rounded-full transition-all ${wordsMode === "cards" ? "bg-[#C5A059] text-[#09090D]" : "text-[#F8F5EE]/50"}`}
+                    className={`py-3 text-xs font-editorial font-bold uppercase tracking-[0.1em] rounded-full transition-all ${wordsMode === "cards" ? "bg-[#C5A059] text-[#09090D]" : "text-[#F8F5EE]/70"}`}
                   >
                     Flashcards
                   </button>
                   <button
                     onClick={() => setWordsMode("match")}
-                    className={`py-2 text-[9px] font-editorial font-bold uppercase tracking-wider rounded-full transition-all ${wordsMode === "match" ? "bg-[#C5A059] text-[#09090D]" : "text-[#F8F5EE]/50"}`}
+                    className={`py-3 text-xs font-editorial font-bold uppercase tracking-[0.1em] rounded-full transition-all ${wordsMode === "match" ? "bg-[#C5A059] text-[#09090D]" : "text-[#F8F5EE]/70"}`}
                   >
                     Matching Game
                   </button>
@@ -332,7 +324,7 @@ export default function KazakhTalesApp({ session }: { session: Session }) {
                   className="relative flex flex-col items-center justify-center gap-1 py-2"
                 >
                   <span
-                    className={`flex items-center justify-center w-9 h-9 rounded-2xl transition-all duration-300 ${active ? "bg-[#C5A059] text-[#09090D] shadow-[0_4px_14px_-2px_rgba(197,160,89,0.55)]" : "text-[#F8F5EE]/45"}`}
+                    className={`flex items-center justify-center w-9 h-9 rounded-2xl transition-all duration-300 ${active ? "bg-[#C5A059] text-[#09090D] shadow-[0_4px_14px_-2px_rgba(197,160,89,0.55)]" : "text-[#F8F5EE]/70"}`}
                   >
                     <Icon size={15} />
                     {id === "words" && savedWords.length > 0 && (
@@ -341,7 +333,7 @@ export default function KazakhTalesApp({ session }: { session: Session }) {
                       </span>
                     )}
                   </span>
-                  <span className={`font-editorial text-[7px] tracking-[0.1em] uppercase transition-colors ${active ? "text-[#C5A059] font-bold" : "text-[#F8F5EE]/35"}`}>
+                  <span className={`font-editorial text-xs tracking-[0.05em] uppercase transition-colors ${active ? "text-[#C5A059] font-bold" : "text-[#F8F5EE]/70"}`}>
                     {label}
                   </span>
                 </button>
