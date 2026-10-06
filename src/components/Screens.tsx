@@ -2,14 +2,14 @@ import { useState, useRef, useEffect } from "react";
 import {
   Sparkles, ArrowRight, Play, Video, Pause, Volume2,
   ChevronRight, ArrowLeft, X, Compass, Layers, Trophy, CheckCircle2, Flame,
-  Mic, MicOff
+  Mic, MicOff, LogOut, Share2, Download
 } from "lucide-react";
 import { 
   BackgroundVideo, KazakhOrnament, DailyGoalRing, 
   safePlayVoice 
 } from "./UIHelpers";
-import { 
-  BG_VIDEO_ASSETS, STORIES, LEVEL_DETAILS, WORD_TRANSLATIONS 
+import {
+  BG_VIDEO_ASSETS, STORIES, LEVEL_DETAILS, WORD_TRANSLATIONS, ACHIEVEMENTS
 } from "../constants";
 import type { SavedWord } from "../types";
 import { supabase } from "../lib/supabase";
@@ -1199,6 +1199,168 @@ export function SpeakScreen({ onReward, t }: {
             </div>
           </div>
           <p className="font-body text-xs text-[#F8F5EE]/90 pt-1">{feedbackMessage}</p>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* --- 8. PROFILE SCREEN --- */
+export function ProfileScreen({ xp, t, savedWordsCount = 0, unlockedAchievements = [], userName = "Learner", onSignOut, streakDays = 0 }: {
+  xp: number;
+  t: Record<string, string>;
+  savedWordsCount?: number;
+  unlockedAchievements?: string[];
+  userName?: string;
+  onSignOut: () => void;
+  streakDays?: number;
+}) {
+  const [showBuklet, setShowBuklet] = useState(false);
+
+  return (
+    <div className="px-5 pb-6 space-y-5 animate-pop-in">
+      <div className="border-b border-[#C5A059]/20 pb-3 flex justify-between items-center">
+        <div>
+          <span className="px-2 py-0.5 gold-badge text-[8px]">USER PASSPORT</span>
+          <h2 className="font-editorial text-base font-bold text-[#F8F5EE] uppercase mt-1">{t.profileTitle}</h2>
+        </div>
+        <button
+          onClick={onSignOut}
+          title="Sign out"
+          className="flex items-center gap-1 text-[9px] font-editorial font-bold text-[#F8F5EE]/50 hover:text-[#B2533E] uppercase tracking-wider"
+        >
+          <LogOut size={14} /> Sign Out
+        </button>
+      </div>
+
+      <div className="glass-luxury-card p-5 text-center space-y-3 relative overflow-hidden">
+        <div className="absolute -top-10 -right-10 w-32 h-32 bg-[#C5A059]/15 rounded-full blur-xl pointer-events-none" />
+
+        <div className="w-20 h-20 mx-auto rounded-full border-2 border-[#C5A059] p-1 bg-[#14141C] flex items-center justify-center shadow-lg gold-glow animate-float">
+          <span className="font-editorial text-2xl font-black text-[#C5A059]">II</span>
+        </div>
+
+        <div>
+          <h3 className="font-editorial text-lg font-extrabold text-[#F8F5EE] uppercase tracking-wide">{userName}</h3>
+          <p className="font-body text-[11px] text-[#C5A059] uppercase tracking-widest mt-0.5">{t.levelStatus}</p>
+        </div>
+
+        <div className="grid grid-cols-3 gap-2 pt-3 border-t border-[#C5A059]/20">
+          <div className="bg-[#14141C]/90 p-2.5 border border-[#C5A059]/20">
+            <span className="text-[9px] text-[#F8F5EE]/60 block">{t.totalXpLabel}</span>
+            <span className="font-editorial text-sm font-extrabold text-[#C5A059]">{xp} XP</span>
+          </div>
+          <div className="bg-[#14141C]/90 p-2.5 border border-[#C5A059]/20">
+            <span className="text-[9px] text-[#F8F5EE]/60 block">{t.streakLabel}</span>
+            <span className="font-editorial text-sm font-extrabold text-amber-400 flex items-center justify-center gap-1">
+              <Flame size={13} /> {streakDays}d
+            </span>
+          </div>
+          <div className="bg-[#14141C]/90 p-2.5 border border-[#C5A059]/20">
+            <span className="text-[9px] text-[#F8F5EE]/60 block">WORDS SAVED</span>
+            <span className="font-editorial text-sm font-extrabold text-[#F8F5EE] flex items-center justify-center gap-1">
+              <Layers size={13} className="text-[#C5A059]" /> {savedWordsCount}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div className="glass-luxury-card p-4 space-y-3">
+        <div className="flex items-center justify-between">
+          <h4 className="font-editorial text-xs font-bold text-[#C5A059] uppercase tracking-wider">🏛️ HERITAGE ARTEFACTS VAULT</h4>
+          <span className="text-[9px] text-[#F8F5EE]/50">{unlockedAchievements.length}/{ACHIEVEMENTS.length}</span>
+        </div>
+        <div className="grid grid-cols-3 gap-2 text-center">
+          {ACHIEVEMENTS.map((a) => {
+            const unlocked = unlockedAchievements.includes(a.id);
+            return (
+              <div
+                key={a.id}
+                title={a.desc}
+                className={`p-2.5 bg-[#14141C] border ${unlocked ? "border-[#C5A059]/40" : "border-[#C5A059]/20 opacity-50"}`}
+              >
+                <span className="text-xl">{a.icon}</span>
+                <span className={`block font-editorial text-[8px] mt-1 ${unlocked ? "text-[#F8F5EE]" : "text-[#F8F5EE]/50"}`}>
+                  {a.title.toUpperCase()}
+                </span>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      <button
+        onClick={() => setShowBuklet(true)}
+        className="rounded-full w-full py-4 bg-gradient-to-r from-[#C5A059] to-[#9A7B38] text-[#09090D] font-editorial font-extrabold text-xs tracking-[0.18em] uppercase gold-glow flex items-center justify-center gap-2"
+      >
+        <Share2 size={16} /> {t.shareBuklet}
+      </button>
+
+      {showBuklet && (
+        <div className="fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex items-center justify-center p-4 animate-pop-in">
+          <div className="w-full max-w-[380px] bg-[#0E0E14] border-2 border-[#C5A059] p-6 rounded-lg shadow-2xl relative space-y-5 text-center">
+            <button onClick={() => setShowBuklet(false)} className="absolute top-4 right-4 text-[#C5A059] hover:text-white">
+              <X size={20} />
+            </button>
+
+            <div className="space-y-1 pt-2">
+              <KazakhOrnament className="w-8 h-8 mx-auto text-[#C5A059]" />
+              <span className="font-editorial text-[10px] tracking-[0.25em] text-[#C5A059] uppercase block">{t.bukletHeader}</span>
+              <h3 className="font-editorial text-lg font-black text-[#F8F5EE] uppercase tracking-wider">ERTEGI ENGLISH DIPLOMA</h3>
+            </div>
+
+            <div className="relative w-28 h-28 mx-auto my-3 rounded-full border-4 border-[#C5A059] p-1 bg-gradient-to-b from-[#1C1C24] to-[#0A0A0E] shadow-[0_0_25px_rgba(197,160,89,0.3)] flex items-center justify-center">
+              <div className="w-full h-full rounded-full bg-[#14141C] flex items-center justify-center border border-[#C5A059]/50 overflow-hidden">
+                <span className="font-editorial text-3xl font-black text-[#C5A059]">II</span>
+              </div>
+              <span className="absolute -bottom-2 bg-[#C5A059] text-[#0E0E14] font-editorial font-extrabold text-[8px] px-2 py-0.5 uppercase tracking-widest">
+                PASSPORT
+              </span>
+            </div>
+
+            <div className="space-y-2 bg-[#14141C] p-3.5 border border-[#C5A059]/30 text-left text-xs font-body text-[#F8F5EE]">
+              <div className="flex justify-between border-b border-[#C5A059]/20 pb-1.5">
+                <span className="text-[#F8F5EE]/60">Learner:</span>
+                <span className="font-bold text-[#C5A059]">{userName}</span>
+              </div>
+              <div className="flex justify-between border-b border-[#C5A059]/20 pb-1.5">
+                <span className="text-[#F8F5EE]/60">Active Streak:</span>
+                <span className="font-bold text-amber-400">🔥 {streakDays} Days</span>
+              </div>
+              <div className="flex justify-between border-b border-[#C5A059]/20 pb-1.5">
+                <span className="text-[#F8F5EE]/60">Total XP:</span>
+                <span className="font-bold text-[#C5A059]">{xp} XP</span>
+              </div>
+            </div>
+
+            <div className="pt-2 flex gap-2">
+              <button
+                onClick={async () => {
+                  const shareText = `🏆 ${userName} is learning English through Kazakh folklore on Ertegi English!\n${xp} XP • ${streakDays}-day streak • ${unlockedAchievements.length}/${ACHIEVEMENTS.length} badges unlocked`;
+                  const shareUrl = window.location.href;
+                  try {
+                    if (navigator.share) {
+                      await navigator.share({ title: "Ertegi English — My Progress", text: shareText, url: shareUrl });
+                    } else {
+                      await navigator.clipboard.writeText(`${shareText}\n${shareUrl}`);
+                      alert("Copied to clipboard — paste it anywhere to share!");
+                    }
+                  } catch {
+                    // AbortError: user dismissed native share sheet — not an error
+                  }
+                }}
+                className="flex-1 py-3 bg-gradient-to-r from-[#C5A059] to-[#9A7B38] text-[#09090D] font-editorial font-black text-[10px] tracking-widest uppercase gold-glow flex items-center justify-center gap-1.5"
+              >
+                <Download size={14} /> {t.downloadBuklet}
+              </button>
+              <button
+                onClick={() => setShowBuklet(false)}
+                className="px-4 py-3 bg-[#14141C] border border-[#C5A059]/40 text-[#F8F5EE] font-editorial font-bold text-[10px] uppercase"
+              >
+                {t.closeBuklet}
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>
