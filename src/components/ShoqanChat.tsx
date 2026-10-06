@@ -92,7 +92,7 @@ export const ShoqanChat = () => {
       const data = await res.json();
       if (!res.ok) throw new Error(data?.error || "Request failed");
       setMessages((prev) => [...prev, { role: "assistant", content: data.reply }]);
-    } catch (err) {
+    } catch {
       setChatError("Shoqan couldn't respond just now — try again in a moment.");
     } finally {
       setSending(false);

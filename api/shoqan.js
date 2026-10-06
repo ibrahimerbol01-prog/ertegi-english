@@ -105,7 +105,7 @@ export default async function handler(req, res) {
     const data = await upstream.json();
     const reply = data?.content?.find((block) => block.type === "text")?.text || "Sorry, I couldn't come up with a reply just now.";
     res.status(200).json({ reply });
-  } catch (err) {
+  } catch {
     res.status(500).json({ error: "Something went wrong reaching the AI service." });
   }
 };
