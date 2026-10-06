@@ -4,6 +4,7 @@
 // just the token + region and uses the Azure Speech SDK directly from the
 // browser for real-time pronunciation assessment — this is Microsoft's own
 // recommended pattern (avoids proxying raw audio through our server).
+import { requireAuth } from "./_auth.js";
 
 export default async function handler(req, res) {
     try {
@@ -11,7 +12,10 @@ export default async function handler(req, res) {
         res.status(405).json({ error: "Method not allowed" });
         return;
       }
-  
+
+      const auth = await requireAuth(req, res);
+      if (!auth) return;
+
       const key = process.env.AZURE_SPEECH_KEY;
       const region = process.env.AZURE_SPEECH_REGION;
   
