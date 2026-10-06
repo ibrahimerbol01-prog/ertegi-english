@@ -125,10 +125,10 @@ export const ShoqanChat = () => {
                 </div>
                 <div>
                   <p className="font-editorial text-xs font-extrabold text-[#F8F5EE] uppercase tracking-wide">Shoqan</p>
-                  <p className="font-body text-[9px] text-[#F8F5EE]/50">English & Kazakh helper</p>
+                  <p className="font-body text-xs text-[#F8F5EE]/70">English & Kazakh helper</p>
                 </div>
               </div>
-              <button onClick={() => setOpen(false)} className="text-[#F8F5EE]/50 hover:text-[#F8F5EE]">
+              <button onClick={() => setOpen(false)} className="p-2.5 text-[#F8F5EE]/70 hover:text-[#F8F5EE]">
                 <X size={18} />
               </button>
             </div>
@@ -137,7 +137,7 @@ export const ShoqanChat = () => {
               {messages.map((m, i) => (
                 <div key={i} className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}>
                   <div
-                    className={`max-w-[80%] p-2.5 text-[11px] font-body leading-relaxed rounded-[14px] ${
+                    className={`max-w-[80%] p-2.5 text-xs font-body leading-relaxed rounded-[14px] ${
                       m.role === "user"
                         ? "bg-[#C5A059] text-[#09090D] font-medium"
                         : "bg-[#14141C] text-[#F8F5EE]/90 border border-[#C5A059]/15"
@@ -149,12 +149,12 @@ export const ShoqanChat = () => {
               ))}
               {sending && (
                 <div className="flex justify-start">
-                  <div className="bg-[#14141C] border border-[#C5A059]/15 p-2.5 rounded-[14px] text-[11px] text-[#F8F5EE]/40 italic">
+                  <div className="bg-[#14141C] border border-[#C5A059]/15 p-2.5 rounded-[14px] text-xs text-[#F8F5EE]/70 italic">
                     Shoqan is thinking...
                   </div>
                 </div>
               )}
-              {chatError && <p className="text-[10px] text-[#B2533E] text-center">{chatError}</p>}
+              {chatError && <p className="text-xs text-[#B2533E] text-center">{chatError}</p>}
             </div>
 
             <div className="p-3 border-t border-[#C5A059]/20 flex items-center gap-2">
@@ -171,7 +171,7 @@ export const ShoqanChat = () => {
               <button
                 onClick={handleSend}
                 disabled={sending || !input.trim()}
-                className="w-9 h-9 shrink-0 rounded-full bg-gradient-to-br from-[#C5A059] to-[#9A7B38] disabled:opacity-40 text-[#09090D] flex items-center justify-center"
+                className="w-11 h-11 shrink-0 rounded-full bg-gradient-to-br from-[#C5A059] to-[#9A7B38] disabled:opacity-40 text-[#09090D] flex items-center justify-center"
               >
                 <Send size={15} />
               </button>

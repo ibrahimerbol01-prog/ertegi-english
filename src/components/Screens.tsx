@@ -86,7 +86,7 @@ export function HomeScreen({ onStartRead, t, lang, sessionXp = 0, dailyGoal = 50
 
       <div className="space-y-3">
         <div className="flex items-center justify-between">
-          <h3 className="font-editorial text-[11px] tracking-[0.18em] text-[#C5A059] uppercase">{t.collectionTitle}</h3>
+          <h3 className="font-editorial text-xs tracking-[0.1em] text-[#C5A059] uppercase">{t.collectionTitle}</h3>
           <span className="text-[9px] text-[#C5A059] font-bold bg-[#14141C] px-2.5 py-1 border border-[#C5A059]/30">
             {STORIES.length}/10 UNLOCKED
           </span>
@@ -198,7 +198,7 @@ export function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, s
               <div className="space-y-1 min-w-0">
                 <span className="px-2 py-0.5 gold-badge text-[9px]">{story.sceneLabel}</span>
                 <h3 className="font-editorial text-xs font-bold text-[#F8F5EE] uppercase tracking-wider">{story.title}</h3>
-                <p className="font-body text-[11px] text-[#F8F5EE]/70">{story.storyDesc.en}</p>
+                <p className="font-body text-xs text-[#F8F5EE]/70">{story.storyDesc.en}</p>
               </div>
               <ChevronRight size={16} className="text-[#C5A059] group-hover:translate-x-1 transition-transform shrink-0" />
             </div>
@@ -241,7 +241,7 @@ export function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, s
                   <span className="px-2 py-0.5 gold-badge text-[9px]">{lvl.badge}</span>
                   <h3 className="font-editorial text-xs font-bold text-[#F8F5EE] uppercase tracking-wider">{lvl.title}</h3>
                 </div>
-                <p className="font-body text-[11px] text-[#F8F5EE]/70">{lvl.desc}</p>
+                <p className="font-body text-xs text-[#F8F5EE]/70">{lvl.desc}</p>
               </div>
               <ChevronRight size={16} className="text-[#C5A059] group-hover:translate-x-1 transition-transform" />
             </div>
@@ -336,13 +336,13 @@ export function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, s
     <div className="px-5 pb-6 space-y-4 animate-pop-in relative">
       <div className="flex items-center justify-between border-b border-[#C5A059]/20 pb-3">
         <div>
-          <p className="font-editorial text-[9px] tracking-[0.18em] text-[#C5A059] uppercase">{currentStory.sceneLabel}</p>
+          <p className="font-editorial text-xs tracking-[0.1em] text-[#C5A059] uppercase">{currentStory.sceneLabel}</p>
           <h1 className="font-editorial text-sm font-extrabold text-[#F8F5EE] uppercase tracking-wide">{currentStory.title}</h1>
         </div>
 
         <button
           onClick={() => setSelectedLevel(null)}
-          className="flex items-center gap-1 px-2.5 py-1 bg-[#14141C] border border-[#C5A059]/30 text-[9px] font-editorial text-[#C5A059] uppercase hover:border-[#C5A059] transition-all"
+          className="flex items-center gap-1 px-3 min-h-[44px] bg-[#14141C] border border-[#C5A059]/30 text-xs font-editorial text-[#C5A059] uppercase hover:border-[#C5A059] transition-all"
         >
           <ArrowLeft size={10} /> {selectedLevel} · {t.changeLevel}
         </button>
@@ -366,7 +366,7 @@ export function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, s
         
         <div className="absolute top-2.5 left-2.5 flex items-center gap-1.5 px-2.5 py-1 bg-[#09090D]/80 border border-[#C5A059]/30 backdrop-blur-md">
           <span className="w-1.5 h-1.5 rounded-full bg-[#C5A059] animate-pulse" />
-          <span className="font-editorial text-[8px] text-[#F8F5EE] uppercase tracking-[0.15em]">
+          <span className="font-editorial text-xs text-[#F8F5EE] uppercase tracking-[0.1em]">
             {t.sceneAnimation}
           </span>
         </div>
@@ -374,14 +374,14 @@ export function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, s
         {!videoError && (
           <button
             onClick={toggleVideo}
-            className="absolute bottom-2.5 right-2.5 p-2 bg-[#09090D]/80 border border-[#C5A059]/40 text-[#C5A059] hover:border-[#C5A059] transition-all"
+            className="absolute bottom-2.5 right-2.5 p-3.5 bg-[#09090D]/80 border border-[#C5A059]/40 text-[#C5A059] hover:border-[#C5A059] transition-all"
           >
             {isPlaying ? <Pause size={13} /> : <Play size={13} />}
           </button>
         )}
       </div>
 
-      <div className="px-3 py-1.5 bg-[#14141C] border border-[#C5A059]/20 flex items-center justify-between text-[10px] text-[#F8F5EE]/80">
+      <div className="px-3 py-1.5 bg-[#14141C] border border-[#C5A059]/20 flex items-center justify-between text-xs text-[#F8F5EE]/80">
         <span className="flex items-center gap-1"><Volume2 size={12} className="text-[#C5A059]" /> {t.tapWordHint}</span>
         {activeWord && (
           <button onClick={() => safePlayVoice(activeWord)} className="text-[#C5A059] underline font-bold">
@@ -394,7 +394,7 @@ export function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, s
         <div className="flex items-center justify-between gap-3">
           <button
             onClick={handleToggleReadAlong}
-            className={`flex items-center gap-2 px-3.5 py-2 text-[10px] font-editorial font-bold uppercase tracking-wider rounded-full transition-all ${
+            className={`flex items-center gap-2 px-3.5 py-3 text-xs font-editorial font-bold uppercase tracking-[0.1em] rounded-full transition-all ${
               isReadAlongPlaying
                 ? "bg-[#B2533E] text-[#F8F5EE]"
                 : "bg-gradient-to-r from-[#C5A059] to-[#9A7B38] text-[#09090D] gold-glow"
@@ -407,33 +407,33 @@ export function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, s
           <div className="flex-1 min-w-0 text-right">
             {readAlongTokenIndex !== null ? (
               <>
-                <span className="text-[9px] text-[#F8F5EE]/50 uppercase tracking-widest block">Now reading</span>
+                <span className="text-xs text-[#F8F5EE]/70 uppercase tracking-[0.1em] block">Now reading</span>
                 <span className="font-editorial text-xs font-bold text-[#C5A059] truncate block">
                   "{tokens[readAlongTokenIndex]}"
                 </span>
               </>
             ) : (
-              <span className="text-[9px] text-[#F8F5EE]/40 italic">Tap play to follow along</span>
+              <span className="text-xs text-[#F8F5EE]/70 italic">Tap play to follow along</span>
             )}
           </div>
 
           {readAlongTokenIndex !== null && (
-            <button onClick={handleRestartReadAlong} className="text-[#F8F5EE]/40 hover:text-[#F8F5EE]" title="Restart from the beginning">
+            <button onClick={handleRestartReadAlong} className="p-2.5 text-[#F8F5EE]/70 hover:text-[#F8F5EE]" title="Restart from the beginning">
               <ArrowLeft size={13} />
             </button>
           )}
         </div>
 
         <div className="flex items-center gap-1.5 pt-2 border-t border-[#C5A059]/15">
-          <span className="text-[8px] text-[#F8F5EE]/40 uppercase tracking-widest pr-1">Speed</span>
+          <span className="text-xs text-[#F8F5EE]/70 uppercase tracking-[0.1em] pr-1">Speed</span>
           {READ_SPEEDS.map((s) => (
             <button
               key={s.key}
               onClick={() => setReadSpeed(s.rate)}
-              className={`px-2.5 py-1 text-[9px] font-editorial font-bold rounded-full transition-all ${
+              className={`px-3 min-h-[44px] text-xs font-editorial font-bold rounded-full transition-all flex items-center ${
                 readSpeed === s.rate
                   ? "bg-[#C5A059] text-[#09090D]"
-                  : "bg-[#14141C] text-[#F8F5EE]/50 border border-[#C5A059]/20 hover:text-[#F8F5EE]"
+                  : "bg-[#14141C] text-[#F8F5EE]/70 border border-[#C5A059]/20 hover:text-[#F8F5EE]"
               }`}
             >
               {s.label}
@@ -445,7 +445,7 @@ export function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, s
       {activeWord && (
         <div className="glass-luxury-card p-3 border border-[#C5A059] flex items-center justify-between gap-2 animate-pop-in">
           <div className="min-w-0">
-            <span className="text-[9px] text-[#C5A059] uppercase tracking-widest block">SELECTED WORD</span>
+            <span className="text-xs text-[#C5A059] uppercase tracking-[0.1em] block">SELECTED WORD</span>
             <span className="font-editorial text-sm font-extrabold text-[#F8F5EE]">"{activeWord}"</span>
             <span className="text-xs text-[#C5A059] font-medium ml-2">→ {translation}</span>
           </div>
@@ -457,7 +457,7 @@ export function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, s
                 <button
                   onClick={() => !alreadySaved && onSaveWord && onSaveWord(cleanWord, translation)}
                   disabled={alreadySaved}
-                  className={`px-2.5 py-1.5 text-[9px] font-editorial font-bold uppercase tracking-wider border transition-all ${
+                  className={`px-3 min-h-[44px] text-xs font-editorial font-bold uppercase tracking-[0.1em] border transition-all flex items-center ${
                     alreadySaved
                       ? "border-emerald-500/50 text-emerald-400 bg-emerald-950/30"
                       : "border-[#C5A059] text-[#C5A059] hover:bg-[#C5A059]/15"
@@ -467,7 +467,7 @@ export function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, s
                 </button>
               );
             })()}
-            <button onClick={() => setActiveWord(null)} className="text-[#F8F5EE]/50 hover:text-[#F8F5EE]">
+            <button onClick={() => setActiveWord(null)} className="p-3 text-[#F8F5EE]/70 hover:text-[#F8F5EE]">
               <X size={14} />
             </button>
           </div>
@@ -475,7 +475,7 @@ export function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, s
       )}
 
       <div className="glass-luxury-card p-5 leading-relaxed relative border-[#C5A059]/30 max-h-[320px] overflow-y-auto">
-        <p className="font-body text-sm text-[#F8F5EE] leading-7">
+        <p className="font-body text-base text-[#F8F5EE] leading-8">
           {tokens.map((tok: string, i: number) => {
             const isWord = /[a-zA-Z]/.test(tok);
             if (!isWord) return <span key={i} className="text-[#F8F5EE]/50">{tok}</span>;
@@ -616,12 +616,12 @@ export function FlashcardsScreen({ savedWords, onReward }: { savedWords: SavedWo
         {!flipped ? (
           <div className="space-y-2 animate-pop-in">
             <h3 className="font-editorial text-2xl font-black text-[#F8F5EE]">{currentWord.word}</h3>
-            <p className="text-[10px] font-body text-[#F8F5EE]/40 italic">English Word</p>
+            <p className="text-xs font-body text-[#F8F5EE]/70 italic">English Word</p>
           </div>
         ) : (
           <div className="space-y-2 animate-pop-in">
             <h3 className="font-editorial text-xl font-extrabold text-[#C5A059]">{currentWord.translation}</h3>
-            <p className="text-[10px] font-body text-[#F8F5EE]/50">Kazakh Translation</p>
+            <p className="text-xs font-body text-[#F8F5EE]/70">Kazakh Translation</p>
           </div>
         )}
       </div>
@@ -948,7 +948,7 @@ export function QuizScreen({ onReward, t, onQuizFinish, questions }: {
             style={{ width: `${Math.max(0, (timeLeft / QUESTION_TIME) * 100)}%` }}
           />
         </div>
-        <span className={`text-[10px] font-bold tabular-nums w-5 text-right ${timeLeft <= 5 ? "text-[#B2533E]" : "text-[#F8F5EE]/50"}`}>
+        <span className={`text-xs font-bold tabular-nums w-5 text-right ${timeLeft <= 5 ? "text-[#B2533E]" : "text-[#F8F5EE]/70"}`}>
           {Math.max(0, timeLeft)}s
         </span>
       </div>
@@ -956,7 +956,7 @@ export function QuizScreen({ onReward, t, onQuizFinish, questions }: {
       <div className="glass-luxury-card p-5 space-y-4">
         {question.type === "fillblank" ? (
           <>
-            <span className="text-[9px] text-[#C5A059] uppercase tracking-widest font-bold block">FILL IN THE BLANK</span>
+            <span className="text-xs text-[#C5A059] uppercase tracking-[0.1em] font-bold block">FILL IN THE BLANK</span>
             <p className="font-body text-sm font-semibold text-[#F8F5EE] leading-relaxed">
               {(question.sentence || "").split("___")[0]}
               <span className="inline-block min-w-[54px] border-b-2 border-[#C5A059] mx-1 text-center text-[#C5A059]">
@@ -1013,7 +1013,7 @@ export function QuizScreen({ onReward, t, onQuizFinish, questions }: {
           </p>
           <button
             onClick={handleNext}
-            className="text-[10px] font-editorial text-[#C5A059] font-bold uppercase hover:text-[#F8F5EE] flex items-center justify-center gap-1 mx-auto"
+            className="text-xs font-editorial text-[#C5A059] font-bold uppercase hover:text-[#F8F5EE] flex items-center justify-center gap-1 mx-auto"
           >
             {qIndex + 1 >= questions.length ? "See Results" : "Next Question"} <ChevronRight size={12} />
           </button>
@@ -1169,7 +1169,7 @@ export function SpeakScreen({ onReward, t }: {
         >
           {recording ? <MicOff size={28} /> : <Mic size={28} />}
         </button>
-        <span className="font-editorial text-[9px] tracking-[0.18em] text-[#C5A059] uppercase">
+        <span className="font-editorial text-xs tracking-[0.1em] text-[#C5A059] uppercase">
           {recording ? t.recording : t.pressMic}
         </span>
       </div>
@@ -1183,19 +1183,19 @@ export function SpeakScreen({ onReward, t }: {
       {scores !== null && (
         <div className="glass-luxury-card p-4 text-center space-y-2 animate-pop-in border-emerald-500/30">
           <p className="font-editorial text-xl font-extrabold text-emerald-400">{scores.pronunciation}% {t.accuracy}</p>
-          {transcript && <p className="font-body text-[10px] text-[#F8F5EE]/50 italic">You said: "{transcript}"</p>}
+          {transcript && <p className="font-body text-xs text-[#F8F5EE]/70 italic">You said: "{transcript}"</p>}
           <div className="grid grid-cols-3 gap-2 pt-1">
             <div>
               <p className="font-editorial text-sm font-bold text-[#C5A059]">{scores.accuracy}%</p>
-              <p className="text-[8px] text-[#F8F5EE]/50 uppercase tracking-wider">Accuracy</p>
+              <p className="text-xs text-[#F8F5EE]/70 uppercase tracking-[0.1em]">Accuracy</p>
             </div>
             <div>
               <p className="font-editorial text-sm font-bold text-[#C5A059]">{scores.fluency}%</p>
-              <p className="text-[8px] text-[#F8F5EE]/50 uppercase tracking-wider">Fluency</p>
+              <p className="text-xs text-[#F8F5EE]/70 uppercase tracking-[0.1em]">Fluency</p>
             </div>
             <div>
               <p className="font-editorial text-sm font-bold text-[#C5A059]">{scores.completeness}%</p>
-              <p className="text-[8px] text-[#F8F5EE]/50 uppercase tracking-wider">Completeness</p>
+              <p className="text-xs text-[#F8F5EE]/70 uppercase tracking-[0.1em]">Completeness</p>
             </div>
           </div>
           <p className="font-body text-xs text-[#F8F5EE]/90 pt-1">{feedbackMessage}</p>
@@ -1242,22 +1242,22 @@ export function ProfileScreen({ xp, t, savedWordsCount = 0, unlockedAchievements
 
         <div>
           <h3 className="font-editorial text-lg font-extrabold text-[#F8F5EE] uppercase tracking-wide">{userName}</h3>
-          <p className="font-body text-[11px] text-[#C5A059] uppercase tracking-widest mt-0.5">{t.levelStatus}</p>
+          <p className="font-body text-xs text-[#C5A059] uppercase tracking-[0.1em] mt-0.5">{t.levelStatus}</p>
         </div>
 
         <div className="grid grid-cols-3 gap-2 pt-3 border-t border-[#C5A059]/20">
           <div className="bg-[#14141C]/90 p-2.5 border border-[#C5A059]/20">
-            <span className="text-[9px] text-[#F8F5EE]/60 block">{t.totalXpLabel}</span>
+            <span className="text-xs text-[#F8F5EE]/70 block">{t.totalXpLabel}</span>
             <span className="font-editorial text-sm font-extrabold text-[#C5A059]">{xp} XP</span>
           </div>
           <div className="bg-[#14141C]/90 p-2.5 border border-[#C5A059]/20">
-            <span className="text-[9px] text-[#F8F5EE]/60 block">{t.streakLabel}</span>
+            <span className="text-xs text-[#F8F5EE]/70 block">{t.streakLabel}</span>
             <span className="font-editorial text-sm font-extrabold text-amber-400 flex items-center justify-center gap-1">
               <Flame size={13} /> {streakDays}d
             </span>
           </div>
           <div className="bg-[#14141C]/90 p-2.5 border border-[#C5A059]/20">
-            <span className="text-[9px] text-[#F8F5EE]/60 block">WORDS SAVED</span>
+            <span className="text-xs text-[#F8F5EE]/70 block">WORDS SAVED</span>
             <span className="font-editorial text-sm font-extrabold text-[#F8F5EE] flex items-center justify-center gap-1">
               <Layers size={13} className="text-[#C5A059]" /> {savedWordsCount}
             </span>
@@ -1268,7 +1268,7 @@ export function ProfileScreen({ xp, t, savedWordsCount = 0, unlockedAchievements
       <div className="glass-luxury-card p-4 space-y-3">
         <div className="flex items-center justify-between">
           <h4 className="font-editorial text-xs font-bold text-[#C5A059] uppercase tracking-wider">🏛️ HERITAGE ARTEFACTS VAULT</h4>
-          <span className="text-[9px] text-[#F8F5EE]/50">{unlockedAchievements.length}/{ACHIEVEMENTS.length}</span>
+          <span className="text-xs text-[#F8F5EE]/70">{unlockedAchievements.length}/{ACHIEVEMENTS.length}</span>
         </div>
         <div className="grid grid-cols-3 gap-2 text-center">
           {ACHIEVEMENTS.map((a) => {
@@ -1280,7 +1280,7 @@ export function ProfileScreen({ xp, t, savedWordsCount = 0, unlockedAchievements
                 className={`p-2.5 bg-[#14141C] border ${unlocked ? "border-[#C5A059]/40" : "border-[#C5A059]/20 opacity-50"}`}
               >
                 <span className="text-xl">{a.icon}</span>
-                <span className={`block font-editorial text-[8px] mt-1 ${unlocked ? "text-[#F8F5EE]" : "text-[#F8F5EE]/50"}`}>
+                <span className={`block font-editorial text-xs tracking-[0.05em] mt-1 ${unlocked ? "text-[#F8F5EE]" : "text-[#F8F5EE]/70"}`}>
                   {a.title.toUpperCase()}
                 </span>
               </div>
@@ -1305,7 +1305,7 @@ export function ProfileScreen({ xp, t, savedWordsCount = 0, unlockedAchievements
 
             <div className="space-y-1 pt-2">
               <KazakhOrnament className="w-8 h-8 mx-auto text-[#C5A059]" />
-              <span className="font-editorial text-[10px] tracking-[0.25em] text-[#C5A059] uppercase block">{t.bukletHeader}</span>
+              <span className="font-editorial text-xs tracking-[0.15em] text-[#C5A059] uppercase block">{t.bukletHeader}</span>
               <h3 className="font-editorial text-lg font-black text-[#F8F5EE] uppercase tracking-wider">ERTEGI ENGLISH DIPLOMA</h3>
             </div>
 
@@ -1320,15 +1320,15 @@ export function ProfileScreen({ xp, t, savedWordsCount = 0, unlockedAchievements
 
             <div className="space-y-2 bg-[#14141C] p-3.5 border border-[#C5A059]/30 text-left text-xs font-body text-[#F8F5EE]">
               <div className="flex justify-between border-b border-[#C5A059]/20 pb-1.5">
-                <span className="text-[#F8F5EE]/60">Learner:</span>
+                <span className="text-[#F8F5EE]/70">Learner:</span>
                 <span className="font-bold text-[#C5A059]">{userName}</span>
               </div>
               <div className="flex justify-between border-b border-[#C5A059]/20 pb-1.5">
-                <span className="text-[#F8F5EE]/60">Active Streak:</span>
+                <span className="text-[#F8F5EE]/70">Active Streak:</span>
                 <span className="font-bold text-amber-400">🔥 {streakDays} Days</span>
               </div>
               <div className="flex justify-between border-b border-[#C5A059]/20 pb-1.5">
-                <span className="text-[#F8F5EE]/60">Total XP:</span>
+                <span className="text-[#F8F5EE]/70">Total XP:</span>
                 <span className="font-bold text-[#C5A059]">{xp} XP</span>
               </div>
             </div>
