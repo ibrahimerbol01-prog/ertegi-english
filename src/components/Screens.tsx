@@ -88,7 +88,7 @@ export function HomeScreen({ onStartRead, t, lang, sessionXp = 0, dailyGoal = 50
         <div className="flex items-center justify-between">
           <h3 className="font-editorial text-xs tracking-[0.1em] text-[#C5A059] uppercase">{t.collectionTitle}</h3>
           <span className="text-[9px] text-[#C5A059] font-bold bg-[#14141C] px-2.5 py-1 border border-[#C5A059]/30">
-            {STORIES.length}/10 UNLOCKED
+            {STORIES.length} STORIES
           </span>
         </div>
 
@@ -99,12 +99,12 @@ export function HomeScreen({ onStartRead, t, lang, sessionXp = 0, dailyGoal = 50
             className="group relative glass-luxury-card glass-card-hover p-4 cursor-pointer transition-all duration-300"
           >
             <div className="relative h-48 w-full overflow-hidden mb-4 border border-[#C5A059]/30 bg-[#121218]">
-              {!videoError ? (
-                <video 
+              {story.id === "aldar_kose" && !videoError ? (
+                <video
                   autoPlay loop muted playsInline
                   src={BG_VIDEO_ASSETS.read}
                   onError={() => setVideoError(true)}
-                  className="w-full h-full object-cover contrast-110 saturate-100 group-hover:scale-105 transition-transform duration-700 ease-out" 
+                  className="w-full h-full object-cover contrast-110 saturate-100 group-hover:scale-105 transition-transform duration-700 ease-out"
                 />
               ) : (
                 <div className="w-full h-full flex items-center justify-center bg-gradient-to-tr from-[#1E1810] to-[#0A0A0E]">
