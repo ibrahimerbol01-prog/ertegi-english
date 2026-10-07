@@ -5,7 +5,7 @@ import {
 } from "lucide-react";
 import {
   FontLoader, LevelUpModal, AchievementBanner, XpToast,
-  KazakhOrnament, StaticOrnamentBg
+  KazakhOrnament, StaticOrnamentBg, SaveErrorToast
 } from "./components/UIHelpers";
 import { ShoqanChat } from "./components/ShoqanChat";
 import {
@@ -15,6 +15,7 @@ import {
 import { DICT, ACHIEVEMENTS, STORIES } from "./constants";
 import type { SavedWord } from "./types";
 import { supabase } from "./lib/supabase";
+import { saveToSupabase } from "./utils/supabase-save";
 
 export default function KazakhTalesApp({ session }: { session: Session }) {
   const userId: string = session.user.id;
@@ -51,7 +52,35 @@ export default function KazakhTalesApp({ session }: { session: Session }) {
   const [unlockedAchievements, setUnlockedAchievements] = useState<string[]>([]);
   const [achievementQueue, setAchievementQueue] = useState<(typeof ACHIEVEMENTS)[number][]>([]);
 
+  // Save-error toast
+  const [showSaveError, setShowSaveError] = useState(false);
+  const saveErrorShowingRef = useRef(false);
+
+  // Refs for latest mutable values — retries read these so they save the
+  // freshest state even if the user accumulated more progress in the 1s window.
+  const latestXpRef = useRef(0);
+  const latestQuizzesRef = useRef(0);
+  const latestPerfectRef = useRef(0);
+  const latestStreakRef = useRef<{ streak_days: number; last_active_date: string }>({
+    streak_days: 0,
+    last_active_date: "",
+  });
+
+  useEffect(() => { latestXpRef.current = xp; }, [xp]);
+  useEffect(() => { latestQuizzesRef.current = quizzesCompleted; }, [quizzesCompleted]);
+  useEffect(() => { latestPerfectRef.current = perfectQuizzes; }, [perfectQuizzes]);
+
   const t = DICT[lang as keyof typeof DICT];
+
+  const onSaveError = () => {
+    if (saveErrorShowingRef.current) return;
+    saveErrorShowingRef.current = true;
+    setShowSaveError(true);
+    setTimeout(() => {
+      setShowSaveError(false);
+      saveErrorShowingRef.current = false;
+    }, 4000);
+  };
 
   useEffect(() => {
     let cancelled = false;
@@ -94,8 +123,9 @@ export default function KazakhTalesApp({ session }: { session: Session }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userId]);
 
-  const handleSignOut = () => {
-    supabase.auth.signOut();
+  const handleSignOut = async () => {
+    const { error } = await supabase.auth.signOut();
+    if (error) onSaveError();
   };
 
   const checkAndUpdateStreak = () => {
@@ -112,17 +142,23 @@ export default function KazakhTalesApp({ session }: { session: Session }) {
 
     lastActiveDateRef.current = today;
     setStreakDays(nextStreak);
-    supabase.from("profiles").update({ streak_days: nextStreak, last_active_date: today }).eq("id", userId).then(() => {});
+    latestStreakRef.current = { streak_days: nextStreak, last_active_date: today };
+    saveToSupabase(
+      async () => supabase.from("profiles").update(latestStreakRef.current).eq("id", userId),
+      onSaveError
+    );
   };
 
   const addXp = (amount: number) => {
     if (!amount) return;
-    setXp((prev: number) => {
-      const next = prev + amount;
-      supabase.from("profiles").update({ xp: next }).eq("id", userId).then(() => {});
-      return next;
-    });
+    // Update ref immediately so retry thunks read the freshest value.
+    latestXpRef.current += amount;
+    setXp(latestXpRef.current);
     setSessionXp((prev: number) => prev + amount);
+    saveToSupabase(
+      async () => supabase.from("profiles").update({ xp: latestXpRef.current }).eq("id", userId),
+      onSaveError
+    );
     checkAndUpdateStreak();
     setXpToast({ amount, key: Date.now() + Math.random() });
     if (xpToastTimer.current) clearTimeout(xpToastTimer.current);
@@ -130,17 +166,19 @@ export default function KazakhTalesApp({ session }: { session: Session }) {
   };
 
   const handleQuizFinish = (correctCount: number, total: number) => {
-    setQuizzesCompleted((c: number) => {
-      const next = c + 1;
-      supabase.from("profiles").update({ quizzes_completed: next }).eq("id", userId).then(() => {});
-      return next;
-    });
+    latestQuizzesRef.current += 1;
+    setQuizzesCompleted(latestQuizzesRef.current);
+    saveToSupabase(
+      async () => supabase.from("profiles").update({ quizzes_completed: latestQuizzesRef.current }).eq("id", userId),
+      onSaveError
+    );
     if (correctCount === total) {
-      setPerfectQuizzes((c: number) => {
-        const next = c + 1;
-        supabase.from("profiles").update({ perfect_quizzes: next }).eq("id", userId).then(() => {});
-        return next;
-      });
+      latestPerfectRef.current += 1;
+      setPerfectQuizzes(latestPerfectRef.current);
+      saveToSupabase(
+        async () => supabase.from("profiles").update({ perfect_quizzes: latestPerfectRef.current }).eq("id", userId),
+        onSaveError
+      );
     }
   };
 
@@ -163,10 +201,10 @@ export default function KazakhTalesApp({ session }: { session: Session }) {
       setUnlockedAchievements((prev) => [...prev, ...newlyUnlocked.map((a) => a.id)]);
       setAchievementQueue((prev) => [...prev, ...newlyUnlocked]);
       newlyUnlocked.forEach((a) => {
-        supabase
-          .from("user_achievements")
-          .upsert({ user_id: userId, achievement_id: a.id }, { onConflict: "user_id,achievement_id" })
-          .then(() => {});
+        saveToSupabase(
+          async () => supabase.from("user_achievements").upsert({ user_id: userId, achievement_id: a.id }, { onConflict: "user_id,achievement_id" }),
+          onSaveError
+        );
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -179,15 +217,13 @@ export default function KazakhTalesApp({ session }: { session: Session }) {
   }, []);
 
   const handleSaveWord = (word: string, translation: string) => {
-    setSavedWords((prev: SavedWord[]) => {
-      if (prev.some((w) => w.word === word)) return prev;
-      addXp(5);
-      supabase
-        .from("saved_words")
-        .upsert({ user_id: userId, word, translation, mastery: 0 }, { onConflict: "user_id,word" })
-        .then(() => {});
-      return [...prev, { word, translation, mastery: 0 }];
-    });
+    if (savedWords.some((w) => w.word === word)) return;
+    addXp(5);
+    setSavedWords((prev: SavedWord[]) => [...prev, { word, translation, mastery: 0 }]);
+    saveToSupabase(
+      async () => supabase.from("saved_words").upsert({ user_id: userId, word, translation, mastery: 0 }, { onConflict: "user_id,word" }),
+      onSaveError
+    );
   };
 
   if (!dataLoaded) {
@@ -204,6 +240,7 @@ export default function KazakhTalesApp({ session }: { session: Session }) {
         onDone={() => setAchievementQueue((prev) => prev.slice(1))}
       />
       <ShoqanChat />
+      <SaveErrorToast show={showSaveError} message={t.saveError} />
 
       {/* Static ornament bg on all tabs — video only inside hero card (HomeScreen) and IntroScreen */}
       <StaticOrnamentBg />
