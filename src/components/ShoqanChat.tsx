@@ -117,7 +117,7 @@ export const ShoqanChat = () => {
 
       {open && (
         <div className="fixed inset-0 z-[75] bg-black/70 backdrop-blur-sm flex items-end sm:items-center justify-center">
-          <div className="w-full sm:max-w-[400px] sm:mb-0 mb-0 max-h-[80vh] h-[75vh] glass-luxury-card flex flex-col rounded-t-[26px] sm:rounded-[26px] overflow-hidden">
+          <div className="w-full max-w-[480px] mb-0 max-h-[80dvh] h-[75dvh] glass-luxury-card flex flex-col rounded-t-[26px] sm:rounded-[26px] overflow-hidden">
             <div className="flex items-center justify-between p-4 border-b border-[#C5A059]/20">
               <div className="flex items-center gap-2">
                 <div className="w-8 h-8 rounded-full overflow-hidden border border-[#C5A059]/50 shrink-0">

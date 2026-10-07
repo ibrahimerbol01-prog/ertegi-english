@@ -227,11 +227,11 @@ export default function KazakhTalesApp({ session }: { session: Session }) {
   };
 
   if (!dataLoaded) {
-    return <div className="min-h-screen w-full bg-[#09090D]" />;
+    return <div className="min-h-dvh w-full bg-[#09090D]" />;
   }
 
   return (
-    <div className="relative min-h-screen bg-[#09090D] font-body flex items-center justify-center sm:py-6 sm:px-3 text-[#F8F5EE] overflow-hidden">
+    <div className="relative h-dvh w-full bg-[#09090D] font-body text-[#F8F5EE] overflow-hidden flex">
       <FontLoader />
 
       <LevelUpModal show={showLevelUp} rank={levelUpRank} onClose={() => setShowLevelUp(false)} />
@@ -245,9 +245,9 @@ export default function KazakhTalesApp({ session }: { session: Session }) {
       {/* Static ornament bg on all tabs — video only inside hero card (HomeScreen) and IntroScreen */}
       <StaticOrnamentBg />
 
-      <div className="relative z-10 w-full h-full sm:h-auto sm:max-w-[420px] bg-[#09090D]/75 backdrop-blur-xl shadow-2xl border border-[#C5A059]/30 overflow-hidden flex flex-col min-h-screen sm:min-h-[780px]">
+      <div className="relative z-10 flex-1 h-dvh bg-[#09090D]/75 backdrop-blur-xl overflow-hidden flex flex-col">
 
-        <div className="flex items-center justify-between px-5 pt-5 pb-3 border-b border-[#C5A059]/20 bg-[#09090D]/85 backdrop-blur-md">
+        <div className="flex items-center justify-between px-5 pt-[max(env(safe-area-inset-top),20px)] pb-3 border-b border-[#C5A059]/20 bg-[#09090D]/85 backdrop-blur-md">
           <div className="flex items-center gap-2">
             <KazakhOrnament className="w-5 h-5 text-[#C5A059]" />
             <span className="font-editorial text-sm font-extrabold tracking-[0.2em] text-[#F8F5EE] uppercase">Ertegi English</span>
@@ -343,8 +343,8 @@ export default function KazakhTalesApp({ session }: { session: Session }) {
           )}
         </div>
 
-        <div className="px-3 pb-3 pt-1.5 border-t border-white/[0.06] bg-[#09090D]/90 backdrop-blur-2xl">
-          <div className="grid grid-cols-6 gap-1">
+        <div className="px-2 pb-[max(env(safe-area-inset-bottom),12px)] pt-1.5 border-t border-white/[0.06] bg-[#09090D]/90 backdrop-blur-2xl">
+          <div className="grid grid-cols-6 gap-0.5">
             {([
               { id: "home",    label: t.navHome,    Icon: HomeIcon },
               { id: "read",    label: t.navRead,    Icon: BookOpen },

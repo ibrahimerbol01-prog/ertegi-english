@@ -66,7 +66,7 @@ export default function App() {
   }
 
   if (loading) {
-    return <div className="min-h-screen w-full bg-[#09090D]" />;
+    return <div className="min-h-dvh w-full bg-[#09090D]" />;
   }
 
   if (!session) {

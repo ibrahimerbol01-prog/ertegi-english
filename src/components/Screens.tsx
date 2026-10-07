@@ -15,42 +15,44 @@ import { supabase } from "../lib/supabase";
 /* --- 1. INTRO SCREEN --- */
 export function IntroScreen({ onFinish, t }: any) {
   return (
-    <div className="relative min-h-screen w-full bg-[#09090D] flex flex-col justify-between p-6 overflow-hidden animate-pop-in">
+    <div className="relative min-h-dvh w-full bg-[#09090D] flex flex-col overflow-hidden animate-pop-in">
       <BackgroundVideo src={BG_VIDEO_ASSETS.intro} opacity={60} videoKey="intro-bg" />
 
-      <div className="relative z-10 flex justify-between items-center pt-4">
-        <div className="flex items-center gap-2.5">
-          <KazakhOrnament className="w-6 h-6 text-[#C5A059]" />
-          <span className="font-editorial text-lg tracking-[0.2em] text-[#F8F5EE] uppercase font-extrabold">Ertegi English</span>
+      <div className="relative z-10 flex flex-col flex-1 justify-between p-6 mx-auto w-full max-w-[480px]">
+        <div className="flex justify-between items-center pt-4">
+          <div className="flex items-center gap-2.5">
+            <KazakhOrnament className="w-6 h-6 text-[#C5A059]" />
+            <span className="font-editorial text-lg tracking-[0.2em] text-[#F8F5EE] uppercase font-extrabold">Ertegi English</span>
+          </div>
+          <button
+            onClick={onFinish}
+            className="text-[10px] font-editorial uppercase tracking-[0.15em] text-[#C5A059] hover:text-[#F8F5EE] px-3.5 py-1.5 border border-[#C5A059]/30 bg-black/50 backdrop-blur-md transition-all"
+          >
+            {t.skip}
+          </button>
         </div>
-        <button 
-          onClick={onFinish}
-          className="text-[10px] font-editorial uppercase tracking-[0.15em] text-[#C5A059] hover:text-[#F8F5EE] px-3.5 py-1.5 border border-[#C5A059]/30 bg-black/50 backdrop-blur-md transition-all"
-        >
-          {t.skip}
-        </button>
-      </div>
 
-      <div className="relative z-10 space-y-4 my-auto text-center px-4 animate-float">
-        <span className="inline-flex items-center gap-1.5 px-3 py-1 terracotta-badge text-[9px] tracking-[0.2em]">
-          <Sparkles size={10} /> QAZAQSTAN EDTECH INITIATIVE
-        </span>
-        <h1 className="font-editorial text-3xl sm:text-4xl font-extrabold text-[#F8F5EE] leading-tight uppercase tracking-wide">
-          DALA AÑYZDARY <br />
-          <span className="text-[#C5A059] drop-shadow-[0_0_20px_rgba(197,160,89,0.4)]">AĞYLŞYN TİLİNDE</span>
-        </h1>
-        <p className="font-body text-xs text-[#F8F5EE]/80 max-w-xs mx-auto leading-relaxed">
-          {t.homeSubtitle}
-        </p>
-      </div>
+        <div className="space-y-4 my-auto text-center px-4 animate-float">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 terracotta-badge text-[9px] tracking-[0.2em]">
+            <Sparkles size={10} /> QAZAQSTAN EDTECH INITIATIVE
+          </span>
+          <h1 className="font-editorial text-3xl sm:text-4xl font-extrabold text-[#F8F5EE] leading-tight uppercase tracking-wide">
+            DALA AÑYZDARY <br />
+            <span className="text-[#C5A059] drop-shadow-[0_0_20px_rgba(197,160,89,0.4)]">AĞYLŞYN TİLİNDE</span>
+          </h1>
+          <p className="font-body text-xs text-[#F8F5EE]/80 max-w-xs mx-auto leading-relaxed">
+            {t.homeSubtitle}
+          </p>
+        </div>
 
-      <div className="relative z-10 pb-6">
-        <button
-          onClick={onFinish}
-          className="rounded-full w-full py-4 bg-gradient-to-r from-[#C5A059] via-[#9A7B38] to-[#C5A059] hover:brightness-110 text-[#09090D] font-editorial font-extrabold text-xs tracking-[0.2em] uppercase gold-glow transition-all flex items-center justify-center gap-2"
-        >
-          {t.enter} <ArrowRight size={16} />
-        </button>
+        <div className="pb-6">
+          <button
+            onClick={onFinish}
+            className="rounded-full w-full py-4 bg-gradient-to-r from-[#C5A059] via-[#9A7B38] to-[#C5A059] hover:brightness-110 text-[#09090D] font-editorial font-extrabold text-xs tracking-[0.2em] uppercase gold-glow transition-all flex items-center justify-center gap-2"
+          >
+            {t.enter} <ArrowRight size={16} />
+          </button>
+        </div>
       </div>
     </div>
   );

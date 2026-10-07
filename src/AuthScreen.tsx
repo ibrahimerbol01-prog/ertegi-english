@@ -45,7 +45,7 @@ team through the contact listed on the project's submission page.
 function PrivacyPolicyModal({ onClose }: { onClose: () => void }) {
   return (
     <div className="fixed inset-0 z-[80] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-      <div className="w-full max-w-[440px] max-h-[80vh] glass-luxury-card p-5 flex flex-col">
+      <div className="w-full max-w-[440px] max-h-[80dvh] glass-luxury-card p-5 flex flex-col">
         <div className="flex items-center justify-between mb-3">
           <h3 className="font-editorial text-sm font-extrabold text-[#F8F5EE] uppercase tracking-wide">
             Privacy Policy
@@ -140,7 +140,7 @@ export default function AuthScreen() {
   };
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center bg-[#09090D] px-4">
+    <div className="min-h-dvh w-full flex items-center justify-center bg-[#09090D] px-4">
       {showPolicy && <PrivacyPolicyModal onClose={() => setShowPolicy(false)} />}
       <div className="w-full max-w-[380px] glass-luxury-card p-6 space-y-5">
         <div className="text-center space-y-1">
