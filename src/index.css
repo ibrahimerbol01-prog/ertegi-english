@@ -1,1 +1,8 @@
 @import "tailwindcss";
+
+@supports not (height: 100dvh) {
+  .h-dvh { height: 100vh; }
+  .min-h-dvh { min-height: 100vh; }
+  .max-h-\[80dvh\] { max-height: 80vh; }
+  .h-\[75dvh\] { height: 75vh; }
+}
