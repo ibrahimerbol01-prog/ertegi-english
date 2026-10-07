@@ -279,6 +279,17 @@ export const AchievementBanner = ({ achievement, onDone }: { achievement: { icon
   );
 };
 
+export const SaveErrorToast = ({ show, message }: { show: boolean; message: string }) => {
+  if (!show) return null;
+  return (
+    <div className="fixed bottom-24 left-1/2 -translate-x-1/2 z-[80] max-w-[340px] w-[calc(100%-32px)] pointer-events-none">
+      <div className="animate-pop-in bg-[#1A0808] border border-[#B2533E]/60 rounded-2xl p-3 text-xs font-body text-[#F8F5EE]/90 text-center shadow-2xl">
+        {message}
+      </div>
+    </div>
+  );
+};
+
 export const DailyGoalRing = ({ current, goal }: { current: number; goal: number }) => {
   const radius = 30;
   const circumference = 2 * Math.PI * radius;

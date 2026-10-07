@@ -534,7 +534,8 @@ export const DICT = {
     tapWordHint: "Sözge basyp audarmasyn qarañyz zhəne dauspen oqyñyz.",
     interactiveChoiceTitle: "INTERAKTIVTI TAÑDAU (VISUAL NOVEL)",
     choicePrompt: "Aldar Köse osy zhғdaıda ne isteui kerek?",
-    artifactUnlocked: "JANA MURA ARTEFAKTY AŞYLMDY! 🏛️"
+    artifactUnlocked: "JANA MURA ARTEFAKTY AŞYLMDY! 🏛️",
+    saveError: "Derekter saqtalmady — baılanysty tekseriñız"
   },
   en: {
     skip: "SKIP INTRO",
@@ -578,7 +579,8 @@ export const DICT = {
     tapWordHint: "Tap any word to see its translation and hear the voice audio.",
     interactiveChoiceTitle: "INTERACTIVE STORY BRANCH",
     choicePrompt: "What should Aldar Kose do in this situation?",
-    artifactUnlocked: "NEW CULTURAL ARTEFACT UNLOCKED! 🏛️"
+    artifactUnlocked: "NEW CULTURAL ARTEFACT UNLOCKED! 🏛️",
+    saveError: "Progress not saved — check your connection"
   }
 };
 
