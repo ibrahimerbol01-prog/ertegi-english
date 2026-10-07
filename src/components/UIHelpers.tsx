@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { CheckCircle2 } from "lucide-react";
 
 export const FontLoader = () => (
@@ -132,23 +132,6 @@ export const FontLoader = () => (
   `}</style>
 );
 
-export const safePlayVoice = (text: string, onFallback?: (msg?: string) => void) => {
-  try {
-    if (!("speechSynthesis" in window)) {
-      if (onFallback) onFallback("Speech synthesis not supported on this browser.");
-      return;
-    }
-    window.speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.rate = 0.85;
-    utterance.pitch = 0.6;
-    utterance.lang = "en-US";
-    utterance.onerror = (e) => console.warn("Speech synthesis error:", e);
-    window.speechSynthesis.speak(utterance);
-  } catch (err) {
-    console.warn("Voice playback failed:", err);
-  }
-};
 
 export const KazakhOrnament = ({ className = "w-6 h-6 text-amber-200" }: { className?: string }) => (
   <svg viewBox="0 0 100 100" className={className} fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -223,26 +206,25 @@ export const XpToast = ({ toast }: { toast: { amount: number; key: number } | nu
   );
 };
 
+const CONFETTI_COLORS = ["#C5A059", "#B2533E", "#F8F5EE", "#9A7B38"];
+
 export const LevelUpModal = ({ show, rank, onClose }: { show: boolean; rank: number; onClose: () => void }) => {
-  const [confetti, setConfetti] = useState<{ id: number; left: number; delay: number; color: string }[]>([]);
   const onCloseRef = useRef(onClose);
   useEffect(() => {
     onCloseRef.current = onClose;
   }, [onClose]);
 
+  const confetti = useMemo(() => show ? Array.from({ length: 18 }, (_, i) => ({
+    id: i,
+    left: 4 + ((i * 53) % 92),
+    delay: (i % 6) * 0.09,
+    color: CONFETTI_COLORS[i % CONFETTI_COLORS.length],
+  })) : [], [show]);
+
   useEffect(() => {
-    if (show) {
-      const colors = ["#C5A059", "#B2533E", "#F8F5EE", "#9A7B38"];
-      const pieces = Array.from({ length: 18 }, (_, i) => ({
-        id: i,
-        left: 4 + ((i * 53) % 92),
-        delay: (i % 6) * 0.09,
-        color: colors[i % colors.length],
-      }));
-      setConfetti(pieces);
-      const timer = setTimeout(() => onCloseRef.current(), 2600);
-      return () => clearTimeout(timer);
-    }
+    if (!show) return;
+    const timer = setTimeout(() => onCloseRef.current(), 2600);
+    return () => clearTimeout(timer);
   }, [show]);
 
   if (!show) return null;

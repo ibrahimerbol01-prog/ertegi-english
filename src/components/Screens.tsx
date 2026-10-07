@@ -4,10 +4,8 @@ import {
   ChevronRight, ArrowLeft, X, Compass, Layers, Trophy, CheckCircle2, Flame,
   Mic, MicOff, LogOut, Share2, Download
 } from "lucide-react";
-import { 
-  BackgroundVideo, KazakhOrnament, DailyGoalRing, 
-  safePlayVoice 
-} from "./UIHelpers";
+import { BackgroundVideo, KazakhOrnament, DailyGoalRing } from "./UIHelpers";
+import { safePlayVoice } from "../utils/voice";
 import {
   BG_VIDEO_ASSETS, STORIES, LEVEL_DETAILS, WORD_TRANSLATIONS, ACHIEVEMENTS
 } from "../constants";
@@ -171,7 +169,7 @@ export function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, s
   useEffect(() => {
     return () => {
       isPlayingRef.current = false;
-      try { window.speechSynthesis.cancel(); } catch (e) {}
+      try { window.speechSynthesis.cancel(); } catch { }
     };
   }, [selectedLevel]);
 
@@ -295,7 +293,7 @@ export function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, s
       } else {
         fallbackAdvance();
       }
-    } catch (err) {
+    } catch {
       fallbackAdvance();
     }
   };
@@ -304,7 +302,7 @@ export function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, s
     if (isReadAlongPlaying) {
       isPlayingRef.current = false;
       setIsReadAlongPlaying(false);
-      try { window.speechSynthesis.cancel(); } catch (e) {}
+      try { window.speechSynthesis.cancel(); } catch { }
     } else {
       isPlayingRef.current = true;
       setIsReadAlongPlaying(true);
@@ -319,7 +317,7 @@ export function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, s
 
   const handleRestartReadAlong = () => {
     isPlayingRef.current = false;
-    try { window.speechSynthesis.cancel(); } catch (e) {}
+    try { window.speechSynthesis.cancel(); } catch { }
     setReadAlongTokenIndex(null);
     setIsReadAlongPlaying(false);
   };
@@ -654,7 +652,7 @@ export function MatchingGame({ savedWords, onReward }: any) {
   const [wrongPair, setWrongPair] = useState<any[]>([]);
   const [roundComplete, setRoundComplete] = useState(false);
 
-  const buildRound = () => {
+  useEffect(() => {
     if (!savedWords || savedWords.length < 3) return;
     const shuffled = [...savedWords].sort(() => Math.random() - 0.5).slice(0, Math.min(GRID_SIZE, savedWords.length));
     const wordTiles = shuffled.map((w, i) => ({ tileId: `w-${i}`, pairId: i, text: w.word, kind: "word" }));
@@ -665,11 +663,7 @@ export function MatchingGame({ savedWords, onReward }: any) {
     setSelectedTile(null);
     setWrongPair([]);
     setRoundComplete(false);
-  };
-
-  useEffect(() => {
-    buildRound();
-  }, [round, savedWords?.length]);
+  }, [round, savedWords]);
 
   const handleTileTap = (tile: any) => {
     if (matchedIds.includes(tile.pairId) || wrongPair.length > 0) return;
