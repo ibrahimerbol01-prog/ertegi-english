@@ -4,7 +4,6 @@ import { supabase } from "./lib/supabase";
 import AuthScreen from "./AuthScreen";
 import KazakhTalesApp from "./KazakhTalesApp";
 import { IntroScreen } from "./components/Screens";
-import { FontLoader } from "./components/UIHelpers";
 import { DICT } from "./constants";
 
 export default function App() {
@@ -58,23 +57,17 @@ export default function App() {
 
   if (!introSeen) {
     return (
-      <>
-        <FontLoader />
-        <IntroScreen onFinish={() => setIntroSeen(true)} t={DICT.kk} />
-      </>
+      <IntroScreen onFinish={() => setIntroSeen(true)} t={DICT.kk} />
     );
   }
 
   if (loading) {
-    return <div className="min-h-dvh w-full bg-ink" />;
+    return <div className="min-h-dvh w-full bg-sand" />;
   }
 
   if (!session) {
     return (
-      <>
-        <FontLoader />
-        <AuthScreen />
-      </>
+      <AuthScreen />
     );
   }
 

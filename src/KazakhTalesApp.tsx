@@ -1,13 +1,13 @@
 import { useState, useRef, useEffect } from "react";
 import type { Session } from "@supabase/supabase-js";
 import {
-  BookOpen, Trophy, Home as HomeIcon, User, Layers, Globe, Mic
+  BookOpen, Trophy, Home as HomeIcon, User, Layers, Mic, Flame, Zap
 } from "lucide-react";
 import {
-  FontLoader, LevelUpModal, AchievementBanner, XpToast,
-  StaticOrnamentBg, SaveErrorToast
+  LevelUpModal, AchievementBanner, XpToast,
+  StaticOrnamentBg, SaveErrorToast, BrandMark, DailyGoalRing
 } from "./components/UIHelpers";
-import { Shanyraq, OrnamentBand } from "./components/Ornaments";
+import { KilimStrip } from "./components/Ornaments";
 import { ShoqanChat } from "./components/ShoqanChat";
 import {
   HomeScreen, ReaderScreen, FlashcardsScreen, MatchingGame,
@@ -96,6 +96,8 @@ export default function KazakhTalesApp({ session }: { session: Session }) {
       if (cancelled) return;
 
       if (profileRes.data) {
+        // Loading saved XP is not a level-up; start the rank baseline here.
+        prevXpRef.current = profileRes.data.xp ?? 0;
         setXp(profileRes.data.xp ?? 0);
         setQuizzesCompleted(profileRes.data.quizzes_completed ?? 0);
         setPerfectQuizzes(profileRes.data.perfect_quizzes ?? 0);
@@ -228,22 +230,46 @@ export default function KazakhTalesApp({ session }: { session: Session }) {
   };
 
   if (!dataLoaded) {
-    return <div className="min-h-dvh w-full bg-ink" />;
+    return <div className="min-h-dvh w-full bg-sand" />;
   }
 
   const tabs = [
     { id: "home",    label: t.navHome,    Icon: HomeIcon },
     { id: "read",    label: t.navRead,    Icon: BookOpen },
     { id: "quiz",    label: t.navQuiz,    Icon: Trophy   },
-    { id: "words",   label: "WORDS",      Icon: Layers   },
+    { id: "words",   label: lang === "kk" ? "Sözder" : "Words", Icon: Layers },
     { id: "speak",   label: t.navSpeak,   Icon: Mic      },
     { id: "profile", label: t.navProfile, Icon: User     },
   ] as const;
 
-  return (
-    <div className="relative h-dvh w-full bg-ink font-body text-cream overflow-hidden flex">
-      <FontLoader />
+  const wordsBadge = (id: string) =>
+    id === "words" && savedWords.length > 0 ? (
+      <span className="absolute -top-1 -right-1.5 min-w-[18px] h-[18px] px-1 rounded-full bg-felt text-[10px] text-white flex items-center justify-center font-bold ring-2 ring-card">
+        {savedWords.length}
+      </span>
+    ) : null;
 
+  const LangToggle = () => (
+    <div className="segmented w-[104px]" role="group" aria-label="Language">
+      <button aria-pressed={lang === "kk"} onClick={() => setLang("kk")}>QAZ</button>
+      <button aria-pressed={lang === "en"} onClick={() => setLang("en")}>ENG</button>
+    </div>
+  );
+
+  const StatChips = () => (
+    <div className="flex items-center gap-2">
+      <span className="chip text-felt" title={t.streakLabel}>
+        <Flame size={16} className="fill-felt" /> {streakDays}
+      </span>
+      <span className="chip relative text-sun-deep" title={t.totalXpLabel}>
+        <Zap size={16} className="fill-sun text-sun-deep" /> {xp}
+        <XpToast toast={xpToast} />
+      </span>
+    </div>
+  );
+
+  return (
+    <div className="relative h-dvh w-full bg-sand font-body text-ink overflow-hidden flex">
       <LevelUpModal show={showLevelUp} rank={levelUpRank} onClose={() => setShowLevelUp(false)} />
       <AchievementBanner
         achievement={achievementQueue[0] || null}
@@ -252,174 +278,164 @@ export default function KazakhTalesApp({ session }: { session: Session }) {
       <ShoqanChat />
       <SaveErrorToast show={showSaveError} message={t.saveError} />
 
-      {/* Static ornament bg on all tabs — video only inside hero card (HomeScreen) and IntroScreen */}
       <StaticOrnamentBg />
 
-      {/* Sidebar — desktop only */}
-      <aside className="hidden md:flex md:w-60 md:shrink-0 md:flex-col md:border-r md:border-gold/25 md:bg-ink-2/90 md:backdrop-blur-md relative z-10">
-        <div className="px-5 py-5 border-b border-gold/20 flex items-center gap-2">
-          <Shanyraq className="w-6 h-6 text-gold" strokeWidth={4} />
-          <span className="font-editorial text-sm font-extrabold tracking-[0.2em] text-cream uppercase">Ertegi English</span>
+      {/* Sidebar — desktop only (Duolingo-style rail) */}
+      <aside className="hidden md:flex md:w-64 md:shrink-0 md:flex-col md:border-r-2 md:border-line md:bg-card/70 relative z-10">
+        <div className="px-6 pt-7 pb-6">
+          <BrandMark />
         </div>
-        <nav className="flex flex-col flex-1 px-3 py-4 gap-1">
+        <nav className="flex flex-col flex-1 px-4 gap-1.5">
           {tabs.map(({ id, label, Icon }) => {
             const active = tab === id;
             return (
               <button
                 key={id}
                 onClick={() => setTab(id)}
-                className={`relative flex items-center gap-3 px-3 py-2.5 rounded-2xl transition-all duration-300 w-full ${active ? "bg-gold text-ink" : "text-cream/70 hover:text-cream hover:bg-white/5"}`}
+                aria-current={active ? "page" : undefined}
+                className={`flex items-center gap-4 px-4 min-h-[52px] rounded-2xl border-2 transition-colors w-full ${active ? "bg-sky-soft border-sky/60 text-sky-deep" : "border-transparent text-ink-2 hover:bg-sand-2"}`}
               >
-                <span className="relative flex items-center justify-center w-9 h-9 shrink-0">
-                  <Icon size={15} />
-                  {id === "words" && savedWords.length > 0 && (
-                    <span className="absolute -top-0.5 right-0.5 w-3.5 h-3.5 rounded-full bg-felt text-[9px] text-cream flex items-center justify-center font-bold ring-2 ring-ink">
-                      {savedWords.length}
-                    </span>
-                  )}
+                <span className="relative">
+                  <Icon size={24} strokeWidth={active ? 2.6 : 2.2} />
+                  {wordsBadge(id)}
                 </span>
-                <span className={`font-editorial text-xs tracking-[0.05em] uppercase ${active ? "font-bold" : ""}`}>{label}</span>
+                <span className="font-display text-[15px] font-extrabold tracking-wide uppercase">{label}</span>
               </button>
             );
           })}
         </nav>
-        <div className="px-5 pb-6 text-gold/35">
-          <OrnamentBand className="h-4 w-full" />
+        <div className="px-6 pb-6 space-y-4">
+          <LangToggle />
+          <KilimStrip className="h-2 w-full opacity-80" />
         </div>
       </aside>
 
       {/* Main column */}
-      <div className="relative z-10 flex-1 h-dvh overflow-hidden flex flex-col">
+      <div className="relative z-10 flex-1 h-dvh overflow-hidden flex flex-col min-w-0">
 
-        <div className="flex items-center px-5 pt-[max(env(safe-area-inset-top),20px)] pb-3 bg-ink/85 backdrop-blur-md relative">
-          <div className="flex items-center gap-2 mr-auto md:hidden">
-            <Shanyraq className="w-6 h-6 text-gold" strokeWidth={4} />
-            <span className="font-editorial text-sm font-extrabold tracking-[0.2em] text-cream uppercase">Ertegi English</span>
-          </div>
-          <div className="flex items-center gap-2.5 ml-auto">
-            <button
-              onClick={() => setLang(lang === "kk" ? "en" : "kk")}
-              className="flex items-center gap-1.5 px-3 min-h-[44px] border border-gold/30 bg-surface text-xs font-editorial font-bold tracking-[0.1em] hover:border-gold transition-all"
-            >
-              <Globe size={11} className="text-gold" />
-              <span className={lang === "kk" ? "text-gold" : "text-cream/70"}>QAZ</span>
-              <span className="text-cream/20">|</span>
-              <span className={lang === "en" ? "text-gold" : "text-cream/70"}>ENG</span>
-            </button>
-            <span className="relative px-2.5 py-0.5 gold-badge text-[10px] gold-glow">
-              {xp} XP
-              <XpToast toast={xpToast} />
-            </span>
-          </div>
-          {/* Felt edging: gold hairline over a red felt stripe */}
-          <span aria-hidden="true" className="absolute inset-x-0 -bottom-[3px] h-[3px] border-t border-gold/50 bg-felt/70" />
-        </div>
+        {/* Top bar — Apple frosted, stats on the right */}
+        <header className="xl:hidden glass border-b border-line/70 flex items-center gap-3 px-4 md:px-8 pt-[max(env(safe-area-inset-top),12px)] pb-3">
+          <div className="md:hidden"><BrandMark compact /></div>
+          <div className="md:hidden"><LangToggle /></div>
+          <div className="ml-auto"><StatChips /></div>
+        </header>
 
-        <div className="flex-1 overflow-y-auto pt-4">
-          <div className="mx-auto w-full max-w-[720px]">
-            {tab === "home" && (
-              <HomeScreen
-                onStartRead={(storyId: string) => {
-                  setSelectedStory(storyId);
-                  setSelectedLevel(null);
-                  setTab("read");
-                }}
-                t={t}
-                lang={lang}
-                sessionXp={sessionXp}
-                dailyGoal={DAILY_GOAL}
-              />
-            )}
-            {tab === "read" && (
-              <ReaderScreen
-                selectedStory={selectedStory}
-                setSelectedStory={setSelectedStory}
-                selectedLevel={selectedLevel}
-                setSelectedLevel={setSelectedLevel}
-                onQuizGate={() => setTab("quiz")}
-                t={t}
-                onReward={addXp}
-                savedWords={savedWords}
-                onSaveWord={handleSaveWord}
-              />
-            )}
-            {tab === "quiz" && (
-              <QuizScreen
-                onReward={addXp}
-                t={t}
-                onQuizFinish={handleQuizFinish}
-                questions={(STORIES.find((s) => s.id === selectedStory) || STORIES[0]).quizQuestions}
-              />
-            )}
-            {tab === "words" && (
-              <div className="animate-pop-in">
-                <div className="px-5 pt-1 pb-3">
-                  <div className="grid grid-cols-2 gap-1 p-1 bg-surface rounded-full border border-white/[0.06]">
-                    <button
-                      onClick={() => setWordsMode("cards")}
-                      className={`py-3 text-xs font-editorial font-bold uppercase tracking-[0.1em] rounded-full transition-all ${wordsMode === "cards" ? "bg-gold text-ink" : "text-cream/70"}`}
-                    >
-                      Flashcards
-                    </button>
-                    <button
-                      onClick={() => setWordsMode("match")}
-                      className={`py-3 text-xs font-editorial font-bold uppercase tracking-[0.1em] rounded-full transition-all ${wordsMode === "match" ? "bg-gold text-ink" : "text-cream/70"}`}
-                    >
-                      Matching Game
-                    </button>
-                  </div>
+        <div className="flex-1 overflow-y-auto">
+          <div className="mx-auto w-full max-w-[1040px] flex gap-8 px-4 md:px-8 pt-4 xl:pt-10 pb-28 md:pb-10">
+            <main className="flex-1 min-w-0 max-w-[620px] mx-auto">
+              {tab === "home" && (
+                <HomeScreen
+                  onStartRead={(storyId: string) => {
+                    setSelectedStory(storyId);
+                    setSelectedLevel(null);
+                    setTab("read");
+                  }}
+                  onStartQuiz={(storyId: string) => {
+                    setSelectedStory(storyId);
+                    setTab("quiz");
+                  }}
+                  t={t}
+                  lang={lang}
+                  userName={displayName}
+                  sessionXp={sessionXp}
+                  dailyGoal={DAILY_GOAL}
+                />
+              )}
+              {tab === "read" && (
+                <ReaderScreen
+                  selectedStory={selectedStory}
+                  setSelectedStory={setSelectedStory}
+                  selectedLevel={selectedLevel}
+                  setSelectedLevel={setSelectedLevel}
+                  onQuizGate={() => setTab("quiz")}
+                  t={t}
+                  lang={lang}
+                  onReward={addXp}
+                  savedWords={savedWords}
+                  onSaveWord={handleSaveWord}
+                />
+              )}
+              {tab === "quiz" && (
+                <QuizScreen
+                  key={selectedStory || "default"}
+                  onReward={addXp}
+                  t={t}
+                  onQuizFinish={handleQuizFinish}
+                  storyTitle={(STORIES.find((s) => s.id === selectedStory) || STORIES[0]).title}
+                  questions={(STORIES.find((s) => s.id === selectedStory) || STORIES[0]).quizQuestions}
+                />
+              )}
+              {tab === "words" && (
+                <div className="animate-pop-in">
+                  {wordsMode === "cards" ? (
+                    <FlashcardsScreen savedWords={savedWords} onReward={addXp} mode={wordsMode} setMode={setWordsMode} />
+                  ) : (
+                    <MatchingGame savedWords={savedWords} onReward={addXp} mode={wordsMode} setMode={setWordsMode} />
+                  )}
                 </div>
-                {wordsMode === "cards" ? (
-                  <FlashcardsScreen savedWords={savedWords} onReward={addXp} />
-                ) : (
-                  <MatchingGame savedWords={savedWords} onReward={addXp} />
-                )}
+              )}
+              {tab === "speak" && <SpeakScreen onReward={addXp} t={t} />}
+              {tab === "profile" && (
+                <ProfileScreen
+                  xp={xp}
+                  t={t}
+                  lang={lang}
+                  setLang={setLang}
+                  savedWordsCount={savedWords.length}
+                  unlockedAchievements={unlockedAchievements}
+                  userName={displayName}
+                  onSignOut={handleSignOut}
+                  streakDays={streakDays}
+                  quizzesCompleted={quizzesCompleted}
+                />
+              )}
+            </main>
+
+            {/* Right rail — wide desktop only, Duolingo-style widgets */}
+            <aside className="hidden xl:flex flex-col gap-4 w-[300px] shrink-0 pt-2 sticky top-0 self-start">
+              <StatChips />
+              <div className="card p-5 flex items-center gap-4">
+                <DailyGoalRing current={sessionXp} goal={DAILY_GOAL} size={64} />
+                <div>
+                  <p className="font-display font-extrabold text-ink">{lang === "kk" ? "Kündelikti maqsat" : "Daily goal"}</p>
+                  <p className="text-sm text-ink-2">{Math.min(sessionXp, DAILY_GOAL)} / {DAILY_GOAL} XP</p>
+                </div>
               </div>
-            )}
-            {tab === "speak" && <SpeakScreen onReward={addXp} t={t} />}
-            {tab === "profile" && (
-              <ProfileScreen
-                xp={xp}
-                t={t}
-                savedWordsCount={savedWords.length}
-                unlockedAchievements={unlockedAchievements}
-                userName={displayName}
-                onSignOut={handleSignOut}
-                streakDays={streakDays}
-              />
-            )}
+              <div className="card p-5">
+                <p className="font-display font-extrabold text-ink">{lang === "kk" ? "Sözdik" : "Vocabulary"}</p>
+                <p className="text-sm text-ink-2 mt-1">
+                  {savedWords.length} {lang === "kk" ? "söz saqtaldy" : "words saved"}
+                </p>
+                <button onClick={() => setTab("words")} className="btn btn-ghost btn-sm w-full mt-4">
+                  {lang === "kk" ? "Qaitalau" : "Practice"}
+                </button>
+              </div>
+            </aside>
           </div>
         </div>
 
-        {/* Bottom nav — mobile only */}
-        <div className="md:hidden px-2 pb-[max(env(safe-area-inset-bottom),12px)] pt-1.5 border-t border-gold/25 bg-ink-2/95 backdrop-blur-2xl">
-          <div className="grid grid-cols-6 gap-0.5">
+        {/* Tab bar — mobile only, Apple frosted */}
+        <nav className="md:hidden fixed bottom-0 inset-x-0 z-30 glass border-t border-line/70 pb-[max(env(safe-area-inset-bottom),8px)] pt-1.5">
+          <div className="grid grid-cols-6">
             {tabs.map(({ id, label, Icon }) => {
               const active = tab === id;
               return (
                 <button
                   key={id}
                   onClick={() => setTab(id)}
-                  className="relative flex flex-col items-center justify-center gap-1 py-2"
+                  aria-current={active ? "page" : undefined}
+                  className={`flex flex-col items-center justify-center gap-0.5 min-h-[50px] ${active ? "text-sky" : "text-ink-3"}`}
                 >
-                  <span
-                    className={`flex items-center justify-center w-9 h-9 rounded-2xl transition-all duration-300 ${active ? "bg-gold text-ink shadow-[0_4px_14px_-2px_rgba(231,169,63,0.55)]" : "text-cream/70"}`}
-                  >
-                    <Icon size={15} />
-                    {id === "words" && savedWords.length > 0 && (
-                      <span className="absolute -top-0.5 right-0.5 w-3.5 h-3.5 rounded-full bg-felt text-[9px] text-cream flex items-center justify-center font-bold ring-2 ring-ink">
-                        {savedWords.length}
-                      </span>
-                    )}
+                  <span className="relative">
+                    <Icon size={24} strokeWidth={active ? 2.6 : 2} />
+                    {wordsBadge(id)}
                   </span>
-                  <span className={`font-editorial text-xs tracking-[0.05em] uppercase transition-colors ${active ? "text-gold font-bold" : "text-cream/70"}`}>
-                    {label}
-                  </span>
+                  <span className={`text-[10px] ${active ? "font-bold" : "font-medium"}`}>{label}</span>
                 </button>
               );
             })}
           </div>
-        </div>
+        </nav>
       </div>
     </div>
   );

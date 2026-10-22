@@ -12,7 +12,7 @@ export const ShoqanChat = () => {
   const [chatError, setChatError] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement | null>(null);
 
-  const BUBBLE_SIZE = 80;
+  const BUBBLE_SIZE = 64;
   const [pos, setPos] = useState(() => {
     try {
       const saved = localStorage.getItem("shoqan_bubble_pos");
@@ -20,7 +20,7 @@ export const ShoqanChat = () => {
     } catch {}
     return {
       x: (typeof window !== "undefined" ? window.innerWidth : 400) - BUBBLE_SIZE - 16,
-      y: (typeof window !== "undefined" ? window.innerHeight : 800) - BUBBLE_SIZE - 96,
+      y: (typeof window !== "undefined" ? window.innerHeight : 800) - BUBBLE_SIZE - 110,
     };
   });
   const dragRef = useRef({ dragging: false, moved: false, startX: 0, startY: 0, origX: 0, origY: 0 });
@@ -107,7 +107,7 @@ export const ShoqanChat = () => {
         onPointerUp={handlePointerUp}
         onPointerCancel={handlePointerUp}
         style={{ left: pos.x, top: pos.y }}
-        className={`fixed z-[65] w-20 h-20 rounded-full overflow-hidden border-[3px] border-gold gold-glow shadow-xl transition-transform touch-none cursor-grab active:cursor-grabbing ${
+        className={`fixed z-[65] w-16 h-16 rounded-full overflow-hidden border-[3px] border-card ring-2 ring-sun shadow-[0_4px_0_var(--color-sun-deep),0_10px_24px_-8px_rgba(28,35,51,0.35)] transition-transform touch-none cursor-grab active:cursor-grabbing ${
           open ? "scale-0" : "scale-100"
         }`}
         title="Ask Shoqan — drag to move, tap to open"
@@ -116,19 +116,19 @@ export const ShoqanChat = () => {
       </button>
 
       {open && (
-        <div className="fixed inset-0 z-[75] bg-black/70 backdrop-blur-sm flex items-end sm:items-center justify-center">
-          <div className="w-full max-w-[480px] mb-0 max-h-[80dvh] h-[75dvh] glass-luxury-card flex flex-col rounded-t-[26px] sm:rounded-[26px] overflow-hidden">
-            <div className="flex items-center justify-between p-4 border-b border-gold/20">
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-full overflow-hidden border border-gold/50 shrink-0">
+        <div className="fixed inset-0 z-[75] bg-ink/35 backdrop-blur-[2px] flex items-end sm:items-center justify-center">
+          <div className="w-full max-w-[480px] mb-0 max-h-[85dvh] h-[75dvh] bg-sand flex flex-col rounded-t-[28px] sm:rounded-[28px] overflow-hidden shadow-2xl animate-sheet-up sm:animate-pop-in">
+            <div className="flex items-center justify-between px-4 py-3 bg-card border-b border-line">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full overflow-hidden ring-2 ring-sun shrink-0">
                   <img src="/shoqan-avatar.jpg" alt="Shoqan" className="w-full h-full object-cover" />
                 </div>
                 <div>
-                  <p className="font-editorial text-xs font-extrabold text-cream uppercase tracking-wide">Shoqan</p>
-                  <p className="font-body text-xs text-cream/70">English & Kazakh helper</p>
+                  <p className="font-display text-[17px] font-black text-ink leading-tight">Shoqan</p>
+                  <p className="text-xs text-ink-2">English & Kazakh helper</p>
                 </div>
               </div>
-              <button onClick={() => setOpen(false)} className="p-2.5 text-cream/70 hover:text-cream">
+              <button onClick={() => setOpen(false)} aria-label="Close" className="w-9 h-9 rounded-full bg-sand-2 text-ink-2 flex items-center justify-center">
                 <X size={18} />
               </button>
             </div>
@@ -137,10 +137,10 @@ export const ShoqanChat = () => {
               {messages.map((m, i) => (
                 <div key={i} className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}>
                   <div
-                    className={`max-w-[80%] p-2.5 text-xs font-body leading-relaxed rounded-[14px] ${
+                    className={`max-w-[80%] px-3.5 py-2.5 text-[15px] leading-relaxed rounded-[20px] ${
                       m.role === "user"
-                        ? "bg-gold text-ink font-medium"
-                        : "bg-surface text-cream/90 border border-gold/15"
+                        ? "bg-sky text-white rounded-br-md"
+                        : "bg-card text-ink border border-line rounded-bl-md"
                     }`}
                   >
                     {m.content}
@@ -149,15 +149,15 @@ export const ShoqanChat = () => {
               ))}
               {sending && (
                 <div className="flex justify-start">
-                  <div className="bg-surface border border-gold/15 p-2.5 rounded-[14px] text-xs text-cream/70 italic">
+                  <div className="bg-card border border-line px-3.5 py-2.5 rounded-[20px] text-sm text-ink-2 italic">
                     Shoqan is thinking...
                   </div>
                 </div>
               )}
-              {chatError && <p className="text-xs text-felt text-center">{chatError}</p>}
+              {chatError && <p className="text-sm text-felt-deep text-center">{chatError}</p>}
             </div>
 
-            <div className="p-3 border-t border-gold/20 flex items-center gap-2">
+            <div className="p-3 bg-card border-t border-line flex items-center gap-2 pb-[max(env(safe-area-inset-bottom),12px)]">
               <input
                 type="text"
                 value={input}
@@ -166,12 +166,13 @@ export const ShoqanChat = () => {
                   if (e.key === "Enter") handleSend();
                 }}
                 placeholder="Ask about English, Kazakh, or the app..."
-                className="flex-1 p-2.5 bg-surface border border-gold/20 rounded-full text-[11px] font-body text-cream placeholder:text-cream/30 outline-none focus:border-gold/60"
+                className="field !min-h-[44px] !rounded-full"
               />
               <button
                 onClick={handleSend}
                 disabled={sending || !input.trim()}
-                className="w-11 h-11 shrink-0 rounded-full bg-gradient-to-br from-gold to-gold-deep disabled:opacity-40 text-ink flex items-center justify-center"
+                aria-label="Send"
+                className="w-11 h-11 shrink-0 rounded-full bg-sky disabled:bg-sand-3 disabled:text-ink-3 text-white flex items-center justify-center"
               >
                 <Send size={15} />
               </button>

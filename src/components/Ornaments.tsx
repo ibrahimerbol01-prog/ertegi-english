@@ -72,7 +72,7 @@ export const OrnamentBand = ({ className = "h-3 w-full", strokeWidth = 2.6 }: Or
 };
 
 /* Thin rule with a horn pair centred on it. Section divider. */
-export const OrnamentDivider = ({ className = "text-gold/70" }: { className?: string }) => (
+export const OrnamentDivider = ({ className = "text-sun-deep/70" }: { className?: string }) => (
   <div className={`flex items-center gap-3 ${className}`} aria-hidden="true">
     <span className="h-px flex-1 bg-gradient-to-r from-transparent to-current opacity-60" />
     <QoshqarMuyiz className="w-7 h-4 shrink-0" strokeWidth={3.5} />
@@ -95,7 +95,7 @@ export const OrnamentCorner = ({ className = "w-8 h-8", corner = "tl" }: { class
 };
 
 /* Four corners inside a relative parent. */
-export const OrnamentFrame = ({ className = "text-gold/45", size = "w-7 h-7" }: { className?: string; size?: string }) => (
+export const OrnamentFrame = ({ className = "text-sun-deep/40", size = "w-7 h-7" }: { className?: string; size?: string }) => (
   <div className={`pointer-events-none absolute inset-2 ${className}`} aria-hidden="true">
     <OrnamentCorner className={`absolute top-0 left-0 ${size}`} corner="tl" />
     <OrnamentCorner className={`absolute top-0 right-0 ${size}`} corner="tr" />
@@ -104,15 +104,14 @@ export const OrnamentFrame = ({ className = "text-gold/45", size = "w-7 h-7" }: 
   </div>
 );
 
-/* Page background: deep steppe-night gradient with a faint repeating
-   horn lattice. Sits behind every authenticated tab. */
+/* Page background: warm kiiz sand with a very faint repeating horn
+   lattice. Sits behind every authenticated tab and the auth screen. */
 export const SteppeBackground = () => {
   const id = useId();
   return (
     <div className="absolute inset-0 w-full h-full overflow-hidden pointer-events-none" style={{ zIndex: 0 }} aria-hidden="true">
-      <div className="absolute inset-0 bg-ink" />
-      <div className="absolute inset-0 bg-[radial-gradient(120%_80%_at_50%_-10%,var(--color-teal-glow)_0%,transparent_60%)]" />
-      <svg className="absolute inset-0 w-full h-full text-gold" style={{ opacity: 0.045 }}>
+      <div className="absolute inset-0 bg-sand" />
+      <svg className="absolute inset-0 w-full h-full text-sun-deep" style={{ opacity: 0.045 }}>
         <defs>
           <pattern id={id} width="96" height="96" patternUnits="userSpaceOnUse">
             <g fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
@@ -125,7 +124,25 @@ export const SteppeBackground = () => {
         </defs>
         <rect width="100%" height="100%" fill={`url(#${id})`} />
       </svg>
-      <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-ink to-transparent" />
     </div>
+  );
+};
+
+/* Kilem strip: a row of felt rhombs in the brand colours, like the woven
+   edge of a syrmaq. Thin accent for card tops and section breaks. */
+export const KilimStrip = ({ className = "h-2 w-full" }: { className?: string }) => {
+  const id = useId();
+  return (
+    <svg className={className} aria-hidden="true" preserveAspectRatio="none">
+      <defs>
+        <pattern id={id} width="48" height="8" patternUnits="userSpaceOnUse">
+          <path d="M6 0 L12 4 L6 8 L0 4 Z" fill="var(--color-sky)" />
+          <path d="M18 0 L24 4 L18 8 L12 4 Z" fill="var(--color-sun)" />
+          <path d="M30 0 L36 4 L30 8 L24 4 Z" fill="var(--color-felt)" />
+          <path d="M42 0 L48 4 L42 8 L36 4 Z" fill="var(--color-jade)" />
+        </pattern>
+      </defs>
+      <rect width="100%" height="100%" fill={`url(#${id})`} />
+    </svg>
   );
 };

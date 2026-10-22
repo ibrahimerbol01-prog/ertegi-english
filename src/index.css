@@ -1,30 +1,276 @@
 @import "tailwindcss";
 
-/* Ertegi design tokens. Palette: steppe night (deep teal), kiiz felt (cream),
-   altyn (gold), qyzyl kiiz (felt red), kók (turquoise). Use these instead of
-   raw hex values in components. */
+/* Ertegi "modern nomad" tokens.
+   Apple: light sand canvas, white cards, frosted bars, large titles.
+   Duolingo: saturated colours, chunky 3D buttons and tiles, learning path.
+   Nomad: kiiz felt cream, Kazakh sky blue, altyn sun, felt red, jade;
+   qoşqar müiız ornaments as accents only. Use these instead of raw hex. */
 @theme static {
-  --color-ink: #0B2128;          /* page background */
-  --color-ink-2: #0F2C35;        /* raised surface */
-  --color-surface: #133640;      /* cards, inputs */
-  --color-surface-2: #1A4450;    /* hover / pressed surface */
-  --color-line: #2A5662;         /* hairlines on dark */
-  --color-teal-glow: #1D5260;    /* background glow */
+  --color-sand: #FBF6EE;         /* page background (kiiz felt) */
+  --color-sand-2: #F3EADB;       /* grouped background, tracks, inputs */
+  --color-sand-3: #E9DDC7;       /* pressed / disabled */
+  --color-card: #FFFFFF;         /* cards, sheets */
+  --color-line: #E8DECB;         /* hairlines and tile borders */
+  --color-line-2: #D9CBB0;       /* 3D tile bottom edge */
 
-  --color-cream: #F6EEDC;        /* primary text */
-  --color-gold: #E7A93F;         /* brand accent, primary actions */
-  --color-gold-deep: #B97A1F;    /* gradient end, pressed */
-  --color-felt: #C8502E;         /* secondary accent, labels, alerts */
-  --color-felt-deep: #8F3119;
-  --color-turq: #4DBFAE;         /* success, positive feedback */
+  --color-ink: #1C2333;          /* primary text */
+  --color-ink-2: #5E6573;        /* secondary text */
+  --color-ink-3: #9A9FA8;        /* tertiary text, inactive icons */
 
-  --font-display: "Alegreya SC", "Alegreya", Georgia, serif;
-  --font-sans: "Manrope", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --color-sky: #12A3C6;          /* primary action (Kazakh flag blue) */
+  --color-sky-deep: #0B7E9A;     /* 3D edge, pressed */
+  --color-sky-soft: #E1F4F9;     /* selected tint */
+
+  --color-sun: #FFB81F;          /* XP, rewards, highlight */
+  --color-sun-deep: #D98E00;
+  --color-sun-soft: #FFF2D2;
+
+  --color-felt: #E4572E;         /* hearts, streak, errors */
+  --color-felt-deep: #B53D1A;
+  --color-felt-soft: #FDE6DE;
+
+  --color-jade: #22B07D;         /* correct, success, continue */
+  --color-jade-deep: #178A60;
+  --color-jade-soft: #DDF5EA;
+
+  --color-night: #1F2B4D;        /* hero story cards (steppe night) */
+  --color-night-2: #2B3B66;
+
+  --font-display: "Nunito", ui-rounded, "SF Pro Rounded", system-ui, sans-serif;
+  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", system-ui, sans-serif;
+
+  --radius-tile: 16px;
+  --radius-card: 24px;
+}
+
+@layer base {
+  :root { color-scheme: light; }
+  html, body { background: var(--color-sand); color: var(--color-ink); }
+  body { font-family: var(--font-sans); -webkit-font-smoothing: antialiased; }
+  * { -webkit-tap-highlight-color: transparent; }
+  ::selection { background: color-mix(in srgb, var(--color-sun) 45%, transparent); }
+  input, textarea { caret-color: var(--color-sky); }
+  :where(button, a, input, textarea, [role="button"]):focus-visible {
+    outline: 3px solid color-mix(in srgb, var(--color-sky) 55%, transparent);
+    outline-offset: 2px;
+  }
+}
+
+@layer components {
+  .font-display { font-family: var(--font-display); }
+  .font-body { font-family: var(--font-sans); }
+
+  /* Apple large title and small caps label */
+  .large-title {
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-size: 30px;
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+    color: var(--color-ink);
+  }
+  .eyebrow {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-ink-2);
+  }
+
+  /* Apple card: white, soft shadow, hairline */
+  .card {
+    background: var(--color-card);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-card);
+    box-shadow: 0 1px 2px rgba(28, 35, 51, 0.04), 0 10px 28px -16px rgba(28, 35, 51, 0.18);
+  }
+
+  /* Duolingo tile: 2px border with a thicker bottom edge, presses down */
+  .tile {
+    background: var(--color-card);
+    border: 2px solid var(--color-line);
+    border-bottom-width: 4px;
+    border-radius: var(--radius-tile);
+    transition: transform 0.08s ease, border-color 0.15s ease, background-color 0.15s ease;
+  }
+  .tile:active:not(:disabled) { transform: translateY(2px); border-bottom-width: 2px; margin-bottom: 2px; }
+  .tile-selected { background: var(--color-sky-soft); border-color: var(--color-sky); color: var(--color-sky-deep); }
+  .tile-correct { background: var(--color-jade-soft); border-color: var(--color-jade); color: var(--color-jade-deep); }
+  .tile-wrong { background: var(--color-felt-soft); border-color: var(--color-felt); color: var(--color-felt-deep); }
+
+  /* Duolingo 3D button. Colour comes from a modifier. */
+  .btn {
+    --b: var(--color-sky);
+    --e: var(--color-sky-deep);
+    --f: #fff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 50px;
+    padding: 0 20px;
+    border-radius: var(--radius-tile);
+    background: var(--b);
+    color: var(--f);
+    box-shadow: 0 4px 0 var(--e);
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-size: 15px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    transition: transform 0.08s ease, box-shadow 0.08s ease, filter 0.15s ease;
+    user-select: none;
+  }
+  .btn:hover:not(:disabled) { filter: brightness(1.05); }
+  .btn:active:not(:disabled) { transform: translateY(4px); box-shadow: 0 0 0 var(--e); }
+  .btn:disabled { --b: var(--color-sand-3); --e: var(--color-line-2); --f: var(--color-ink-3); cursor: not-allowed; }
+  .btn-sun { --b: var(--color-sun); --e: var(--color-sun-deep); --f: var(--color-ink); }
+  .btn-jade { --b: var(--color-jade); --e: var(--color-jade-deep); }
+  .btn-felt { --b: var(--color-felt); --e: var(--color-felt-deep); }
+  .btn-night { --b: var(--color-night); --e: #121a31; }
+  .btn-ghost {
+    --b: var(--color-card); --e: var(--color-line-2); --f: var(--color-sky-deep);
+    border: 2px solid var(--color-line);
+  }
+  .btn-sm { min-height: 40px; padding: 0 14px; font-size: 13px; }
+
+  /* Pill chip for stats and labels */
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 32px;
+    padding: 0 12px;
+    border-radius: 999px;
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 14px;
+    background: var(--color-card);
+    border: 1px solid var(--color-line);
+  }
+
+  /* Apple frosted bar */
+  .glass {
+    background: color-mix(in srgb, var(--color-sand) 78%, transparent);
+    backdrop-filter: saturate(180%) blur(20px);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+  }
+
+  /* Apple segmented control */
+  .segmented { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 2px; padding: 3px; border-radius: 12px; background: var(--color-sand-2); }
+  .segmented > button { min-height: 36px; border-radius: 9px; font-weight: 600; font-size: 13px; color: var(--color-ink-2); transition: background-color 0.2s ease, color 0.2s ease; }
+  .segmented > button[aria-pressed="true"] { background: var(--color-card); color: var(--color-ink); box-shadow: 0 1px 3px rgba(28, 35, 51, 0.12); }
+
+  /* Apple text field */
+  .field {
+    width: 100%;
+    min-height: 50px;
+    padding: 0 16px;
+    border-radius: 14px;
+    background: var(--color-sand-2);
+    border: 2px solid transparent;
+    font-size: 16px;
+    color: var(--color-ink);
+    outline: none;
+    transition: border-color 0.15s ease, background-color 0.15s ease;
+  }
+  .field::placeholder { color: var(--color-ink-3); }
+  .field:focus { border-color: var(--color-sky); background: var(--color-card); }
+
+  /* Progress track */
+  .track { height: 14px; border-radius: 999px; background: var(--color-sand-2); overflow: hidden; }
+  .track > span {
+    display: block; height: 100%; border-radius: inherit;
+    background: var(--color-jade);
+    box-shadow: inset 0 -3px 0 rgba(0, 0, 0, 0.12), inset 0 4px 0 -1px rgba(255, 255, 255, 0.35);
+    transition: width 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  }
 }
 
 @supports not (height: 100dvh) {
   .h-dvh { height: 100vh; }
   .min-h-dvh { min-height: 100vh; }
-  .max-h-\[80dvh\] { max-height: 80vh; }
+  .max-h-\[85dvh\] { max-height: 85vh; }
   .h-\[75dvh\] { height: 75vh; }
 }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+}
+
+@keyframes pop-in {
+  0% { opacity: 0; transform: translateY(8px) scale(0.98); }
+  100% { opacity: 1; transform: none; }
+}
+.animate-pop-in { animation: pop-in 0.35s cubic-bezier(0.16, 1, 0.3, 1) both; }
+
+@keyframes sheet-up {
+  0% { transform: translateY(100%); }
+  100% { transform: none; }
+}
+.animate-sheet-up { animation: sheet-up 0.32s cubic-bezier(0.16, 1, 0.3, 1) both; }
+
+@keyframes bob {
+  0%, 100% { transform: translate(-50%, 0); }
+  50% { transform: translate(-50%, -5px); }
+}
+.animate-bob { animation: bob 1.6s ease-in-out infinite; }
+
+@keyframes float-slow {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+.animate-float { animation: float-slow 4s ease-in-out infinite; }
+
+@keyframes xp-float {
+  0% { opacity: 0; transform: translateY(-4px) scale(0.75); }
+  15% { opacity: 1; transform: translateY(2px) scale(1.15); }
+  75% { opacity: 1; transform: translateY(14px) scale(1); }
+  100% { opacity: 0; transform: translateY(24px) scale(0.9); }
+}
+.animate-xp-float { animation: xp-float 1.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+
+@keyframes confetti-fall {
+  0% { transform: translateY(-10px) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(260px) rotate(540deg); opacity: 0; }
+}
+.animate-confetti { animation: confetti-fall 1.8s cubic-bezier(0.3, 0.6, 0.5, 1) forwards; }
+
+@keyframes rank-pop {
+  0% { opacity: 0; transform: scale(0.6) translateY(10px); }
+  60% { opacity: 1; transform: scale(1.06) translateY(0); }
+  100% { opacity: 1; transform: none; }
+}
+.animate-rank-pop { animation: rank-pop 0.55s cubic-bezier(0.16, 1, 0.3, 1) both; }
+
+@keyframes answer-correct-pulse {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.03); }
+  100% { transform: scale(1); }
+}
+.animate-answer-correct { animation: answer-correct-pulse 0.45s cubic-bezier(0.16, 1, 0.3, 1) both; }
+
+@keyframes answer-wrong-shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-6px); }
+  40% { transform: translateX(5px); }
+  60% { transform: translateX(-3px); }
+  80% { transform: translateX(2px); }
+}
+.animate-answer-wrong { animation: answer-wrong-shake 0.4s ease-in-out both; }
+
+@keyframes achievement-slide {
+  0% { opacity: 0; transform: translateY(-16px) scale(0.97); }
+  12% { opacity: 1; transform: none; }
+  88% { opacity: 1; transform: none; }
+  100% { opacity: 0; transform: translateY(-10px) scale(0.98); }
+}
+.animate-achievement { animation: achievement-slide 2.8s cubic-bezier(0.16, 1, 0.3, 1) both; }
+
+/* Flashcard flip */
+.flip { perspective: 1200px; }
+.flip-inner { position: relative; transition: transform 0.55s cubic-bezier(0.16, 1, 0.3, 1); transform-style: preserve-3d; }
+.flip-inner.is-flipped { transform: rotateY(180deg); }
+.flip-face { position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+.flip-back { transform: rotateY(180deg); }
