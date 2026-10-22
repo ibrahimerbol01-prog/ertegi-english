@@ -5,8 +5,9 @@ import {
 } from "lucide-react";
 import {
   FontLoader, LevelUpModal, AchievementBanner, XpToast,
-  KazakhOrnament, StaticOrnamentBg, SaveErrorToast
+  StaticOrnamentBg, SaveErrorToast
 } from "./components/UIHelpers";
+import { Shanyraq, OrnamentBand } from "./components/Ornaments";
 import { ShoqanChat } from "./components/ShoqanChat";
 import {
   HomeScreen, ReaderScreen, FlashcardsScreen, MatchingGame,
@@ -227,7 +228,7 @@ export default function KazakhTalesApp({ session }: { session: Session }) {
   };
 
   if (!dataLoaded) {
-    return <div className="min-h-dvh w-full bg-[#09090D]" />;
+    return <div className="min-h-dvh w-full bg-ink" />;
   }
 
   const tabs = [
@@ -240,7 +241,7 @@ export default function KazakhTalesApp({ session }: { session: Session }) {
   ] as const;
 
   return (
-    <div className="relative h-dvh w-full bg-[#09090D] font-body text-[#F8F5EE] overflow-hidden flex">
+    <div className="relative h-dvh w-full bg-ink font-body text-cream overflow-hidden flex">
       <FontLoader />
 
       <LevelUpModal show={showLevelUp} rank={levelUpRank} onClose={() => setShowLevelUp(false)} />
@@ -255,10 +256,10 @@ export default function KazakhTalesApp({ session }: { session: Session }) {
       <StaticOrnamentBg />
 
       {/* Sidebar — desktop only */}
-      <aside className="hidden md:flex md:w-60 md:shrink-0 md:flex-col md:border-r md:border-[#C5A059]/20 md:bg-[#09090D]/85 md:backdrop-blur-md relative z-10">
-        <div className="px-5 py-5 border-b border-[#C5A059]/20 flex items-center gap-2">
-          <KazakhOrnament className="w-5 h-5 text-[#C5A059]" />
-          <span className="font-editorial text-sm font-extrabold tracking-[0.2em] text-[#F8F5EE] uppercase">Ertegi English</span>
+      <aside className="hidden md:flex md:w-60 md:shrink-0 md:flex-col md:border-r md:border-gold/25 md:bg-ink-2/90 md:backdrop-blur-md relative z-10">
+        <div className="px-5 py-5 border-b border-gold/20 flex items-center gap-2">
+          <Shanyraq className="w-6 h-6 text-gold" strokeWidth={4} />
+          <span className="font-editorial text-sm font-extrabold tracking-[0.2em] text-cream uppercase">Ertegi English</span>
         </div>
         <nav className="flex flex-col flex-1 px-3 py-4 gap-1">
           {tabs.map(({ id, label, Icon }) => {
@@ -267,12 +268,12 @@ export default function KazakhTalesApp({ session }: { session: Session }) {
               <button
                 key={id}
                 onClick={() => setTab(id)}
-                className={`relative flex items-center gap-3 px-3 py-2.5 rounded-2xl transition-all duration-300 w-full ${active ? "bg-[#C5A059] text-[#09090D]" : "text-[#F8F5EE]/70 hover:text-[#F8F5EE] hover:bg-white/5"}`}
+                className={`relative flex items-center gap-3 px-3 py-2.5 rounded-2xl transition-all duration-300 w-full ${active ? "bg-gold text-ink" : "text-cream/70 hover:text-cream hover:bg-white/5"}`}
               >
                 <span className="relative flex items-center justify-center w-9 h-9 shrink-0">
                   <Icon size={15} />
                   {id === "words" && savedWords.length > 0 && (
-                    <span className="absolute -top-0.5 right-0.5 w-3.5 h-3.5 rounded-full bg-[#B2533E] text-[7px] text-[#F8F5EE] flex items-center justify-center font-bold ring-2 ring-[#09090D]">
+                    <span className="absolute -top-0.5 right-0.5 w-3.5 h-3.5 rounded-full bg-felt text-[9px] text-cream flex items-center justify-center font-bold ring-2 ring-ink">
                       {savedWords.length}
                     </span>
                   )}
@@ -282,31 +283,36 @@ export default function KazakhTalesApp({ session }: { session: Session }) {
             );
           })}
         </nav>
+        <div className="px-5 pb-6 text-gold/35">
+          <OrnamentBand className="h-4 w-full" />
+        </div>
       </aside>
 
       {/* Main column */}
-      <div className="relative z-10 flex-1 h-dvh bg-[#09090D]/75 backdrop-blur-xl overflow-hidden flex flex-col">
+      <div className="relative z-10 flex-1 h-dvh overflow-hidden flex flex-col">
 
-        <div className="flex items-center px-5 pt-[max(env(safe-area-inset-top),20px)] pb-3 border-b border-[#C5A059]/20 bg-[#09090D]/85 backdrop-blur-md">
+        <div className="flex items-center px-5 pt-[max(env(safe-area-inset-top),20px)] pb-3 bg-ink/85 backdrop-blur-md relative">
           <div className="flex items-center gap-2 mr-auto md:hidden">
-            <KazakhOrnament className="w-5 h-5 text-[#C5A059]" />
-            <span className="font-editorial text-sm font-extrabold tracking-[0.2em] text-[#F8F5EE] uppercase">Ertegi English</span>
+            <Shanyraq className="w-6 h-6 text-gold" strokeWidth={4} />
+            <span className="font-editorial text-sm font-extrabold tracking-[0.2em] text-cream uppercase">Ertegi English</span>
           </div>
           <div className="flex items-center gap-2.5 ml-auto">
             <button
               onClick={() => setLang(lang === "kk" ? "en" : "kk")}
-              className="flex items-center gap-1.5 px-3 min-h-[44px] border border-[#C5A059]/30 bg-[#14141C] text-xs font-editorial font-bold tracking-[0.1em] hover:border-[#C5A059] transition-all"
+              className="flex items-center gap-1.5 px-3 min-h-[44px] border border-gold/30 bg-surface text-xs font-editorial font-bold tracking-[0.1em] hover:border-gold transition-all"
             >
-              <Globe size={11} className="text-[#C5A059]" />
-              <span className={lang === "kk" ? "text-[#C5A059]" : "text-[#F8F5EE]/70"}>QAZ</span>
-              <span className="text-[#F8F5EE]/20">|</span>
-              <span className={lang === "en" ? "text-[#C5A059]" : "text-[#F8F5EE]/70"}>ENG</span>
+              <Globe size={11} className="text-gold" />
+              <span className={lang === "kk" ? "text-gold" : "text-cream/70"}>QAZ</span>
+              <span className="text-cream/20">|</span>
+              <span className={lang === "en" ? "text-gold" : "text-cream/70"}>ENG</span>
             </button>
-            <span className="relative px-2.5 py-0.5 gold-badge text-[9px] gold-glow">
+            <span className="relative px-2.5 py-0.5 gold-badge text-[10px] gold-glow">
               {xp} XP
               <XpToast toast={xpToast} />
             </span>
           </div>
+          {/* Felt edging: gold hairline over a red felt stripe */}
+          <span aria-hidden="true" className="absolute inset-x-0 -bottom-[3px] h-[3px] border-t border-gold/50 bg-felt/70" />
         </div>
 
         <div className="flex-1 overflow-y-auto pt-4">
@@ -348,16 +354,16 @@ export default function KazakhTalesApp({ session }: { session: Session }) {
             {tab === "words" && (
               <div className="animate-pop-in">
                 <div className="px-5 pt-1 pb-3">
-                  <div className="grid grid-cols-2 gap-1 p-1 bg-[#14141C] rounded-full border border-white/[0.06]">
+                  <div className="grid grid-cols-2 gap-1 p-1 bg-surface rounded-full border border-white/[0.06]">
                     <button
                       onClick={() => setWordsMode("cards")}
-                      className={`py-3 text-xs font-editorial font-bold uppercase tracking-[0.1em] rounded-full transition-all ${wordsMode === "cards" ? "bg-[#C5A059] text-[#09090D]" : "text-[#F8F5EE]/70"}`}
+                      className={`py-3 text-xs font-editorial font-bold uppercase tracking-[0.1em] rounded-full transition-all ${wordsMode === "cards" ? "bg-gold text-ink" : "text-cream/70"}`}
                     >
                       Flashcards
                     </button>
                     <button
                       onClick={() => setWordsMode("match")}
-                      className={`py-3 text-xs font-editorial font-bold uppercase tracking-[0.1em] rounded-full transition-all ${wordsMode === "match" ? "bg-[#C5A059] text-[#09090D]" : "text-[#F8F5EE]/70"}`}
+                      className={`py-3 text-xs font-editorial font-bold uppercase tracking-[0.1em] rounded-full transition-all ${wordsMode === "match" ? "bg-gold text-ink" : "text-cream/70"}`}
                     >
                       Matching Game
                     </button>
@@ -386,7 +392,7 @@ export default function KazakhTalesApp({ session }: { session: Session }) {
         </div>
 
         {/* Bottom nav — mobile only */}
-        <div className="md:hidden px-2 pb-[max(env(safe-area-inset-bottom),12px)] pt-1.5 border-t border-white/[0.06] bg-[#09090D]/90 backdrop-blur-2xl">
+        <div className="md:hidden px-2 pb-[max(env(safe-area-inset-bottom),12px)] pt-1.5 border-t border-gold/25 bg-ink-2/95 backdrop-blur-2xl">
           <div className="grid grid-cols-6 gap-0.5">
             {tabs.map(({ id, label, Icon }) => {
               const active = tab === id;
@@ -397,16 +403,16 @@ export default function KazakhTalesApp({ session }: { session: Session }) {
                   className="relative flex flex-col items-center justify-center gap-1 py-2"
                 >
                   <span
-                    className={`flex items-center justify-center w-9 h-9 rounded-2xl transition-all duration-300 ${active ? "bg-[#C5A059] text-[#09090D] shadow-[0_4px_14px_-2px_rgba(197,160,89,0.55)]" : "text-[#F8F5EE]/70"}`}
+                    className={`flex items-center justify-center w-9 h-9 rounded-2xl transition-all duration-300 ${active ? "bg-gold text-ink shadow-[0_4px_14px_-2px_rgba(231,169,63,0.55)]" : "text-cream/70"}`}
                   >
                     <Icon size={15} />
                     {id === "words" && savedWords.length > 0 && (
-                      <span className="absolute -top-0.5 right-0.5 w-3.5 h-3.5 rounded-full bg-[#B2533E] text-[7px] text-[#F8F5EE] flex items-center justify-center font-bold ring-2 ring-[#09090D]">
+                      <span className="absolute -top-0.5 right-0.5 w-3.5 h-3.5 rounded-full bg-felt text-[9px] text-cream flex items-center justify-center font-bold ring-2 ring-ink">
                         {savedWords.length}
                       </span>
                     )}
                   </span>
-                  <span className={`font-editorial text-xs tracking-[0.05em] uppercase transition-colors ${active ? "text-[#C5A059] font-bold" : "text-[#F8F5EE]/70"}`}>
+                  <span className={`font-editorial text-xs tracking-[0.05em] uppercase transition-colors ${active ? "text-gold font-bold" : "text-cream/70"}`}>
                     {label}
                   </span>
                 </button>

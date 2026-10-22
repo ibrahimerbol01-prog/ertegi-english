@@ -1,61 +1,72 @@
 import { useState, useEffect, useRef, useMemo } from "react";
 import { CheckCircle2 } from "lucide-react";
+import { OrnamentFrame, QoshqarMuyiz, Shanyraq, SteppeBackground } from "./Ornaments";
 
 export const FontLoader = () => (
   <style>{`
-    @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Alegreya+SC:wght@500;700;800;900&family=Manrope:wght@400;500;600;700;800&display=swap');
 
-    .font-editorial { font-family: 'Cinzel', serif; }
+    /* Display: Alegreya SC (storybook small caps, Latin-ext + Cyrillic).
+       Body: Manrope (Latin-ext + Cyrillic, covers ä ğ ı ñ ö ş ū ü and Қ Ә Ң). */
+    .font-editorial { font-family: var(--font-display); letter-spacing: 0.02em; }
     .font-body {
-      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Plus Jakarta Sans', system-ui, sans-serif;
+      font-family: var(--font-sans);
       -webkit-font-smoothing: antialiased;
     }
 
     * { -webkit-tap-highlight-color: transparent; }
+    ::selection { background: rgba(231,169,63,0.35); color: var(--color-cream); }
 
     :root {
       --radius-sm: 12px;
       --radius-md: 18px;
-      --radius-lg: 26px;
+      --radius-lg: 24px;
       --radius-pill: 999px;
+      color-scheme: dark;
     }
 
+    /* Primary label chip: gold felt with dark ink text */
     .gold-badge {
-      background: linear-gradient(135deg, #C5A059 0%, #9A7B38 100%);
-      color: #0B0B0E;
-      font-weight: 700;
+      background: linear-gradient(135deg, var(--color-gold) 0%, var(--color-gold-deep) 100%);
+      color: var(--color-ink);
+      font-weight: 800;
       letter-spacing: 0.1em;
       text-transform: uppercase;
       border-radius: var(--radius-pill);
-      box-shadow: 0 1px 3px rgba(0,0,0,0.2), 0 4px 14px rgba(197, 160, 89, 0.22);
+      box-shadow: 0 1px 0 rgba(255,255,255,0.25) inset, 0 4px 14px -4px rgba(231,169,63,0.45);
     }
 
+    /* Secondary label chip: red felt */
     .terracotta-badge {
-      background: linear-gradient(135deg, #B2533E 0%, #8C3A27 100%);
-      color: #F8F5EE;
-      font-weight: 700;
-      letter-spacing: 0.08em;
+      background: linear-gradient(135deg, var(--color-felt) 0%, var(--color-felt-deep) 100%);
+      color: var(--color-cream);
+      font-weight: 800;
+      letter-spacing: 0.1em;
       text-transform: uppercase;
       border-radius: var(--radius-pill);
+      box-shadow: 0 1px 0 rgba(255,255,255,0.18) inset;
     }
 
-    .gold-glow { box-shadow: 0 8px 28px -6px rgba(197, 160, 89, 0.35), 0 1px 2px rgba(0,0,0,0.15); }
+    .gold-glow { box-shadow: 0 10px 28px -8px rgba(231,169,63,0.5), 0 1px 0 rgba(255,255,255,0.25) inset; }
 
+    /* Card: teal felt panel with a faint gold rim and top sheen */
     .glass-luxury-card {
-      background: rgba(20, 20, 26, 0.72);
-      backdrop-filter: saturate(180%) blur(24px);
-      -webkit-backdrop-filter: saturate(180%) blur(24px);
-      border: 1px solid rgba(255, 255, 255, 0.08);
+      background:
+        linear-gradient(180deg, rgba(246,238,220,0.045) 0%, rgba(246,238,220,0) 40%),
+        rgba(19, 54, 64, 0.92);
+      backdrop-filter: saturate(140%) blur(18px);
+      -webkit-backdrop-filter: saturate(140%) blur(18px);
+      border: 1px solid rgba(231, 169, 63, 0.16);
       border-radius: var(--radius-lg);
-      box-shadow: 0 1px 0 rgba(255,255,255,0.04) inset, 0 16px 40px -12px rgba(0, 0, 0, 0.55);
+      box-shadow: 0 1px 0 rgba(246,238,220,0.06) inset, 0 18px 40px -16px rgba(3, 14, 18, 0.7);
     }
 
     .glass-card-hover {
       transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease, box-shadow 0.3s ease;
     }
     .glass-card-hover:hover {
-      border-color: rgba(197, 160, 89, 0.5);
-      box-shadow: 0 20px 48px -12px rgba(0, 0, 0, 0.65), 0 0 0 1px rgba(197,160,89,0.15);
+      border-color: rgba(231, 169, 63, 0.5);
+      box-shadow: 0 22px 48px -14px rgba(3, 14, 18, 0.8), 0 0 0 1px rgba(231,169,63,0.18);
     }
     .glass-card-hover:active { transform: scale(0.985); }
 
@@ -64,8 +75,30 @@ export const FontLoader = () => (
       transition: transform 0.15s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.15s ease, background-color 0.2s ease, border-color 0.2s ease;
     }
     button:active:not(:disabled) { transform: scale(0.96); opacity: 0.92; }
+    button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visible {
+      outline: 2px solid var(--color-gold);
+      outline-offset: 2px;
+    }
+
+    input, textarea { caret-color: var(--color-gold); }
 
     .gold-glow, .glass-luxury-card { border-radius: var(--radius-lg); }
+
+
+    /* Section header rule: a thin band of horn motifs instead of a flat border */
+    .ornament-rule { position: relative; }
+    .ornament-rule::after {
+      content: "";
+      position: absolute; left: 0; right: 0; bottom: 0; height: 12px;
+      background-color: var(--color-gold);
+      opacity: 0.45;
+      -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='34' height='12' viewBox='0 0 100 36'%3E%3Cg fill='none' stroke='black' stroke-width='5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M32 34 V24 C32 14 39 6 47 6 C55 6 60 11 59 17 C58 23 51 24 49 20 C47.5 17 50 14.5 52.5 16 M32 24 C32 14 25 6 17 6 C9 6 4 11 5 17 C6 23 13 24 15 20 C16.5 17 14 14.5 11.5 16'/%3E%3C/g%3E%3Cpath d='M83 15 L89 21 L83 27 L77 21 Z' fill='black'/%3E%3Cpath d='M66 21 H74 M92 21 H100' stroke='black' stroke-width='3'/%3E%3C/svg%3E") repeat-x left center / 34px 12px;
+      mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='34' height='12' viewBox='0 0 100 36'%3E%3Cg fill='none' stroke='black' stroke-width='5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M32 34 V24 C32 14 39 6 47 6 C55 6 60 11 59 17 C58 23 51 24 49 20 C47.5 17 50 14.5 52.5 16 M32 24 C32 14 25 6 17 6 C9 6 4 11 5 17 C6 23 13 24 15 20 C16.5 17 14 14.5 11.5 16'/%3E%3C/g%3E%3Cpath d='M83 15 L89 21 L83 27 L77 21 Z' fill='black'/%3E%3Cpath d='M66 21 H74 M92 21 H100' stroke='black' stroke-width='3'/%3E%3C/svg%3E") repeat-x left center / 34px 12px;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+    }
 
     @keyframes pop-in {
       0% { opacity: 0; transform: scale(0.96) translateY(8px); }
@@ -101,15 +134,15 @@ export const FontLoader = () => (
     .animate-rank-pop { animation: rank-pop 0.55s cubic-bezier(0.16, 1, 0.3, 1) both; }
 
     @keyframes ring-pulse {
-      0%, 100% { filter: drop-shadow(0 0 3px rgba(197,160,89,0.4)); }
-      50% { filter: drop-shadow(0 0 9px rgba(197,160,89,0.75)); }
+      0%, 100% { filter: drop-shadow(0 0 3px rgba(231,169,63,0.4)); }
+      50% { filter: drop-shadow(0 0 9px rgba(231,169,63,0.75)); }
     }
     .animate-ring-pulse { animation: ring-pulse 2.4s ease-in-out infinite; }
 
     @keyframes answer-correct-pulse {
       0% { transform: scale(1); }
-      40% { transform: scale(1.035); box-shadow: 0 0 0 3px rgba(16,185,129,0.28); }
-      100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(16,185,129,0); }
+      40% { transform: scale(1.035); box-shadow: 0 0 0 3px rgba(77,191,174,0.28); }
+      100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(77,191,174,0); }
     }
     .animate-answer-correct { animation: answer-correct-pulse 0.5s cubic-bezier(0.16, 1, 0.3, 1) both; }
 
@@ -133,39 +166,13 @@ export const FontLoader = () => (
 );
 
 
-export const KazakhOrnament = ({ className = "w-6 h-6 text-amber-200" }: { className?: string }) => (
-  <svg viewBox="0 0 100 100" className={className} fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-    <path d="M50 5 C30 25, 10 30, 10 50 C10 70, 30 75, 50 95 C70 75, 90 70, 90 50 C90 30, 70 25, 50 5 Z M50 25 C40 38, 30 40, 30 50 C30 60, 40 62, 50 75 C60 62, 70 60, 70 50 C70 40, 60 38, 50 25 Z" />
-  </svg>
+/* Brand mark used across screens: the qoşqar müiız horn pair. */
+export const KazakhOrnament = ({ className = "w-6 h-6 text-gold" }: { className?: string }) => (
+  <QoshqarMuyiz className={className} strokeWidth={4} />
 );
 
-/* Static ornament background — replaces BackgroundVideo on all content tabs */
-export const StaticOrnamentBg = () => (
-  <div className="absolute inset-0 w-full h-full overflow-hidden pointer-events-none" style={{ zIndex: 0 }}>
-    <div className="absolute inset-0 bg-[#09090D]" />
-    {/* ponytail: inline SVG pattern avoids an extra network request; upgrade to CSS mask-image if pattern changes frequently */}
-    <svg
-      className="absolute inset-0 w-full h-full"
-      xmlns="http://www.w3.org/2000/svg"
-      style={{ opacity: 0.05 }}
-      aria-hidden="true"
-    >
-      <defs>
-        <pattern id="kz-ornament" x="0" y="0" width="48" height="48" patternUnits="userSpaceOnUse">
-          <path d="M24 2 L46 24 L24 46 L2 24 Z" stroke="#C5A059" strokeWidth="0.8" fill="none"/>
-          <path d="M24 12 L36 24 L24 36 L12 24 Z" stroke="#C5A059" strokeWidth="0.5" fill="none"/>
-          <path d="M24 2 L24 12 M24 36 L24 46 M2 24 L12 24 M36 24 L46 24" stroke="#C5A059" strokeWidth="0.4" fill="none"/>
-          <circle cx="24" cy="2" r="1.2" fill="#C5A059"/>
-          <circle cx="46" cy="24" r="1.2" fill="#C5A059"/>
-          <circle cx="24" cy="46" r="1.2" fill="#C5A059"/>
-          <circle cx="2" cy="24" r="1.2" fill="#C5A059"/>
-          <circle cx="24" cy="24" r="1.5" fill="#C5A059"/>
-        </pattern>
-      </defs>
-      <rect width="100%" height="100%" fill="url(#kz-ornament)"/>
-    </svg>
-  </div>
-);
+/* Kept under its old name so callers don't change. */
+export const StaticOrnamentBg = SteppeBackground;
 
 export const BackgroundVideo = ({ src, opacity = 50, videoKey }: { src: string; opacity?: number; videoKey?: string }) => {
   const [error, setError] = useState(false);
@@ -185,9 +192,9 @@ export const BackgroundVideo = ({ src, opacity = 50, videoKey }: { src: string; 
           style={{ opacity: opacity / 100, filter: "contrast(1.15) saturate(1.1)" }}
         />
       ) : (
-        <div className="absolute inset-0 w-full h-full bg-gradient-to-br from-[#1A150C] to-[#09090D]" />
+        <div className="absolute inset-0 w-full h-full bg-gradient-to-br from-ink-2 to-ink" />
       )}
-      <div className="absolute inset-0 bg-gradient-to-b from-[#09090D]/40 via-[#09090D]/55 to-[#09090D]/85" />
+      <div className="absolute inset-0 bg-gradient-to-b from-ink/40 via-ink/55 to-ink/85" />
     </div>
   );
 };
@@ -199,14 +206,14 @@ export const XpToast = ({ toast }: { toast: { amount: number; key: number } | nu
       key={toast.key}
       className="absolute -top-1 left-1/2 -translate-x-1/2 pointer-events-none animate-xp-float"
     >
-      <span className="font-editorial text-xs font-black text-[#C5A059] drop-shadow-[0_0_6px_rgba(197,160,89,0.7)] whitespace-nowrap">
+      <span className="font-editorial text-xs font-black text-gold drop-shadow-[0_0_6px_rgba(231,169,63,0.7)] whitespace-nowrap">
         +{toast.amount} XP
       </span>
     </span>
   );
 };
 
-const CONFETTI_COLORS = ["#C5A059", "#B2533E", "#F8F5EE", "#9A7B38"];
+const CONFETTI_COLORS = ["#E7A93F", "#C8502E", "#F6EEDC", "#4DBFAE"];
 
 export const LevelUpModal = ({ show, rank, onClose }: { show: boolean; rank: number; onClose: () => void }) => {
   const onCloseRef = useRef(onClose);
@@ -239,11 +246,12 @@ export const LevelUpModal = ({ show, rank, onClose }: { show: boolean; rank: num
             style={{ left: `${c.left}%`, backgroundColor: c.color, animationDelay: `${c.delay}s` }}
           />
         ))}
-        <div className="relative glass-luxury-card border-2 border-[#C5A059] p-6 text-center space-y-3 animate-rank-pop">
-          <KazakhOrnament className="w-9 h-9 mx-auto text-[#C5A059] animate-float" />
-          <p className="font-editorial text-xs tracking-[0.15em] text-[#C5A059] uppercase">RANK ACHIEVED</p>
-          <h3 className="font-editorial text-2xl font-black text-[#F8F5EE] uppercase">Level {rank}</h3>
-          <p className="font-body text-xs text-[#F8F5EE]/70">Your dedication to the steppe tales is paying off.</p>
+        <div className="relative glass-luxury-card border-2 border-gold p-6 text-center space-y-3 animate-rank-pop">
+          <OrnamentFrame />
+          <Shanyraq className="w-12 h-12 mx-auto text-gold animate-float" strokeWidth={3.5} />
+          <p className="font-editorial text-xs tracking-[0.15em] text-gold uppercase">RANK ACHIEVED</p>
+          <h3 className="font-editorial text-2xl font-black text-cream uppercase">Level {rank}</h3>
+          <p className="font-body text-xs text-cream/70">Your dedication to the steppe tales is paying off.</p>
         </div>
       </div>
     </div>
@@ -267,12 +275,12 @@ export const AchievementBanner = ({ achievement, onDone }: { achievement: { icon
 
   return (
     <div className="fixed top-4 left-1/2 -translate-x-1/2 z-[70] w-[calc(100%-32px)] max-w-[380px] px-4 pointer-events-none">
-      <div className="animate-achievement glass-luxury-card border-2 border-[#C5A059] p-3.5 flex items-center gap-3 gold-glow">
+      <div className="animate-achievement glass-luxury-card border-2 border-gold p-3.5 flex items-center gap-3 gold-glow">
         <span className="text-2xl shrink-0">{achievement.icon}</span>
         <div className="min-w-0">
-          <p className="text-xs text-[#C5A059] uppercase tracking-[0.1em] font-bold">Badge Unlocked</p>
-          <p className="font-editorial text-xs font-extrabold text-[#F8F5EE] truncate">{achievement.title}</p>
-          <p className="font-body text-xs text-[#F8F5EE]/70 truncate">{achievement.desc}</p>
+          <p className="text-xs text-gold uppercase tracking-[0.1em] font-bold">Badge Unlocked</p>
+          <p className="font-editorial text-xs font-extrabold text-cream truncate">{achievement.title}</p>
+          <p className="font-body text-xs text-cream/70 truncate">{achievement.desc}</p>
         </div>
       </div>
     </div>
@@ -283,7 +291,7 @@ export const SaveErrorToast = ({ show, message }: { show: boolean; message: stri
   if (!show) return null;
   return (
     <div className="fixed bottom-24 left-1/2 -translate-x-1/2 z-[80] max-w-[340px] w-[calc(100%-32px)] pointer-events-none">
-      <div className="animate-pop-in bg-[#1A0808] border border-[#B2533E]/60 rounded-2xl p-3 text-xs font-body text-[#F8F5EE]/90 text-center shadow-2xl">
+      <div className="animate-pop-in bg-felt-deep border border-felt/60 rounded-2xl p-3 text-xs font-body text-cream/90 text-center shadow-2xl">
         {message}
       </div>
     </div>
@@ -300,10 +308,10 @@ export const DailyGoalRing = ({ current, goal }: { current: number; goal: number
   return (
     <div className="relative w-[72px] h-[72px] flex items-center justify-center shrink-0">
       <svg viewBox="0 0 72 72" className={`w-full h-full -rotate-90 ${complete ? "animate-ring-pulse" : ""}`}>
-        <circle cx="36" cy="36" r={radius} stroke="#2A2A32" strokeWidth="6" fill="none" />
+        <circle cx="36" cy="36" r={radius} stroke="#2A5662" strokeWidth="6" fill="none" />
         <circle
           cx="36" cy="36" r={radius}
-          stroke={complete ? "#34D399" : "#C5A059"}
+          stroke={complete ? "#4DBFAE" : "#E7A93F"}
           strokeWidth="6" fill="none" strokeLinecap="round"
           strokeDasharray={circumference}
           strokeDashoffset={offset}
@@ -312,12 +320,12 @@ export const DailyGoalRing = ({ current, goal }: { current: number; goal: number
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center">
         {complete ? (
-          <CheckCircle2 size={18} className="text-emerald-400" />
+          <CheckCircle2 size={18} className="text-turq" />
         ) : (
           <>
-            <span className="font-editorial text-xs font-black text-[#F8F5EE] leading-none">{current}</span>
+            <span className="font-editorial text-xs font-black text-cream leading-none">{current}</span>
             {/* ponytail: 10px inside a 54px ring — decorative context, min-12px rule doesn't apply here */}
-            <span className="text-[10px] text-[#F8F5EE]/70 uppercase tracking-[0.05em] mt-0.5">/ {goal} XP</span>
+            <span className="text-[10px] text-cream/70 uppercase tracking-[0.05em] mt-0.5">/ {goal} XP</span>
           </>
         )}
       </div>

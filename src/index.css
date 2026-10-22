@@ -1,5 +1,27 @@
 @import "tailwindcss";
 
+/* Ertegi design tokens. Palette: steppe night (deep teal), kiiz felt (cream),
+   altyn (gold), qyzyl kiiz (felt red), kók (turquoise). Use these instead of
+   raw hex values in components. */
+@theme static {
+  --color-ink: #0B2128;          /* page background */
+  --color-ink-2: #0F2C35;        /* raised surface */
+  --color-surface: #133640;      /* cards, inputs */
+  --color-surface-2: #1A4450;    /* hover / pressed surface */
+  --color-line: #2A5662;         /* hairlines on dark */
+  --color-teal-glow: #1D5260;    /* background glow */
+
+  --color-cream: #F6EEDC;        /* primary text */
+  --color-gold: #E7A93F;         /* brand accent, primary actions */
+  --color-gold-deep: #B97A1F;    /* gradient end, pressed */
+  --color-felt: #C8502E;         /* secondary accent, labels, alerts */
+  --color-felt-deep: #8F3119;
+  --color-turq: #4DBFAE;         /* success, positive feedback */
+
+  --font-display: "Alegreya SC", "Alegreya", Georgia, serif;
+  --font-sans: "Manrope", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
 @supports not (height: 100dvh) {
   .h-dvh { height: 100vh; }
   .min-h-dvh { min-height: 100vh; }

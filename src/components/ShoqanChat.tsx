@@ -107,7 +107,7 @@ export const ShoqanChat = () => {
         onPointerUp={handlePointerUp}
         onPointerCancel={handlePointerUp}
         style={{ left: pos.x, top: pos.y }}
-        className={`fixed z-[65] w-20 h-20 rounded-full overflow-hidden border-[3px] border-[#C5A059] gold-glow shadow-xl transition-transform touch-none cursor-grab active:cursor-grabbing ${
+        className={`fixed z-[65] w-20 h-20 rounded-full overflow-hidden border-[3px] border-gold gold-glow shadow-xl transition-transform touch-none cursor-grab active:cursor-grabbing ${
           open ? "scale-0" : "scale-100"
         }`}
         title="Ask Shoqan — drag to move, tap to open"
@@ -118,17 +118,17 @@ export const ShoqanChat = () => {
       {open && (
         <div className="fixed inset-0 z-[75] bg-black/70 backdrop-blur-sm flex items-end sm:items-center justify-center">
           <div className="w-full max-w-[480px] mb-0 max-h-[80dvh] h-[75dvh] glass-luxury-card flex flex-col rounded-t-[26px] sm:rounded-[26px] overflow-hidden">
-            <div className="flex items-center justify-between p-4 border-b border-[#C5A059]/20">
+            <div className="flex items-center justify-between p-4 border-b border-gold/20">
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-full overflow-hidden border border-[#C5A059]/50 shrink-0">
+                <div className="w-8 h-8 rounded-full overflow-hidden border border-gold/50 shrink-0">
                   <img src="/shoqan-avatar.jpg" alt="Shoqan" className="w-full h-full object-cover" />
                 </div>
                 <div>
-                  <p className="font-editorial text-xs font-extrabold text-[#F8F5EE] uppercase tracking-wide">Shoqan</p>
-                  <p className="font-body text-xs text-[#F8F5EE]/70">English & Kazakh helper</p>
+                  <p className="font-editorial text-xs font-extrabold text-cream uppercase tracking-wide">Shoqan</p>
+                  <p className="font-body text-xs text-cream/70">English & Kazakh helper</p>
                 </div>
               </div>
-              <button onClick={() => setOpen(false)} className="p-2.5 text-[#F8F5EE]/70 hover:text-[#F8F5EE]">
+              <button onClick={() => setOpen(false)} className="p-2.5 text-cream/70 hover:text-cream">
                 <X size={18} />
               </button>
             </div>
@@ -139,8 +139,8 @@ export const ShoqanChat = () => {
                   <div
                     className={`max-w-[80%] p-2.5 text-xs font-body leading-relaxed rounded-[14px] ${
                       m.role === "user"
-                        ? "bg-[#C5A059] text-[#09090D] font-medium"
-                        : "bg-[#14141C] text-[#F8F5EE]/90 border border-[#C5A059]/15"
+                        ? "bg-gold text-ink font-medium"
+                        : "bg-surface text-cream/90 border border-gold/15"
                     }`}
                   >
                     {m.content}
@@ -149,15 +149,15 @@ export const ShoqanChat = () => {
               ))}
               {sending && (
                 <div className="flex justify-start">
-                  <div className="bg-[#14141C] border border-[#C5A059]/15 p-2.5 rounded-[14px] text-xs text-[#F8F5EE]/70 italic">
+                  <div className="bg-surface border border-gold/15 p-2.5 rounded-[14px] text-xs text-cream/70 italic">
                     Shoqan is thinking...
                   </div>
                 </div>
               )}
-              {chatError && <p className="text-xs text-[#B2533E] text-center">{chatError}</p>}
+              {chatError && <p className="text-xs text-felt text-center">{chatError}</p>}
             </div>
 
-            <div className="p-3 border-t border-[#C5A059]/20 flex items-center gap-2">
+            <div className="p-3 border-t border-gold/20 flex items-center gap-2">
               <input
                 type="text"
                 value={input}
@@ -166,12 +166,12 @@ export const ShoqanChat = () => {
                   if (e.key === "Enter") handleSend();
                 }}
                 placeholder="Ask about English, Kazakh, or the app..."
-                className="flex-1 p-2.5 bg-[#14141C] border border-[#C5A059]/20 rounded-full text-[11px] font-body text-[#F8F5EE] placeholder:text-[#F8F5EE]/30 outline-none focus:border-[#C5A059]/60"
+                className="flex-1 p-2.5 bg-surface border border-gold/20 rounded-full text-[11px] font-body text-cream placeholder:text-cream/30 outline-none focus:border-gold/60"
               />
               <button
                 onClick={handleSend}
                 disabled={sending || !input.trim()}
-                className="w-11 h-11 shrink-0 rounded-full bg-gradient-to-br from-[#C5A059] to-[#9A7B38] disabled:opacity-40 text-[#09090D] flex items-center justify-center"
+                className="w-11 h-11 shrink-0 rounded-full bg-gradient-to-br from-gold to-gold-deep disabled:opacity-40 text-ink flex items-center justify-center"
               >
                 <Send size={15} />
               </button>

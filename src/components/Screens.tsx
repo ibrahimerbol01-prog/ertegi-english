@@ -5,6 +5,7 @@ import {
   Mic, MicOff, LogOut, Share2, Download
 } from "lucide-react";
 import { BackgroundVideo, KazakhOrnament, DailyGoalRing } from "./UIHelpers";
+import { Shanyraq, OrnamentBand, OrnamentDivider, OrnamentFrame, Tumar, SteppeBackground } from "./Ornaments";
 import { safePlayVoice } from "../utils/voice";
 import {
   BG_VIDEO_ASSETS, STORIES, LEVEL_DETAILS, WORD_TRANSLATIONS, ACHIEVEMENTS
@@ -15,32 +16,40 @@ import { supabase } from "../lib/supabase";
 /* --- 1. INTRO SCREEN --- */
 export function IntroScreen({ onFinish, t }: any) {
   return (
-    <div className="relative min-h-dvh w-full bg-[#09090D] flex flex-col overflow-hidden animate-pop-in">
-      <BackgroundVideo src={BG_VIDEO_ASSETS.intro} opacity={60} videoKey="intro-bg" />
+    <div className="relative min-h-dvh w-full bg-ink flex flex-col overflow-hidden animate-pop-in">
+      <SteppeBackground />
+      <BackgroundVideo src={BG_VIDEO_ASSETS.intro} opacity={50} videoKey="intro-bg" />
+      {/* Şañyraq watermark behind the title */}
+      <div aria-hidden="true" className="absolute inset-0 z-[1] flex items-center justify-center pointer-events-none">
+        <Shanyraq className="w-[min(120vw,560px)] h-[min(120vw,560px)] text-gold/[0.07]" strokeWidth={1.2} />
+      </div>
+      <OrnamentBand className="absolute top-0 inset-x-0 z-[2] h-4 w-full text-gold/40" />
+      <OrnamentBand className="absolute bottom-0 inset-x-0 z-[2] h-4 w-full text-felt/70 rotate-180" />
 
-      <div className="relative z-10 flex flex-col flex-1 justify-between p-6 mx-auto w-full max-w-[480px]">
+      <div className="relative z-10 flex flex-col flex-1 justify-between px-6 py-8 mx-auto w-full max-w-[480px]">
         <div className="flex justify-between items-center pt-4">
           <div className="flex items-center gap-2.5">
-            <KazakhOrnament className="w-6 h-6 text-[#C5A059]" />
-            <span className="font-editorial text-lg tracking-[0.2em] text-[#F8F5EE] uppercase font-extrabold">Ertegi English</span>
+            <Shanyraq className="w-7 h-7 text-gold" strokeWidth={4} />
+            <span className="font-editorial text-lg tracking-[0.2em] text-cream uppercase font-extrabold">Ertegi English</span>
           </div>
           <button
             onClick={onFinish}
-            className="text-[10px] font-editorial uppercase tracking-[0.15em] text-[#C5A059] hover:text-[#F8F5EE] px-3.5 py-1.5 border border-[#C5A059]/30 bg-black/50 backdrop-blur-md transition-all"
+            className="text-[10px] font-editorial uppercase tracking-[0.15em] text-gold hover:text-cream px-3.5 py-1.5 border border-gold/30 bg-black/50 backdrop-blur-md transition-all"
           >
             {t.skip}
           </button>
         </div>
 
         <div className="space-y-4 my-auto text-center px-4 animate-float">
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 terracotta-badge text-[9px] tracking-[0.2em]">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 terracotta-badge text-[10px] tracking-[0.2em]">
             <Sparkles size={10} /> QAZAQSTAN EDTECH INITIATIVE
           </span>
-          <h1 className="font-editorial text-3xl sm:text-4xl font-extrabold text-[#F8F5EE] leading-tight uppercase tracking-wide">
+          <h1 className="font-editorial text-4xl sm:text-5xl font-extrabold text-cream leading-[1.05] uppercase tracking-wide">
             DALA AÑYZDARY <br />
-            <span className="text-[#C5A059] drop-shadow-[0_0_20px_rgba(197,160,89,0.4)]">AĞYLŞYN TİLİNDE</span>
+            <span className="text-gold drop-shadow-[0_0_20px_rgba(231,169,63,0.4)]">AĞYLŞYN TİLİNDE</span>
           </h1>
-          <p className="font-body text-xs text-[#F8F5EE]/80 max-w-xs mx-auto leading-relaxed">
+          <OrnamentDivider className="text-gold/80 max-w-[220px] mx-auto" />
+          <p className="font-body text-sm text-cream/85 max-w-xs mx-auto leading-relaxed">
             {t.homeSubtitle}
           </p>
         </div>
@@ -48,7 +57,7 @@ export function IntroScreen({ onFinish, t }: any) {
         <div className="pb-6">
           <button
             onClick={onFinish}
-            className="rounded-full w-full py-4 bg-gradient-to-r from-[#C5A059] via-[#9A7B38] to-[#C5A059] hover:brightness-110 text-[#09090D] font-editorial font-extrabold text-xs tracking-[0.2em] uppercase gold-glow transition-all flex items-center justify-center gap-2"
+            className="rounded-full w-full py-4 bg-gradient-to-r from-gold via-gold-deep to-gold hover:brightness-110 text-ink font-editorial font-extrabold text-xs tracking-[0.2em] uppercase gold-glow transition-all flex items-center justify-center gap-2"
           >
             {t.enter} <ArrowRight size={16} />
           </button>
@@ -64,19 +73,19 @@ export function HomeScreen({ onStartRead, t, lang, sessionXp = 0, dailyGoal = 50
 
   return (
     <div className="px-5 pb-6 space-y-5 animate-pop-in">
-      <div className="relative glass-luxury-card p-5 border-l-2 border-l-[#C5A059] overflow-hidden min-h-[140px]">
+      <div className="relative glass-luxury-card p-6 overflow-hidden min-h-[140px]">
         <BackgroundVideo src={BG_VIDEO_ASSETS.home} opacity={35} videoKey="home-hero" />
+        <OrnamentFrame className="text-gold/50 z-10" size="w-6 h-6" />
 
         <div className="relative z-10 flex items-center justify-between mb-2">
-          <span className="px-2 py-0.5 gold-badge text-[8px]">HERITAGE · QAZAQSTAN</span>
-          <KazakhOrnament className="w-5 h-5 text-[#C5A059]" />
+          <span className="px-2 py-0.5 gold-badge text-[10px]">HERITAGE · QAZAQSTAN</span>
         </div>
         <div className="relative z-10 flex items-center gap-4">
           <div className="flex-1 min-w-0">
-            <h2 className="font-editorial text-xl font-bold text-[#F8F5EE] uppercase tracking-wide">
+            <h2 className="font-editorial text-xl font-bold text-cream uppercase tracking-wide">
               {t.greeting}
             </h2>
-            <p className="font-body text-xs text-[#F8F5EE]/80 mt-1 leading-relaxed">
+            <p className="font-body text-xs text-cream/80 mt-1 leading-relaxed">
               {t.homeSubtitle}
             </p>
           </div>
@@ -86,8 +95,11 @@ export function HomeScreen({ onStartRead, t, lang, sessionXp = 0, dailyGoal = 50
 
       <div className="space-y-3">
         <div className="flex items-center justify-between">
-          <h3 className="font-editorial text-xs tracking-[0.1em] text-[#C5A059] uppercase">{t.collectionTitle}</h3>
-          <span className="text-[9px] text-[#C5A059] font-bold bg-[#14141C] px-2.5 py-1 border border-[#C5A059]/30">
+          <h3 className="flex items-center gap-2 font-editorial text-sm tracking-[0.1em] text-gold uppercase">
+            <Tumar className="w-3.5 h-3.5 text-felt" />
+            {t.collectionTitle}
+          </h3>
+          <span className="text-[10px] text-gold font-bold bg-surface px-2.5 py-1 border border-gold/30">
             {STORIES.length}/10 UNLOCKED
           </span>
         </div>
@@ -98,7 +110,7 @@ export function HomeScreen({ onStartRead, t, lang, sessionXp = 0, dailyGoal = 50
             onClick={() => onStartRead(story.id)}
             className="group relative glass-luxury-card glass-card-hover p-4 cursor-pointer transition-all duration-300"
           >
-            <div className="relative h-48 w-full overflow-hidden mb-4 border border-[#C5A059]/30 bg-[#121218]">
+            <div className="relative h-48 w-full overflow-hidden mb-4 border border-gold/30 bg-ink-2">
               {!videoError ? (
                 <video 
                   autoPlay loop muted playsInline
@@ -107,25 +119,25 @@ export function HomeScreen({ onStartRead, t, lang, sessionXp = 0, dailyGoal = 50
                   className="w-full h-full object-cover contrast-110 saturate-100 group-hover:scale-105 transition-transform duration-700 ease-out" 
                 />
               ) : (
-                <div className="w-full h-full flex items-center justify-center bg-gradient-to-tr from-[#1E1810] to-[#0A0A0E]">
-                  <KazakhOrnament className="w-12 h-12 text-[#C5A059]/40" />
+                <div className="w-full h-full flex items-center justify-center bg-gradient-to-tr from-surface to-ink">
+                  <KazakhOrnament className="w-12 h-12 text-gold/40" />
                 </div>
               )}
-              <div className="absolute inset-0 bg-gradient-to-t from-[#09090D] via-[#09090D]/30 to-transparent opacity-90 pointer-events-none" />
+              <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/30 to-transparent opacity-90 pointer-events-none" />
               <div className="absolute top-3 left-3 flex gap-2">
-                <span className="gold-badge text-[8px] px-2 py-0.5">ADAPTIVE A1–C1</span>
-                <span className="bg-[#09090D]/90 border border-[#C5A059]/40 text-[#C5A059] text-[8px] px-2 py-0.5 font-bold flex items-center gap-1">
+                <span className="gold-badge text-[10px] px-2 py-0.5">ADAPTIVE A1–C1</span>
+                <span className="bg-ink/90 border border-gold/40 text-gold text-[10px] px-2 py-0.5 font-bold flex items-center gap-1">
                   <Video size={10} /> CINEMATIC
                 </span>
               </div>
             </div>
 
-            <h4 className="font-editorial text-base font-extrabold text-[#F8F5EE] uppercase tracking-wide">{story.title}</h4>
-            <p className="font-body text-xs text-[#F8F5EE]/70 mt-1 leading-relaxed">
+            <h4 className="font-editorial text-base font-extrabold text-cream uppercase tracking-wide">{story.title}</h4>
+            <p className="font-body text-xs text-cream/70 mt-1 leading-relaxed">
               {story.storyDesc[lang] || story.storyDesc.en}
             </p>
 
-            <button className="rounded-full mt-4 w-full py-3.5 bg-gradient-to-r from-[#C5A059] to-[#9A7B38] hover:brightness-110 text-[#09090D] font-editorial font-bold text-xs tracking-[0.15em] uppercase transition-all flex items-center justify-center gap-2 gold-glow">
+            <button className="rounded-full mt-4 w-full py-3.5 bg-gradient-to-r from-gold to-gold-deep hover:brightness-110 text-ink font-editorial font-bold text-xs tracking-[0.15em] uppercase transition-all flex items-center justify-center gap-2 gold-glow">
               <Play size={13} fill="currentColor" /> {t.startReading}
             </button>
           </div>
@@ -178,15 +190,15 @@ export function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, s
   if (!selectedStory) {
     return (
       <div className="px-5 pb-6 space-y-4 animate-pop-in">
-        <div className="border-b border-[#C5A059]/20 pb-3 flex items-center justify-between">
+        <div className="ornament-rule pb-5 flex items-center justify-between">
           <div>
-            <span className="px-2 py-0.5 terracotta-badge text-[8px]">STORY SELECT</span>
-            <h2 className="font-editorial text-base font-bold text-[#F8F5EE] uppercase mt-1">{t.selectStoryTitle}</h2>
+            <span className="px-2 py-0.5 terracotta-badge text-[10px]">STORY SELECT</span>
+            <h2 className="font-editorial text-xl font-bold text-cream uppercase mt-1.5 tracking-wide">{t.selectStoryTitle}</h2>
           </div>
-          <KazakhOrnament className="w-5 h-5 text-[#C5A059]" />
+          <KazakhOrnament className="w-5 h-5 text-gold" />
         </div>
 
-        <p className="font-body text-xs text-[#F8F5EE]/70">{t.selectStorySub}</p>
+        <p className="font-body text-xs text-cream/70">{t.selectStorySub}</p>
 
         <div className="space-y-2.5 pt-2">
           {STORIES.map((story: any) => (
@@ -196,11 +208,11 @@ export function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, s
               className="group glass-luxury-card glass-card-hover p-4 flex items-center justify-between cursor-pointer transition-all"
             >
               <div className="space-y-1 min-w-0">
-                <span className="px-2 py-0.5 gold-badge text-[9px]">{story.sceneLabel}</span>
-                <h3 className="font-editorial text-xs font-bold text-[#F8F5EE] uppercase tracking-wider">{story.title}</h3>
-                <p className="font-body text-xs text-[#F8F5EE]/70">{story.storyDesc.en}</p>
+                <span className="px-2 py-0.5 gold-badge text-[10px]">{story.sceneLabel}</span>
+                <h3 className="font-editorial text-xs font-bold text-cream uppercase tracking-wider">{story.title}</h3>
+                <p className="font-body text-xs text-cream/70">{story.storyDesc.en}</p>
               </div>
-              <ChevronRight size={16} className="text-[#C5A059] group-hover:translate-x-1 transition-transform shrink-0" />
+              <ChevronRight size={16} className="text-gold group-hover:translate-x-1 transition-transform shrink-0" />
             </div>
           ))}
         </div>
@@ -213,21 +225,21 @@ export function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, s
   if (!selectedLevel) {
     return (
       <div className="px-5 pb-6 space-y-4 animate-pop-in">
-        <div className="border-b border-[#C5A059]/20 pb-3 flex items-center justify-between">
+        <div className="ornament-rule pb-5 flex items-center justify-between">
           <div>
             <button
               onClick={() => setSelectedStory(null)}
-              className="text-[9px] text-[#C5A059]/70 hover:text-[#C5A059] flex items-center gap-1 mb-1"
+              className="text-[10px] text-gold/70 hover:text-gold flex items-center gap-1 mb-1"
             >
               <ArrowLeft size={10} /> {currentStory.title}
             </button>
-            <span className="px-2 py-0.5 terracotta-badge text-[8px]">PHASE 01 · LEVEL SELECT</span>
-            <h2 className="font-editorial text-base font-bold text-[#F8F5EE] uppercase mt-1">{t.selectLevelTitle}</h2>
+            <span className="px-2 py-0.5 terracotta-badge text-[10px]">PHASE 01 · LEVEL SELECT</span>
+            <h2 className="font-editorial text-xl font-bold text-cream uppercase mt-1.5 tracking-wide">{t.selectLevelTitle}</h2>
           </div>
-          <KazakhOrnament className="w-5 h-5 text-[#C5A059]" />
+          <KazakhOrnament className="w-5 h-5 text-gold" />
         </div>
 
-        <p className="font-body text-xs text-[#F8F5EE]/70">{t.selectLevelSub}</p>
+        <p className="font-body text-xs text-cream/70">{t.selectLevelSub}</p>
 
         <div className="space-y-2.5 pt-2">
           {LEVEL_DETAILS.map((lvl) => (
@@ -238,12 +250,12 @@ export function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, s
             >
               <div className="space-y-1">
                 <div className="flex items-center gap-2">
-                  <span className="px-2 py-0.5 gold-badge text-[9px]">{lvl.badge}</span>
-                  <h3 className="font-editorial text-xs font-bold text-[#F8F5EE] uppercase tracking-wider">{lvl.title}</h3>
+                  <span className="px-2 py-0.5 gold-badge text-[10px]">{lvl.badge}</span>
+                  <h3 className="font-editorial text-xs font-bold text-cream uppercase tracking-wider">{lvl.title}</h3>
                 </div>
-                <p className="font-body text-xs text-[#F8F5EE]/70">{lvl.desc}</p>
+                <p className="font-body text-xs text-cream/70">{lvl.desc}</p>
               </div>
-              <ChevronRight size={16} className="text-[#C5A059] group-hover:translate-x-1 transition-transform" />
+              <ChevronRight size={16} className="text-gold group-hover:translate-x-1 transition-transform" />
             </div>
           ))}
         </div>
@@ -334,21 +346,21 @@ export function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, s
 
   return (
     <div className="px-5 pb-6 space-y-4 animate-pop-in relative">
-      <div className="flex items-center justify-between border-b border-[#C5A059]/20 pb-3">
+      <div className="flex items-center justify-between ornament-rule pb-5">
         <div>
-          <p className="font-editorial text-xs tracking-[0.1em] text-[#C5A059] uppercase">{currentStory.sceneLabel}</p>
-          <h1 className="font-editorial text-sm font-extrabold text-[#F8F5EE] uppercase tracking-wide">{currentStory.title}</h1>
+          <p className="font-editorial text-xs tracking-[0.1em] text-gold uppercase">{currentStory.sceneLabel}</p>
+          <h1 className="font-editorial text-sm font-extrabold text-cream uppercase tracking-wide">{currentStory.title}</h1>
         </div>
 
         <button
           onClick={() => setSelectedLevel(null)}
-          className="flex items-center gap-1 px-3 min-h-[44px] bg-[#14141C] border border-[#C5A059]/30 text-xs font-editorial text-[#C5A059] uppercase hover:border-[#C5A059] transition-all"
+          className="flex items-center gap-1 px-3 min-h-[44px] bg-surface border border-gold/30 text-xs font-editorial text-gold uppercase hover:border-gold transition-all"
         >
           <ArrowLeft size={10} /> {selectedLevel} · {t.changeLevel}
         </button>
       </div>
 
-      <div className="relative border border-[#C5A059]/30 bg-[#09090D] overflow-hidden h-44">
+      <div className="relative border border-gold/30 bg-ink overflow-hidden h-44">
         {!videoError ? (
           <video
             ref={videoRef}
@@ -358,15 +370,15 @@ export function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, s
             className="w-full h-full object-cover opacity-90 contrast-110 saturate-100"
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center bg-[#14141C]">
-            <KazakhOrnament className="w-10 h-10 text-[#C5A059]/40" />
+          <div className="w-full h-full flex items-center justify-center bg-surface">
+            <KazakhOrnament className="w-10 h-10 text-gold/40" />
           </div>
         )}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#09090D] via-transparent to-transparent pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-t from-ink via-transparent to-transparent pointer-events-none" />
         
-        <div className="absolute top-2.5 left-2.5 flex items-center gap-1.5 px-2.5 py-1 bg-[#09090D]/80 border border-[#C5A059]/30 backdrop-blur-md">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#C5A059] animate-pulse" />
-          <span className="font-editorial text-xs text-[#F8F5EE] uppercase tracking-[0.1em]">
+        <div className="absolute top-2.5 left-2.5 flex items-center gap-1.5 px-2.5 py-1 bg-ink/80 border border-gold/30 backdrop-blur-md">
+          <span className="w-1.5 h-1.5 rounded-full bg-gold animate-pulse" />
+          <span className="font-editorial text-xs text-cream uppercase tracking-[0.1em]">
             {t.sceneAnimation}
           </span>
         </div>
@@ -374,17 +386,17 @@ export function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, s
         {!videoError && (
           <button
             onClick={toggleVideo}
-            className="absolute bottom-2.5 right-2.5 p-3.5 bg-[#09090D]/80 border border-[#C5A059]/40 text-[#C5A059] hover:border-[#C5A059] transition-all"
+            className="absolute bottom-2.5 right-2.5 p-3.5 bg-ink/80 border border-gold/40 text-gold hover:border-gold transition-all"
           >
             {isPlaying ? <Pause size={13} /> : <Play size={13} />}
           </button>
         )}
       </div>
 
-      <div className="px-3 py-1.5 bg-[#14141C] border border-[#C5A059]/20 flex items-center justify-between text-xs text-[#F8F5EE]/80">
-        <span className="flex items-center gap-1"><Volume2 size={12} className="text-[#C5A059]" /> {t.tapWordHint}</span>
+      <div className="px-3 py-1.5 bg-surface border border-gold/20 flex items-center justify-between text-xs text-cream/80">
+        <span className="flex items-center gap-1"><Volume2 size={12} className="text-gold" /> {t.tapWordHint}</span>
         {activeWord && (
-          <button onClick={() => safePlayVoice(activeWord)} className="text-[#C5A059] underline font-bold">
+          <button onClick={() => safePlayVoice(activeWord)} className="text-gold underline font-bold">
             🔊 Re-read
           </button>
         )}
@@ -396,8 +408,8 @@ export function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, s
             onClick={handleToggleReadAlong}
             className={`flex items-center gap-2 px-3.5 py-3 text-xs font-editorial font-bold uppercase tracking-[0.1em] rounded-full transition-all ${
               isReadAlongPlaying
-                ? "bg-[#B2533E] text-[#F8F5EE]"
-                : "bg-gradient-to-r from-[#C5A059] to-[#9A7B38] text-[#09090D] gold-glow"
+                ? "bg-felt text-cream"
+                : "bg-gradient-to-r from-gold to-gold-deep text-ink gold-glow"
             }`}
           >
             {isReadAlongPlaying ? <Pause size={12} /> : <Play size={12} fill="currentColor" />}
@@ -407,33 +419,33 @@ export function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, s
           <div className="flex-1 min-w-0 text-right">
             {readAlongTokenIndex !== null ? (
               <>
-                <span className="text-xs text-[#F8F5EE]/70 uppercase tracking-[0.1em] block">Now reading</span>
-                <span className="font-editorial text-xs font-bold text-[#C5A059] truncate block">
+                <span className="text-xs text-cream/70 uppercase tracking-[0.1em] block">Now reading</span>
+                <span className="font-editorial text-xs font-bold text-gold truncate block">
                   "{tokens[readAlongTokenIndex]}"
                 </span>
               </>
             ) : (
-              <span className="text-xs text-[#F8F5EE]/70 italic">Tap play to follow along</span>
+              <span className="text-xs text-cream/70 italic">Tap play to follow along</span>
             )}
           </div>
 
           {readAlongTokenIndex !== null && (
-            <button onClick={handleRestartReadAlong} className="p-2.5 text-[#F8F5EE]/70 hover:text-[#F8F5EE]" title="Restart from the beginning">
+            <button onClick={handleRestartReadAlong} className="p-2.5 text-cream/70 hover:text-cream" title="Restart from the beginning">
               <ArrowLeft size={13} />
             </button>
           )}
         </div>
 
-        <div className="flex items-center gap-1.5 pt-2 border-t border-[#C5A059]/15">
-          <span className="text-xs text-[#F8F5EE]/70 uppercase tracking-[0.1em] pr-1">Speed</span>
+        <div className="flex items-center gap-1.5 pt-2 border-t border-gold/15">
+          <span className="text-xs text-cream/70 uppercase tracking-[0.1em] pr-1">Speed</span>
           {READ_SPEEDS.map((s) => (
             <button
               key={s.key}
               onClick={() => setReadSpeed(s.rate)}
               className={`px-3 min-h-[44px] text-xs font-editorial font-bold rounded-full transition-all flex items-center ${
                 readSpeed === s.rate
-                  ? "bg-[#C5A059] text-[#09090D]"
-                  : "bg-[#14141C] text-[#F8F5EE]/70 border border-[#C5A059]/20 hover:text-[#F8F5EE]"
+                  ? "bg-gold text-ink"
+                  : "bg-surface text-cream/70 border border-gold/20 hover:text-cream"
               }`}
             >
               {s.label}
@@ -443,11 +455,11 @@ export function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, s
       </div>
 
       {activeWord && (
-        <div className="glass-luxury-card p-3 border border-[#C5A059] flex items-center justify-between gap-2 animate-pop-in">
+        <div className="glass-luxury-card p-3 border border-gold flex items-center justify-between gap-2 animate-pop-in">
           <div className="min-w-0">
-            <span className="text-xs text-[#C5A059] uppercase tracking-[0.1em] block">SELECTED WORD</span>
-            <span className="font-editorial text-sm font-extrabold text-[#F8F5EE]">"{activeWord}"</span>
-            <span className="text-xs text-[#C5A059] font-medium ml-2">→ {translation}</span>
+            <span className="text-xs text-gold uppercase tracking-[0.1em] block">SELECTED WORD</span>
+            <span className="font-editorial text-sm font-extrabold text-cream">"{activeWord}"</span>
+            <span className="text-xs text-gold font-medium ml-2">→ {translation}</span>
           </div>
           <div className="flex items-center gap-2 shrink-0">
             {(() => {
@@ -459,26 +471,26 @@ export function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, s
                   disabled={alreadySaved}
                   className={`px-3 min-h-[44px] text-xs font-editorial font-bold uppercase tracking-[0.1em] border transition-all flex items-center ${
                     alreadySaved
-                      ? "border-emerald-500/50 text-emerald-400 bg-emerald-950/30"
-                      : "border-[#C5A059] text-[#C5A059] hover:bg-[#C5A059]/15"
+                      ? "border-turq/50 text-turq bg-turq/10"
+                      : "border-gold text-gold hover:bg-gold/15"
                   }`}
                 >
                   {alreadySaved ? "✓ SAVED" : "+ MY WORDS"}
                 </button>
               );
             })()}
-            <button onClick={() => setActiveWord(null)} className="p-3 text-[#F8F5EE]/70 hover:text-[#F8F5EE]">
+            <button onClick={() => setActiveWord(null)} className="p-3 text-cream/70 hover:text-cream">
               <X size={14} />
             </button>
           </div>
         </div>
       )}
 
-      <div className="glass-luxury-card p-5 leading-relaxed relative border-[#C5A059]/30 max-h-[320px] overflow-y-auto">
-        <p className="font-body text-base text-[#F8F5EE] leading-8">
+      <div className="glass-luxury-card p-5 leading-relaxed relative border-gold/30 max-h-[320px] overflow-y-auto">
+        <p className="font-body text-base text-cream leading-8">
           {tokens.map((tok: string, i: number) => {
             const isWord = /[a-zA-Z]/.test(tok);
-            if (!isWord) return <span key={i} className="text-[#F8F5EE]/50">{tok}</span>;
+            if (!isWord) return <span key={i} className="text-cream/50">{tok}</span>;
             const isCurrentlyRead = i === readAlongTokenIndex;
             return (
               <span key={i} className="relative inline-block mx-0.5">
@@ -487,8 +499,8 @@ export function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, s
                   onClick={() => handleWordClick(tok)}
                   className={`px-1 py-0.5 rounded font-semibold cursor-pointer transition-all duration-300 ${
                     isCurrentlyRead
-                      ? "bg-[#C5A059] text-[#09090D] shadow-[0_2px_10px_-2px_rgba(197,160,89,0.6)]"
-                      : "text-[#F8F5EE] hover:text-[#C5A059] hover:bg-[#C5A059]/15 border-b border-[#C5A059]/40"
+                      ? "bg-gold text-ink shadow-[0_2px_10px_-2px_rgba(231,169,63,0.6)]"
+                      : "text-cream hover:text-gold hover:bg-gold/15 border-b border-gold/40"
                   }`}
                 >
                   {tok}
@@ -502,13 +514,13 @@ export function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, s
       <div className="flex gap-2">
         <button
           onClick={() => setShowChoiceModal(true)}
-          className="flex-1 py-3.5 bg-[#14141C] border border-[#C5A059] text-[#C5A059] font-editorial font-bold text-[10px] tracking-widest uppercase hover:bg-[#C5A059]/10 transition-all flex items-center justify-center gap-2"
+          className="flex-1 py-3.5 bg-surface border border-gold text-gold font-editorial font-bold text-[10px] tracking-widest uppercase hover:bg-gold/10 transition-all flex items-center justify-center gap-2"
         >
           <Compass size={14} /> {t.interactiveChoiceTitle}
         </button>
         <button
           onClick={onQuizGate}
-          className="flex-1 py-3.5 bg-gradient-to-r from-[#C5A059] to-[#9A7B38] text-[#09090D] font-editorial font-extrabold text-[10px] tracking-widest uppercase gold-glow flex items-center justify-center gap-1.5"
+          className="flex-1 py-3.5 bg-gradient-to-r from-gold to-gold-deep text-ink font-editorial font-extrabold text-[10px] tracking-widest uppercase gold-glow flex items-center justify-center gap-1.5"
         >
           {t.takeQuiz} <ChevronRight size={14} />
         </button>
@@ -516,14 +528,15 @@ export function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, s
 
       {showChoiceModal && (
         <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4 animate-pop-in">
-          <div className="w-full max-w-[360px] bg-[#0E0E14] border-2 border-[#C5A059] p-5 rounded-lg shadow-2xl space-y-4 text-center relative">
-            <button onClick={() => setShowChoiceModal(false)} className="absolute top-3 right-3 text-[#C5A059]">
+          <div className="w-full max-w-[360px] bg-ink-2 border-2 border-gold p-6 rounded-2xl shadow-2xl space-y-4 text-center relative">
+            <OrnamentFrame className="text-gold/50" size="w-5 h-5" />
+            <button onClick={() => setShowChoiceModal(false)} className="absolute top-3 right-3 text-gold">
               <X size={18} />
             </button>
 
-            <KazakhOrnament className="w-7 h-7 mx-auto text-[#C5A059]" />
-            <h3 className="font-editorial text-sm font-black text-[#F8F5EE] uppercase tracking-wider">{t.interactiveChoiceTitle}</h3>
-            <p className="font-body text-xs text-[#F8F5EE]/80">{currentStory.choicePrompt}</p>
+            <KazakhOrnament className="w-7 h-7 mx-auto text-gold" />
+            <h3 className="font-editorial text-sm font-black text-cream uppercase tracking-wider">{t.interactiveChoiceTitle}</h3>
+            <p className="font-body text-xs text-cream/80">{currentStory.choicePrompt}</p>
 
             <div className="space-y-2 pt-1">
               <button
@@ -532,7 +545,7 @@ export function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, s
                   onReward(20);
                   setShowChoiceModal(false);
                 }}
-                className="w-full p-3 bg-[#14141C] border border-[#C5A059]/40 hover:border-[#C5A059] text-left font-body text-xs text-[#F8F5EE] transition-all"
+                className="w-full p-3 bg-surface border border-gold/40 hover:border-gold text-left font-body text-xs text-cream transition-all"
               >
                 {currentStory.choiceOptionA}
               </button>
@@ -542,14 +555,14 @@ export function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, s
                   onReward(10);
                   setShowChoiceModal(false);
                 }}
-                className="w-full p-3 bg-[#14141C] border border-[#C5A059]/40 hover:border-[#C5A059] text-left font-body text-xs text-[#F8F5EE] transition-all"
+                className="w-full p-3 bg-surface border border-gold/40 hover:border-gold text-left font-body text-xs text-cream transition-all"
               >
                 {currentStory.choiceOptionB}
               </button>
             </div>
 
             {choiceMade && (
-              <p className="text-[10px] text-emerald-400 font-editorial uppercase tracking-widest">
+              <p className="text-[10px] text-turq font-editorial uppercase tracking-widest">
                 {t.artifactUnlocked}
               </p>
             )}
@@ -568,13 +581,13 @@ export function FlashcardsScreen({ savedWords, onReward }: { savedWords: SavedWo
   if (!savedWords || savedWords.length === 0) {
     return (
       <div className="px-5 pb-6 space-y-4 animate-pop-in">
-        <div className="border-b border-white/[0.06] pb-3">
-          <span className="px-2 py-0.5 terracotta-badge text-[8px]">VOCABULARY DRILL</span>
-          <h2 className="font-editorial text-base font-bold text-[#F8F5EE] uppercase mt-1">FLASHCARDS</h2>
+        <div className="ornament-rule pb-5">
+          <span className="px-2 py-0.5 terracotta-badge text-[10px]">VOCABULARY DRILL</span>
+          <h2 className="font-editorial text-xl font-bold text-cream uppercase mt-1.5 tracking-wide">FLASHCARDS</h2>
         </div>
         <div className="glass-luxury-card p-6 text-center space-y-2">
-          <Layers className="mx-auto text-[#C5A059]/50" size={28} />
-          <p className="font-body text-xs text-[#F8F5EE]/70 leading-relaxed">
+          <Layers className="mx-auto text-gold/50" size={28} />
+          <p className="font-body text-xs text-cream/70 leading-relaxed">
             No words saved yet. Tap any word while reading a story to save it to your flashcards bank!
           </p>
         </div>
@@ -592,12 +605,12 @@ export function FlashcardsScreen({ savedWords, onReward }: { savedWords: SavedWo
 
   return (
     <div className="px-5 pb-6 space-y-4 animate-pop-in">
-      <div className="border-b border-white/[0.06] pb-3 flex items-center justify-between">
+      <div className="ornament-rule pb-5 flex items-center justify-between">
         <div>
-          <span className="px-2 py-0.5 terracotta-badge text-[8px]">VOCABULARY DRILL</span>
-          <h2 className="font-editorial text-base font-bold text-[#F8F5EE] uppercase mt-1">FLASHCARDS</h2>
+          <span className="px-2 py-0.5 terracotta-badge text-[10px]">VOCABULARY DRILL</span>
+          <h2 className="font-editorial text-xl font-bold text-cream uppercase mt-1.5 tracking-wide">FLASHCARDS</h2>
         </div>
-        <span className="text-[10px] font-editorial text-[#C5A059] font-bold">
+        <span className="text-[10px] font-editorial text-gold font-bold">
           {currentIndex + 1} / {savedWords.length}
         </span>
       </div>
@@ -609,19 +622,19 @@ export function FlashcardsScreen({ savedWords, onReward }: { savedWords: SavedWo
         }}
         className="glass-luxury-card glass-card-hover min-h-[220px] p-6 flex flex-col items-center justify-center text-center cursor-pointer relative overflow-hidden transition-all duration-500"
       >
-        <span className="absolute top-3 left-3 text-[8px] font-editorial text-[#C5A059]/70 uppercase tracking-widest">
+        <span className="absolute top-3 left-3 text-[10px] font-editorial text-gold/70 uppercase tracking-widest">
           TAP TO FLIP
         </span>
 
         {!flipped ? (
           <div className="space-y-2 animate-pop-in">
-            <h3 className="font-editorial text-2xl font-black text-[#F8F5EE]">{currentWord.word}</h3>
-            <p className="text-xs font-body text-[#F8F5EE]/70 italic">English Word</p>
+            <h3 className="font-editorial text-2xl font-black text-cream">{currentWord.word}</h3>
+            <p className="text-xs font-body text-cream/70 italic">English Word</p>
           </div>
         ) : (
           <div className="space-y-2 animate-pop-in">
-            <h3 className="font-editorial text-xl font-extrabold text-[#C5A059]">{currentWord.translation}</h3>
-            <p className="text-xs font-body text-[#F8F5EE]/70">Kazakh Translation</p>
+            <h3 className="font-editorial text-xl font-extrabold text-gold">{currentWord.translation}</h3>
+            <p className="text-xs font-body text-cream/70">Kazakh Translation</p>
           </div>
         )}
       </div>
@@ -629,13 +642,13 @@ export function FlashcardsScreen({ savedWords, onReward }: { savedWords: SavedWo
       <div className="flex gap-3">
         <button
           onClick={() => handleNext(false)}
-          className="flex-1 py-3 bg-[#14141C] border border-[#B2533E]/50 text-[#B2533E] font-editorial text-[10px] font-bold uppercase tracking-wider hover:bg-[#B2533E]/10"
+          className="flex-1 py-3 bg-surface border border-felt/50 text-felt font-editorial text-[10px] font-bold uppercase tracking-wider hover:bg-felt/10"
         >
           Still Learning
         </button>
         <button
           onClick={() => handleNext(true)}
-          className="flex-1 py-3 bg-[#14141C] border border-emerald-500/50 text-emerald-400 font-editorial text-[10px] font-bold uppercase tracking-wider hover:bg-emerald-950/20"
+          className="flex-1 py-3 bg-surface border border-turq/50 text-turq font-editorial text-[10px] font-bold uppercase tracking-wider hover:bg-turq/10"
         >
           I Knew It (+2 XP)
         </button>
@@ -699,13 +712,13 @@ export function MatchingGame({ savedWords, onReward }: any) {
   if (!savedWords || savedWords.length < 3) {
     return (
       <div className="px-5 pb-6 space-y-4 animate-pop-in">
-        <div className="border-b border-white/[0.06] pb-3">
-          <span className="px-2 py-0.5 terracotta-badge text-[8px]">MATCHING GAME</span>
-          <h2 className="font-editorial text-base font-bold text-[#F8F5EE] uppercase mt-1">FIND THE PAIR</h2>
+        <div className="ornament-rule pb-5">
+          <span className="px-2 py-0.5 terracotta-badge text-[10px]">MATCHING GAME</span>
+          <h2 className="font-editorial text-xl font-bold text-cream uppercase mt-1.5 tracking-wide">FIND THE PAIR</h2>
         </div>
         <div className="glass-luxury-card p-6 text-center space-y-2">
-          <Layers className="mx-auto text-[#C5A059]/50" size={28} />
-          <p className="font-body text-xs text-[#F8F5EE]/70 leading-relaxed">
+          <Layers className="mx-auto text-gold/50" size={28} />
+          <p className="font-body text-xs text-cream/70 leading-relaxed">
             Save at least 3 words while reading to unlock the matching game.
           </p>
         </div>
@@ -716,17 +729,17 @@ export function MatchingGame({ savedWords, onReward }: any) {
   if (roundComplete) {
     return (
       <div className="px-5 pb-6 space-y-4 animate-pop-in">
-        <div className="border-b border-white/[0.06] pb-3">
-          <span className="px-2 py-0.5 gold-badge text-[8px]">MATCHING GAME</span>
-          <h2 className="font-editorial text-base font-bold text-[#F8F5EE] uppercase mt-1">FIND THE PAIR</h2>
+        <div className="ornament-rule pb-5">
+          <span className="px-2 py-0.5 gold-badge text-[10px]">MATCHING GAME</span>
+          <h2 className="font-editorial text-xl font-bold text-cream uppercase mt-1.5 tracking-wide">FIND THE PAIR</h2>
         </div>
         <div className="glass-luxury-card p-6 text-center space-y-3">
-          <Trophy className="mx-auto text-[#C5A059]" size={28} />
-          <p className="font-editorial text-sm font-bold text-[#F8F5EE] uppercase">All Matched!</p>
-          <p className="font-body text-xs text-[#F8F5EE]/70">Great recognition speed.</p>
+          <Trophy className="mx-auto text-gold" size={28} />
+          <p className="font-editorial text-sm font-bold text-cream uppercase">All Matched!</p>
+          <p className="font-body text-xs text-cream/70">Great recognition speed.</p>
           <button
             onClick={() => setRound((r) => r + 1)}
-            className="w-full py-3 bg-gradient-to-r from-[#C5A059] to-[#9A7B38] text-[#09090D] font-editorial font-bold text-xs uppercase"
+            className="w-full py-3 bg-gradient-to-r from-gold to-gold-deep text-ink font-editorial font-bold text-xs uppercase"
           >
             Play Next Round
           </button>
@@ -737,12 +750,12 @@ export function MatchingGame({ savedWords, onReward }: any) {
 
   return (
     <div className="px-5 pb-6 space-y-4 animate-pop-in">
-      <div className="border-b border-white/[0.06] pb-3 flex items-center justify-between">
+      <div className="ornament-rule pb-5 flex items-center justify-between">
         <div>
-          <span className="px-2 py-0.5 terracotta-badge text-[8px]">MATCHING GAME</span>
-          <h2 className="font-editorial text-base font-bold text-[#F8F5EE] uppercase mt-1">FIND THE PAIR</h2>
+          <span className="px-2 py-0.5 terracotta-badge text-[10px]">MATCHING GAME</span>
+          <h2 className="font-editorial text-xl font-bold text-cream uppercase mt-1.5 tracking-wide">FIND THE PAIR</h2>
         </div>
-        <span className="text-[10px] font-editorial text-[#C5A059] font-bold">
+        <span className="text-[10px] font-editorial text-gold font-bold">
           Matched: {matchedIds.length} / {tiles.length / 2}
         </span>
       </div>
@@ -760,12 +773,12 @@ export function MatchingGame({ savedWords, onReward }: any) {
               disabled={isMatched}
               className={`p-3.5 min-h-[64px] text-center rounded-[14px] font-editorial text-xs transition-all duration-200 border flex items-center justify-center ${
                 isMatched
-                  ? "bg-emerald-950/20 border-emerald-500/30 text-emerald-400 opacity-40"
+                  ? "bg-turq/10 border-turq/30 text-turq opacity-40"
                   : isWrong
-                  ? "bg-rose-950/40 border-rose-500 text-rose-300 animate-answer-wrong"
+                  ? "bg-felt-deep/40 border-felt text-[#F2A08A] animate-answer-wrong"
                   : isSelected
-                  ? "bg-[#C5A059] border-[#C5A059] text-[#09090D] font-bold scale-[1.02]"
-                  : "bg-[#14141C] border-[#C5A059]/20 text-[#F8F5EE] hover:border-[#C5A059]/60"
+                  ? "bg-gold border-gold text-ink font-bold scale-[1.02]"
+                  : "bg-surface border-gold/20 text-cream hover:border-gold/60"
               }`}
             >
               {tile.text}
@@ -868,7 +881,7 @@ export function QuizScreen({ onReward, t, onQuizFinish, questions }: {
   const HeartsRow = () => (
     <div className="flex items-center gap-1">
       {Array.from({ length: MAX_HEARTS }, (_, i) => (
-        <Flame key={i} size={13} className={i < hearts ? "text-[#B2533E] fill-[#B2533E]" : "text-[#F8F5EE]/15"} />
+        <Flame key={i} size={13} className={i < hearts ? "text-felt fill-felt" : "text-cream/15"} />
       ))}
     </div>
   );
@@ -876,20 +889,20 @@ export function QuizScreen({ onReward, t, onQuizFinish, questions }: {
   if (outOfHearts) {
     return (
       <div className="px-5 pb-6 space-y-5 animate-pop-in">
-        <div className="border-b border-white/[0.06] pb-3 flex justify-between items-center">
+        <div className="ornament-rule pb-5 flex justify-between items-center">
           <div>
-            <span className="px-2 py-0.5 terracotta-badge text-[8px]">QUIZ MODULE</span>
-            <h2 className="font-editorial text-base font-bold text-[#F8F5EE] uppercase mt-1">{t.quizTitle}</h2>
+            <span className="px-2 py-0.5 terracotta-badge text-[10px]">QUIZ MODULE</span>
+            <h2 className="font-editorial text-xl font-bold text-cream uppercase mt-1.5 tracking-wide">{t.quizTitle}</h2>
           </div>
           <HeartsRow />
         </div>
         <div className="glass-luxury-card p-6 text-center space-y-3">
-          <Flame className="mx-auto text-[#B2533E]" size={30} />
-          <p className="font-editorial text-sm font-bold text-[#F8F5EE] uppercase">Out of Hearts</p>
-          <p className="font-body text-xs text-[#F8F5EE]/70">
+          <Flame className="mx-auto text-felt" size={30} />
+          <p className="font-editorial text-sm font-bold text-cream uppercase">Out of Hearts</p>
+          <p className="font-body text-xs text-cream/70">
             You've run out of hearts for this attempt. Re-read the story to refresh your memory, then try again from the start.
           </p>
-          <button onClick={handleRestart} className="w-full py-3 bg-gradient-to-r from-[#C5A059] to-[#9A7B38] text-[#09090D] font-editorial font-bold text-[10px] tracking-widest uppercase gold-glow">
+          <button onClick={handleRestart} className="w-full py-3 bg-gradient-to-r from-gold to-gold-deep text-ink font-editorial font-bold text-[10px] tracking-widest uppercase gold-glow">
             Restart Quiz
           </button>
         </div>
@@ -901,20 +914,20 @@ export function QuizScreen({ onReward, t, onQuizFinish, questions }: {
     const passed = correctCount >= Math.ceil(questions.length * 0.6);
     return (
       <div className="px-5 pb-6 space-y-5 animate-pop-in">
-        <div className="border-b border-white/[0.06] pb-3 flex justify-between items-center">
+        <div className="ornament-rule pb-5 flex justify-between items-center">
           <div>
-            <span className="px-2 py-0.5 gold-badge text-[8px]">QUIZ MODULE</span>
-            <h2 className="font-editorial text-base font-bold text-[#F8F5EE] uppercase mt-1">{t.quizTitle}</h2>
+            <span className="px-2 py-0.5 gold-badge text-[10px]">QUIZ MODULE</span>
+            <h2 className="font-editorial text-xl font-bold text-cream uppercase mt-1.5 tracking-wide">{t.quizTitle}</h2>
           </div>
-          <Trophy className="text-[#C5A059] w-5 h-5" />
+          <Trophy className="text-gold w-5 h-5" />
         </div>
         <div className="glass-luxury-card p-6 text-center space-y-3">
-          <Trophy className={`mx-auto ${passed ? "text-[#C5A059]" : "text-[#F8F5EE]/40"}`} size={30} />
-          <p className="font-editorial text-lg font-black text-[#F8F5EE]">{correctCount} / {questions.length}</p>
-          <p className="font-body text-xs text-[#F8F5EE]/70">
+          <Trophy className={`mx-auto ${passed ? "text-gold" : "text-cream/40"}`} size={30} />
+          <p className="font-editorial text-lg font-black text-cream">{correctCount} / {questions.length}</p>
+          <p className="font-body text-xs text-cream/70">
             {passed ? "Great comprehension! You understood the story well." : "Re-read the story and try again — comprehension takes practice."}
           </p>
-          <button onClick={handleRestart} className="w-full py-3 bg-gradient-to-r from-[#C5A059] to-[#9A7B38] text-[#09090D] font-editorial font-bold text-[10px] tracking-widest uppercase gold-glow">
+          <button onClick={handleRestart} className="w-full py-3 bg-gradient-to-r from-gold to-gold-deep text-ink font-editorial font-bold text-[10px] tracking-widest uppercase gold-glow">
             {t.tryAgain}
           </button>
         </div>
@@ -924,27 +937,27 @@ export function QuizScreen({ onReward, t, onQuizFinish, questions }: {
 
   return (
     <div className="px-5 pb-6 space-y-5 animate-pop-in">
-      <div className="border-b border-white/[0.06] pb-3 flex justify-between items-center">
+      <div className="ornament-rule pb-5 flex justify-between items-center">
         <div>
-          <span className="px-2 py-0.5 gold-badge text-[8px]">QUIZ MODULE</span>
-          <h2 className="font-editorial text-base font-bold text-[#F8F5EE] uppercase mt-1">{t.quizTitle}</h2>
+          <span className="px-2 py-0.5 gold-badge text-[10px]">QUIZ MODULE</span>
+          <h2 className="font-editorial text-xl font-bold text-cream uppercase mt-1.5 tracking-wide">{t.quizTitle}</h2>
         </div>
         <div className="flex items-center gap-2">
           <HeartsRow />
-          <span className="text-[10px] text-[#C5A059] font-bold bg-[#14141C] px-2.5 py-1 rounded-full border border-[#C5A059]/30">
+          <span className="text-[10px] text-gold font-bold bg-surface px-2.5 py-1 rounded-full border border-gold/30">
             {qIndex + 1} / {questions.length}
           </span>
         </div>
       </div>
 
       <div className="flex items-center gap-2">
-        <div className="flex-1 h-1.5 bg-[#14141C] rounded-full overflow-hidden border border-[#C5A059]/10">
+        <div className="flex-1 h-1.5 bg-surface rounded-full overflow-hidden border border-gold/10">
           <div
-            className={`h-full rounded-full transition-all duration-1000 ease-linear ${timeLeft <= 5 ? "bg-[#B2533E]" : "bg-gradient-to-r from-[#C5A059] to-[#9A7B38]"}`}
+            className={`h-full rounded-full transition-all duration-1000 ease-linear ${timeLeft <= 5 ? "bg-felt" : "bg-gradient-to-r from-gold to-gold-deep"}`}
             style={{ width: `${Math.max(0, (timeLeft / QUESTION_TIME) * 100)}%` }}
           />
         </div>
-        <span className={`text-xs font-bold tabular-nums w-5 text-right ${timeLeft <= 5 ? "text-[#B2533E]" : "text-[#F8F5EE]/70"}`}>
+        <span className={`text-xs font-bold tabular-nums w-5 text-right ${timeLeft <= 5 ? "text-felt" : "text-cream/70"}`}>
           {Math.max(0, timeLeft)}s
         </span>
       </div>
@@ -952,30 +965,30 @@ export function QuizScreen({ onReward, t, onQuizFinish, questions }: {
       <div className="glass-luxury-card p-5 space-y-4">
         {question.type === "fillblank" ? (
           <>
-            <span className="text-xs text-[#C5A059] uppercase tracking-[0.1em] font-bold block">FILL IN THE BLANK</span>
-            <p className="font-body text-sm font-semibold text-[#F8F5EE] leading-relaxed">
+            <span className="text-xs text-gold uppercase tracking-[0.1em] font-bold block">FILL IN THE BLANK</span>
+            <p className="font-body text-sm font-semibold text-cream leading-relaxed">
               {(question.sentence || "").split("___")[0]}
-              <span className="inline-block min-w-[54px] border-b-2 border-[#C5A059] mx-1 text-center text-[#C5A059]">
+              <span className="inline-block min-w-[54px] border-b-2 border-gold mx-1 text-center text-gold">
                 {submitted && selected !== null ? question.options[selected] : " "}
               </span>
               {(question.sentence || "").split("___")[1]}
             </p>
           </>
         ) : (
-          <p className="font-body text-xs font-semibold text-[#F8F5EE] leading-relaxed">{question.q}</p>
+          <p className="font-body text-xs font-semibold text-cream leading-relaxed">{question.q}</p>
         )}
 
         <div className="space-y-2">
           {question.options.map((opt: string, idx: number) => {
-            let style = "border-[#C5A059]/20 bg-[#14141C]/80 text-[#F8F5EE]/80 hover:border-[#C5A059]/50";
+            let style = "border-gold/20 bg-surface/80 text-cream/80 hover:border-gold/50";
             let anim = "";
-            if (selected === idx) style = "border-[#C5A059] bg-[#C5A059]/15 text-[#C5A059] font-bold";
+            if (selected === idx) style = "border-gold bg-gold/15 text-gold font-bold";
             if (submitted) {
               if (idx === question.correct) {
-                style = "border-emerald-500/80 bg-emerald-950/50 text-emerald-300 font-bold";
+                style = "border-turq/80 bg-turq/10 text-turq font-bold";
                 anim = "animate-answer-correct";
               } else if (selected === idx) {
-                style = "border-red-500/80 bg-red-950/50 text-red-300";
+                style = "border-felt/80 bg-felt-deep/50 text-[#F2A08A]";
                 anim = "animate-answer-wrong";
               }
             }
@@ -987,7 +1000,7 @@ export function QuizScreen({ onReward, t, onQuizFinish, questions }: {
                 className={`w-full text-left p-3.5 border font-body text-xs transition-all flex items-center justify-between ${style} ${anim}`}
               >
                 <span>{opt}</span>
-                {submitted && idx === question.correct && <CheckCircle2 size={15} className="text-emerald-400" />}
+                {submitted && idx === question.correct && <CheckCircle2 size={15} className="text-turq" />}
               </button>
             );
           })}
@@ -998,18 +1011,18 @@ export function QuizScreen({ onReward, t, onQuizFinish, questions }: {
         <button
           onClick={handleCheck}
           disabled={selected === null}
-          className="w-full py-3.5 bg-gradient-to-r from-[#C5A059] to-[#9A7B38] disabled:opacity-40 text-[#09090D] font-editorial font-extrabold text-xs tracking-[0.18em] uppercase gold-glow rounded-full"
+          className="w-full py-3.5 bg-gradient-to-r from-gold to-gold-deep disabled:opacity-40 text-ink font-editorial font-extrabold text-xs tracking-[0.18em] uppercase gold-glow rounded-full"
         >
           {t.checkAnswer}
         </button>
       ) : (
-        <div className="p-4 border border-emerald-500/30 bg-emerald-950/30 backdrop-blur-md text-center space-y-2 animate-pop-in">
-          <p className="font-editorial text-xs font-extrabold text-emerald-400 uppercase tracking-wider">
+        <div className="p-4 border border-turq/30 bg-turq/10 backdrop-blur-md text-center space-y-2 animate-pop-in">
+          <p className="font-editorial text-xs font-extrabold text-turq uppercase tracking-wider">
             {timedOut ? "Time's Up" : selected === question.correct ? t.correctMsg : t.wrongMsg}
           </p>
           <button
             onClick={handleNext}
-            className="text-xs font-editorial text-[#C5A059] font-bold uppercase hover:text-[#F8F5EE] flex items-center justify-center gap-1 mx-auto"
+            className="text-xs font-editorial text-gold font-bold uppercase hover:text-cream flex items-center justify-center gap-1 mx-auto"
           >
             {qIndex + 1 >= questions.length ? "See Results" : "Next Question"} <ChevronRight size={12} />
           </button>
@@ -1136,18 +1149,18 @@ export function SpeakScreen({ onReward, t }: {
 
   return (
     <div className="px-5 pb-6 space-y-5 animate-pop-in">
-      <div className="border-b border-[#C5A059]/20 pb-3 flex justify-between items-center">
+      <div className="ornament-rule pb-5 flex justify-between items-center">
         <div>
-          <span className="px-2 py-0.5 terracotta-badge text-[8px]">SPEECH EVALUATION</span>
-          <h2 className="font-editorial text-base font-bold text-[#F8F5EE] uppercase mt-1">{t.speakTitle}</h2>
+          <span className="px-2 py-0.5 terracotta-badge text-[10px]">SPEECH EVALUATION</span>
+          <h2 className="font-editorial text-xl font-bold text-cream uppercase mt-1.5 tracking-wide">{t.speakTitle}</h2>
         </div>
-        <Mic className="text-[#C5A059] w-5 h-5" />
+        <Mic className="text-gold w-5 h-5" />
       </div>
 
       <div className="glass-luxury-card p-6 text-center space-y-3">
-        <p className="font-body text-xs text-[#F8F5EE]/70">{t.speakSubtitle}</p>
+        <p className="font-body text-xs text-cream/70">{t.speakSubtitle}</p>
         <blockquote
-          className="font-editorial text-sm font-bold text-[#C5A059] uppercase tracking-wide leading-relaxed cursor-pointer"
+          className="font-editorial text-sm font-bold text-gold uppercase tracking-wide leading-relaxed cursor-pointer"
           onClick={() => safePlayVoice(targetPhrase)}
         >
           "{targetPhrase}" 🔊
@@ -1159,42 +1172,42 @@ export function SpeakScreen({ onReward, t }: {
           onClick={toggleRecord}
           className={`w-20 h-20 rounded-full flex items-center justify-center transition-all ${
             recording
-              ? "bg-[#B2533E] text-[#F8F5EE] animate-pulse shadow-[0_0_30px_rgba(178,83,62,0.6)]"
-              : "bg-[#14141C] border border-[#C5A059] text-[#C5A059] hover:bg-[#C5A059] hover:text-[#09090D] gold-glow"
+              ? "bg-felt text-cream animate-pulse shadow-[0_0_30px_rgba(178,83,62,0.6)]"
+              : "bg-surface border border-gold text-gold hover:bg-gold hover:text-ink gold-glow"
           }`}
         >
           {recording ? <MicOff size={28} /> : <Mic size={28} />}
         </button>
-        <span className="font-editorial text-xs tracking-[0.1em] text-[#C5A059] uppercase">
+        <span className="font-editorial text-xs tracking-[0.1em] text-gold uppercase">
           {recording ? t.recording : t.pressMic}
         </span>
       </div>
 
       {speechError && (
-        <div className="glass-luxury-card p-4 text-center space-y-1 animate-pop-in border-[#B2533E]/40">
-          <p className="font-body text-xs text-[#B2533E]">{speechError}</p>
+        <div className="glass-luxury-card p-4 text-center space-y-1 animate-pop-in border-felt/40">
+          <p className="font-body text-xs text-felt">{speechError}</p>
         </div>
       )}
 
       {scores !== null && (
-        <div className="glass-luxury-card p-4 text-center space-y-2 animate-pop-in border-emerald-500/30">
-          <p className="font-editorial text-xl font-extrabold text-emerald-400">{scores.pronunciation}% {t.accuracy}</p>
-          {transcript && <p className="font-body text-xs text-[#F8F5EE]/70 italic">You said: "{transcript}"</p>}
+        <div className="glass-luxury-card p-4 text-center space-y-2 animate-pop-in border-turq/30">
+          <p className="font-editorial text-xl font-extrabold text-turq">{scores.pronunciation}% {t.accuracy}</p>
+          {transcript && <p className="font-body text-xs text-cream/70 italic">You said: "{transcript}"</p>}
           <div className="grid grid-cols-3 gap-2 pt-1">
             <div>
-              <p className="font-editorial text-sm font-bold text-[#C5A059]">{scores.accuracy}%</p>
-              <p className="text-xs text-[#F8F5EE]/70 uppercase tracking-[0.1em]">Accuracy</p>
+              <p className="font-editorial text-sm font-bold text-gold">{scores.accuracy}%</p>
+              <p className="text-xs text-cream/70 uppercase tracking-[0.1em]">Accuracy</p>
             </div>
             <div>
-              <p className="font-editorial text-sm font-bold text-[#C5A059]">{scores.fluency}%</p>
-              <p className="text-xs text-[#F8F5EE]/70 uppercase tracking-[0.1em]">Fluency</p>
+              <p className="font-editorial text-sm font-bold text-gold">{scores.fluency}%</p>
+              <p className="text-xs text-cream/70 uppercase tracking-[0.1em]">Fluency</p>
             </div>
             <div>
-              <p className="font-editorial text-sm font-bold text-[#C5A059]">{scores.completeness}%</p>
-              <p className="text-xs text-[#F8F5EE]/70 uppercase tracking-[0.1em]">Completeness</p>
+              <p className="font-editorial text-sm font-bold text-gold">{scores.completeness}%</p>
+              <p className="text-xs text-cream/70 uppercase tracking-[0.1em]">Completeness</p>
             </div>
           </div>
-          <p className="font-body text-xs text-[#F8F5EE]/90 pt-1">{feedbackMessage}</p>
+          <p className="font-body text-xs text-cream/90 pt-1">{feedbackMessage}</p>
         </div>
       )}
     </div>
@@ -1215,47 +1228,50 @@ export function ProfileScreen({ xp, t, savedWordsCount = 0, unlockedAchievements
 
   return (
     <div className="px-5 pb-6 space-y-5 animate-pop-in">
-      <div className="border-b border-[#C5A059]/20 pb-3 flex justify-between items-center">
+      <div className="ornament-rule pb-5 flex justify-between items-center">
         <div>
-          <span className="px-2 py-0.5 gold-badge text-[8px]">USER PASSPORT</span>
-          <h2 className="font-editorial text-base font-bold text-[#F8F5EE] uppercase mt-1">{t.profileTitle}</h2>
+          <span className="px-2 py-0.5 gold-badge text-[10px]">USER PASSPORT</span>
+          <h2 className="font-editorial text-xl font-bold text-cream uppercase mt-1.5 tracking-wide">{t.profileTitle}</h2>
         </div>
         <button
           onClick={onSignOut}
           title="Sign out"
-          className="flex items-center gap-1 text-[9px] font-editorial font-bold text-[#F8F5EE]/50 hover:text-[#B2533E] uppercase tracking-wider"
+          className="flex items-center gap-1 text-[10px] font-editorial font-bold text-cream/50 hover:text-felt uppercase tracking-wider"
         >
           <LogOut size={14} /> Sign Out
         </button>
       </div>
 
       <div className="glass-luxury-card p-5 text-center space-y-3 relative overflow-hidden">
-        <div className="absolute -top-10 -right-10 w-32 h-32 bg-[#C5A059]/15 rounded-full blur-xl pointer-events-none" />
+        <div className="absolute -top-10 -right-10 w-32 h-32 bg-gold/15 rounded-full blur-xl pointer-events-none" />
 
-        <div className="w-20 h-20 mx-auto rounded-full border-2 border-[#C5A059] p-1 bg-[#14141C] flex items-center justify-center shadow-lg gold-glow animate-float">
-          <span className="font-editorial text-2xl font-black text-[#C5A059]">II</span>
+        <div className="relative w-28 h-28 mx-auto flex items-center justify-center animate-float">
+          <Shanyraq className="absolute inset-0 w-full h-full text-gold/35" strokeWidth={2} />
+          <div className="relative w-[70px] h-[70px] rounded-full border-2 border-gold bg-surface flex items-center justify-center gold-glow">
+            <span className="font-editorial text-2xl font-black text-gold">II</span>
+          </div>
         </div>
 
         <div>
-          <h3 className="font-editorial text-lg font-extrabold text-[#F8F5EE] uppercase tracking-wide">{userName}</h3>
-          <p className="font-body text-xs text-[#C5A059] uppercase tracking-[0.1em] mt-0.5">{t.levelStatus}</p>
+          <h3 className="font-editorial text-lg font-extrabold text-cream uppercase tracking-wide">{userName}</h3>
+          <p className="font-body text-xs text-gold uppercase tracking-[0.1em] mt-0.5">{t.levelStatus}</p>
         </div>
 
-        <div className="grid grid-cols-3 gap-2 pt-3 border-t border-[#C5A059]/20">
-          <div className="bg-[#14141C]/90 p-2.5 border border-[#C5A059]/20">
-            <span className="text-xs text-[#F8F5EE]/70 block">{t.totalXpLabel}</span>
-            <span className="font-editorial text-sm font-extrabold text-[#C5A059]">{xp} XP</span>
+        <div className="grid grid-cols-3 gap-2 pt-3 border-t border-gold/20">
+          <div className="bg-surface/90 p-2.5 border border-gold/20 rounded-xl">
+            <span className="text-xs text-cream/70 block">{t.totalXpLabel}</span>
+            <span className="font-editorial text-sm font-extrabold text-gold">{xp} XP</span>
           </div>
-          <div className="bg-[#14141C]/90 p-2.5 border border-[#C5A059]/20">
-            <span className="text-xs text-[#F8F5EE]/70 block">{t.streakLabel}</span>
-            <span className="font-editorial text-sm font-extrabold text-amber-400 flex items-center justify-center gap-1">
+          <div className="bg-surface/90 p-2.5 border border-gold/20 rounded-xl">
+            <span className="text-xs text-cream/70 block">{t.streakLabel}</span>
+            <span className="font-editorial text-sm font-extrabold text-gold flex items-center justify-center gap-1">
               <Flame size={13} /> {streakDays}d
             </span>
           </div>
-          <div className="bg-[#14141C]/90 p-2.5 border border-[#C5A059]/20">
-            <span className="text-xs text-[#F8F5EE]/70 block">WORDS SAVED</span>
-            <span className="font-editorial text-sm font-extrabold text-[#F8F5EE] flex items-center justify-center gap-1">
-              <Layers size={13} className="text-[#C5A059]" /> {savedWordsCount}
+          <div className="bg-surface/90 p-2.5 border border-gold/20 rounded-xl">
+            <span className="text-xs text-cream/70 block">WORDS SAVED</span>
+            <span className="font-editorial text-sm font-extrabold text-cream flex items-center justify-center gap-1">
+              <Layers size={13} className="text-gold" /> {savedWordsCount}
             </span>
           </div>
         </div>
@@ -1263,8 +1279,8 @@ export function ProfileScreen({ xp, t, savedWordsCount = 0, unlockedAchievements
 
       <div className="glass-luxury-card p-4 space-y-3">
         <div className="flex items-center justify-between">
-          <h4 className="font-editorial text-xs font-bold text-[#C5A059] uppercase tracking-wider">🏛️ HERITAGE ARTEFACTS VAULT</h4>
-          <span className="text-xs text-[#F8F5EE]/70">{unlockedAchievements.length}/{ACHIEVEMENTS.length}</span>
+          <h4 className="font-editorial text-xs font-bold text-gold uppercase tracking-wider">🏛️ HERITAGE ARTEFACTS VAULT</h4>
+          <span className="text-xs text-cream/70">{unlockedAchievements.length}/{ACHIEVEMENTS.length}</span>
         </div>
         <div className="grid grid-cols-3 gap-2 text-center">
           {ACHIEVEMENTS.map((a) => {
@@ -1273,10 +1289,10 @@ export function ProfileScreen({ xp, t, savedWordsCount = 0, unlockedAchievements
               <div
                 key={a.id}
                 title={a.desc}
-                className={`p-2.5 bg-[#14141C] border ${unlocked ? "border-[#C5A059]/40" : "border-[#C5A059]/20 opacity-50"}`}
+                className={`p-2.5 bg-surface border rounded-xl ${unlocked ? "border-gold/40" : "border-gold/20 opacity-50"}`}
               >
                 <span className="text-xl">{a.icon}</span>
-                <span className={`block font-editorial text-xs tracking-[0.05em] mt-1 ${unlocked ? "text-[#F8F5EE]" : "text-[#F8F5EE]/70"}`}>
+                <span className={`block font-editorial text-xs tracking-[0.05em] mt-1 ${unlocked ? "text-cream" : "text-cream/70"}`}>
                   {a.title.toUpperCase()}
                 </span>
               </div>
@@ -1287,45 +1303,46 @@ export function ProfileScreen({ xp, t, savedWordsCount = 0, unlockedAchievements
 
       <button
         onClick={() => setShowBuklet(true)}
-        className="rounded-full w-full py-4 bg-gradient-to-r from-[#C5A059] to-[#9A7B38] text-[#09090D] font-editorial font-extrabold text-xs tracking-[0.18em] uppercase gold-glow flex items-center justify-center gap-2"
+        className="rounded-full w-full py-4 bg-gradient-to-r from-gold to-gold-deep text-ink font-editorial font-extrabold text-xs tracking-[0.18em] uppercase gold-glow flex items-center justify-center gap-2"
       >
         <Share2 size={16} /> {t.shareBuklet}
       </button>
 
       {showBuklet && (
         <div className="fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex items-center justify-center p-4 animate-pop-in">
-          <div className="w-full max-w-[380px] bg-[#0E0E14] border-2 border-[#C5A059] p-6 rounded-lg shadow-2xl relative space-y-5 text-center">
-            <button onClick={() => setShowBuklet(false)} className="absolute top-4 right-4 text-[#C5A059] hover:text-white">
+          <div className="w-full max-w-[380px] bg-ink-2 border-2 border-gold p-7 rounded-2xl shadow-2xl relative space-y-5 text-center">
+            <OrnamentFrame className="text-gold/60" />
+            <button onClick={() => setShowBuklet(false)} className="absolute top-4 right-4 text-gold hover:text-white">
               <X size={20} />
             </button>
 
             <div className="space-y-1 pt-2">
-              <KazakhOrnament className="w-8 h-8 mx-auto text-[#C5A059]" />
-              <span className="font-editorial text-xs tracking-[0.15em] text-[#C5A059] uppercase block">{t.bukletHeader}</span>
-              <h3 className="font-editorial text-lg font-black text-[#F8F5EE] uppercase tracking-wider">ERTEGI ENGLISH DIPLOMA</h3>
+              <Shanyraq className="w-10 h-10 mx-auto text-gold" strokeWidth={3.5} />
+              <span className="font-editorial text-xs tracking-[0.15em] text-gold uppercase block">{t.bukletHeader}</span>
+              <h3 className="font-editorial text-lg font-black text-cream uppercase tracking-wider">ERTEGI ENGLISH DIPLOMA</h3>
             </div>
 
-            <div className="relative w-28 h-28 mx-auto my-3 rounded-full border-4 border-[#C5A059] p-1 bg-gradient-to-b from-[#1C1C24] to-[#0A0A0E] shadow-[0_0_25px_rgba(197,160,89,0.3)] flex items-center justify-center">
-              <div className="w-full h-full rounded-full bg-[#14141C] flex items-center justify-center border border-[#C5A059]/50 overflow-hidden">
-                <span className="font-editorial text-3xl font-black text-[#C5A059]">II</span>
+            <div className="relative w-28 h-28 mx-auto my-3 rounded-full border-4 border-gold p-1 bg-gradient-to-b from-surface to-ink shadow-[0_0_25px_rgba(231,169,63,0.3)] flex items-center justify-center">
+              <div className="w-full h-full rounded-full bg-surface flex items-center justify-center border border-gold/50 overflow-hidden">
+                <span className="font-editorial text-3xl font-black text-gold">II</span>
               </div>
-              <span className="absolute -bottom-2 bg-[#C5A059] text-[#0E0E14] font-editorial font-extrabold text-[8px] px-2 py-0.5 uppercase tracking-widest">
+              <span className="absolute -bottom-2 bg-gold text-ink-2 font-editorial font-extrabold text-[10px] px-2 py-0.5 uppercase tracking-widest">
                 PASSPORT
               </span>
             </div>
 
-            <div className="space-y-2 bg-[#14141C] p-3.5 border border-[#C5A059]/30 text-left text-xs font-body text-[#F8F5EE]">
-              <div className="flex justify-between border-b border-[#C5A059]/20 pb-1.5">
-                <span className="text-[#F8F5EE]/70">Learner:</span>
-                <span className="font-bold text-[#C5A059]">{userName}</span>
+            <div className="space-y-2 bg-surface p-3.5 border border-gold/30 text-left text-xs font-body text-cream">
+              <div className="flex justify-between border-b border-gold/20 pb-1.5">
+                <span className="text-cream/70">Learner:</span>
+                <span className="font-bold text-gold">{userName}</span>
               </div>
-              <div className="flex justify-between border-b border-[#C5A059]/20 pb-1.5">
-                <span className="text-[#F8F5EE]/70">Active Streak:</span>
-                <span className="font-bold text-amber-400">🔥 {streakDays} Days</span>
+              <div className="flex justify-between border-b border-gold/20 pb-1.5">
+                <span className="text-cream/70">Active Streak:</span>
+                <span className="font-bold text-gold">🔥 {streakDays} Days</span>
               </div>
-              <div className="flex justify-between border-b border-[#C5A059]/20 pb-1.5">
-                <span className="text-[#F8F5EE]/70">Total XP:</span>
-                <span className="font-bold text-[#C5A059]">{xp} XP</span>
+              <div className="flex justify-between border-b border-gold/20 pb-1.5">
+                <span className="text-cream/70">Total XP:</span>
+                <span className="font-bold text-gold">{xp} XP</span>
               </div>
             </div>
 
@@ -1345,13 +1362,13 @@ export function ProfileScreen({ xp, t, savedWordsCount = 0, unlockedAchievements
                     // AbortError: user dismissed native share sheet — not an error
                   }
                 }}
-                className="flex-1 py-3 bg-gradient-to-r from-[#C5A059] to-[#9A7B38] text-[#09090D] font-editorial font-black text-[10px] tracking-widest uppercase gold-glow flex items-center justify-center gap-1.5"
+                className="flex-1 py-3 bg-gradient-to-r from-gold to-gold-deep text-ink font-editorial font-black text-[10px] tracking-widest uppercase gold-glow flex items-center justify-center gap-1.5"
               >
                 <Download size={14} /> {t.downloadBuklet}
               </button>
               <button
                 onClick={() => setShowBuklet(false)}
-                className="px-4 py-3 bg-[#14141C] border border-[#C5A059]/40 text-[#F8F5EE] font-editorial font-bold text-[10px] uppercase"
+                className="px-4 py-3 bg-surface border border-gold/40 text-cream font-editorial font-bold text-[10px] uppercase"
               >
                 {t.closeBuklet}
               </button>
