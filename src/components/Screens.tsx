@@ -1164,6 +1164,19 @@ function ScoreRing({ value, size = 120 }: { value: number; size?: number }) {
 }
 
 /* --- 7. SPEAK SCREEN --- */
+// Practice phrases: every sentence from every story, grouped by level.
+// Higher levels allow longer sentences, since their texts use them.
+const SPEAK_LEVELS = LEVEL_DETAILS.map((l) => l.id);
+const SPEAK_MAX_WORDS: Record<string, number> = { A1: 16, A2: 18, B1: 24, B2: 32, C1: 40 };
+const SPEAK_PHRASES: Record<string, string[]> = Object.fromEntries(
+  SPEAK_LEVELS.map((lvl) => [
+    lvl,
+    STORIES.flatMap((s: any) => (s.levels[lvl] as string).match(/[^.!?]+[.!?]/g) ?? [])
+      .map((x: string) => x.trim())
+      .filter((x: string) => !/["“”]/.test(x) && x.split(/\s+/).length >= 4 && x.split(/\s+/).length <= (SPEAK_MAX_WORDS[lvl] ?? 24)),
+  ])
+);
+
 export function SpeakScreen({ onReward, t }: {
   onReward: (xp: number) => void;
   t: Record<string, string>;
@@ -1179,7 +1192,17 @@ export function SpeakScreen({ onReward, t }: {
   const [speechError, setSpeechError] = useState<string | null>(null);
   const recognizerRef = useRef<{ stopContinuousRecognitionAsync?: () => void; close?: () => void } | null>(null);
 
-  const targetPhrase = "He is renowned across the steppe for his sharp wit.";
+  const [speakLevel, setSpeakLevel] = useState("A2");
+  const [phraseIndex, setPhraseIndex] = useState(0);
+  const phrases = SPEAK_PHRASES[speakLevel];
+  const targetPhrase = phrases[phraseIndex % phrases.length];
+  const changePhrase = (level: string, index: number) => {
+    setSpeakLevel(level);
+    setPhraseIndex(index);
+    setScores(null);
+    setTranscript("");
+    setSpeechError(null);
+  };
 
   const toggleRecord = async () => {
     if (recording) {
@@ -1282,14 +1305,28 @@ export function SpeakScreen({ onReward, t }: {
     <div className="animate-pop-in">
       <ScreenHeader eyebrow="Pronunciation" title={t.speakTitle} />
 
+      <div className="segmented mb-4" role="group" aria-label="Level">
+        {SPEAK_LEVELS.map((lvl) => (
+          <button key={lvl} aria-pressed={speakLevel === lvl} disabled={recording} onClick={() => changePhrase(lvl, 0)}>
+            {lvl}
+          </button>
+        ))}
+      </div>
+
       <div className="card p-6">
-        <p className="eyebrow">{t.speakSubtitle}</p>
+        <div className="flex items-center justify-between gap-3">
+          <p className="eyebrow">{t.speakSubtitle}</p>
+          <span className="text-xs font-bold text-ink-3">{(phraseIndex % phrases.length) + 1} / {phrases.length}</span>
+        </div>
         <div className="flex items-start gap-4 mt-3">
           <p className="flex-1 font-display font-extrabold text-[22px] leading-snug text-ink">“{targetPhrase}”</p>
           <button onClick={() => safePlayVoice(targetPhrase)} aria-label="Listen" className="w-12 h-12 rounded-full bg-sky-soft text-sky flex items-center justify-center shrink-0">
             <Volume2 size={22} />
           </button>
         </div>
+        <button onClick={() => changePhrase(speakLevel, phraseIndex + 1)} disabled={recording} className="btn btn-ghost btn-sm w-full mt-5">
+          <RotateCcw size={16} /> {t.nextPhrase}
+        </button>
       </div>
 
       <div className="flex flex-col items-center justify-center py-10">

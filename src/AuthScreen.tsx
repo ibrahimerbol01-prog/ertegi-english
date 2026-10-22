@@ -59,7 +59,7 @@ function PrivacyPolicyModal({ onClose }: { onClose: () => void }) {
 }
 
 export default function AuthScreen() {
-  const [mode, setMode] = useState<"signin" | "signup">("signin");
+  const [mode, setMode] = useState<"signin" | "signup">("signup");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [displayName, setDisplayName] = useState("");
