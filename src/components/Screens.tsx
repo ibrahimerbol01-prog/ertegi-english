@@ -13,6 +13,7 @@ import {
 import type { SavedWord } from "../types";
 import { supabase } from "../lib/supabase";
 import { isDue, MAX_MASTERY } from "../utils/progress";
+import { MaqalCard, StoryHistory } from "./Culture";
 
 /* Small video tile with a night-sky fallback. */
 function StoryVideo({ src, className = "", videoRef, paused }: { src: string; className?: string; videoRef?: React.Ref<HTMLVideoElement>; paused?: boolean }) {
@@ -147,7 +148,7 @@ function PathIsland({ label, caption, color, edge, x, onClick, locked, highlight
   );
 }
 
-export function HomeScreen({ onStartRead, onStartQuiz, t, lang, userName = "", sessionXp = 0, dailyGoal = 50, progress = new Set<string>() }: any) {
+export function HomeScreen({ onStartRead, onStartQuiz, t, lang, userName = "", sessionXp = 0, dailyGoal = 50, progress = new Set<string>(), userId, onReward = () => {} }: any) {
   // Next step on the path: first level or quiz not yet finished, in order.
   const steps = STORIES.flatMap((s: any) => [...LEVEL_DETAILS.map((l) => ({ story: s, step: l.id })), { story: s, step: "quiz" }]);
   const current = steps.find((x) => !progress.has(`${x.story.id}:${x.step}`)) || null;
@@ -216,6 +217,8 @@ export function HomeScreen({ onStartRead, onStartQuiz, t, lang, userName = "", s
           </button>
         </div>
       </div>
+
+      <MaqalCard lang={lang} userId={userId} onReward={onReward} />
 
       {/* Caravan path: one unit per story, islands are CEFR levels */}
       {STORIES.map((story: any, si: number) => {
@@ -373,6 +376,7 @@ export function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, s
           title={t.selectLevelTitle}
         />
         <p className="text-[15px] text-ink-2 -mt-2 mb-5">{t.selectLevelSub}</p>
+        <div className="mb-5"><StoryHistory storyId={currentStory.id} lang={lang} /></div>
 
         <div className="space-y-3">
           {LEVEL_DETAILS.map((lvl) => {
@@ -516,6 +520,8 @@ export function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, s
           {isPlaying ? <Pause size={18} className="fill-ink" /> : <Play size={18} className="fill-ink" />}
         </button>
       </div>
+
+      <StoryHistory storyId={currentStory.id} lang={lang} />
 
       {/* Read-along player (Apple Music mini player) */}
       <div className="card p-3.5 space-y-3">
@@ -1406,7 +1412,7 @@ export function SpeakScreen({ onReward, t }: {
 }
 
 /* --- 8. PROFILE SCREEN --- */
-export function ProfileScreen({ xp, t, lang = "kk", setLang, savedWordsCount = 0, unlockedAchievements = [], userName = "Learner", onSignOut, streakDays = 0, quizzesCompleted = 0 }: {
+export function ProfileScreen({ xp, t, lang = "kk", setLang, savedWordsCount = 0, unlockedAchievements = [], userName = "Learner", onSignOut, streakDays = 0, quizzesCompleted = 0, kilim }: {
   xp: number;
   t: Record<string, string>;
   lang?: string;
@@ -1417,6 +1423,7 @@ export function ProfileScreen({ xp, t, lang = "kk", setLang, savedWordsCount = 0
   onSignOut: () => void;
   streakDays?: number;
   quizzesCompleted?: number;
+  kilim?: React.ReactNode;
 }) {
   const [showBuklet, setShowBuklet] = useState(false);
   const rank = Math.floor(xp / 100);
@@ -1480,6 +1487,8 @@ export function ProfileScreen({ xp, t, lang = "kk", setLang, savedWordsCount = 0
           ))}
         </div>
       </div>
+
+      {kilim}
 
       {/* Achievements */}
       <div>
