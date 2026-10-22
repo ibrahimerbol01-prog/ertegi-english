@@ -1168,6 +1168,20 @@ export function QuizScreen({ onReward, t, onQuizFinish, questions, storyTitle }:
                 <p className="text-[15px] text-felt-deep font-semibold">{question.options[question.correct]}</p>
               )}
             </div>
+            {!isCorrect && (
+              <button
+                onClick={() => {
+                  const task = question.sentence || question.q || "";
+                  const mine = selected !== null ? ` I chose "${question.options[selected]}".` : "";
+                  window.dispatchEvent(new CustomEvent("shoqan:open", {
+                    detail: `Why is "${question.options[question.correct]}" the right answer here: "${task}"?${mine} Explain simply, comparing with Kazakh.`,
+                  }));
+                }}
+                className="ml-auto shrink-0 h-9 px-3 rounded-full bg-card text-felt-deep text-sm font-bold"
+              >
+                Nege?
+              </button>
+            )}
           </div>
           <button onClick={handleNext} className={`btn w-full mt-4 ${isCorrect ? "btn-jade" : "btn-felt"}`}>
             {qIndex + 1 >= questions.length ? "See results" : "Continue"}
@@ -1222,6 +1236,7 @@ export function SpeakScreen({ onReward, t }: {
     pronunciation: number;
   } | null>(null);
   const [transcript, setTranscript] = useState<string>("");
+  const [wordScores, setWordScores] = useState<{ word: string; score: number; error: string }[]>([]);
   const [speechError, setSpeechError] = useState<string | null>(null);
   const recognizerRef = useRef<{ stopContinuousRecognitionAsync?: () => void; close?: () => void } | null>(null);
 
@@ -1234,6 +1249,7 @@ export function SpeakScreen({ onReward, t }: {
     setPhraseIndex(index);
     setScores(null);
     setTranscript("");
+    setWordScores([]);
     setSpeechError(null);
   };
 
@@ -1250,6 +1266,7 @@ export function SpeakScreen({ onReward, t }: {
     setSpeechError(null);
     setScores(null);
     setTranscript("");
+    setWordScores([]);
 
     try {
       const { data: { session: s } } = await supabase.auth.getSession();
@@ -1286,6 +1303,13 @@ export function SpeakScreen({ onReward, t }: {
           if (result.reason === SpeechSDK.ResultReason.RecognizedSpeech) {
             const assessment = SpeechSDK.PronunciationAssessmentResult.fromResult(result as Parameters<typeof SpeechSDK.PronunciationAssessmentResult.fromResult>[0]);
             setTranscript(result.text);
+            // Per-word accuracy, so the learner sees exactly which words to fix.
+            const words = (assessment.detailResult?.Words ?? []) as { Word: string; PronunciationAssessment?: { AccuracyScore?: number; ErrorType?: string } }[];
+            setWordScores(words.map((w) => ({
+              word: w.Word,
+              score: Math.round(w.PronunciationAssessment?.AccuracyScore ?? 0),
+              error: w.PronunciationAssessment?.ErrorType ?? "None",
+            })));
             const next = {
               accuracy: Math.round(assessment.accuracyScore),
               fluency: Math.round(assessment.fluencyScore),
@@ -1403,6 +1427,28 @@ export function SpeakScreen({ onReward, t }: {
               ))}
             </div>
           </div>
+          {wordScores.length > 0 && (
+            <div className="mt-5">
+              <p className="eyebrow mb-2">Word by word · tap to hear</p>
+              <div className="flex flex-wrap gap-2">
+                {wordScores.map((w, i) => {
+                  const missed = w.error === "Omission";
+                  const cls = missed
+                    ? "bg-felt-soft text-felt-deep line-through"
+                    : w.score >= 80 ? "bg-jade-soft text-jade-deep" : w.score >= 60 ? "bg-sun-soft text-ink" : "bg-felt-soft text-felt-deep";
+                  return (
+                    <button key={i} onClick={() => safePlayVoice(w.word)} className={`h-9 px-3 rounded-xl font-semibold text-[15px] flex items-center gap-1.5 ${cls}`}>
+                      {w.word}
+                      <span className="text-xs font-bold opacity-70">{missed ? "—" : w.score}</span>
+                    </button>
+                  );
+                })}
+              </div>
+              {wordScores.some((w) => w.score < 60 || w.error === "Omission") && (
+                <p className="text-sm text-ink-2 mt-3">Red words need work: listen, then record the phrase again.</p>
+              )}
+            </div>
+          )}
           {transcript && <p className="text-sm text-ink-2 italic mt-5">You said: “{transcript}”</p>}
           <p className="text-[15px] text-ink mt-2">{feedbackMessage}</p>
         </div>
