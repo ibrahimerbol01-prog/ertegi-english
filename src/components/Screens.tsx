@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import {
   ArrowRight, Play, Pause, Volume2, ChevronRight, RotateCcw, Compass, Layers, Trophy,
-  Check, X, Flame, Heart, Mic, MicOff, LogOut, Share2, BookOpen, Lock, Timer, Zap, Plus
+  Check, X, Flame, Heart, Mic, MicOff, LogOut, Share2, BookOpen, Lock, Timer, Zap, Plus, MessageCircle
 } from "lucide-react";
 import { DailyGoalRing, ScreenHeader, Sheet, BrandMark } from "./UIHelpers";
 import { displayTitle } from "../utils/text";
@@ -13,6 +13,7 @@ import {
 import type { SavedWord } from "../types";
 import { supabase } from "../lib/supabase";
 import { isDue, MAX_MASTERY } from "../utils/progress";
+import { MaqalCard, StoryHistory } from "./Culture";
 
 /* Small video tile with a night-sky fallback. */
 function StoryVideo({ src, className = "", videoRef, paused }: { src: string; className?: string; videoRef?: React.Ref<HTMLVideoElement>; paused?: boolean }) {
@@ -147,7 +148,7 @@ function PathIsland({ label, caption, color, edge, x, onClick, locked, highlight
   );
 }
 
-export function HomeScreen({ onStartRead, onStartQuiz, t, lang, userName = "", sessionXp = 0, dailyGoal = 50, progress = new Set<string>() }: any) {
+export function HomeScreen({ onStartRead, onStartQuiz, t, lang, userName = "", sessionXp = 0, dailyGoal = 50, progress = new Set<string>(), userId, onReward = () => {} }: any) {
   // Next step on the path: first level or quiz not yet finished, in order.
   const steps = STORIES.flatMap((s: any) => [...LEVEL_DETAILS.map((l) => ({ story: s, step: l.id })), { story: s, step: "quiz" }]);
   const current = steps.find((x) => !progress.has(`${x.story.id}:${x.step}`)) || null;
@@ -216,6 +217,8 @@ export function HomeScreen({ onStartRead, onStartQuiz, t, lang, userName = "", s
           </button>
         </div>
       </div>
+
+      <MaqalCard lang={lang} userId={userId} onReward={onReward} />
 
       {/* Caravan path: one unit per story, islands are CEFR levels */}
       {STORIES.map((story: any, si: number) => {
@@ -373,6 +376,7 @@ export function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, s
           title={t.selectLevelTitle}
         />
         <p className="text-[15px] text-ink-2 -mt-2 mb-5">{t.selectLevelSub}</p>
+        <div className="mb-5"><StoryHistory storyId={currentStory.id} lang={lang} /></div>
 
         <div className="space-y-3">
           {LEVEL_DETAILS.map((lvl) => {
@@ -516,6 +520,8 @@ export function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, s
           {isPlaying ? <Pause size={18} className="fill-ink" /> : <Play size={18} className="fill-ink" />}
         </button>
       </div>
+
+      <StoryHistory storyId={currentStory.id} lang={lang} />
 
       {/* Read-along player (Apple Music mini player) */}
       <div className="card p-3.5 space-y-3">
@@ -1161,6 +1167,20 @@ export function QuizScreen({ onReward, t, onQuizFinish, questions, storyTitle }:
               {!isCorrect && (
                 <p className="text-[15px] text-felt-deep font-semibold">{question.options[question.correct]}</p>
               )}
+              {!isCorrect && (
+                <button
+                  onClick={() => {
+                    const task = question.sentence || question.q || "";
+                    const mine = selected !== null ? ` I chose "${question.options[selected]}".` : "";
+                    window.dispatchEvent(new CustomEvent("shoqan:open", {
+                      detail: `Why is "${question.options[question.correct]}" the right answer here: "${task}"?${mine} Explain simply, comparing with Kazakh.`,
+                    }));
+                  }}
+                  className="mt-2 h-8 px-3 rounded-full bg-card text-felt-deep text-sm font-bold inline-flex items-center gap-1.5"
+                >
+                  <MessageCircle size={15} /> Nege? Şoqannan sura
+                </button>
+              )}
             </div>
           </div>
           <button onClick={handleNext} className={`btn w-full mt-4 ${isCorrect ? "btn-jade" : "btn-felt"}`}>
@@ -1216,6 +1236,7 @@ export function SpeakScreen({ onReward, t }: {
     pronunciation: number;
   } | null>(null);
   const [transcript, setTranscript] = useState<string>("");
+  const [wordScores, setWordScores] = useState<{ word: string; score: number; error: string }[]>([]);
   const [speechError, setSpeechError] = useState<string | null>(null);
   const recognizerRef = useRef<{ stopContinuousRecognitionAsync?: () => void; close?: () => void } | null>(null);
 
@@ -1228,6 +1249,7 @@ export function SpeakScreen({ onReward, t }: {
     setPhraseIndex(index);
     setScores(null);
     setTranscript("");
+    setWordScores([]);
     setSpeechError(null);
   };
 
@@ -1244,6 +1266,7 @@ export function SpeakScreen({ onReward, t }: {
     setSpeechError(null);
     setScores(null);
     setTranscript("");
+    setWordScores([]);
 
     try {
       const { data: { session: s } } = await supabase.auth.getSession();
@@ -1280,6 +1303,13 @@ export function SpeakScreen({ onReward, t }: {
           if (result.reason === SpeechSDK.ResultReason.RecognizedSpeech) {
             const assessment = SpeechSDK.PronunciationAssessmentResult.fromResult(result as Parameters<typeof SpeechSDK.PronunciationAssessmentResult.fromResult>[0]);
             setTranscript(result.text);
+            // Per-word accuracy, so the learner sees exactly which words to fix.
+            const words = (assessment.detailResult?.Words ?? []) as { Word: string; PronunciationAssessment?: { AccuracyScore?: number; ErrorType?: string } }[];
+            setWordScores(words.map((w) => ({
+              word: w.Word,
+              score: Math.round(w.PronunciationAssessment?.AccuracyScore ?? 0),
+              error: w.PronunciationAssessment?.ErrorType ?? "None",
+            })));
             const next = {
               accuracy: Math.round(assessment.accuracyScore),
               fluency: Math.round(assessment.fluencyScore),
@@ -1397,6 +1427,28 @@ export function SpeakScreen({ onReward, t }: {
               ))}
             </div>
           </div>
+          {wordScores.length > 0 && (
+            <div className="mt-5">
+              <p className="eyebrow mb-2">Word by word · tap to hear</p>
+              <div className="flex flex-wrap gap-2">
+                {wordScores.map((w, i) => {
+                  const missed = w.error === "Omission";
+                  const cls = missed
+                    ? "bg-felt-soft text-felt-deep line-through"
+                    : w.score >= 80 ? "bg-jade-soft text-jade-deep" : w.score >= 60 ? "bg-sun-soft text-ink" : "bg-felt-soft text-felt-deep";
+                  return (
+                    <button key={i} onClick={() => safePlayVoice(w.word)} className={`h-9 px-3 rounded-xl font-semibold text-[15px] flex items-center gap-1.5 ${cls}`}>
+                      {w.word}
+                      <span className="text-xs font-bold opacity-70">{missed ? "—" : w.score}</span>
+                    </button>
+                  );
+                })}
+              </div>
+              {wordScores.some((w) => w.score < 60 || w.error === "Omission") && (
+                <p className="text-sm text-ink-2 mt-3">Red words need work: listen, then record the phrase again.</p>
+              )}
+            </div>
+          )}
           {transcript && <p className="text-sm text-ink-2 italic mt-5">You said: “{transcript}”</p>}
           <p className="text-[15px] text-ink mt-2">{feedbackMessage}</p>
         </div>
@@ -1406,7 +1458,7 @@ export function SpeakScreen({ onReward, t }: {
 }
 
 /* --- 8. PROFILE SCREEN --- */
-export function ProfileScreen({ xp, t, lang = "kk", setLang, savedWordsCount = 0, unlockedAchievements = [], userName = "Learner", onSignOut, streakDays = 0, quizzesCompleted = 0 }: {
+export function ProfileScreen({ xp, t, lang = "kk", setLang, savedWordsCount = 0, unlockedAchievements = [], userName = "Learner", onSignOut, streakDays = 0, quizzesCompleted = 0, kilim }: {
   xp: number;
   t: Record<string, string>;
   lang?: string;
@@ -1417,6 +1469,7 @@ export function ProfileScreen({ xp, t, lang = "kk", setLang, savedWordsCount = 0
   onSignOut: () => void;
   streakDays?: number;
   quizzesCompleted?: number;
+  kilim?: React.ReactNode;
 }) {
   const [showBuklet, setShowBuklet] = useState(false);
   const rank = Math.floor(xp / 100);
@@ -1480,6 +1533,8 @@ export function ProfileScreen({ xp, t, lang = "kk", setLang, savedWordsCount = 0
           ))}
         </div>
       </div>
+
+      {kilim}
 
       {/* Achievements */}
       <div>

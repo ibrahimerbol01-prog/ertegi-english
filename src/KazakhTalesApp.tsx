@@ -18,6 +18,7 @@ import type { SavedWord } from "./types";
 import { supabase } from "./lib/supabase";
 import { saveToSupabase } from "./utils/supabase-save";
 import { buildLevelQuiz } from "./utils/levelQuiz";
+import { BataModal, OyuKilim, TurkicWords, loadMaqals } from "./components/Culture";
 import {
   loadProgress, saveProgress, progressKey, loadLocalReviews, saveReview,
   nextReview, isDue, MAX_MASTERY, type ProgressStep
@@ -36,6 +37,7 @@ export default function KazakhTalesApp({ session }: { session: Session }) {
   const [selectedLevel, setSelectedLevel] = useState<string | null>(null);
   // Set when the quiz was opened from the reader: a short check for that level only.
   const [quizLevel, setQuizLevel] = useState<ProgressStep | null>(null);
+  const [bataStory, setBataStory] = useState<string | null>(null);
   const [selectedStory, setSelectedStory] = useState<string | null>(null);
   const [xp, setXp] = useState(0);
   const [lang, setLang] = useState("kk");
@@ -206,7 +208,13 @@ export default function KazakhTalesApp({ session }: { session: Session }) {
     : quizStory.quizQuestions;
 
   const handleQuizFinish = (correctCount: number, total: number) => {
-    if (correctCount >= Math.ceil(total * 0.6)) markStep(selectedStory || STORIES[0].id, quizLevel ?? "quiz");
+    const storyId = selectedStory || STORIES[0].id;
+    const step = quizLevel ?? "quiz";
+    if (correctCount >= Math.ceil(total * 0.6)) {
+      // First time a whole tale is finished: the elder's blessing and its ornament.
+      if (step === "quiz" && !progress.has(progressKey(storyId, "quiz"))) setBataStory(storyId);
+      markStep(storyId, step);
+    }
     latestQuizzesRef.current += 1;
     setQuizzesCompleted(latestQuizzesRef.current);
     saveToSupabase(
@@ -316,6 +324,7 @@ export default function KazakhTalesApp({ session }: { session: Session }) {
   return (
     <div className="relative h-dvh w-full bg-sand font-body text-ink overflow-hidden flex">
       <LevelUpModal show={showLevelUp} rank={levelUpRank} onClose={() => setShowLevelUp(false)} />
+      <BataModal storyId={bataStory} lang={lang} onClose={() => setBataStory(null)} />
       <AchievementBanner
         achievement={achievementQueue[0] || null}
         onDone={() => setAchievementQueue((prev) => prev.slice(1))}
@@ -371,6 +380,8 @@ export default function KazakhTalesApp({ session }: { session: Session }) {
               {tab === "home" && (
                 <HomeScreen
                   progress={progress}
+                  userId={userId}
+                  onReward={addXp}
                   onStartRead={(storyId: string, level?: string) => {
                     setSelectedStory(storyId);
                     setSelectedLevel(level ?? null);
@@ -420,6 +431,7 @@ export default function KazakhTalesApp({ session }: { session: Session }) {
                   ) : (
                     <MatchingGame savedWords={savedWords} onReward={addXp} mode={wordsMode} setMode={setWordsMode} />
                   )}
+                  <div className="mt-8"><TurkicWords lang={lang} /></div>
                 </div>
               )}
               {tab === "speak" && <SpeakScreen onReward={addXp} t={t} />}
@@ -435,6 +447,7 @@ export default function KazakhTalesApp({ session }: { session: Session }) {
                   onSignOut={handleSignOut}
                   streakDays={streakDays}
                   quizzesCompleted={quizzesCompleted}
+                  kilim={<OyuKilim progress={progress} lang={lang} maqalCount={loadMaqals(userId).length} />}
                 />
               )}
             </main>
