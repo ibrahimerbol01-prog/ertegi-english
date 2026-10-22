@@ -414,9 +414,12 @@ export function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, s
   }, [] as number[]);
 
   const handleWordClick = (word: string) => {
-    const cleanWord = word.replace(/[^a-zA-Z]/g, "").toLowerCase();
+    // Try the word as written ("didn't"), then without a possessive ("man's" -> "man"), then letters only.
+    const withApostrophe = word.toLowerCase().replace(/[’]/g, "'").replace(/[^a-z']/g, "").replace(/^'+|'+$/g, "");
+    const candidates = [withApostrophe, withApostrophe.replace(/'s$/, ""), withApostrophe.replace(/[^a-z]/g, "")];
+    const found = candidates.map((c) => WORD_TRANSLATIONS[c]).find(Boolean);
     setActiveWord(word);
-    setTranslation(WORD_TRANSLATIONS[cleanWord as keyof typeof WORD_TRANSLATIONS] || "Аудармасы әзірге жоқ");
+    setTranslation(found || "Аудармасы әзірге жоқ");
     safePlayVoice(word);
   };
 
