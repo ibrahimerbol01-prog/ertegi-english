@@ -87,6 +87,17 @@ export function IntroScreen({ onFinish, t }: any) {
   );
 }
 
+/* Shoqan's tip of the day on the home path: one per day, same for everyone. */
+const SHOQAN_TIPS = [
+  { kk: "Bir mätindi eki deñgeide oqyp kör: aldymen A2, sosyn B1. Jaña sözder birden közge tüsedi.", en: "Read one tale at two levels: A2 first, then B1. The new words jump out.", ask: "Which words change between the A2 and B1 versions of a tale?" },
+  { kk: "Tanys emes sözdi bas ta, saqta. Ertesi küni ol «Sözder» bölimine qaitalauǵa keledi.", en: "Tap an unknown word and save it. It comes back for review in Words the next day.", ask: "How should I review the words I saved?" },
+  { kk: "«Read along» qosyp, dauyspen birge oqy. Aıtylymǵa jaqsy jattyǵu.", en: "Turn on Read along and read out loud with it. Great practice for pronunciation.", ask: "How can I practise English pronunciation with the stories?" },
+  { kk: "Aldar Köse — ailaker. Aǵylşynda ony «clever» nemese «cunning» dep ataıdy. Aıyrmasy nede?", en: "Aldar Köse is a trickster. In English he is \"clever\" or \"cunning\". What's the difference?", ask: "What is the difference between clever and cunning?" },
+  { kk: "Kün saıyn 10 minut — aptasyna bir saǵattan artyq. Kishkene qadam da qadam.", en: "Ten minutes a day adds up to over an hour a week. Small steps count.", ask: "Give me a 10-minute daily English routine." },
+  { kk: "Quiz-de qatelesseñ, mätinge qaıtyp, sol söılemdi tap. Osylaı este jaqsy qalady.", en: "Missed a quiz question? Go back and find that sentence in the text. It sticks better.", ask: "Why do I keep forgetting new English words?" },
+  { kk: "Jirenşe şeşen üş suraqqa jauap berdi. Sen aǵylşynşa bir suraq qoıyp kör!", en: "Zhirenshe answered three questions. Try asking me one in English!", ask: "What is the fastest thing in the world?" },
+];
+
 /* --- 2. HOME SCREEN: greeting, daily goal, and the caravan path --- */
 const PATH_OFFSETS = [0, 52, 78, 52, 0, -52, -78, -52];
 const UNIT_COLORS = [
@@ -146,6 +157,7 @@ export function HomeScreen({ onStartRead, onStartQuiz, t, lang, userName = "", s
   const comingSoon = totalPlanned - STORIES.length;
 
   const firstName = (userName || "").split(/[\s@]/)[0];
+  const [tip] = useState(() => SHOQAN_TIPS[Math.floor(Date.now() / 86400000) % SHOQAN_TIPS.length]);
 
   return (
     <div className="space-y-6 animate-pop-in">
@@ -189,6 +201,21 @@ export function HomeScreen({ onStartRead, onStartQuiz, t, lang, userName = "", s
         </div>
       </button>
       )}
+
+      {/* Shoqan by the path, like Duolingo's owl: tip of the day + a ready question */}
+      <div className="flex items-end gap-3">
+        <img src="/shoqan-avatar.jpg" alt="Shoqan" className="w-16 h-16 rounded-full object-cover border-[3px] border-sun shadow-[0_4px_0_var(--color-sun-deep)] shrink-0" />
+        <div className="relative flex-1 card p-4 rounded-bl-md">
+          <p className="eyebrow text-sun-deep">{lang === "kk" ? "Şoqannyñ keñesi" : "Shoqan's tip"}</p>
+          <p className="text-[15px] text-ink mt-1 leading-snug">{tip[lang === "kk" ? "kk" : "en"]}</p>
+          <button
+            onClick={() => window.dispatchEvent(new CustomEvent("shoqan:open", { detail: tip.ask }))}
+            className="mt-2 text-sm font-bold text-sky-deep"
+          >
+            {lang === "kk" ? "Şoqannan suraý ›" : "Ask Shoqan ›"}
+          </button>
+        </div>
+      </div>
 
       {/* Caravan path: one unit per story, islands are CEFR levels */}
       {STORIES.map((story: any, si: number) => {
