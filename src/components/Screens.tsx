@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import {
   ArrowRight, Play, Pause, Volume2, ChevronRight, RotateCcw, Compass, Layers, Trophy,
-  Check, X, Flame, Heart, Mic, MicOff, LogOut, Share2, BookOpen, Lock, Timer, Zap, Plus
+  Check, X, Flame, Heart, Mic, MicOff, LogOut, Share2, BookOpen, Lock, Timer, Zap, Plus, MessageCircle
 } from "lucide-react";
 import { DailyGoalRing, ScreenHeader, Sheet, BrandMark } from "./UIHelpers";
 import { displayTitle } from "../utils/text";
@@ -1167,21 +1167,21 @@ export function QuizScreen({ onReward, t, onQuizFinish, questions, storyTitle }:
               {!isCorrect && (
                 <p className="text-[15px] text-felt-deep font-semibold">{question.options[question.correct]}</p>
               )}
+              {!isCorrect && (
+                <button
+                  onClick={() => {
+                    const task = question.sentence || question.q || "";
+                    const mine = selected !== null ? ` I chose "${question.options[selected]}".` : "";
+                    window.dispatchEvent(new CustomEvent("shoqan:open", {
+                      detail: `Why is "${question.options[question.correct]}" the right answer here: "${task}"?${mine} Explain simply, comparing with Kazakh.`,
+                    }));
+                  }}
+                  className="mt-2 h-8 px-3 rounded-full bg-card text-felt-deep text-sm font-bold inline-flex items-center gap-1.5"
+                >
+                  <MessageCircle size={15} /> Nege? Şoqannan sura
+                </button>
+              )}
             </div>
-            {!isCorrect && (
-              <button
-                onClick={() => {
-                  const task = question.sentence || question.q || "";
-                  const mine = selected !== null ? ` I chose "${question.options[selected]}".` : "";
-                  window.dispatchEvent(new CustomEvent("shoqan:open", {
-                    detail: `Why is "${question.options[question.correct]}" the right answer here: "${task}"?${mine} Explain simply, comparing with Kazakh.`,
-                  }));
-                }}
-                className="ml-auto shrink-0 h-9 px-3 rounded-full bg-card text-felt-deep text-sm font-bold"
-              >
-                Nege?
-              </button>
-            )}
           </div>
           <button onClick={handleNext} className={`btn w-full mt-4 ${isCorrect ? "btn-jade" : "btn-felt"}`}>
             {qIndex + 1 >= questions.length ? "See results" : "Continue"}

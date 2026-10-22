@@ -118,9 +118,12 @@ export function BataModal({ storyId, lang, onClose }: { storyId: string | null; 
             <p className="text-sm text-ink-2 mt-1.5">{bata.en}</p>
           </div>
 
-          <p className="text-sm text-ink-2 mt-4 flex items-center justify-center gap-1.5">
-            <Sparkles size={15} className="text-sun-deep" />
-            {l === "kk" ? `Jaña oıu: ${oyu.name}` : `New ornament: ${oyu.name}`} · {oyu.meaning[l]}
+          <p className="text-sm text-ink-2 mt-4">
+            <span className="inline-flex items-center gap-1.5 font-bold text-ink">
+              <Sparkles size={15} className="text-sun-deep" />
+              {l === "kk" ? `Jaña oıu: ${oyu.name}` : `New ornament: ${oyu.name}`}
+            </span>
+            <span className="block mt-0.5">{oyu.meaning[l]}</span>
           </p>
           <button onClick={onClose} className="btn btn-sun w-full mt-6">Äumın</button>
         </div>
