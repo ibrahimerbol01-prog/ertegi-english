@@ -35,12 +35,12 @@ function StoryVideo({ src, className = "", videoRef, paused }: { src: string; cl
   );
 }
 
-const LEVEL_COLORS: Record<string, { bg: string; edge: string; soft: string }> = {
-  A1: { bg: "bg-jade", edge: "shadow-[0_4px_0_var(--color-jade-deep)]", soft: "text-jade-deep" },
-  A2: { bg: "bg-sky", edge: "shadow-[0_4px_0_var(--color-sky-deep)]", soft: "text-sky-deep" },
-  B1: { bg: "bg-sun", edge: "shadow-[0_4px_0_var(--color-sun-deep)]", soft: "text-sun-deep" },
-  B2: { bg: "bg-felt", edge: "shadow-[0_4px_0_var(--color-felt-deep)]", soft: "text-felt-deep" },
-  C1: { bg: "bg-night", edge: "shadow-[0_4px_0_#121a31]", soft: "text-night" },
+const LEVEL_COLORS: Record<string, { bg: string; edge: string; island: string; soft: string }> = {
+  A1: { bg: "bg-jade", edge: "shadow-[0_4px_0_var(--color-jade-deep)]", island: "shadow-[0_7px_0_var(--color-jade-deep)]", soft: "text-jade-deep" },
+  A2: { bg: "bg-sky", edge: "shadow-[0_4px_0_var(--color-sky-deep)]", island: "shadow-[0_7px_0_var(--color-sky-deep)]", soft: "text-sky-deep" },
+  B1: { bg: "bg-sun", edge: "shadow-[0_4px_0_var(--color-sun-deep)]", island: "shadow-[0_7px_0_var(--color-sun-deep)]", soft: "text-sun-deep" },
+  B2: { bg: "bg-felt", edge: "shadow-[0_4px_0_var(--color-felt-deep)]", island: "shadow-[0_7px_0_var(--color-felt-deep)]", soft: "text-felt-deep" },
+  C1: { bg: "bg-night", edge: "shadow-[0_4px_0_#121a31]", island: "shadow-[0_7px_0_#121a31]", soft: "text-night" },
 };
 
 /* --- 1. INTRO SCREEN --- */
@@ -87,27 +87,47 @@ export function IntroScreen({ onFinish, t }: any) {
 }
 
 /* --- 2. HOME SCREEN: greeting, daily goal, and the caravan path --- */
-type PathNode =
-  | { kind: "read"; storyId: string; title: string }
-  | { kind: "quiz"; storyId: string; title: string }
-  | { kind: "locked" }
-  | { kind: "chest" };
-
 const PATH_OFFSETS = [0, 52, 78, 52, 0, -52, -78, -52];
+const UNIT_COLORS = [
+  { bg: "bg-sky", edge: "shadow-[0_4px_0_var(--color-sky-deep)]" },
+  { bg: "bg-felt", edge: "shadow-[0_4px_0_var(--color-felt-deep)]" },
+  { bg: "bg-jade", edge: "shadow-[0_4px_0_var(--color-jade-deep)]" },
+  { bg: "bg-night", edge: "shadow-[0_4px_0_#121a31]" },
+];
+
+/* One island on the path: a level badge (A1–C1), C2 as "coming soon",
+   then the story quiz. Shape mirrors Duolingo's oval nodes. */
+function PathIsland({ label, caption, color, edge, x, onClick, locked, highlight, ariaLabel, children }: {
+  label?: string; caption?: string; color: string; edge: string; x: number;
+  onClick?: () => void; locked?: boolean; highlight?: boolean; ariaLabel: string; children?: React.ReactNode;
+}) {
+  const Tag = onClick ? "button" : "div";
+  return (
+    <div className="relative flex flex-col items-center" style={{ transform: `translateX(${x}px)` }}>
+      {highlight && <span aria-hidden="true" className="absolute top-0 w-[92px] h-[86px] -mt-2 rounded-[50%] border-4 border-sky/30 animate-pulse" />}
+      <Tag
+        onClick={onClick}
+        aria-label={ariaLabel}
+        className={`relative w-[76px] h-[70px] rounded-[50%] flex items-center justify-center font-display font-black text-[22px] ${color} ${edge} ${
+          onClick ? "transition-transform active:translate-y-[5px] active:shadow-none" : ""
+        } ${locked ? "text-ink-3" : "text-white"}`}
+      >
+        {children ?? label}
+        {locked && (
+          <span className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-card border-2 border-line flex items-center justify-center">
+            <Lock size={12} strokeWidth={3} className="text-ink-3" />
+          </span>
+        )}
+      </Tag>
+      {caption && <span className="mt-3 text-xs font-bold text-ink-2">{caption}</span>}
+    </div>
+  );
+}
 
 export function HomeScreen({ onStartRead, onStartQuiz, t, lang, userName = "", sessionXp = 0, dailyGoal = 50 }: any) {
   const featured = STORIES[0];
   const totalPlanned = 10;
-  const lockedCount = Math.min(3, totalPlanned - STORIES.length);
-
-  const nodes: PathNode[] = [
-    ...STORIES.flatMap((s): PathNode[] => [
-      { kind: "read", storyId: s.id, title: s.title },
-      { kind: "quiz", storyId: s.id, title: s.title },
-    ]),
-    ...Array.from({ length: lockedCount }, (): PathNode => ({ kind: "locked" })),
-    { kind: "chest" },
-  ];
+  const comingSoon = totalPlanned - STORIES.length;
 
   const firstName = (userName || "").split(/[\s@]/)[0];
 
@@ -152,68 +172,70 @@ export function HomeScreen({ onStartRead, onStartQuiz, t, lang, userName = "", s
         </div>
       </button>
 
-      {/* Unit banner */}
-      <div className="relative rounded-[22px] bg-sky text-white px-5 py-4 overflow-hidden shadow-[0_4px_0_var(--color-sky-deep)]">
-        <OrnamentBand className="absolute -bottom-0.5 inset-x-0 h-4 w-full text-white/20" />
-        <p className="text-xs font-bold uppercase tracking-[0.08em] text-white/80">{lang === "kk" ? "1-bölim" : "Unit 1"}</p>
-        <div className="flex items-center justify-between gap-3">
-          <h3 className="font-display font-black text-xl">{t.collectionTitle}</h3>
-          <span className="text-sm font-bold bg-white/20 rounded-full px-3 h-7 flex items-center shrink-0">{STORIES.length}/{totalPlanned}</span>
-        </div>
-      </div>
-
-      {/* Caravan path */}
-      <div className="relative flex flex-col items-center gap-5 pt-16 pb-4">
-        {nodes.map((n, i) => {
-          const x = PATH_OFFSETS[i % PATH_OFFSETS.length];
-          const isFirst = i === 0;
-          let body: React.ReactNode;
-          if (n.kind === "read" || n.kind === "quiz") {
-            const read = n.kind === "read";
-            body = (
-              <button
-                onClick={() => (read ? onStartRead(n.storyId) : onStartQuiz(n.storyId))}
-                aria-label={`${read ? t.startReading : t.takeQuiz}: ${displayTitle(n.title)}`}
-                className={`relative w-[76px] h-[70px] rounded-[50%] flex items-center justify-center text-white transition-transform active:translate-y-[5px] ${
-                  read
-                    ? "bg-sky shadow-[0_7px_0_var(--color-sky-deep)] active:shadow-[0_2px_0_var(--color-sky-deep)]"
-                    : "bg-sun shadow-[0_7px_0_var(--color-sun-deep)] active:shadow-[0_2px_0_var(--color-sun-deep)]"
-                }`}
-              >
-                {read ? <BookOpen size={30} strokeWidth={2.6} /> : <Trophy size={30} strokeWidth={2.6} className="text-ink" />}
-              </button>
-            );
-          } else if (n.kind === "locked") {
-            body = (
-              <div aria-label={lang === "kk" ? "Jaqynda" : "Coming soon"} className="w-[76px] h-[70px] rounded-[50%] bg-sand-3 shadow-[0_7px_0_var(--color-line-2)] flex items-center justify-center text-ink-3">
-                <Lock size={26} strokeWidth={2.6} />
-              </div>
-            );
-          } else {
-            body = (
-              <div aria-label={lang === "kk" ? "Mūra sandyğy" : "Heritage chest"} className="w-[88px] h-[76px] rounded-[22px] bg-sand-3 shadow-[0_7px_0_var(--color-line-2)] flex items-center justify-center text-ink-3">
-                <Tumar className="w-10 h-10" strokeWidth={3} />
-              </div>
-            );
-          }
-          return (
-            <div key={i} className="relative" style={{ transform: `translateX(${x}px)` }}>
-              {isFirst && (
-                <span className="absolute -top-12 left-1/2 animate-bob whitespace-nowrap rounded-xl bg-card border-2 border-line px-3 py-1.5 font-display font-black text-sm text-sky uppercase tracking-wide">
-                  {lang === "kk" ? "Bastau" : "Start"}
-                  <span className="absolute left-1/2 -bottom-[7px] -translate-x-1/2 w-3 h-3 rotate-45 bg-card border-r-2 border-b-2 border-line" />
-                </span>
-              )}
-              {body}
+      {/* Caravan path: one unit per story, islands are CEFR levels */}
+      {STORIES.map((story: any, si: number) => {
+        const unit = UNIT_COLORS[si % UNIT_COLORS.length];
+        return (
+          <section key={story.id} className="space-y-6">
+            <div className={`relative rounded-[22px] ${unit.bg} ${unit.edge} text-white px-5 py-4 overflow-hidden`}>
+              <OrnamentBand className="absolute -bottom-0.5 inset-x-0 h-4 w-full text-white/20" />
+              <p className="text-xs font-bold uppercase tracking-[0.08em] text-white/80">
+                {lang === "kk" ? `${si + 1}-bölim` : `Unit ${si + 1}`}
+              </p>
+              <h3 className="font-display font-black text-xl leading-tight">{displayTitle(story.title)}</h3>
             </div>
-          );
-        })}
-        {lockedCount > 0 && (
-          <p className="text-sm text-ink-3 font-semibold pt-2">
-            {lang === "kk" ? `Taǵy ${totalPlanned - STORIES.length} añyz jaqynda` : `${totalPlanned - STORIES.length} more tales coming soon`}
+
+            <div className="flex flex-col items-center gap-6 pb-2">
+              {LEVEL_DETAILS.map((lvl, li) => {
+                const c = LEVEL_COLORS[lvl.id];
+                return (
+                  <PathIsland
+                    key={lvl.id}
+                    label={lvl.id}
+                    caption={lvl.title}
+                    color={c.bg}
+                    edge={c.island}
+                    x={PATH_OFFSETS[li % PATH_OFFSETS.length]}
+                    highlight={si === 0 && li === 0}
+                    onClick={() => onStartRead(story.id, lvl.id)}
+                    ariaLabel={`${displayTitle(story.title)}: ${lvl.id} ${lvl.title}`}
+                  />
+                );
+              })}
+              <PathIsland
+                label="C2"
+                caption={lang === "kk" ? "Jaqynda" : "Coming soon"}
+                color="bg-sand-3"
+                edge="shadow-[0_7px_0_var(--color-line-2)]"
+                x={PATH_OFFSETS[5]}
+                locked
+                ariaLabel={`C2: ${lang === "kk" ? "jaqynda" : "coming soon"}`}
+              />
+              <PathIsland
+                caption={t.takeQuiz}
+                color="bg-sun"
+                edge="shadow-[0_7px_0_var(--color-sun-deep)]"
+                x={PATH_OFFSETS[6]}
+                onClick={() => onStartQuiz(story.id)}
+                ariaLabel={`${t.takeQuiz}: ${displayTitle(story.title)}`}
+              >
+                <Trophy size={30} strokeWidth={2.6} className="text-ink" />
+              </PathIsland>
+            </div>
+          </section>
+        );
+      })}
+
+      {comingSoon > 0 && (
+        <div className="flex flex-col items-center gap-3 pt-2 pb-4">
+          <div className="w-[88px] h-[76px] rounded-[22px] bg-sand-3 shadow-[0_7px_0_var(--color-line-2)] flex items-center justify-center text-ink-3">
+            <Tumar className="w-10 h-10" strokeWidth={3} />
+          </div>
+          <p className="text-sm text-ink-3 font-semibold pt-1">
+            {lang === "kk" ? `Taǵy ${comingSoon} añyz jaqynda` : `${comingSoon} more tales coming soon`}
           </p>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -498,12 +520,12 @@ export function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, s
         </p>
       </div>
 
-      <div className="grid grid-cols-2 gap-3 pt-1">
-        <button onClick={() => setShowChoiceModal(true)} className="btn btn-ghost">
-          <Compass size={18} strokeWidth={2.6} /> <span className="truncate">{t.interactiveChoiceTitle}</span>
-        </button>
-        <button onClick={onQuizGate} className="btn">
+      <div className="flex flex-col sm:flex-row-reverse gap-3 pt-1">
+        <button onClick={onQuizGate} className="btn flex-1">
           {t.takeQuiz} <ChevronRight size={18} strokeWidth={3} />
+        </button>
+        <button onClick={() => setShowChoiceModal(true)} className="btn btn-ghost flex-1">
+          <Compass size={18} strokeWidth={2.6} /> {t.interactiveChoiceTitle}
         </button>
       </div>
 

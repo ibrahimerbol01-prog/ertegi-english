@@ -25,6 +25,7 @@ export default function KazakhTalesApp({ session }: { session: Session }) {
     (session.user.user_metadata?.display_name as string | undefined) || userEmail.split("@")[0] || "Learner"
   );
   const [dataLoaded, setDataLoaded] = useState(false);
+  const scrollRef = useRef<HTMLDivElement | null>(null);
 
   const [tab, setTab] = useState("home");
   const [selectedLevel, setSelectedLevel] = useState<string | null>(null);
@@ -229,6 +230,11 @@ export default function KazakhTalesApp({ session }: { session: Session }) {
     );
   };
 
+  // Each screen starts at the top, like a new page.
+  useEffect(() => {
+    scrollRef.current?.scrollTo({ top: 0 });
+  }, [tab, selectedStory, selectedLevel]);
+
   if (!dataLoaded) {
     return <div className="min-h-dvh w-full bg-sand" />;
   }
@@ -320,14 +326,14 @@ export default function KazakhTalesApp({ session }: { session: Session }) {
           <div className="ml-auto"><StatChips /></div>
         </header>
 
-        <div className="flex-1 overflow-y-auto">
+        <div ref={scrollRef} className="flex-1 overflow-y-auto">
           <div className="mx-auto w-full max-w-[1040px] flex gap-8 px-4 md:px-8 pt-4 xl:pt-10 pb-28 md:pb-10">
             <main className="flex-1 min-w-0 max-w-[620px] mx-auto">
               {tab === "home" && (
                 <HomeScreen
-                  onStartRead={(storyId: string) => {
+                  onStartRead={(storyId: string, level?: string) => {
                     setSelectedStory(storyId);
-                    setSelectedLevel(null);
+                    setSelectedLevel(level ?? null);
                     setTab("read");
                   }}
                   onStartQuiz={(storyId: string) => {
