@@ -32,6 +32,17 @@ export const ShoqanChat = () => {
     return { x: Math.min(Math.max(margin, x), maxX), y: Math.min(Math.max(margin, y), maxY) };
   };
 
+  // Other screens open the chat with a "shoqan:open" event, optionally with a draft question.
+  useEffect(() => {
+    const onOpen = (e: Event) => {
+      const draft = (e as CustomEvent<string | undefined>).detail;
+      if (draft) setInput(draft);
+      setOpen(true);
+    };
+    window.addEventListener("shoqan:open", onOpen);
+    return () => window.removeEventListener("shoqan:open", onOpen);
+  }, []);
+
   useEffect(() => {
     const onResize = () => setPos((p: { x: number; y: number }) => clampPos(p.x, p.y));
     window.addEventListener("resize", onResize);
