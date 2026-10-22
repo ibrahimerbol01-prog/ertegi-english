@@ -13,8 +13,8 @@ const pick = (lang: string) => (lang === "kk" ? "kk" : "en") as Lang;
 const cardsKey = (userId?: string) => `ertegi_cards_${userId || "guest"}`;
 function loadCards(userId?: string): string[] {
   try {
-    const raw = localStorage.getItem(cardsKey(userId));
-    return raw ? JSON.parse(raw) : [];
+    const raw = JSON.parse(localStorage.getItem(cardsKey(userId)) || "[]");
+    return Array.isArray(raw) ? raw : [];
   } catch {
     return [];
   }
@@ -47,8 +47,8 @@ function CardFace({ card, lang, big = false }: { card: LegendCard; lang: Lang; b
       </div>
       <div className={`flex-1 flex flex-col justify-center text-center ${big ? "px-4 py-3" : "px-2 py-2"}`}>
         <p className={`font-bold uppercase tracking-[0.08em] text-ink-3 ${big ? "text-xs mb-1" : "text-[9px] mb-0.5"}`}>{r[lang]}</p>
-        <p className={`font-display font-black text-ink leading-tight ${big ? "text-2xl" : "text-[14px]"}`}>{card.name}</p>
-        <p className={`text-ink-3 font-semibold mt-0.5 ${big ? "text-sm" : "text-[11px]"}`}>{card.kk}</p>
+        <p className={`font-display font-black text-ink leading-tight ${big ? "text-2xl" : "text-[12px] line-clamp-2"}`}>{card.name}</p>
+        {big && <p className="text-ink-3 font-semibold mt-0.5 text-sm">{card.kk}</p>}
       </div>
     </div>
   );
@@ -119,10 +119,10 @@ function Challenge({ card, lang, onWin, onClose }: { card: LegendCard; lang: Lan
         <p className="eyebrow text-sun-deep mt-5">{lang === "kk" ? "Karta seniki!" : "The card is yours!"}</p>
         <p className="text-sm font-bold text-ink mt-1">{score}/3 · +{r.xp} XP</p>
         <div className="mt-4 rounded-2xl bg-sand-2 p-4 text-left">
-          <p className="eyebrow">{lang === "kk" ? "Bılesıñ be?" : "Did you know?"}</p>
+          <p className="eyebrow">{lang === "kk" ? "Bilesiñ be?" : "Did you know?"}</p>
           <p className="text-sm text-ink mt-1 leading-relaxed">{card.fact[lang]}</p>
         </div>
-        <button onClick={onClose} className="btn btn-sun w-full mt-6">{lang === "kk" ? "Jınaqqa" : "To my deck"}</button>
+        <button onClick={onClose} className="btn btn-sun w-full mt-6">{lang === "kk" ? "Jinaqqa" : "To my deck"}</button>
       </div>
     );
   }
@@ -135,6 +135,7 @@ function Challenge({ card, lang, onWin, onClose }: { card: LegendCard; lang: Lan
     return (
       <button
         disabled={checked}
+        aria-pressed={chosen}
         onClick={() => setTf((prev) => prev.map((x, j) => (j === i ? value : x)))}
         className={`tile flex-1 py-2.5 text-sm font-bold ${state}`}
       >
@@ -188,7 +189,7 @@ function Challenge({ card, lang, onWin, onClose }: { card: LegendCard; lang: Lan
               if (checked && gap === i) state = gapOk ? "tile-correct" : "tile-wrong animate-answer-wrong";
               if (checked && gap !== i && i === card.gap.answer) state = "tile-correct";
               return (
-                <button key={opt} disabled={checked} onClick={() => setGap(i)} className={`tile flex-1 py-2.5 text-sm font-bold ${state}`}>
+                <button key={opt} disabled={checked} aria-pressed={gap === i} onClick={() => setGap(i)} className={`tile flex-1 py-2.5 text-sm font-bold ${state}`}>
                   {opt}
                 </button>
               );
@@ -199,10 +200,10 @@ function Challenge({ card, lang, onWin, onClose }: { card: LegendCard; lang: Lan
 
       {checked ? (
         <div className="mt-6 rounded-[20px] bg-felt-soft p-4 animate-pop-in">
-          <p className="font-display font-black text-felt-deep">{score}/3 · {lang === "kk" ? "Taǵy bır ret tyñda" : "Listen once more"}</p>
-          <p className="text-sm text-ink-2 mt-1">{lang === "kk" ? "Kartany alu üşın keminde 2 durys jauap kerek." : "You need at least 2 right to win the card."}</p>
+          <p className="font-display font-black text-felt-deep">{score}/3 · {lang === "kk" ? "Taǵy bir ret tyñda" : "Listen once more"}</p>
+          <p className="text-sm text-ink-2 mt-1">{lang === "kk" ? "Kartany alu üşin keminde 2 dūrys jauap kerek." : "You need at least 2 right to win the card."}</p>
           <details className="mt-2">
-            <summary className="text-sm font-bold text-sky-deep cursor-pointer">{lang === "kk" ? "Mätındı kör" : "Show the text"}</summary>
+            <summary className="text-sm font-bold text-sky-deep cursor-pointer">{lang === "kk" ? "Mätindi kör" : "Show the text"}</summary>
             <p className="text-sm text-ink mt-2 leading-relaxed">{card.scene}</p>
           </details>
           <button onClick={retry} className="btn btn-felt w-full mt-4"><RotateCcw size={18} /> {lang === "kk" ? "Qaıtadan" : "Try again"}</button>
@@ -226,7 +227,7 @@ function CardDetail({ card, lang }: { card: LegendCard; lang: Lang }) {
       </button>
       <p className="text-[15px] text-ink leading-relaxed mt-4">{card.scene}</p>
       <div className="mt-4 rounded-2xl bg-sand-2 p-4">
-        <p className="eyebrow">{lang === "kk" ? "Bılesıñ be?" : "Did you know?"}</p>
+        <p className="eyebrow">{lang === "kk" ? "Bilesiñ be?" : "Did you know?"}</p>
         <p className="text-sm text-ink mt-1 leading-relaxed">{card.fact[lang]}</p>
       </div>
     </div>
@@ -243,7 +244,7 @@ function LegendDeck({ lang, owned, onWin, onClose }: {
   const isOwned = (id: string) => owned.includes(id);
 
   return createPortal(
-    <div className="fixed inset-0 z-[66] bg-sand overflow-y-auto animate-pop-in" role="dialog" aria-modal="true" aria-label="Batyr cards">
+    <div className="fixed inset-0 z-[66] bg-sand overflow-y-auto animate-pop-in" role="dialog" aria-modal="true" aria-label={lang === "kk" ? "Batyrlar kartalary" : "Batyr cards"}>
       <div className="sticky top-0 z-10 glass border-b border-line/70">
         <div className="mx-auto max-w-[620px] px-4 h-16 flex items-center gap-3">
           <button onClick={() => { stopVoice(); onClose(); }} aria-label="Close" className="w-10 h-10 rounded-full bg-card border-2 border-line flex items-center justify-center text-ink-2">
@@ -257,7 +258,7 @@ function LegendDeck({ lang, owned, onWin, onClose }: {
       <div className="mx-auto max-w-[620px] px-4 pt-5 pb-16">
         <p className="text-[15px] text-ink-2 leading-relaxed">
           {lang === "kk"
-            ? "Qazaq ertegılerı, jyrlary, añyzdary men tarıhy. Aǵylşynşa sahnany tyñda, 3 suraqqa jauap ber – karta seniki."
+            ? "Qazaq ertegileri, jyrlary, añyzdary men tarihy. Aǵylşynşa sahnany tyñda, 3 sūraqqa jauap ber – karta seniki."
             : "Kazakh tales, epics, legends and history. Listen to a scene in English, answer 3 questions, and the card is yours."}
         </p>
         <div className="flex flex-wrap gap-2 mt-3">
@@ -315,9 +316,9 @@ export function LegendDeckEntry({ lang, userId, onReward }: { lang: string; user
           ))}
         </div>
         <div className="flex-1 min-w-0">
-          <p className="eyebrow text-sky-deep">{l === "kk" ? "Tyñda da jına" : "Listen and collect"}</p>
+          <p className="eyebrow text-sky-deep">{l === "kk" ? "Tyñda da jina" : "Listen and collect"}</p>
           <p className="font-display font-extrabold text-ink text-[17px] mt-0.5">{l === "kk" ? "Batyrlar kartalary" : "Batyr cards"}</p>
-          <p className="text-sm text-ink-2 mt-0.5">{owned.length}/{LEGENDS.length} · {l === "kk" ? "ertegı, jyr, añyz, tarih" : "tales, epics, legends, history"}</p>
+          <p className="text-sm text-ink-2 mt-0.5">{owned.length}/{LEGENDS.length} · {l === "kk" ? "ertegi, jyr, añyz, tarih" : "tales, epics, legends, history"}</p>
         </div>
         <ChevronRight size={22} className="text-ink-3 shrink-0" />
       </button>

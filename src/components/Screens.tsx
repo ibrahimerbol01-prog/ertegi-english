@@ -16,6 +16,7 @@ import { isDue, MAX_MASTERY } from "../utils/progress";
 import { MaqalCard, StoryHistory } from "./Culture";
 import { LegendDeckEntry } from "./LegendCards";
 import { StoryCover } from "./StoryCover";
+import { buildLevelQuiz } from "../utils/levelQuiz";
 
 /* Small video tile with a night-sky fallback. */
 function StoryVideo({ src, className = "", videoRef, paused }: { src: string; className?: string; videoRef?: React.Ref<HTMLVideoElement>; paused?: boolean }) {
@@ -963,35 +964,37 @@ export function QuizSetup({ storyId, level, onChange, onStart, progress, lang, t
   t: Record<string, string>;
 }) {
   const kk = lang === "kk";
+  // A level check counts as reading that level, so only levels already read
+  // (or the one the learner just came from in the reader) can be picked here.
+  const [entry] = useState(() => ({ storyId, level }));
+  const canPick = (sid: string, lvl: string | null) =>
+    lvl === null || progress.has(`${sid}:${lvl}`) || (sid === entry.storyId && lvl === entry.level);
   const modes = [
-    { id: null, label: kk ? "Bükıl ertegı" : "Whole tale" },
+    { id: null, label: kk ? "Bükil ertegi" : "Whole tale" },
     ...LEVEL_DETAILS.map((l) => ({ id: l.id as string | null, label: l.id })),
   ];
   const story = STORIES.find((s: any) => s.id === storyId) || STORIES[0];
-  const count = level ? 4 : story.quizQuestions.length;
+  const count = level ? buildLevelQuiz(story.levels[level as keyof typeof story.levels]).length : story.quizQuestions.length;
 
   return (
     <div className="animate-pop-in">
       <ScreenHeader eyebrow={kk ? "Synaqqa daıyndal" : "Get ready"} title={t.quizTitle} />
 
-      <p className="eyebrow mb-2">{kk ? "1. Mätındı tañda" : "1. Choose a text"}</p>
-      <div className="space-y-3">
+      <p className="eyebrow mb-2">{kk ? "1. Mätindi tañda" : "1. Choose a text"}</p>
+      <div className="space-y-2">
         {STORIES.map((s: any) => {
           const active = s.id === storyId;
           const done = progress.has(`${s.id}:quiz`);
           return (
             <button
               key={s.id}
-              onClick={() => onChange(s.id, level)}
+              onClick={() => onChange(s.id, canPick(s.id, level) ? level : null)}
               aria-pressed={active}
-              className={`tile w-full text-left p-4 flex items-center gap-3.5 ${active ? "tile-selected" : "text-ink"}`}
+              className={`tile w-full text-left p-3 flex items-center gap-3 ${active ? "tile-selected" : "text-ink"}`}
             >
-              <span className={`w-11 h-11 rounded-xl flex items-center justify-center shrink-0 ${active ? "bg-sky text-white" : "bg-sand-2 text-ink-3"}`}>
-                <BookOpen size={20} />
-              </span>
+              <StoryCover id={s.id} className={`w-11 h-11 rounded-xl shrink-0 ${active ? "" : "opacity-80"}`} />
               <span className="flex-1 min-w-0">
-                <span className="block font-display font-extrabold text-[16px] leading-snug">{displayTitle(s.title)}</span>
-                <span className="block text-sm text-ink-2 mt-0.5">{displayTitle(s.sceneLabel)}</span>
+                <span className="block font-display font-extrabold text-[15px] leading-snug">{displayTitle(s.title)}</span>
               </span>
               {done && <Check size={20} strokeWidth={3} className="text-jade shrink-0" />}
             </button>
@@ -999,18 +1002,22 @@ export function QuizSetup({ storyId, level, onChange, onStart, progress, lang, t
         })}
       </div>
 
-      <p className="eyebrow mt-6 mb-2">{kk ? "2. Deñgeıdı tañda" : "2. Choose the level"}</p>
+      <p className="eyebrow mt-6 mb-2">{kk ? "2. Deñgeıdi tañda" : "2. Choose the level"}</p>
       <div className="flex flex-wrap gap-2">
         {modes.map((m) => {
           const active = m.id === level;
           const done = m.id ? progress.has(`${storyId}:${m.id}`) : false;
+          const open = canPick(storyId, m.id);
           return (
             <button
               key={m.label}
-              onClick={() => onChange(storyId, m.id)}
+              onClick={() => open && onChange(storyId, m.id)}
+              disabled={!open}
               aria-pressed={active}
-              className={`tile h-11 px-4 text-sm font-bold flex items-center gap-1.5 ${active ? "tile-selected" : "text-ink"}`}
+              title={open ? undefined : (kk ? "Aldymen osy deñgeıdi oqy" : "Read this level first")}
+              className={`tile h-11 px-4 text-sm font-bold flex items-center gap-1.5 ${active ? "tile-selected" : open ? "text-ink" : "text-ink-3 opacity-60"}`}
             >
+              {!open && <Lock size={13} />}
               {m.label}
               {done && <Check size={14} strokeWidth={3} className="text-jade" />}
             </button>
@@ -1019,8 +1026,8 @@ export function QuizSetup({ storyId, level, onChange, onStart, progress, lang, t
       </div>
 
       <div className="card p-4 mt-6 grid grid-cols-3 text-center">
-        <div><p className="font-display font-black text-xl text-ink">{count}</p><p className="text-xs text-ink-2">{kk ? "suraq" : "questions"}</p></div>
-        <div className="border-x-2 border-line"><p className="font-display font-black text-xl text-ink flex items-center justify-center gap-1"><Timer size={18} className="text-sky-deep" />15s</p><p className="text-xs text-ink-2">{kk ? "ár suraqqa" : "per question"}</p></div>
+        <div><p className="font-display font-black text-xl text-ink">{count}</p><p className="text-xs text-ink-2">{kk ? "sūraq" : "questions"}</p></div>
+        <div className="border-x-2 border-line"><p className="font-display font-black text-xl text-ink flex items-center justify-center gap-1"><Timer size={18} className="text-sky-deep" />15s</p><p className="text-xs text-ink-2">{kk ? "är sūraqqa" : "per question"}</p></div>
         <div><p className="font-display font-black text-xl text-ink flex items-center justify-center gap-1"><Heart size={18} className="fill-felt text-felt" />3</p><p className="text-xs text-ink-2">{kk ? "jürek" : "hearts"}</p></div>
       </div>
 

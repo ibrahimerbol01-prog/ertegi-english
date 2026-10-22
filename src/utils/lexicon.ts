@@ -27,7 +27,10 @@ const STOP = new Set(
 
 // Prefer the base form: skip "decides" or "walked" when "decide" or "walk" is in the dictionary.
 const BASE_ENDINGS: [RegExp, string][] = [[/ies$/, "y"], [/es$/, ""], [/s$/, ""], [/ed$/, ""], [/ed$/, "e"], [/ing$/, ""], [/ing$/, "e"]];
-const hasBase = (word: string) => BASE_ENDINGS.some(([re, rep]) => re.test(word) && WORD_TRANSLATIONS[word.replace(re, rep)] !== undefined);
+const hasBase = (word: string) => BASE_ENDINGS.some(([re, rep]) => {
+  const base = word.replace(re, rep);
+  return re.test(word) && base.length >= 3 && !STOP.has(base) && WORD_TRANSLATIONS[base] !== undefined;
+});
 
 const isLexical = (word: string, translation: string) =>
   word.length >= 3 && !STOP.has(word) && !word.includes("'") && !hasBase(word) &&
@@ -60,8 +63,8 @@ export function wordBank(): LexWord[] {
 const knownKey = (userId?: string) => `ertegi_known_${userId || "guest"}`;
 export function loadKnown(userId?: string): string[] {
   try {
-    const raw = localStorage.getItem(knownKey(userId));
-    return raw ? JSON.parse(raw) : [];
+    const raw = JSON.parse(localStorage.getItem(knownKey(userId)) || "[]");
+    return Array.isArray(raw) ? raw : [];
   } catch {
     return [];
   }

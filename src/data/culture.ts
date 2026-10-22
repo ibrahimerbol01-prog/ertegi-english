@@ -79,18 +79,18 @@ export const DEFAULT_BATA = {
 /* One ornament per story, unlocked with its bata. Together they form the
    learner's kilim in the profile. */
 export const OYU = [
-  { id: "qoshqar", name: "Qoşqar müiız", meaning: { kk: "Küş pen molşylyq", en: "Strength and plenty" } },
-  { id: "shanyraq", name: "Şañyraq", meaning: { kk: "Şañyraq — üıdıñ júregı", en: "The heart of the home" } },
+  { id: "qoshqar", name: "Qoşqar müıiz", meaning: { kk: "Küş pen molşylyq", en: "Strength and plenty" } },
+  { id: "shanyraq", name: "Şañyraq", meaning: { kk: "Şañyraq — üıdiñ jüregi", en: "The heart of the home" } },
   { id: "tumar", name: "Tumar", meaning: { kk: "Qorǵanysh pen sättilik", en: "Protection and good luck" } },
 ] as const;
 export const oyuForStory = (storyIndex: number) => OYU[storyIndex % OYU.length];
 
 /* English words that came from Turkic languages, Kazakh included. */
 export const TURKIC_WORDS = [
-  { en: "khan", kk: "хан", note: { kk: "Türkı tılınen kelgen bilеuşı ataǵy.", en: "A ruler's title from Turkic qan." } },
-  { en: "horde", kk: "орда", note: { kk: "«Orda» — hannyñ ordasy, áskerı.", en: "From Turkic orda, the khan's camp." } },
-  { en: "yurt", kk: "киіз үй", note: { kk: "Orys tılı arqyly türkı «jurt» sózınen.", en: "Via Russian from Turkic jurt, homeland." } },
-  { en: "koumiss", kk: "қымыз", note: { kk: "«Qymyz» sózı aǵylşynǵa osylaı jetken.", en: "Fermented mare's milk, from qymyz." } },
+  { en: "khan", kk: "хан", note: { kk: "Türki tilinen kelgen bıleuşi ataǵy.", en: "A ruler's title from Turkic qan." } },
+  { en: "horde", kk: "орда", note: { kk: "«Orda» — hannyñ ordasy, äskeri.", en: "From Turkic orda, the khan's camp." } },
+  { en: "yurt", kk: "киіз үй", note: { kk: "Orys tili arqyly türki «jūrt» sözinen.", en: "Via Russian from Turkic jurt, homeland." } },
+  { en: "koumiss", kk: "қымыз", note: { kk: "«Qymyz» sözi aǵylşynǵa osylaı jetken.", en: "Fermented mare's milk, from qymyz." } },
 ];
 
 /* Historical background shown above each tale in the reader. Kept to facts

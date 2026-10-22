@@ -1,3 +1,5 @@
+import { useId } from "react";
+
 /* Cover art for each tale: flat steppe scene in the app's palette with the
    tale's key motif. Drawn as SVG, so it is ours, sharp at any size and light. */
 
@@ -139,9 +141,9 @@ const PALETTE_FOR: Record<string, keyof typeof P> = {
 // `wide` widens the scene sideways for banner slots, so the motif keeps its full height.
 export function StoryCover({ id, className = "", wide = false }: { id: string; className?: string; wide?: boolean }) {
   const p = P[PALETTE_FOR[id] || "sky"];
-  const gid = `cover-${id}`;
+  const gid = `cover-${id}-${useId().replace(/:/g, "")}`;
   return (
-    <svg viewBox={wide ? "-60 0 220 100" : "0 0 100 100"} className={className} role="img" aria-hidden="true" preserveAspectRatio="xMidYMid slice">
+    <svg viewBox={wide ? "-60 0 220 100" : "0 0 100 100"} className={className} aria-hidden="true" preserveAspectRatio="xMidYMid slice">
       <defs>
         <linearGradient id={gid} x1="0" y1="0" x2="0" y2="1">
           <stop offset="0" stopColor={p.top} />

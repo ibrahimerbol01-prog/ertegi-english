@@ -9,7 +9,7 @@ const todayKey = (userId?: string) => `ertegi_daily_words_${userId || "guest"}`;
 function loadToday(userId: string | undefined, day: number): string[] | null {
   try {
     const raw = JSON.parse(localStorage.getItem(todayKey(userId)) || "null");
-    return raw && raw.day === day ? raw.words : null;
+    return raw && raw.day === day && Array.isArray(raw.words) ? raw.words : null;
   } catch {
     return null;
   }
@@ -67,17 +67,17 @@ export function WordCoach({ savedWords, progress, userId, lang, onLearn, onRewar
       {/* Level and the road to the next one */}
       <div className="bg-night text-white p-5">
         <div className="flex items-center justify-between gap-3">
-          <p className="text-xs font-bold uppercase tracking-[0.08em] text-sun">{kk ? "Jeke sózdık" : "Your word coach"}</p>
+          <p className="text-xs font-bold uppercase tracking-[0.08em] text-sun">{kk ? "Jeke sözdik" : "Your word coach"}</p>
           <span className="chip h-7 text-[12px] border-0 bg-white/15 text-white">
             <TrendingUp size={14} /> {profile.level}{profile.next ? ` → ${profile.next}` : ""}
           </span>
         </div>
         <p className="font-display font-black text-2xl mt-2 leading-tight">
-          {kk ? "Kúnnıñ 5 sózı" : "5 words for today"}
+          {kk ? "Künniñ 5 sözi" : "5 words for today"}
         </p>
         <p className="text-sm text-white/75 mt-1">
           {kk
-            ? `Sen ${profile.totalKnown} sóz bılesıñ. Sózder seniñ deñgeııñe saı tañdaldy.`
+            ? `Sen ${profile.totalKnown} söz bilesiñ. Sözder seniñ deñgeıiñe saı tañdaldy.`
             : `You know ${profile.totalKnown} words. These are picked for your level.`}
         </p>
 
@@ -94,7 +94,7 @@ export function WordCoach({ savedWords, progress, userId, lang, onLearn, onRewar
         )}
 
         {/* Mastered words per level */}
-        <div className="grid grid-cols-5 gap-2 mt-4" aria-label={kk ? "Deñgeı boıynşa sózder" : "Words by level"}>
+        <div className="grid grid-cols-5 gap-2 mt-4" aria-label={kk ? "Deñgeı boıynşa sözder" : "Words by level"}>
           {profile.stats.map((s) => {
             const fill = Math.min(1, s.mastered / s.goal);
             const current = s.level === profile.level;
@@ -137,15 +137,15 @@ export function WordCoach({ savedWords, progress, userId, lang, onLearn, onRewar
               {isSaved || isKnown ? (
                 <p className="text-sm font-bold text-jade-deep mt-3 flex items-center gap-1.5">
                   <Check size={16} strokeWidth={3} />
-                  {isKnown ? (kk ? "Bılesıñ" : "You know it") : (kk ? "Sózdıgıñe qosyldy, qaıtalaımyz" : "Added to your reviews")}
+                  {isKnown ? (kk ? "Bilesiñ" : "You know it") : (kk ? "Sözdigiñe qosyldy, qaıtalaımyz" : "Added to your reviews")}
                 </p>
               ) : (
                 <div className="grid grid-cols-2 gap-2 mt-3">
                   <button onClick={() => onLearn(w.word, w.translation)} className="btn h-11 text-sm">
-                    <Plus size={16} /> {kk ? "Úırenu" : "Learn"}
+                    <Plus size={16} /> {kk ? "Üırenu" : "Learn"}
                   </button>
                   <button onClick={() => know(w)} className="btn btn-ghost h-11 text-sm">
-                    {kk ? "Bılemın" : "I know it"}
+                    {kk ? "Bilemin" : "I know it"}
                   </button>
                 </div>
               )}
@@ -154,7 +154,7 @@ export function WordCoach({ savedWords, progress, userId, lang, onLearn, onRewar
         })}
         {today.length > 0 && doneCount === today.length && (
           <p className="text-sm font-semibold text-ink-2 text-center flex items-center justify-center gap-1.5 py-1 animate-pop-in">
-            <Sparkles size={15} className="text-sun-deep" /> {kk ? "Bügınge bıttı. Erteñ jaña sózder." : "Done for today. New words tomorrow."}
+            <Sparkles size={15} className="text-sun-deep" /> {kk ? "Büginge bitti. Erteñ jaña sözder." : "Done for today. New words tomorrow."}
           </p>
         )}
       </div>
