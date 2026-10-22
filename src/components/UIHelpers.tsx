@@ -11,15 +11,15 @@ export const KazakhOrnament = ({ className = "w-6 h-6 text-sun-deep" }: { classN
 /* Kept under its old name so callers don't change. */
 export const StaticOrnamentBg = SteppeBackground;
 
-/* Logo: şañyraq in a sky tile plus the wordmark. */
+/* Logo: şañyraq in a sky tile plus the ERTEGI ENGLISH wordmark. */
 export const BrandMark = ({ compact = false }: { compact?: boolean }) => (
   <div className="flex items-center gap-2.5">
     <span className="w-9 h-9 rounded-[11px] bg-sky flex items-center justify-center shadow-[0_3px_0_var(--color-sky-deep)]">
       <Shanyraq className="w-6 h-6 text-white" strokeWidth={4.5} />
     </span>
     {!compact && (
-      <span className="font-display font-black text-[19px] tracking-tight text-ink leading-none">
-        ertegi<span className="text-sky">.</span>
+      <span className="font-display font-black text-[17px] tracking-[0.02em] text-ink leading-none whitespace-nowrap">
+        ERTEGI <span className="text-sky">ENGLISH</span>
       </span>
     )}
   </div>

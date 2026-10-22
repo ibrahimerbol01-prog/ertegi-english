@@ -19,6 +19,7 @@ import { supabase } from "./lib/supabase";
 import { saveToSupabase } from "./utils/supabase-save";
 import { buildLevelQuiz } from "./utils/levelQuiz";
 import { BataModal, OyuKilim, TurkicWords, loadMaqals } from "./components/Culture";
+import { WordCoach } from "./components/WordCoach";
 import {
   loadProgress, saveProgress, progressKey, loadLocalReviews, saveReview,
   nextReview, isDue, MAX_MASTERY, type ProgressStep
@@ -439,6 +440,9 @@ export default function KazakhTalesApp({ session }: { session: Session }) {
               )}
               {tab === "words" && (
                 <div className="animate-pop-in">
+                  <div className="mb-8">
+                    <WordCoach savedWords={savedWords} progress={progress} userId={userId} lang={lang} onLearn={handleSaveWord} onReward={addXp} />
+                  </div>
                   {wordsMode === "cards" ? (
                     <FlashcardsScreen savedWords={savedWords} onReview={handleReview} lang={lang} mode={wordsMode} setMode={setWordsMode} />
                   ) : (
