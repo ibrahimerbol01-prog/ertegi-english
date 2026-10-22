@@ -17,6 +17,7 @@ import { DICT, ACHIEVEMENTS, STORIES } from "./constants";
 import type { SavedWord } from "./types";
 import { supabase } from "./lib/supabase";
 import { saveToSupabase } from "./utils/supabase-save";
+import { buildLevelQuiz } from "./utils/levelQuiz";
 import {
   loadProgress, saveProgress, progressKey, loadLocalReviews, saveReview,
   nextReview, isDue, MAX_MASTERY, type ProgressStep
@@ -33,6 +34,8 @@ export default function KazakhTalesApp({ session }: { session: Session }) {
 
   const [tab, setTab] = useState("home");
   const [selectedLevel, setSelectedLevel] = useState<string | null>(null);
+  // Set when the quiz was opened from the reader: a short check for that level only.
+  const [quizLevel, setQuizLevel] = useState<ProgressStep | null>(null);
   const [selectedStory, setSelectedStory] = useState<string | null>(null);
   const [xp, setXp] = useState(0);
   const [lang, setLang] = useState("kk");
@@ -197,8 +200,13 @@ export default function KazakhTalesApp({ session }: { session: Session }) {
     if (known) addXp(2);
   };
 
+  const quizStory = STORIES.find((s) => s.id === selectedStory) || STORIES[0];
+  const quizQuestions = quizLevel && quizLevel !== "quiz" && quizLevel in quizStory.levels
+    ? buildLevelQuiz(quizStory.levels[quizLevel as keyof typeof quizStory.levels])
+    : quizStory.quizQuestions;
+
   const handleQuizFinish = (correctCount: number, total: number) => {
-    if (correctCount >= Math.ceil(total * 0.6)) markStep(selectedStory || STORIES[0].id, "quiz");
+    if (correctCount >= Math.ceil(total * 0.6)) markStep(selectedStory || STORIES[0].id, quizLevel ?? "quiz");
     latestQuizzesRef.current += 1;
     setQuizzesCompleted(latestQuizzesRef.current);
     saveToSupabase(
@@ -328,7 +336,7 @@ export default function KazakhTalesApp({ session }: { session: Session }) {
             return (
               <button
                 key={id}
-                onClick={() => setTab(id)}
+                onClick={() => { if (id === "quiz") setQuizLevel(null); setTab(id); }}
                 aria-current={active ? "page" : undefined}
                 className={`flex items-center gap-4 px-4 min-h-[52px] rounded-2xl border-2 transition-colors w-full ${active ? "bg-sky-soft border-sky/60 text-sky-deep" : "border-transparent text-ink-2 hover:bg-sand-2"}`}
               >
@@ -370,6 +378,7 @@ export default function KazakhTalesApp({ session }: { session: Session }) {
                   }}
                   onStartQuiz={(storyId: string) => {
                     setSelectedStory(storyId);
+                    setQuizLevel(null);
                     setTab("quiz");
                   }}
                   t={t}
@@ -385,7 +394,7 @@ export default function KazakhTalesApp({ session }: { session: Session }) {
                   setSelectedStory={setSelectedStory}
                   selectedLevel={selectedLevel}
                   setSelectedLevel={setSelectedLevel}
-                  onQuizGate={() => setTab("quiz")}
+                  onQuizGate={() => { setQuizLevel(selectedLevel as ProgressStep | null); setTab("quiz"); }}
                   onLevelDone={(storyId: string, level: ProgressStep) => markStep(storyId, level)}
                   t={t}
                   lang={lang}
@@ -396,12 +405,12 @@ export default function KazakhTalesApp({ session }: { session: Session }) {
               )}
               {tab === "quiz" && (
                 <QuizScreen
-                  key={selectedStory || "default"}
+                  key={`${selectedStory || "default"}:${quizLevel || "story"}`}
                   onReward={addXp}
                   t={t}
                   onQuizFinish={handleQuizFinish}
-                  storyTitle={(STORIES.find((s) => s.id === selectedStory) || STORIES[0]).title}
-                  questions={(STORIES.find((s) => s.id === selectedStory) || STORIES[0]).quizQuestions}
+                  storyTitle={`${(STORIES.find((s) => s.id === selectedStory) || STORIES[0]).title}${quizLevel ? ` · ${quizLevel}` : ""}`}
+                  questions={quizQuestions}
                 />
               )}
               {tab === "words" && (
@@ -462,7 +471,7 @@ export default function KazakhTalesApp({ session }: { session: Session }) {
               return (
                 <button
                   key={id}
-                  onClick={() => setTab(id)}
+                  onClick={() => { if (id === "quiz") setQuizLevel(null); setTab(id); }}
                   aria-current={active ? "page" : undefined}
                   className={`flex flex-col items-center justify-center gap-0.5 min-h-[50px] ${active ? "text-sky" : "text-ink-3"}`}
                 >
