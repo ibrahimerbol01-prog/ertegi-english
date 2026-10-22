@@ -11,7 +11,7 @@ import { KilimStrip } from "./components/Ornaments";
 import { ShoqanChat } from "./components/ShoqanChat";
 import {
   HomeScreen, ReaderScreen, FlashcardsScreen, MatchingGame,
-  QuizScreen, SpeakScreen, ProfileScreen
+  QuizScreen, QuizSetup, SpeakScreen, ProfileScreen
 } from "./components/Screens";
 import { DICT, ACHIEVEMENTS, STORIES } from "./constants";
 import type { SavedWord } from "./types";
@@ -37,6 +37,7 @@ export default function KazakhTalesApp({ session }: { session: Session }) {
   const [selectedLevel, setSelectedLevel] = useState<string | null>(null);
   // Set when the quiz was opened from the reader: a short check for that level only.
   const [quizLevel, setQuizLevel] = useState<ProgressStep | null>(null);
+  const [quizStarted, setQuizStarted] = useState(false);
   const [bataStory, setBataStory] = useState<string | null>(null);
   const [selectedStory, setSelectedStory] = useState<string | null>(null);
   const [xp, setXp] = useState(0);
@@ -345,7 +346,7 @@ export default function KazakhTalesApp({ session }: { session: Session }) {
             return (
               <button
                 key={id}
-                onClick={() => { if (id === "quiz") setQuizLevel(null); setTab(id); }}
+                onClick={() => { if (id === "quiz") { setQuizLevel(null); setQuizStarted(false); } setTab(id); }}
                 aria-current={active ? "page" : undefined}
                 className={`flex items-center gap-4 px-4 min-h-[52px] rounded-2xl border-2 transition-colors w-full ${active ? "bg-sky-soft border-sky/60 text-sky-deep" : "border-transparent text-ink-2 hover:bg-sand-2"}`}
               >
@@ -390,6 +391,7 @@ export default function KazakhTalesApp({ session }: { session: Session }) {
                   onStartQuiz={(storyId: string) => {
                     setSelectedStory(storyId);
                     setQuizLevel(null);
+                    setQuizStarted(false);
                     setTab("quiz");
                   }}
                   t={t}
@@ -405,7 +407,7 @@ export default function KazakhTalesApp({ session }: { session: Session }) {
                   setSelectedStory={setSelectedStory}
                   selectedLevel={selectedLevel}
                   setSelectedLevel={setSelectedLevel}
-                  onQuizGate={() => { setQuizLevel(selectedLevel as ProgressStep | null); setTab("quiz"); }}
+                  onQuizGate={() => { setQuizLevel(selectedLevel as ProgressStep | null); setQuizStarted(false); setTab("quiz"); }}
                   onLevelDone={(storyId: string, level: ProgressStep) => markStep(storyId, level)}
                   t={t}
                   lang={lang}
@@ -414,7 +416,18 @@ export default function KazakhTalesApp({ session }: { session: Session }) {
                   onSaveWord={handleSaveWord}
                 />
               )}
-              {tab === "quiz" && (
+              {tab === "quiz" && !quizStarted && (
+                <QuizSetup
+                  storyId={selectedStory || STORIES[0].id}
+                  level={quizLevel}
+                  onChange={(storyId: string, level: string | null) => { setSelectedStory(storyId); setQuizLevel(level as ProgressStep | null); }}
+                  onStart={() => setQuizStarted(true)}
+                  progress={progress}
+                  lang={lang}
+                  t={t}
+                />
+              )}
+              {tab === "quiz" && quizStarted && (
                 <QuizScreen
                   key={`${selectedStory || "default"}:${quizLevel || "story"}`}
                   onReward={addXp}
@@ -484,7 +497,7 @@ export default function KazakhTalesApp({ session }: { session: Session }) {
               return (
                 <button
                   key={id}
-                  onClick={() => { if (id === "quiz") setQuizLevel(null); setTab(id); }}
+                  onClick={() => { if (id === "quiz") { setQuizLevel(null); setQuizStarted(false); } setTab(id); }}
                   aria-current={active ? "page" : undefined}
                   className={`flex flex-col items-center justify-center gap-0.5 min-h-[50px] ${active ? "text-sky" : "text-ink-3"}`}
                 >
