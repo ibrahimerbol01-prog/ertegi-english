@@ -189,10 +189,9 @@ export function HomeScreen({ onStartRead, onStartQuiz, t, lang, userName = "", s
         onClick={() => (current?.step === "quiz" ? onStartQuiz(featured.id) : onStartRead(featured.id, featuredLevel?.id))}
         className="group relative w-full text-left rounded-[28px] overflow-hidden bg-night shadow-[0_6px_0_#121a31] active:translate-y-[3px] active:shadow-[0_3px_0_#121a31] transition-transform"
       >
-        <StoryCover id={featured.id} className="absolute inset-0 w-full h-full" />
-        <div className="absolute inset-0 bg-gradient-to-t from-night via-night/70 to-night/10" />
+        <StoryCover id={featured.id} className="absolute top-4 right-4 w-24 h-24 rounded-[20px] shadow-[0_4px_0_rgba(0,0,0,0.25)] rotate-3" />
         <OrnamentBand className="absolute top-3 inset-x-0 h-3 w-full text-white/15" />
-        <div className="relative p-5 pt-24">
+        <div className="relative p-5 pt-[124px]">
           <span className="inline-flex items-center gap-1.5 h-7 px-3 rounded-full bg-white/15 backdrop-blur text-white text-xs font-bold">
             <BookOpen size={13} /> {featuredLevel ? `${featuredLevel.id} · ${featuredLevel.title}` : current?.step === "quiz" ? t.takeQuiz : displayTitle(featured.sceneLabel)}
           </span>
@@ -530,7 +529,7 @@ export function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, s
             </button>
           </>
         ) : (
-          <StoryCover id={currentStory.id} className="absolute inset-0 w-full h-full" />
+          <StoryCover id={currentStory.id} wide className="absolute inset-0 w-full h-full" />
         )}
       </div>
 

@@ -73,6 +73,17 @@ function CardBack({ card, lang }: { card: LegendCard; lang: Lang }) {
   );
 }
 
+/* Tiny card for the home preview: colour and ornament only. */
+function MiniCard({ card, owned }: { card: LegendCard; owned: boolean }) {
+  const r = RARITY[card.rarity];
+  return (
+    <div className={`relative w-full aspect-[3/4] rounded-xl overflow-hidden border-2 flex items-center justify-center shadow-[0_3px_0_var(--color-line-2)] ${owned ? `${r.tone} ${r.frame} ${card.rarity === "tarih" ? "text-sun" : "text-white"}` : "bg-card border-line text-ink-3"}`}>
+      {!owned && <span className={`absolute top-0 inset-x-0 h-1.5 ${r.tone}`} />}
+      {owned ? ORNAMENT[card.ornament]("w-8 h-8") : <span className="opacity-35">{ORNAMENT[card.ornament]("w-7 h-7")}</span>}
+    </div>
+  );
+}
+
 /* Listening challenge: two true/false lines and one gap, then the card is yours. */
 function Challenge({ card, lang, onWin, onClose }: { card: LegendCard; lang: Lang; onWin: () => void; onClose: () => void }) {
   const [tf, setTf] = useState<(boolean | null)[]>([null, null]);
@@ -299,7 +310,7 @@ export function LegendDeckEntry({ lang, userId, onReward }: { lang: string; user
               className="absolute top-1 w-[58px]"
               style={{ left: i * 22, transform: `rotate(${(i - 1) * 9}deg)`, zIndex: i }}
             >
-              {owned.includes(card.id) ? <CardFace card={card} lang={l} /> : <CardBack card={card} lang={l} />}
+              <MiniCard card={card} owned={owned.includes(card.id)} />
             </div>
           ))}
         </div>

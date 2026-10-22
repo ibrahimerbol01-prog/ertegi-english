@@ -136,20 +136,21 @@ const PALETTE_FOR: Record<string, keyof typeof P> = {
   alpamys: "deep",
 };
 
-export function StoryCover({ id, className = "" }: { id: string; className?: string }) {
+// `wide` widens the scene sideways for banner slots, so the motif keeps its full height.
+export function StoryCover({ id, className = "", wide = false }: { id: string; className?: string; wide?: boolean }) {
   const p = P[PALETTE_FOR[id] || "sky"];
   const gid = `cover-${id}`;
   return (
-    <svg viewBox="0 0 100 100" className={className} role="img" aria-hidden="true" preserveAspectRatio="xMidYMid slice">
+    <svg viewBox={wide ? "-60 0 220 100" : "0 0 100 100"} className={className} role="img" aria-hidden="true" preserveAspectRatio="xMidYMid slice">
       <defs>
         <linearGradient id={gid} x1="0" y1="0" x2="0" y2="1">
           <stop offset="0" stopColor={p.top} />
           <stop offset="1" stopColor={p.bottom} />
         </linearGradient>
       </defs>
-      <rect width="100" height="100" fill={`url(#${gid})`} />
-      <path d="M0 76Q24 64 50 72T100 68V100H0Z" fill={p.hill} />
-      <path d="M0 86Q30 78 60 85T100 82V100H0Z" fill={p.front} />
+      <rect x="-60" width="220" height="100" fill={`url(#${gid})`} />
+      <path d="M-60 72Q-32 62 0 76Q24 64 50 72T100 68Q130 62 160 72V100H-60Z" fill={p.hill} />
+      <path d="M-60 84Q-24 78 0 86Q30 78 60 85T100 82Q132 76 160 84V100H-60Z" fill={p.front} />
       <Motif id={id} />
     </svg>
   );
