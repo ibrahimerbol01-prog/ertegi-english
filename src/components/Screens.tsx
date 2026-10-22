@@ -14,6 +14,7 @@ import type { SavedWord } from "../types";
 import { supabase } from "../lib/supabase";
 import { isDue, MAX_MASTERY } from "../utils/progress";
 import { MaqalCard, StoryHistory } from "./Culture";
+import { LegendDeckEntry } from "./LegendCards";
 
 /* Small video tile with a night-sky fallback. */
 function StoryVideo({ src, className = "", videoRef, paused }: { src: string; className?: string; videoRef?: React.Ref<HTMLVideoElement>; paused?: boolean }) {
@@ -219,6 +220,7 @@ export function HomeScreen({ onStartRead, onStartQuiz, t, lang, userName = "", s
       </div>
 
       <MaqalCard lang={lang} userId={userId} onReward={onReward} />
+      <LegendDeckEntry lang={lang} userId={userId} onReward={onReward} />
 
       {/* Caravan path: one unit per story, islands are CEFR levels */}
       {STORIES.map((story: any, si: number) => {
@@ -935,6 +937,86 @@ export function MatchingGame({ savedWords, onReward, mode, setMode }: any) {
           );
         })}
       </div>
+    </div>
+  );
+}
+
+/* --- 6a. QUIZ SETUP --- */
+// Pick the text and its level first; the timer only starts after "Bastau".
+export function QuizSetup({ storyId, level, onChange, onStart, progress, lang, t }: {
+  storyId: string;
+  level: string | null;
+  onChange: (storyId: string, level: string | null) => void;
+  onStart: () => void;
+  progress: Set<string>;
+  lang: string;
+  t: Record<string, string>;
+}) {
+  const kk = lang === "kk";
+  const modes = [
+    { id: null, label: kk ? "Bükıl ertegı" : "Whole tale" },
+    ...LEVEL_DETAILS.map((l) => ({ id: l.id as string | null, label: l.id })),
+  ];
+  const story = STORIES.find((s: any) => s.id === storyId) || STORIES[0];
+  const count = level ? 4 : story.quizQuestions.length;
+
+  return (
+    <div className="animate-pop-in">
+      <ScreenHeader eyebrow={kk ? "Synaqqa daıyndal" : "Get ready"} title={t.quizTitle} />
+
+      <p className="eyebrow mb-2">{kk ? "1. Mätındı tañda" : "1. Choose a text"}</p>
+      <div className="space-y-3">
+        {STORIES.map((s: any) => {
+          const active = s.id === storyId;
+          const done = progress.has(`${s.id}:quiz`);
+          return (
+            <button
+              key={s.id}
+              onClick={() => onChange(s.id, level)}
+              aria-pressed={active}
+              className={`tile w-full text-left p-4 flex items-center gap-3.5 ${active ? "tile-selected" : "text-ink"}`}
+            >
+              <span className={`w-11 h-11 rounded-xl flex items-center justify-center shrink-0 ${active ? "bg-sky text-white" : "bg-sand-2 text-ink-3"}`}>
+                <BookOpen size={20} />
+              </span>
+              <span className="flex-1 min-w-0">
+                <span className="block font-display font-extrabold text-[16px] leading-snug">{displayTitle(s.title)}</span>
+                <span className="block text-sm text-ink-2 mt-0.5">{displayTitle(s.sceneLabel)}</span>
+              </span>
+              {done && <Check size={20} strokeWidth={3} className="text-jade shrink-0" />}
+            </button>
+          );
+        })}
+      </div>
+
+      <p className="eyebrow mt-6 mb-2">{kk ? "2. Deñgeıdı tañda" : "2. Choose the level"}</p>
+      <div className="flex flex-wrap gap-2">
+        {modes.map((m) => {
+          const active = m.id === level;
+          const done = m.id ? progress.has(`${storyId}:${m.id}`) : false;
+          return (
+            <button
+              key={m.label}
+              onClick={() => onChange(storyId, m.id)}
+              aria-pressed={active}
+              className={`tile h-11 px-4 text-sm font-bold flex items-center gap-1.5 ${active ? "tile-selected" : "text-ink"}`}
+            >
+              {m.label}
+              {done && <Check size={14} strokeWidth={3} className="text-jade" />}
+            </button>
+          );
+        })}
+      </div>
+
+      <div className="card p-4 mt-6 grid grid-cols-3 text-center">
+        <div><p className="font-display font-black text-xl text-ink">{count}</p><p className="text-xs text-ink-2">{kk ? "suraq" : "questions"}</p></div>
+        <div className="border-x-2 border-line"><p className="font-display font-black text-xl text-ink flex items-center justify-center gap-1"><Timer size={18} className="text-sky-deep" />15s</p><p className="text-xs text-ink-2">{kk ? "ár suraqqa" : "per question"}</p></div>
+        <div><p className="font-display font-black text-xl text-ink flex items-center justify-center gap-1"><Heart size={18} className="fill-felt text-felt" />3</p><p className="text-xs text-ink-2">{kk ? "jürek" : "hearts"}</p></div>
+      </div>
+
+      <button onClick={onStart} className="btn w-full mt-6">
+        {kk ? "Bastau" : "Start"} <ArrowRight size={20} />
+      </button>
     </div>
   );
 }
