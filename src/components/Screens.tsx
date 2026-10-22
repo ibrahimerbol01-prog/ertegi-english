@@ -98,14 +98,20 @@ const UNIT_COLORS = [
 
 /* One island on the path: a level badge (A1–C1), C2 as "coming soon",
    then the story quiz. Shape mirrors Duolingo's oval nodes. */
-function PathIsland({ label, caption, color, edge, x, onClick, locked, highlight, done, ariaLabel, children }: {
-  label?: string; caption?: string; color: string; edge: string; x: number;
+function PathIsland({ label, caption, color, edge, x, onClick, locked, highlight, done, ariaLabel, bubble, children }: {
+  label?: string; caption?: string; bubble?: string; color: string; edge: string; x: number;
   onClick?: () => void; locked?: boolean; highlight?: boolean; done?: boolean; ariaLabel: string; children?: React.ReactNode;
 }) {
   const Tag = onClick ? "button" : "div";
   return (
-    <div className="relative flex flex-col items-center" style={{ transform: `translateX(${x}px)` }}>
+    <div className={`relative flex flex-col items-center ${bubble ? "mt-12" : ""}`} style={{ transform: `translateX(${x}px)` }}>
       {highlight && <span aria-hidden="true" className="absolute top-0 w-[92px] h-[86px] -mt-2 rounded-[50%] border-4 border-sky/30 animate-pulse" />}
+      {bubble && (
+        <span className="absolute bottom-full mb-3 left-1/2 animate-bob whitespace-nowrap px-3 py-1.5 rounded-xl bg-card border-2 border-line font-display font-black text-xs uppercase tracking-[0.06em] text-sky-deep">
+          {bubble}
+          <span aria-hidden="true" className="absolute top-full left-1/2 -translate-x-1/2 -mt-[5px] w-2.5 h-2.5 rotate-45 bg-card border-r-2 border-b-2 border-line" />
+        </span>
+      )}
       <Tag
         onClick={onClick}
         aria-label={ariaLabel}
@@ -162,7 +168,8 @@ export function HomeScreen({ onStartRead, onStartQuiz, t, lang, userName = "", s
         </div>
       </div>
 
-      {/* Continue card */}
+      {/* Continue card: only once there is progress, otherwise the first island is the start */}
+      {progress.size > 0 && (
       <button
         onClick={() => (current?.step === "quiz" ? onStartQuiz(featured.id) : onStartRead(featured.id, featuredLevel?.id))}
         className="group relative w-full text-left rounded-[28px] overflow-hidden bg-night shadow-[0_6px_0_#121a31] active:translate-y-[3px] active:shadow-[0_3px_0_#121a31] transition-transform"
@@ -177,10 +184,11 @@ export function HomeScreen({ onStartRead, onStartQuiz, t, lang, userName = "", s
           <h2 className="font-display font-black text-white text-2xl leading-tight mt-3">{displayTitle(featured.title)}</h2>
           <p className="text-white/75 text-sm mt-1.5 line-clamp-2">{featured.storyDesc[lang as "en" | "kk"] || featured.storyDesc.en}</p>
           <span className="btn btn-sun btn-sm mt-4 pointer-events-none">
-            <Play size={15} className="fill-ink" /> {progress.size > 0 ? (lang === "kk" ? "Jalğastyru" : "Continue") : t.startReading}
+            <Play size={15} className="fill-ink" /> {lang === "kk" ? "Jalğastyru" : "Continue"}
           </span>
         </div>
       </button>
+      )}
 
       {/* Caravan path: one unit per story, islands are CEFR levels */}
       {STORIES.map((story: any, si: number) => {
@@ -213,6 +221,7 @@ export function HomeScreen({ onStartRead, onStartQuiz, t, lang, userName = "", s
                     edge={c.island}
                     x={PATH_OFFSETS[li % PATH_OFFSETS.length]}
                     highlight={isCurrent(lvl.id)}
+                    bubble={progress.size === 0 && isCurrent(lvl.id) ? t.startReading : undefined}
                     done={isDone(lvl.id)}
                     onClick={() => onStartRead(story.id, lvl.id)}
                     ariaLabel={`${displayTitle(story.title)}: ${lvl.id} ${lvl.title}`}
@@ -448,6 +457,10 @@ export function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, s
   const cleanActive = activeWord ? activeWord.replace(/[^a-zA-Z]/g, "").toLowerCase() : "";
   const alreadySaved = !!activeWord && savedWords && savedWords.some((w: any) => w.word === cleanActive);
   const levelColor = LEVEL_COLORS[selectedLevel] || LEVEL_COLORS.A1;
+  // Saved words: learning ones get a sun highlight, mastered ones a jade underline.
+  const savedMastery = new Map<string, number>((savedWords || []).map((w: any) => [w.word, w.mastery ?? 0]));
+  const cleanTok = (tok: string) => tok.replace(/[^a-zA-Z]/g, "").toLowerCase();
+  const savedInText = new Set(tokens.map(cleanTok).filter((w: string) => savedMastery.has(w))).size;
 
   return (
     <div className="space-y-4 animate-pop-in relative">
@@ -514,12 +527,25 @@ export function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, s
 
       {/* Story text */}
       <div className="card p-5 sm:p-7 max-h-[440px] overflow-y-auto">
+        {savedInText > 0 && (
+          <p className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs font-semibold text-ink-2 mb-3">
+            <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded bg-sun-soft border-b-2 border-sun-deep/60" />{lang === "kk" ? "Üırenip jatyrsyñ" : "Learning"}</span>
+            <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded border-b-2 border-jade" />{lang === "kk" ? "Meñgerildi" : "Mastered"}</span>
+            <span className="text-ink-3">{savedInText} {lang === "kk" ? "saqtalǵan söz osy mätinde" : "saved words in this text"}</span>
+          </p>
+        )}
         <p className="text-[18px] text-ink leading-[1.9]">
           {tokens.map((tok: string, i: number) => {
             const isWord = /[a-zA-Z]/.test(tok);
             if (!isWord) return <span key={i}>{tok}</span>;
             const isCurrentlyRead = i === readAlongTokenIndex;
             const isActive = activeWord === tok;
+            const mastery = savedMastery.get(cleanTok(tok));
+            const savedCls = mastery === undefined
+              ? "hover:bg-sky-soft decoration-ink-3/40 decoration-dotted underline underline-offset-[6px]"
+              : mastery >= MAX_MASTERY
+              ? "hover:bg-jade-soft decoration-jade decoration-2 underline underline-offset-[6px]"
+              : "bg-sun-soft hover:bg-sun/40 decoration-sun-deep/60 decoration-2 underline underline-offset-[6px]";
             return (
               <span
                 key={i}
@@ -530,7 +556,7 @@ export function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, s
                     ? "bg-sun text-ink"
                     : isActive
                     ? "bg-sky-soft text-sky-deep"
-                    : "hover:bg-sky-soft decoration-ink-3/40 decoration-dotted underline underline-offset-[6px]"
+                    : savedCls
                 }`}
               >
                 {tok}
