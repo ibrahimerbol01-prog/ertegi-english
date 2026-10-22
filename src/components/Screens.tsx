@@ -12,6 +12,7 @@ import {
 } from "../constants";
 import type { SavedWord } from "../types";
 import { supabase } from "../lib/supabase";
+import { isDue, MAX_MASTERY } from "../utils/progress";
 
 /* Small video tile with a night-sky fallback. */
 function StoryVideo({ src, className = "", videoRef, paused }: { src: string; className?: string; videoRef?: React.Ref<HTMLVideoElement>; paused?: boolean }) {
@@ -97,9 +98,9 @@ const UNIT_COLORS = [
 
 /* One island on the path: a level badge (A1–C1), C2 as "coming soon",
    then the story quiz. Shape mirrors Duolingo's oval nodes. */
-function PathIsland({ label, caption, color, edge, x, onClick, locked, highlight, ariaLabel, children }: {
+function PathIsland({ label, caption, color, edge, x, onClick, locked, highlight, done, ariaLabel, children }: {
   label?: string; caption?: string; color: string; edge: string; x: number;
-  onClick?: () => void; locked?: boolean; highlight?: boolean; ariaLabel: string; children?: React.ReactNode;
+  onClick?: () => void; locked?: boolean; highlight?: boolean; done?: boolean; ariaLabel: string; children?: React.ReactNode;
 }) {
   const Tag = onClick ? "button" : "div";
   return (
@@ -113,6 +114,11 @@ function PathIsland({ label, caption, color, edge, x, onClick, locked, highlight
         } ${locked ? "text-ink-3" : "text-white"}`}
       >
         {children ?? label}
+        {done && (
+          <span className="absolute -bottom-1 -right-1 w-7 h-7 rounded-full bg-jade border-[3px] border-card flex items-center justify-center">
+            <Check size={14} strokeWidth={4} className="text-white" />
+          </span>
+        )}
         {locked && (
           <span className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-card border-2 border-line flex items-center justify-center">
             <Lock size={12} strokeWidth={3} className="text-ink-3" />
@@ -124,8 +130,12 @@ function PathIsland({ label, caption, color, edge, x, onClick, locked, highlight
   );
 }
 
-export function HomeScreen({ onStartRead, onStartQuiz, t, lang, userName = "", sessionXp = 0, dailyGoal = 50 }: any) {
-  const featured = STORIES[0];
+export function HomeScreen({ onStartRead, onStartQuiz, t, lang, userName = "", sessionXp = 0, dailyGoal = 50, progress = new Set<string>() }: any) {
+  // Next step on the path: first level or quiz not yet finished, in order.
+  const steps = STORIES.flatMap((s: any) => [...LEVEL_DETAILS.map((l) => ({ story: s, step: l.id })), { story: s, step: "quiz" }]);
+  const current = steps.find((x) => !progress.has(`${x.story.id}:${x.step}`)) || null;
+  const featured = current?.story || STORIES[0];
+  const featuredLevel = current && current.step !== "quiz" ? LEVEL_DETAILS.find((l) => l.id === current.step) : null;
   const totalPlanned = 10;
   const comingSoon = totalPlanned - STORIES.length;
 
@@ -154,7 +164,7 @@ export function HomeScreen({ onStartRead, onStartQuiz, t, lang, userName = "", s
 
       {/* Continue card */}
       <button
-        onClick={() => onStartRead(featured.id)}
+        onClick={() => (current?.step === "quiz" ? onStartQuiz(featured.id) : onStartRead(featured.id, featuredLevel?.id))}
         className="group relative w-full text-left rounded-[28px] overflow-hidden bg-night shadow-[0_6px_0_#121a31] active:translate-y-[3px] active:shadow-[0_3px_0_#121a31] transition-transform"
       >
         <StoryVideo src={BG_VIDEO_ASSETS.read} className="absolute inset-0" />
@@ -162,12 +172,12 @@ export function HomeScreen({ onStartRead, onStartQuiz, t, lang, userName = "", s
         <OrnamentBand className="absolute top-3 inset-x-0 h-3 w-full text-white/15" />
         <div className="relative p-5 pt-24">
           <span className="inline-flex items-center gap-1.5 h-7 px-3 rounded-full bg-white/15 backdrop-blur text-white text-xs font-bold">
-            <BookOpen size={13} /> {displayTitle(featured.sceneLabel)}
+            <BookOpen size={13} /> {featuredLevel ? `${featuredLevel.id} · ${featuredLevel.title}` : current?.step === "quiz" ? t.takeQuiz : displayTitle(featured.sceneLabel)}
           </span>
           <h2 className="font-display font-black text-white text-2xl leading-tight mt-3">{displayTitle(featured.title)}</h2>
           <p className="text-white/75 text-sm mt-1.5 line-clamp-2">{featured.storyDesc[lang as "en" | "kk"] || featured.storyDesc.en}</p>
           <span className="btn btn-sun btn-sm mt-4 pointer-events-none">
-            <Play size={15} className="fill-ink" /> {t.startReading}
+            <Play size={15} className="fill-ink" /> {progress.size > 0 ? (lang === "kk" ? "Jalğastyru" : "Continue") : t.startReading}
           </span>
         </div>
       </button>
@@ -175,6 +185,9 @@ export function HomeScreen({ onStartRead, onStartQuiz, t, lang, userName = "", s
       {/* Caravan path: one unit per story, islands are CEFR levels */}
       {STORIES.map((story: any, si: number) => {
         const unit = UNIT_COLORS[si % UNIT_COLORS.length];
+        const isDone = (step: string) => progress.has(`${story.id}:${step}`);
+        const isCurrent = (step: string) => current?.story.id === story.id && current?.step === step;
+        const doneCount = [...LEVEL_DETAILS.map((l) => l.id), "quiz"].filter(isDone).length;
         return (
           <section key={story.id} className="space-y-6">
             <div className={`relative rounded-[22px] ${unit.bg} ${unit.edge} text-white px-5 py-4 overflow-hidden`}>
@@ -182,7 +195,10 @@ export function HomeScreen({ onStartRead, onStartQuiz, t, lang, userName = "", s
               <p className="text-xs font-bold uppercase tracking-[0.08em] text-white/80">
                 {lang === "kk" ? `${si + 1}-bölim` : `Unit ${si + 1}`}
               </p>
-              <h3 className="font-display font-black text-xl leading-tight">{displayTitle(story.title)}</h3>
+              <div className="flex items-end justify-between gap-3">
+                <h3 className="font-display font-black text-xl leading-tight">{displayTitle(story.title)}</h3>
+                <span className="text-sm font-bold bg-white/20 rounded-full px-3 h-7 flex items-center shrink-0">{doneCount}/{LEVEL_DETAILS.length + 1}</span>
+              </div>
             </div>
 
             <div className="flex flex-col items-center gap-6 pb-2">
@@ -196,7 +212,8 @@ export function HomeScreen({ onStartRead, onStartQuiz, t, lang, userName = "", s
                     color={c.bg}
                     edge={c.island}
                     x={PATH_OFFSETS[li % PATH_OFFSETS.length]}
-                    highlight={si === 0 && li === 0}
+                    highlight={isCurrent(lvl.id)}
+                    done={isDone(lvl.id)}
                     onClick={() => onStartRead(story.id, lvl.id)}
                     ariaLabel={`${displayTitle(story.title)}: ${lvl.id} ${lvl.title}`}
                   />
@@ -217,6 +234,8 @@ export function HomeScreen({ onStartRead, onStartQuiz, t, lang, userName = "", s
                 edge="shadow-[0_7px_0_var(--color-sun-deep)]"
                 x={PATH_OFFSETS[6]}
                 onClick={() => onStartQuiz(story.id)}
+                highlight={isCurrent("quiz")}
+                done={isDone("quiz")}
                 ariaLabel={`${t.takeQuiz}: ${displayTitle(story.title)}`}
               >
                 <Trophy size={30} strokeWidth={2.6} className="text-ink" />
@@ -241,7 +260,7 @@ export function HomeScreen({ onStartRead, onStartQuiz, t, lang, userName = "", s
 }
 
 /* --- 3. READER SCREEN --- */
-export function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, setSelectedLevel, onQuizGate, t, lang = "kk", onReward, savedWords, onSaveWord }: any) {
+export function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, setSelectedLevel, onQuizGate, onLevelDone, t, lang = "kk", onReward, savedWords, onSaveWord }: any) {
   const [isPlaying, setIsPlaying] = useState(true);
   const [activeWord, setActiveWord] = useState<string | null>(null);
   const [translation, setTranslation] = useState("");
@@ -363,6 +382,7 @@ export function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, s
     if (pos >= wordIndices.length) {
       isPlayingRef.current = false;
       setIsReadAlongPlaying(false);
+      onLevelDone?.(currentStory.id, selectedLevel);
       return;
     }
     const tokenIdx = wordIndices[pos];
@@ -521,7 +541,13 @@ export function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, s
       </div>
 
       <div className="flex flex-col sm:flex-row-reverse gap-3 pt-1">
-        <button onClick={onQuizGate} className="btn flex-1">
+        <button
+          onClick={() => {
+            onLevelDone?.(currentStory.id, selectedLevel);
+            onQuizGate();
+          }}
+          className="btn flex-1"
+        >
           {t.takeQuiz} <ChevronRight size={18} strokeWidth={3} />
         </button>
         <button onClick={() => setShowChoiceModal(true)} className="btn btn-ghost flex-1">
@@ -615,10 +641,27 @@ function EmptyState({ text }: { text: string }) {
   );
 }
 
-/* --- 3.5 FLASHCARDS SCREEN --- */
-export function FlashcardsScreen({ savedWords, onReward, mode, setMode }: { savedWords: SavedWord[]; onReward: (xp: number) => void; mode?: string; setMode?: (m: string) => void }) {
-  const [currentIndex, setCurrentIndex] = useState(0);
+/* --- 3.5 FLASHCARDS SCREEN: spaced repetition (Leitner boxes) --- */
+export function FlashcardsScreen({ savedWords, onReview, lang = "kk", mode, setMode }: {
+  savedWords: SavedWord[];
+  onReview: (word: string, known: boolean) => void;
+  lang?: string;
+  mode?: string;
+  setMode?: (m: string) => void;
+}) {
+  // The session queue is fixed when the screen opens; "not yet" cards go to the back.
+  const [queue, setQueue] = useState<string[]>(() =>
+    savedWords
+      .filter((w) => isDue(w.nextReviewAt))
+      .sort((a, b) => (a.mastery ?? 0) - (b.mastery ?? 0))
+      .map((w) => w.word)
+  );
+  const [sessionSize, setSessionSize] = useState(queue.length);
+  const [reviewed, setReviewed] = useState(0);
+  const [practice, setPractice] = useState(false);
   const [flipped, setFlipped] = useState(false);
+  const [openedAt] = useState(() => Date.now());
+  const kk = lang === "kk";
 
   if (!savedWords || savedWords.length === 0) {
     return (
@@ -629,19 +672,61 @@ export function FlashcardsScreen({ savedWords, onReward, mode, setMode }: { save
     );
   }
 
-  const currentWord = savedWords[currentIndex % savedWords.length];
+  if (queue.length === 0) {
+    const upcoming = savedWords
+      .map((w) => w.nextReviewAt)
+      .filter((d): d is string => !!d && !isDue(d, openedAt))
+      .sort()[0];
+    const days = upcoming ? Math.max(1, Math.round((new Date(upcoming).getTime() - openedAt) / 86400000)) : null;
+    return (
+      <div className="animate-pop-in">
+        <WordsHeader mode={mode} setMode={setMode} />
+        <div className="card p-8 text-center">
+          <span className="mx-auto w-20 h-20 rounded-full bg-jade flex items-center justify-center shadow-[0_5px_0_var(--color-jade-deep)]">
+            <Check className="text-white" size={40} strokeWidth={3.5} />
+          </span>
+          <p className="font-display font-black text-2xl text-ink mt-5">{kk ? "Bäri qaitalandy!" : "All caught up!"}</p>
+          <p className="text-[15px] text-ink-2 mt-1">
+            {reviewed > 0 && `${reviewed} ${kk ? "söz qaitalandy. " : "words reviewed. "}`}
+            {days !== null && (kk ? `Kelesi qaitalau ${days} künnen keiin.` : `Next review in ${days} day${days > 1 ? "s" : ""}.`)}
+          </p>
+          <button
+            onClick={() => {
+              const all = savedWords.map((w) => w.word);
+              setPractice(true);
+              setQueue(all);
+              setSessionSize(all.length);
+              setReviewed(0);
+            }}
+            className="btn btn-ghost w-full mt-6"
+          >
+            {kk ? "Bärın qaitalau" : "Practice all anyway"}
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  const currentWord = savedWords.find((w) => w.word === queue[0]) || savedWords[0];
+  const box = currentWord.mastery ?? 0;
 
   const handleNext = (known: boolean) => {
-    if (known) onReward(2);
+    // Free practice doesn't move words between boxes.
+    if (!practice) onReview(currentWord.word, known);
     setFlipped(false);
-    setCurrentIndex((prev) => (prev + 1) % savedWords.length);
+    setQueue((q) => (known || practice ? q.slice(1) : [...q.slice(1), q[0]]));
+    if (known || practice) setReviewed((r) => r + 1);
   };
 
   return (
     <div className="animate-pop-in">
-      <WordsHeader mode={mode} setMode={setMode} trailing={<span className="chip text-ink-2">{currentIndex + 1} / {savedWords.length}</span>} />
+      <WordsHeader
+        mode={mode}
+        setMode={setMode}
+        trailing={<span className="chip text-ink-2">{Math.min(reviewed + 1, sessionSize)} / {sessionSize}</span>}
+      />
 
-      <div className="track mb-5"><span style={{ width: `${((currentIndex + 1) / savedWords.length) * 100}%` }} /></div>
+      <div className="track mb-5"><span style={{ width: `${(reviewed / Math.max(sessionSize, 1)) * 100}%` }} /></div>
 
       <button
         onClick={() => {
@@ -657,6 +742,11 @@ export function FlashcardsScreen({ savedWords, onReward, mode, setMode }: { save
             <span className="eyebrow">English</span>
             <span className="font-display font-black text-[40px] text-ink mt-2">{currentWord.word}</span>
             <span className="mt-6 text-sm text-ink-3 flex items-center gap-1.5"><Volume2 size={15} /> Tap to flip</span>
+            <span className="absolute bottom-4 flex gap-1.5" aria-label={`Box ${box} of ${MAX_MASTERY}`}>
+              {Array.from({ length: MAX_MASTERY }, (_, i) => (
+                <span key={i} className={`w-2 h-2 rounded-full ${i < box ? "bg-jade" : "bg-sand-3"}`} />
+              ))}
+            </span>
           </div>
           <div className="flip-face flip-back rounded-[24px] bg-sky shadow-[0_6px_0_var(--color-sky-deep)] flex flex-col items-center justify-center p-6 text-white">
             <span className="text-xs font-bold uppercase tracking-[0.08em] text-white/75">Qazaqşa</span>
@@ -666,9 +756,14 @@ export function FlashcardsScreen({ savedWords, onReward, mode, setMode }: { save
       </button>
 
       <div className="grid grid-cols-2 gap-3 mt-7">
-        <button onClick={() => handleNext(false)} className="btn btn-ghost">Not yet</button>
-        <button onClick={() => handleNext(true)} className="btn btn-jade">I knew it</button>
+        <button onClick={() => handleNext(false)} className="btn btn-ghost">{kk ? "Äli bilmeimin" : "Not yet"}</button>
+        <button onClick={() => handleNext(true)} className="btn btn-jade">{kk ? "Bilemin" : "I knew it"}</button>
       </div>
+      {!practice && (
+        <p className="text-center text-sm text-ink-3 mt-4">
+          {kk ? "Bilseñ, söz keiınırek qaitalanady: 1, 3, 7 kün..." : "Words you know come back later: 1, 3, 7 days..."}
+        </p>
+      )}
     </div>
   );
 }

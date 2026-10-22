@@ -17,6 +17,10 @@ import { DICT, ACHIEVEMENTS, STORIES } from "./constants";
 import type { SavedWord } from "./types";
 import { supabase } from "./lib/supabase";
 import { saveToSupabase } from "./utils/supabase-save";
+import {
+  loadProgress, saveProgress, progressKey, loadLocalReviews, saveReview,
+  nextReview, isDue, MAX_MASTERY, type ProgressStep
+} from "./utils/progress";
 
 export default function KazakhTalesApp({ session }: { session: Session }) {
   const userId: string = session.user.id;
@@ -37,6 +41,7 @@ export default function KazakhTalesApp({ session }: { session: Session }) {
   const lastActiveDateRef = useRef<string | null>(null);
 
   const [savedWords, setSavedWords] = useState<SavedWord[]>([]);
+  const [progress, setProgress] = useState<Set<string>>(new Set());
   const [wordsMode, setWordsMode] = useState("cards");
 
   const [sessionXp, setSessionXp] = useState(0);
@@ -88,10 +93,11 @@ export default function KazakhTalesApp({ session }: { session: Session }) {
     let cancelled = false;
 
     const loadUserData = async () => {
-      const [profileRes, wordsRes, achievementsRes] = await Promise.all([
+      const [profileRes, wordsRes, achievementsRes, progressSet] = await Promise.all([
         supabase.from("profiles").select("*").eq("id", userId).maybeSingle(),
         supabase.from("saved_words").select("*").eq("user_id", userId).order("created_at", { ascending: true }),
         supabase.from("user_achievements").select("achievement_id").eq("user_id", userId),
+        loadProgress(userId),
       ]);
 
       if (cancelled) return;
@@ -106,12 +112,15 @@ export default function KazakhTalesApp({ session }: { session: Session }) {
         lastActiveDateRef.current = profileRes.data.last_active_date ?? null;
         if (profileRes.data.display_name) setDisplayName(profileRes.data.display_name as string);
       }
+      setProgress(progressSet);
       if (wordsRes.data) {
+        const localReviews = loadLocalReviews(userId);
         setSavedWords(
-          wordsRes.data.map((row: { word: string; translation: string; mastery: number }) => ({
+          wordsRes.data.map((row: { word: string; translation: string; mastery: number; next_review_at?: string | null }) => ({
             word: row.word,
             translation: row.translation,
             mastery: row.mastery,
+            nextReviewAt: row.next_review_at ?? localReviews[row.word] ?? null,
           }))
         );
       }
@@ -169,7 +178,27 @@ export default function KazakhTalesApp({ session }: { session: Session }) {
     xpToastTimer.current = setTimeout(() => setXpToast(null), 1300);
   };
 
+  const markStep = (storyId: string, step: ProgressStep) => {
+    const key = progressKey(storyId, step);
+    if (progress.has(key)) return;
+    const next = new Set(progress).add(key);
+    setProgress(next);
+    saveProgress(userId, storyId, step, next);
+  };
+
+  // Leitner review: "knew it" moves the word up a box, "not yet" back to box 0.
+  const handleReview = (word: string, known: boolean) => {
+    const current = savedWords.find((w) => w.word === word);
+    if (!current) return;
+    const mastery = known ? Math.min((current.mastery ?? 0) + 1, MAX_MASTERY) : 0;
+    const nextReviewAt = nextReview(mastery);
+    setSavedWords((prev) => prev.map((w) => (w.word === word ? { ...w, mastery, nextReviewAt } : w)));
+    saveReview(userId, word, mastery, nextReviewAt);
+    if (known) addXp(2);
+  };
+
   const handleQuizFinish = (correctCount: number, total: number) => {
+    if (correctCount >= Math.ceil(total * 0.6)) markStep(selectedStory || STORIES[0].id, "quiz");
     latestQuizzesRef.current += 1;
     setQuizzesCompleted(latestQuizzesRef.current);
     saveToSupabase(
@@ -223,7 +252,7 @@ export default function KazakhTalesApp({ session }: { session: Session }) {
   const handleSaveWord = (word: string, translation: string) => {
     if (savedWords.some((w) => w.word === word)) return;
     addXp(5);
-    setSavedWords((prev: SavedWord[]) => [...prev, { word, translation, mastery: 0 }]);
+    setSavedWords((prev: SavedWord[]) => [...prev, { word, translation, mastery: 0, nextReviewAt: null }]);
     saveToSupabase(
       async () => supabase.from("saved_words").upsert({ user_id: userId, word, translation, mastery: 0 }, { onConflict: "user_id,word" }),
       onSaveError
@@ -248,10 +277,12 @@ export default function KazakhTalesApp({ session }: { session: Session }) {
     { id: "profile", label: t.navProfile, Icon: User     },
   ] as const;
 
+  const dueCount = savedWords.filter((w) => isDue(w.nextReviewAt)).length;
+
   const wordsBadge = (id: string) =>
-    id === "words" && savedWords.length > 0 ? (
+    id === "words" && dueCount > 0 ? (
       <span className="absolute -top-1 -right-1.5 min-w-[18px] h-[18px] px-1 rounded-full bg-felt text-[10px] text-white flex items-center justify-center font-bold ring-2 ring-card">
-        {savedWords.length}
+        {dueCount}
       </span>
     ) : null;
 
@@ -331,6 +362,7 @@ export default function KazakhTalesApp({ session }: { session: Session }) {
             <main className="flex-1 min-w-0 max-w-[620px] mx-auto">
               {tab === "home" && (
                 <HomeScreen
+                  progress={progress}
                   onStartRead={(storyId: string, level?: string) => {
                     setSelectedStory(storyId);
                     setSelectedLevel(level ?? null);
@@ -354,6 +386,7 @@ export default function KazakhTalesApp({ session }: { session: Session }) {
                   selectedLevel={selectedLevel}
                   setSelectedLevel={setSelectedLevel}
                   onQuizGate={() => setTab("quiz")}
+                  onLevelDone={(storyId: string, level: ProgressStep) => markStep(storyId, level)}
                   t={t}
                   lang={lang}
                   onReward={addXp}
@@ -374,7 +407,7 @@ export default function KazakhTalesApp({ session }: { session: Session }) {
               {tab === "words" && (
                 <div className="animate-pop-in">
                   {wordsMode === "cards" ? (
-                    <FlashcardsScreen savedWords={savedWords} onReward={addXp} mode={wordsMode} setMode={setWordsMode} />
+                    <FlashcardsScreen savedWords={savedWords} onReview={handleReview} lang={lang} mode={wordsMode} setMode={setWordsMode} />
                   ) : (
                     <MatchingGame savedWords={savedWords} onReward={addXp} mode={wordsMode} setMode={setWordsMode} />
                   )}
@@ -411,6 +444,7 @@ export default function KazakhTalesApp({ session }: { session: Session }) {
                 <p className="font-display font-extrabold text-ink">{lang === "kk" ? "Sözdik" : "Vocabulary"}</p>
                 <p className="text-sm text-ink-2 mt-1">
                   {savedWords.length} {lang === "kk" ? "söz saqtaldy" : "words saved"}
+                  {dueCount > 0 && <> · <b className="text-felt">{dueCount} {lang === "kk" ? "qaitalauğa" : "due"}</b></>}
                 </p>
                 <button onClick={() => setTab("words")} className="btn btn-ghost btn-sm w-full mt-4">
                   {lang === "kk" ? "Qaitalau" : "Practice"}
