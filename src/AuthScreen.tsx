@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { supabase } from "./lib/supabase";
+import { Shanyraq, SteppeBackground, KilimStrip } from "./components/Ornaments";
+import { Sheet } from "./components/UIHelpers";
 
 const PRIVACY_POLICY_TEXT = `
 Last updated: 2026
@@ -44,27 +46,15 @@ team through the contact listed on the project's submission page.
 
 function PrivacyPolicyModal({ onClose }: { onClose: () => void }) {
   return (
-    <div className="fixed inset-0 z-[80] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-      <div className="w-full max-w-[440px] max-h-[80dvh] glass-luxury-card p-5 flex flex-col">
-        <div className="flex items-center justify-between mb-3">
-          <h3 className="font-editorial text-sm font-extrabold text-[#F8F5EE] uppercase tracking-wide">
-            Privacy Policy
-          </h3>
-          <button onClick={onClose} className="p-2 min-h-[44px] min-w-[44px] flex items-center justify-center text-[#F8F5EE]/70 hover:text-[#F8F5EE] text-xl leading-none">
-            ×
-          </button>
-        </div>
-        <div className="overflow-y-auto font-body text-xs text-[#F8F5EE]/70 leading-relaxed whitespace-pre-wrap pr-1">
+    <Sheet open onClose={onClose} label="Privacy Policy">
+      <div className="p-6 pt-4 flex flex-col">
+        <h3 className="font-display text-xl font-black text-ink mb-3">Privacy Policy</h3>
+        <div className="max-h-[55dvh] overflow-y-auto text-sm text-ink-2 leading-relaxed whitespace-pre-wrap pr-1">
           {PRIVACY_POLICY_TEXT}
         </div>
-        <button
-          onClick={onClose}
-          className="mt-4 w-full py-2.5 bg-gradient-to-r from-[#C5A059] to-[#9A7B38] text-[#09090D] font-editorial font-bold text-xs tracking-[0.1em] uppercase rounded-full"
-        >
-          Close
-        </button>
+        <button onClick={onClose} className="btn w-full mt-5">Close</button>
       </div>
-    </div>
+    </Sheet>
   );
 }
 
@@ -140,25 +130,23 @@ export default function AuthScreen() {
   };
 
   return (
-    <div className="min-h-dvh w-full flex items-center justify-center bg-[#09090D] px-4">
+    <div className="relative min-h-dvh w-full flex items-center justify-center bg-sand px-4 py-10 overflow-hidden">
+      <SteppeBackground />
       {showPolicy && <PrivacyPolicyModal onClose={() => setShowPolicy(false)} />}
-      <div className="w-full max-w-[380px] glass-luxury-card p-6 space-y-5">
-        <div className="text-center space-y-1">
-          <span className="font-editorial text-lg tracking-[0.2em] text-[#F8F5EE] uppercase font-extrabold">
-            Ertegi English
+      <div className="relative z-10 w-full max-w-[400px] card overflow-hidden px-6 pt-10 pb-7 space-y-5">
+        <KilimStrip className="absolute top-0 inset-x-0 h-2 w-full" />
+        <div className="text-center">
+          <span className="mx-auto w-16 h-16 rounded-[20px] bg-sky flex items-center justify-center shadow-[0_5px_0_var(--color-sky-deep)]">
+            <Shanyraq className="w-11 h-11 text-white" strokeWidth={4} />
           </span>
-          <p className="font-body text-xs text-[#F8F5EE]/70">
-            {mode === "signin" ? "Welcome back" : "Create your account"}
-          </p>
+          <h1 className="large-title mt-5">{mode === "signin" ? "Welcome back" : "Create your account"}</h1>
+          <p className="text-[15px] text-ink-2 mt-1.5">Ertegi English · Kazakh tales, English fluency</p>
         </div>
 
         {!confirmSent && (
           <>
-            <button
-              onClick={handleGoogleSignIn}
-              className="w-full py-3 flex items-center justify-center gap-2.5 bg-[#F8F5EE] hover:bg-white text-[#09090D] font-editorial font-bold text-xs rounded-full transition-colors"
-            >
-              <svg width="16" height="16" viewBox="0 0 48 48">
+            <button onClick={handleGoogleSignIn} className="btn btn-ghost w-full normal-case tracking-normal text-ink">
+              <svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true">
                 <path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3c-1.6 4.7-6.1 8-11.3 8-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.6 6.1 29.6 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.7-.4-3.5z" />
                 <path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.6 15.9 18.9 13 24 13c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.6 6.1 29.6 4 24 4 16.3 4 9.7 8.3 6.3 14.7z" />
                 <path fill="#4CAF50" d="M24 44c5.5 0 10.4-1.9 14.3-5.1l-6.6-5.6c-2 1.5-4.7 2.6-7.7 2.6-5.2 0-9.6-3.3-11.3-7.9l-6.6 5.1C9.6 39.6 16.3 44 24 44z" />
@@ -167,24 +155,24 @@ export default function AuthScreen() {
               Continue with Google
             </button>
             <div className="flex items-center gap-3">
-              <div className="flex-1 h-px bg-[#C5A059]/20" />
-              <span className="text-[9px] text-[#F8F5EE]/40 uppercase tracking-wider">or</span>
-              <div className="flex-1 h-px bg-[#C5A059]/20" />
+              <div className="flex-1 h-px bg-line" />
+              <span className="text-xs font-semibold text-ink-3 uppercase tracking-wider">or</span>
+              <div className="flex-1 h-px bg-line" />
             </div>
           </>
         )}
 
         {confirmSent ? (
-          <div className="text-center space-y-3 py-4">
-            <p className="font-body text-xs text-[#F8F5EE]/80 leading-relaxed">
-              Check your inbox — we sent a confirmation link to <b>{email}</b>. Confirm it, then come back and sign in.
+          <div className="text-center space-y-4 py-2">
+            <p className="text-[15px] text-ink-2 leading-relaxed">
+              Check your inbox — we sent a confirmation link to <b className="text-ink">{email}</b>. Confirm it, then come back and sign in.
             </p>
             <button
               onClick={() => {
                 setConfirmSent(false);
                 setMode("signin");
               }}
-              className="text-[11px] font-editorial font-bold text-[#C5A059] uppercase tracking-wider"
+              className="btn btn-ghost w-full"
             >
               Back to sign in
             </button>
@@ -195,71 +183,66 @@ export default function AuthScreen() {
               <input
                 type="text"
                 placeholder="Your name"
+                autoComplete="name"
                 value={displayName}
                 onChange={(e) => setDisplayName(e.target.value)}
-                className="w-full p-3 bg-[#14141C] border border-[#C5A059]/20 rounded-[12px] text-xs font-body text-[#F8F5EE] placeholder:text-[#F8F5EE]/30 outline-none focus:border-[#C5A059]/60"
+                className="field"
               />
             )}
             <input
               type="email"
               required
               placeholder="Email"
+              autoComplete="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full p-3 bg-[#14141C] border border-[#C5A059]/20 rounded-[12px] text-xs font-body text-[#F8F5EE] placeholder:text-[#F8F5EE]/30 outline-none focus:border-[#C5A059]/60"
+              className="field"
             />
             <input
               type="password"
               required
               minLength={6}
               placeholder="Password (min 6 characters)"
+              autoComplete={mode === "signin" ? "current-password" : "new-password"}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full p-3 bg-[#14141C] border border-[#C5A059]/20 rounded-[12px] text-xs font-body text-[#F8F5EE] placeholder:text-[#F8F5EE]/30 outline-none focus:border-[#C5A059]/60"
+              className="field"
             />
 
             {mode === "signup" && (
-              <label className="flex items-start gap-2.5 cursor-pointer select-none">
+              <label className="flex items-start gap-3 cursor-pointer select-none pt-1">
                 <input
                   type="checkbox"
                   checked={agreed}
                   onChange={(e) => setAgreed(e.target.checked)}
-                  className="mt-0.5 w-3.5 h-3.5 accent-[#C5A059] shrink-0"
+                  className="mt-0.5 w-5 h-5 accent-[var(--color-sky)] shrink-0"
                 />
-                <span className="text-xs font-body text-[#F8F5EE]/70 leading-relaxed">
+                <span className="text-sm text-ink-2 leading-relaxed">
                   I agree to the{" "}
-                  <button
-                    type="button"
-                    onClick={() => setShowPolicy(true)}
-                    className="text-[#C5A059] font-bold underline underline-offset-2"
-                  >
+                  <button type="button" onClick={() => setShowPolicy(true)} className="text-sky font-semibold">
                     Privacy Policy
                   </button>
                 </span>
               </label>
             )}
 
-            {error && <p className="text-xs font-body text-[#B2533E] leading-relaxed">{error}</p>}
+            {error && <p className="text-sm text-felt-deep bg-felt-soft rounded-xl px-3 py-2.5 leading-relaxed">{error}</p>}
 
-            <button
-              type="submit"
-              disabled={loading || !canSubmit}
-              className="w-full py-3.5 bg-gradient-to-r from-[#C5A059] to-[#9A7B38] disabled:opacity-40 text-[#09090D] font-editorial font-extrabold text-xs tracking-[0.18em] uppercase gold-glow rounded-full"
-            >
-              {loading ? "Please wait..." : mode === "signin" ? "Sign In" : "Create Account"}
+            <button type="submit" disabled={loading || !canSubmit} className="btn w-full !mt-5">
+              {loading ? "Please wait..." : mode === "signin" ? "Sign in" : "Create account"}
             </button>
           </form>
         )}
 
         {!confirmSent && (
-          <p className="text-center text-xs font-body text-[#F8F5EE]/70">
+          <p className="text-center text-[15px] text-ink-2">
             {mode === "signin" ? "No account yet?" : "Already have an account?"}{" "}
             <button
               onClick={() => {
                 setError(null);
                 setMode(mode === "signin" ? "signup" : "signin");
               }}
-              className="text-[#C5A059] font-bold"
+              className="text-sky font-bold"
             >
               {mode === "signin" ? "Sign up" : "Sign in"}
             </button>

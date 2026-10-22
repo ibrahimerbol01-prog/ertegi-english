@@ -1,10 +1,11 @@
 import { useState, useRef, useEffect } from "react";
 import {
-  Sparkles, ArrowRight, Play, Video, Pause, Volume2,
-  ChevronRight, ArrowLeft, X, Compass, Layers, Trophy, CheckCircle2, Flame,
-  Mic, MicOff, LogOut, Share2, Download
+  ArrowRight, Play, Pause, Volume2, ChevronRight, RotateCcw, Compass, Layers, Trophy,
+  Check, X, Flame, Heart, Mic, MicOff, LogOut, Share2, BookOpen, Lock, Timer, Zap, Plus
 } from "lucide-react";
-import { BackgroundVideo, KazakhOrnament, DailyGoalRing } from "./UIHelpers";
+import { DailyGoalRing, ScreenHeader, Sheet, BrandMark } from "./UIHelpers";
+import { displayTitle } from "../utils/text";
+import { Shanyraq, OrnamentBand, Tumar, SteppeBackground, KilimStrip, QoshqarMuyiz } from "./Ornaments";
 import { safePlayVoice } from "../utils/voice";
 import {
   BG_VIDEO_ASSETS, STORIES, LEVEL_DETAILS, WORD_TRANSLATIONS, ACHIEVEMENTS
@@ -12,137 +13,218 @@ import {
 import type { SavedWord } from "../types";
 import { supabase } from "../lib/supabase";
 
+/* Small video tile with a night-sky fallback. */
+function StoryVideo({ src, className = "", videoRef, paused }: { src: string; className?: string; videoRef?: React.Ref<HTMLVideoElement>; paused?: boolean }) {
+  const [error, setError] = useState(false);
+  return (
+    <div className={`overflow-hidden bg-night ${className}`}>
+      {!error ? (
+        <video
+          ref={videoRef}
+          autoPlay={!paused} loop muted playsInline
+          src={src}
+          onError={() => setError(true)}
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+      ) : (
+        <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-night-2 to-night">
+          <Shanyraq className="w-14 h-14 text-white/25" strokeWidth={3} />
+        </div>
+      )}
+    </div>
+  );
+}
+
+const LEVEL_COLORS: Record<string, { bg: string; edge: string; soft: string }> = {
+  A1: { bg: "bg-jade", edge: "shadow-[0_4px_0_var(--color-jade-deep)]", soft: "text-jade-deep" },
+  A2: { bg: "bg-sky", edge: "shadow-[0_4px_0_var(--color-sky-deep)]", soft: "text-sky-deep" },
+  B1: { bg: "bg-sun", edge: "shadow-[0_4px_0_var(--color-sun-deep)]", soft: "text-sun-deep" },
+  B2: { bg: "bg-felt", edge: "shadow-[0_4px_0_var(--color-felt-deep)]", soft: "text-felt-deep" },
+  C1: { bg: "bg-night", edge: "shadow-[0_4px_0_#121a31]", soft: "text-night" },
+};
+
 /* --- 1. INTRO SCREEN --- */
 export function IntroScreen({ onFinish, t }: any) {
   return (
-    <div className="relative min-h-dvh w-full bg-[#09090D] flex flex-col overflow-hidden animate-pop-in">
-      <BackgroundVideo src={BG_VIDEO_ASSETS.intro} opacity={60} videoKey="intro-bg" />
+    <div className="relative min-h-dvh w-full bg-sand flex flex-col overflow-hidden">
+      <SteppeBackground />
+      <KilimStrip className="absolute top-0 inset-x-0 h-2 w-full z-[1]" />
 
-      <div className="relative z-10 flex flex-col flex-1 justify-between p-6 mx-auto w-full max-w-[480px]">
-        <div className="flex justify-between items-center pt-4">
-          <div className="flex items-center gap-2.5">
-            <KazakhOrnament className="w-6 h-6 text-[#C5A059]" />
-            <span className="font-editorial text-lg tracking-[0.2em] text-[#F8F5EE] uppercase font-extrabold">Ertegi English</span>
-          </div>
-          <button
-            onClick={onFinish}
-            className="text-[10px] font-editorial uppercase tracking-[0.15em] text-[#C5A059] hover:text-[#F8F5EE] px-3.5 py-1.5 border border-[#C5A059]/30 bg-black/50 backdrop-blur-md transition-all"
-          >
+      <div className="relative z-10 flex flex-col flex-1 px-6 pt-[max(env(safe-area-inset-top),28px)] pb-[max(env(safe-area-inset-bottom),24px)] mx-auto w-full max-w-[440px]">
+        <div className="flex justify-between items-center">
+          <BrandMark />
+          <button onClick={onFinish} className="text-sm font-semibold text-ink-2 hover:text-ink px-2 min-h-[44px]">
             {t.skip}
           </button>
         </div>
 
-        <div className="space-y-4 my-auto text-center px-4 animate-float">
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 terracotta-badge text-[9px] tracking-[0.2em]">
-            <Sparkles size={10} /> QAZAQSTAN EDTECH INITIATIVE
-          </span>
-          <h1 className="font-editorial text-3xl sm:text-4xl font-extrabold text-[#F8F5EE] leading-tight uppercase tracking-wide">
-            DALA AÑYZDARY <br />
-            <span className="text-[#C5A059] drop-shadow-[0_0_20px_rgba(197,160,89,0.4)]">AĞYLŞYN TİLİNDE</span>
+        <div className="my-auto py-10 text-center animate-pop-in">
+          <div className="relative mx-auto w-[220px] h-[220px] mb-9">
+            <div className="absolute inset-0 rounded-full bg-sun-soft" />
+            <div className="absolute inset-5 rounded-full bg-sky shadow-[0_8px_0_var(--color-sky-deep)] flex items-center justify-center animate-float">
+              <Shanyraq className="w-28 h-28 text-white" strokeWidth={3.2} />
+            </div>
+            <QoshqarMuyiz className="absolute -left-3 top-6 w-14 h-8 text-felt -rotate-[18deg]" strokeWidth={4.5} />
+            <QoshqarMuyiz className="absolute -right-3 bottom-8 w-14 h-8 text-jade rotate-[160deg]" strokeWidth={4.5} />
+            <Tumar className="absolute right-3 top-2 w-7 h-7 text-sun-deep" strokeWidth={3} />
+          </div>
+
+          <h1 className="font-display font-black text-[40px] leading-[1.05] tracking-tight text-ink">
+            Dala añyzdary<br />
+            <span className="text-sky">ağylşyn tilinde</span>
           </h1>
-          <p className="font-body text-xs text-[#F8F5EE]/80 max-w-xs mx-auto leading-relaxed">
+          <p className="text-[17px] text-ink-2 max-w-[320px] mx-auto leading-relaxed mt-4">
             {t.homeSubtitle}
           </p>
         </div>
 
-        <div className="pb-6">
-          <button
-            onClick={onFinish}
-            className="rounded-full w-full py-4 bg-gradient-to-r from-[#C5A059] via-[#9A7B38] to-[#C5A059] hover:brightness-110 text-[#09090D] font-editorial font-extrabold text-xs tracking-[0.2em] uppercase gold-glow transition-all flex items-center justify-center gap-2"
-          >
-            {t.enter} <ArrowRight size={16} />
-          </button>
-        </div>
+        <button onClick={onFinish} className="btn w-full">
+          {t.enter} <ArrowRight size={18} strokeWidth={3} />
+        </button>
       </div>
     </div>
   );
 }
 
-/* --- 2. HOME SCREEN --- */
-export function HomeScreen({ onStartRead, t, lang, sessionXp = 0, dailyGoal = 50 }: any) {
-  const [videoError, setVideoError] = useState(false);
+/* --- 2. HOME SCREEN: greeting, daily goal, and the caravan path --- */
+type PathNode =
+  | { kind: "read"; storyId: string; title: string }
+  | { kind: "quiz"; storyId: string; title: string }
+  | { kind: "locked" }
+  | { kind: "chest" };
+
+const PATH_OFFSETS = [0, 52, 78, 52, 0, -52, -78, -52];
+
+export function HomeScreen({ onStartRead, onStartQuiz, t, lang, userName = "", sessionXp = 0, dailyGoal = 50 }: any) {
+  const featured = STORIES[0];
+  const totalPlanned = 10;
+  const lockedCount = Math.min(3, totalPlanned - STORIES.length);
+
+  const nodes: PathNode[] = [
+    ...STORIES.flatMap((s): PathNode[] => [
+      { kind: "read", storyId: s.id, title: s.title },
+      { kind: "quiz", storyId: s.id, title: s.title },
+    ]),
+    ...Array.from({ length: lockedCount }, (): PathNode => ({ kind: "locked" })),
+    { kind: "chest" },
+  ];
+
+  const firstName = (userName || "").split(/[\s@]/)[0];
 
   return (
-    <div className="px-5 pb-6 space-y-5 animate-pop-in">
-      <div className="relative glass-luxury-card p-5 border-l-2 border-l-[#C5A059] overflow-hidden min-h-[140px]">
-        <BackgroundVideo src={BG_VIDEO_ASSETS.home} opacity={35} videoKey="home-hero" />
+    <div className="space-y-6 animate-pop-in">
+      <div className="pt-2">
+        <p className="eyebrow mb-1">{lang === "kk" ? "Bügin" : "Today"}</p>
+        <h1 className="large-title">{lang === "kk" ? "Sälem" : "Hi"}{firstName ? `, ${firstName}` : ""}!</h1>
+        <p className="text-[15px] text-ink-2 mt-2 leading-relaxed">{t.homeSubtitle}</p>
+      </div>
 
-        <div className="relative z-10 flex items-center justify-between mb-2">
-          <span className="px-2 py-0.5 gold-badge text-[8px]">HERITAGE · QAZAQSTAN</span>
-          <KazakhOrnament className="w-5 h-5 text-[#C5A059]" />
-        </div>
-        <div className="relative z-10 flex items-center gap-4">
-          <div className="flex-1 min-w-0">
-            <h2 className="font-editorial text-xl font-bold text-[#F8F5EE] uppercase tracking-wide">
-              {t.greeting}
-            </h2>
-            <p className="font-body text-xs text-[#F8F5EE]/80 mt-1 leading-relaxed">
-              {t.homeSubtitle}
-            </p>
-          </div>
-          <DailyGoalRing current={sessionXp} goal={dailyGoal} />
+      {/* Daily goal — on wide screens this lives in the right rail */}
+      <div className="card p-4 flex items-center gap-4 xl:hidden">
+        <DailyGoalRing current={sessionXp} goal={dailyGoal} size={60} />
+        <div className="flex-1 min-w-0">
+          <p className="font-display font-extrabold text-ink text-[17px]">{lang === "kk" ? "Kündelikti maqsat" : "Daily goal"}</p>
+          <p className="text-sm text-ink-2">
+            {sessionXp >= dailyGoal
+              ? (lang === "kk" ? "Orındaldy! Jaraısyñ." : "Done for today. Nice work!")
+              : `${dailyGoal - sessionXp} XP ${lang === "kk" ? "qaldy" : "to go"}`}
+          </p>
         </div>
       </div>
 
-      <div className="space-y-3">
-        <div className="flex items-center justify-between">
-          <h3 className="font-editorial text-xs tracking-[0.1em] text-[#C5A059] uppercase">{t.collectionTitle}</h3>
-          <span className="text-[9px] text-[#C5A059] font-bold bg-[#14141C] px-2.5 py-1 border border-[#C5A059]/30">
-            {STORIES.length}/10 UNLOCKED
+      {/* Continue card */}
+      <button
+        onClick={() => onStartRead(featured.id)}
+        className="group relative w-full text-left rounded-[28px] overflow-hidden bg-night shadow-[0_6px_0_#121a31] active:translate-y-[3px] active:shadow-[0_3px_0_#121a31] transition-transform"
+      >
+        <StoryVideo src={BG_VIDEO_ASSETS.read} className="absolute inset-0" />
+        <div className="absolute inset-0 bg-gradient-to-t from-night via-night/70 to-night/10" />
+        <OrnamentBand className="absolute top-3 inset-x-0 h-3 w-full text-white/15" />
+        <div className="relative p-5 pt-24">
+          <span className="inline-flex items-center gap-1.5 h-7 px-3 rounded-full bg-white/15 backdrop-blur text-white text-xs font-bold">
+            <BookOpen size={13} /> {displayTitle(featured.sceneLabel)}
+          </span>
+          <h2 className="font-display font-black text-white text-2xl leading-tight mt-3">{displayTitle(featured.title)}</h2>
+          <p className="text-white/75 text-sm mt-1.5 line-clamp-2">{featured.storyDesc[lang as "en" | "kk"] || featured.storyDesc.en}</p>
+          <span className="btn btn-sun btn-sm mt-4 pointer-events-none">
+            <Play size={15} className="fill-ink" /> {t.startReading}
           </span>
         </div>
+      </button>
 
-        {STORIES.map((story: any) => (
-          <div
-            key={story.id}
-            onClick={() => onStartRead(story.id)}
-            className="group relative glass-luxury-card glass-card-hover p-4 cursor-pointer transition-all duration-300"
-          >
-            <div className="relative h-48 w-full overflow-hidden mb-4 border border-[#C5A059]/30 bg-[#121218]">
-              {!videoError ? (
-                <video 
-                  autoPlay loop muted playsInline
-                  src={BG_VIDEO_ASSETS.read}
-                  onError={() => setVideoError(true)}
-                  className="w-full h-full object-cover contrast-110 saturate-100 group-hover:scale-105 transition-transform duration-700 ease-out" 
-                />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center bg-gradient-to-tr from-[#1E1810] to-[#0A0A0E]">
-                  <KazakhOrnament className="w-12 h-12 text-[#C5A059]/40" />
-                </div>
-              )}
-              <div className="absolute inset-0 bg-gradient-to-t from-[#09090D] via-[#09090D]/30 to-transparent opacity-90 pointer-events-none" />
-              <div className="absolute top-3 left-3 flex gap-2">
-                <span className="gold-badge text-[8px] px-2 py-0.5">ADAPTIVE A1–C1</span>
-                <span className="bg-[#09090D]/90 border border-[#C5A059]/40 text-[#C5A059] text-[8px] px-2 py-0.5 font-bold flex items-center gap-1">
-                  <Video size={10} /> CINEMATIC
-                </span>
+      {/* Unit banner */}
+      <div className="relative rounded-[22px] bg-sky text-white px-5 py-4 overflow-hidden shadow-[0_4px_0_var(--color-sky-deep)]">
+        <OrnamentBand className="absolute -bottom-0.5 inset-x-0 h-4 w-full text-white/20" />
+        <p className="text-xs font-bold uppercase tracking-[0.08em] text-white/80">{lang === "kk" ? "1-bölim" : "Unit 1"}</p>
+        <div className="flex items-center justify-between gap-3">
+          <h3 className="font-display font-black text-xl">{t.collectionTitle}</h3>
+          <span className="text-sm font-bold bg-white/20 rounded-full px-3 h-7 flex items-center shrink-0">{STORIES.length}/{totalPlanned}</span>
+        </div>
+      </div>
+
+      {/* Caravan path */}
+      <div className="relative flex flex-col items-center gap-5 pt-16 pb-4">
+        {nodes.map((n, i) => {
+          const x = PATH_OFFSETS[i % PATH_OFFSETS.length];
+          const isFirst = i === 0;
+          let body: React.ReactNode;
+          if (n.kind === "read" || n.kind === "quiz") {
+            const read = n.kind === "read";
+            body = (
+              <button
+                onClick={() => (read ? onStartRead(n.storyId) : onStartQuiz(n.storyId))}
+                aria-label={`${read ? t.startReading : t.takeQuiz}: ${displayTitle(n.title)}`}
+                className={`relative w-[76px] h-[70px] rounded-[50%] flex items-center justify-center text-white transition-transform active:translate-y-[5px] ${
+                  read
+                    ? "bg-sky shadow-[0_7px_0_var(--color-sky-deep)] active:shadow-[0_2px_0_var(--color-sky-deep)]"
+                    : "bg-sun shadow-[0_7px_0_var(--color-sun-deep)] active:shadow-[0_2px_0_var(--color-sun-deep)]"
+                }`}
+              >
+                {read ? <BookOpen size={30} strokeWidth={2.6} /> : <Trophy size={30} strokeWidth={2.6} className="text-ink" />}
+              </button>
+            );
+          } else if (n.kind === "locked") {
+            body = (
+              <div aria-label={lang === "kk" ? "Jaqynda" : "Coming soon"} className="w-[76px] h-[70px] rounded-[50%] bg-sand-3 shadow-[0_7px_0_var(--color-line-2)] flex items-center justify-center text-ink-3">
+                <Lock size={26} strokeWidth={2.6} />
               </div>
+            );
+          } else {
+            body = (
+              <div aria-label={lang === "kk" ? "Mūra sandyğy" : "Heritage chest"} className="w-[88px] h-[76px] rounded-[22px] bg-sand-3 shadow-[0_7px_0_var(--color-line-2)] flex items-center justify-center text-ink-3">
+                <Tumar className="w-10 h-10" strokeWidth={3} />
+              </div>
+            );
+          }
+          return (
+            <div key={i} className="relative" style={{ transform: `translateX(${x}px)` }}>
+              {isFirst && (
+                <span className="absolute -top-12 left-1/2 animate-bob whitespace-nowrap rounded-xl bg-card border-2 border-line px-3 py-1.5 font-display font-black text-sm text-sky uppercase tracking-wide">
+                  {lang === "kk" ? "Bastau" : "Start"}
+                  <span className="absolute left-1/2 -bottom-[7px] -translate-x-1/2 w-3 h-3 rotate-45 bg-card border-r-2 border-b-2 border-line" />
+                </span>
+              )}
+              {body}
             </div>
-
-            <h4 className="font-editorial text-base font-extrabold text-[#F8F5EE] uppercase tracking-wide">{story.title}</h4>
-            <p className="font-body text-xs text-[#F8F5EE]/70 mt-1 leading-relaxed">
-              {story.storyDesc[lang] || story.storyDesc.en}
-            </p>
-
-            <button className="rounded-full mt-4 w-full py-3.5 bg-gradient-to-r from-[#C5A059] to-[#9A7B38] hover:brightness-110 text-[#09090D] font-editorial font-bold text-xs tracking-[0.15em] uppercase transition-all flex items-center justify-center gap-2 gold-glow">
-              <Play size={13} fill="currentColor" /> {t.startReading}
-            </button>
-          </div>
-        ))}
+          );
+        })}
+        {lockedCount > 0 && (
+          <p className="text-sm text-ink-3 font-semibold pt-2">
+            {lang === "kk" ? `Taǵy ${totalPlanned - STORIES.length} añyz jaqynda` : `${totalPlanned - STORIES.length} more tales coming soon`}
+          </p>
+        )}
       </div>
     </div>
   );
 }
 
 /* --- 3. READER SCREEN --- */
-export function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, setSelectedLevel, onQuizGate, t, onReward, savedWords, onSaveWord }: any) {
+export function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, setSelectedLevel, onQuizGate, t, lang = "kk", onReward, savedWords, onSaveWord }: any) {
   const [isPlaying, setIsPlaying] = useState(true);
   const [activeWord, setActiveWord] = useState<string | null>(null);
   const [translation, setTranslation] = useState("");
   const [showChoiceModal, setShowChoiceModal] = useState(false);
   const [choiceMade, setChoiceMade] = useState(false);
-  const [videoError, setVideoError] = useState(false);
   const videoRef = useRef<HTMLVideoElement | null>(null);
 
   const [isReadAlongPlaying, setIsReadAlongPlaying] = useState(false);
@@ -177,31 +259,25 @@ export function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, s
 
   if (!selectedStory) {
     return (
-      <div className="px-5 pb-6 space-y-4 animate-pop-in">
-        <div className="border-b border-[#C5A059]/20 pb-3 flex items-center justify-between">
-          <div>
-            <span className="px-2 py-0.5 terracotta-badge text-[8px]">STORY SELECT</span>
-            <h2 className="font-editorial text-base font-bold text-[#F8F5EE] uppercase mt-1">{t.selectStoryTitle}</h2>
-          </div>
-          <KazakhOrnament className="w-5 h-5 text-[#C5A059]" />
-        </div>
+      <div className="animate-pop-in">
+        <ScreenHeader eyebrow={lang === "kk" ? "Kitaphana" : "Library"} title={t.selectStoryTitle} />
+        <p className="text-[15px] text-ink-2 -mt-2 mb-4">{t.selectStorySub}</p>
 
-        <p className="font-body text-xs text-[#F8F5EE]/70">{t.selectStorySub}</p>
-
-        <div className="space-y-2.5 pt-2">
+        <div className="card overflow-hidden divide-y divide-line">
           {STORIES.map((story: any) => (
-            <div
+            <button
               key={story.id}
               onClick={() => setSelectedStory(story.id)}
-              className="group glass-luxury-card glass-card-hover p-4 flex items-center justify-between cursor-pointer transition-all"
+              className="w-full flex items-center gap-4 p-4 text-left hover:bg-sand/60 transition-colors"
             >
-              <div className="space-y-1 min-w-0">
-                <span className="px-2 py-0.5 gold-badge text-[9px]">{story.sceneLabel}</span>
-                <h3 className="font-editorial text-xs font-bold text-[#F8F5EE] uppercase tracking-wider">{story.title}</h3>
-                <p className="font-body text-xs text-[#F8F5EE]/70">{story.storyDesc.en}</p>
+              <StoryVideo src={BG_VIDEO_ASSETS.read} paused className="relative w-[72px] h-[72px] rounded-2xl shrink-0" />
+              <div className="flex-1 min-w-0">
+                <p className="eyebrow text-[11px] text-sky-deep">{displayTitle(story.sceneLabel)}</p>
+                <h3 className="font-display font-extrabold text-[17px] text-ink leading-snug mt-0.5">{displayTitle(story.title)}</h3>
+                <p className="text-sm text-ink-2 line-clamp-1 mt-0.5">{story.storyDesc[lang] || story.storyDesc.en}</p>
               </div>
-              <ChevronRight size={16} className="text-[#C5A059] group-hover:translate-x-1 transition-transform shrink-0" />
-            </div>
+              <ChevronRight size={20} className="text-ink-3 shrink-0" />
+            </button>
           ))}
         </div>
       </div>
@@ -212,40 +288,35 @@ export function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, s
 
   if (!selectedLevel) {
     return (
-      <div className="px-5 pb-6 space-y-4 animate-pop-in">
-        <div className="border-b border-[#C5A059]/20 pb-3 flex items-center justify-between">
-          <div>
-            <button
-              onClick={() => setSelectedStory(null)}
-              className="text-[9px] text-[#C5A059]/70 hover:text-[#C5A059] flex items-center gap-1 mb-1"
-            >
-              <ArrowLeft size={10} /> {currentStory.title}
-            </button>
-            <span className="px-2 py-0.5 terracotta-badge text-[8px]">PHASE 01 · LEVEL SELECT</span>
-            <h2 className="font-editorial text-base font-bold text-[#F8F5EE] uppercase mt-1">{t.selectLevelTitle}</h2>
-          </div>
-          <KazakhOrnament className="w-5 h-5 text-[#C5A059]" />
-        </div>
+      <div className="animate-pop-in">
+        <ScreenHeader
+          onBack={() => setSelectedStory(null)}
+          backLabel={lang === "kk" ? "Añyzdar" : "Stories"}
+          eyebrow={displayTitle(currentStory.title)}
+          title={t.selectLevelTitle}
+        />
+        <p className="text-[15px] text-ink-2 -mt-2 mb-5">{t.selectLevelSub}</p>
 
-        <p className="font-body text-xs text-[#F8F5EE]/70">{t.selectLevelSub}</p>
-
-        <div className="space-y-2.5 pt-2">
-          {LEVEL_DETAILS.map((lvl) => (
-            <div
-              key={lvl.id}
-              onClick={() => setSelectedLevel(lvl.id)}
-              className="group glass-luxury-card glass-card-hover p-4 flex items-center justify-between cursor-pointer transition-all"
-            >
-              <div className="space-y-1">
-                <div className="flex items-center gap-2">
-                  <span className="px-2 py-0.5 gold-badge text-[9px]">{lvl.badge}</span>
-                  <h3 className="font-editorial text-xs font-bold text-[#F8F5EE] uppercase tracking-wider">{lvl.title}</h3>
+        <div className="space-y-3">
+          {LEVEL_DETAILS.map((lvl) => {
+            const c = LEVEL_COLORS[lvl.id];
+            return (
+              <button
+                key={lvl.id}
+                onClick={() => setSelectedLevel(lvl.id)}
+                className="tile w-full flex items-center gap-4 p-3.5 text-left hover:border-sky/50"
+              >
+                <span className={`w-14 h-14 rounded-2xl ${c.bg} ${c.edge} flex items-center justify-center font-display font-black text-xl text-white shrink-0`}>
+                  {lvl.badge}
+                </span>
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-display font-extrabold text-[17px] text-ink">{lvl.title}</h3>
+                  <p className="text-sm text-ink-2 leading-snug">{lvl.desc}</p>
                 </div>
-                <p className="font-body text-xs text-[#F8F5EE]/70">{lvl.desc}</p>
-              </div>
-              <ChevronRight size={16} className="text-[#C5A059] group-hover:translate-x-1 transition-transform" />
-            </div>
-          ))}
+                <ChevronRight size={20} className="text-ink-3 shrink-0" />
+              </button>
+            );
+          })}
         </div>
       </div>
     );
@@ -276,7 +347,7 @@ export function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, s
     setReadAlongTokenIndex(tokenIdx);
     const word = tokens[tokenIdx];
     const rate = readSpeedRef.current;
-    
+
     const fallbackAdvance = () => {
       if (isPlayingRef.current) setTimeout(() => speakWordAt(pos + 1), Math.max(280, word.length * 90) / rate);
     };
@@ -332,252 +403,206 @@ export function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, s
     }
   };
 
-  return (
-    <div className="px-5 pb-6 space-y-4 animate-pop-in relative">
-      <div className="flex items-center justify-between border-b border-[#C5A059]/20 pb-3">
-        <div>
-          <p className="font-editorial text-xs tracking-[0.1em] text-[#C5A059] uppercase">{currentStory.sceneLabel}</p>
-          <h1 className="font-editorial text-sm font-extrabold text-[#F8F5EE] uppercase tracking-wide">{currentStory.title}</h1>
-        </div>
+  const cleanActive = activeWord ? activeWord.replace(/[^a-zA-Z]/g, "").toLowerCase() : "";
+  const alreadySaved = !!activeWord && savedWords && savedWords.some((w: any) => w.word === cleanActive);
+  const levelColor = LEVEL_COLORS[selectedLevel] || LEVEL_COLORS.A1;
 
+  return (
+    <div className="space-y-4 animate-pop-in relative">
+      <ScreenHeader
+        onBack={() => setSelectedLevel(null)}
+        backLabel={t.changeLevel}
+        eyebrow={displayTitle(currentStory.sceneLabel)}
+        title={displayTitle(currentStory.title)}
+        trailing={
+          <span className={`shrink-0 w-12 h-12 rounded-2xl ${levelColor.bg} ${levelColor.edge} flex items-center justify-center font-display font-black text-white`}>
+            {selectedLevel}
+          </span>
+        }
+      />
+
+      <div className="relative rounded-[24px] overflow-hidden h-48 sm:h-56">
+        <StoryVideo src={BG_VIDEO_ASSETS.read} videoRef={videoRef} className="absolute inset-0" />
+        <span className="absolute top-3 left-3 flex items-center gap-1.5 h-7 px-3 rounded-full glass text-ink text-xs font-bold">
+          <span className="w-1.5 h-1.5 rounded-full bg-felt animate-pulse" /> {t.sceneAnimation}
+        </span>
         <button
-          onClick={() => setSelectedLevel(null)}
-          className="flex items-center gap-1 px-3 min-h-[44px] bg-[#14141C] border border-[#C5A059]/30 text-xs font-editorial text-[#C5A059] uppercase hover:border-[#C5A059] transition-all"
+          onClick={toggleVideo}
+          aria-label={isPlaying ? "Pause video" : "Play video"}
+          className="absolute bottom-3 right-3 w-11 h-11 rounded-full glass text-ink flex items-center justify-center"
         >
-          <ArrowLeft size={10} /> {selectedLevel} · {t.changeLevel}
+          {isPlaying ? <Pause size={18} className="fill-ink" /> : <Play size={18} className="fill-ink" />}
         </button>
       </div>
 
-      <div className="relative border border-[#C5A059]/30 bg-[#09090D] overflow-hidden h-44">
-        {!videoError ? (
-          <video
-            ref={videoRef}
-            autoPlay loop muted playsInline
-            src={BG_VIDEO_ASSETS.read}
-            onError={() => setVideoError(true)}
-            className="w-full h-full object-cover opacity-90 contrast-110 saturate-100"
-          />
-        ) : (
-          <div className="w-full h-full flex items-center justify-center bg-[#14141C]">
-            <KazakhOrnament className="w-10 h-10 text-[#C5A059]/40" />
-          </div>
-        )}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#09090D] via-transparent to-transparent pointer-events-none" />
-        
-        <div className="absolute top-2.5 left-2.5 flex items-center gap-1.5 px-2.5 py-1 bg-[#09090D]/80 border border-[#C5A059]/30 backdrop-blur-md">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#C5A059] animate-pulse" />
-          <span className="font-editorial text-xs text-[#F8F5EE] uppercase tracking-[0.1em]">
-            {t.sceneAnimation}
-          </span>
-        </div>
-
-        {!videoError && (
-          <button
-            onClick={toggleVideo}
-            className="absolute bottom-2.5 right-2.5 p-3.5 bg-[#09090D]/80 border border-[#C5A059]/40 text-[#C5A059] hover:border-[#C5A059] transition-all"
-          >
-            {isPlaying ? <Pause size={13} /> : <Play size={13} />}
-          </button>
-        )}
-      </div>
-
-      <div className="px-3 py-1.5 bg-[#14141C] border border-[#C5A059]/20 flex items-center justify-between text-xs text-[#F8F5EE]/80">
-        <span className="flex items-center gap-1"><Volume2 size={12} className="text-[#C5A059]" /> {t.tapWordHint}</span>
-        {activeWord && (
-          <button onClick={() => safePlayVoice(activeWord)} className="text-[#C5A059] underline font-bold">
-            🔊 Re-read
-          </button>
-        )}
-      </div>
-
-      <div className="glass-luxury-card p-3 space-y-2.5">
-        <div className="flex items-center justify-between gap-3">
+      {/* Read-along player (Apple Music mini player) */}
+      <div className="card p-3.5 space-y-3">
+        <div className="flex items-center gap-3">
           <button
             onClick={handleToggleReadAlong}
-            className={`flex items-center gap-2 px-3.5 py-3 text-xs font-editorial font-bold uppercase tracking-[0.1em] rounded-full transition-all ${
+            aria-label={isReadAlongPlaying ? "Pause read-along" : "Start read-along"}
+            className={`w-12 h-12 rounded-full flex items-center justify-center shrink-0 transition-transform active:translate-y-[3px] ${
               isReadAlongPlaying
-                ? "bg-[#B2533E] text-[#F8F5EE]"
-                : "bg-gradient-to-r from-[#C5A059] to-[#9A7B38] text-[#09090D] gold-glow"
+                ? "bg-felt text-white shadow-[0_3px_0_var(--color-felt-deep)] active:shadow-none"
+                : "bg-sun text-ink shadow-[0_3px_0_var(--color-sun-deep)] active:shadow-none"
             }`}
           >
-            {isReadAlongPlaying ? <Pause size={12} /> : <Play size={12} fill="currentColor" />}
-            {isReadAlongPlaying ? "Pause Read-Along" : "Read Along"}
+            {isReadAlongPlaying ? <Pause size={20} className="fill-white" /> : <Play size={20} className="fill-ink ml-0.5" />}
           </button>
-
-          <div className="flex-1 min-w-0 text-right">
-            {readAlongTokenIndex !== null ? (
-              <>
-                <span className="text-xs text-[#F8F5EE]/70 uppercase tracking-[0.1em] block">Now reading</span>
-                <span className="font-editorial text-xs font-bold text-[#C5A059] truncate block">
-                  "{tokens[readAlongTokenIndex]}"
-                </span>
-              </>
-            ) : (
-              <span className="text-xs text-[#F8F5EE]/70 italic">Tap play to follow along</span>
-            )}
+          <div className="flex-1 min-w-0">
+            <p className="font-display font-extrabold text-ink text-[15px]">Read along</p>
+            <p className="text-sm text-ink-2 truncate">
+              {readAlongTokenIndex !== null ? <>Now: <b className="text-ink">{tokens[readAlongTokenIndex]}</b></> : t.tapWordHint}
+            </p>
           </div>
-
           {readAlongTokenIndex !== null && (
-            <button onClick={handleRestartReadAlong} className="p-2.5 text-[#F8F5EE]/70 hover:text-[#F8F5EE]" title="Restart from the beginning">
-              <ArrowLeft size={13} />
+            <button onClick={handleRestartReadAlong} aria-label="Restart" className="w-10 h-10 rounded-full flex items-center justify-center text-ink-2 hover:bg-sand-2">
+              <RotateCcw size={18} />
             </button>
           )}
         </div>
-
-        <div className="flex items-center gap-1.5 pt-2 border-t border-[#C5A059]/15">
-          <span className="text-xs text-[#F8F5EE]/70 uppercase tracking-[0.1em] pr-1">Speed</span>
+        <div className="segmented" role="group" aria-label="Speed">
           {READ_SPEEDS.map((s) => (
-            <button
-              key={s.key}
-              onClick={() => setReadSpeed(s.rate)}
-              className={`px-3 min-h-[44px] text-xs font-editorial font-bold rounded-full transition-all flex items-center ${
-                readSpeed === s.rate
-                  ? "bg-[#C5A059] text-[#09090D]"
-                  : "bg-[#14141C] text-[#F8F5EE]/70 border border-[#C5A059]/20 hover:text-[#F8F5EE]"
-              }`}
-            >
+            <button key={s.key} aria-pressed={readSpeed === s.rate} onClick={() => setReadSpeed(s.rate)}>
               {s.label}
             </button>
           ))}
         </div>
       </div>
 
-      {activeWord && (
-        <div className="glass-luxury-card p-3 border border-[#C5A059] flex items-center justify-between gap-2 animate-pop-in">
-          <div className="min-w-0">
-            <span className="text-xs text-[#C5A059] uppercase tracking-[0.1em] block">SELECTED WORD</span>
-            <span className="font-editorial text-sm font-extrabold text-[#F8F5EE]">"{activeWord}"</span>
-            <span className="text-xs text-[#C5A059] font-medium ml-2">→ {translation}</span>
-          </div>
-          <div className="flex items-center gap-2 shrink-0">
-            {(() => {
-              const cleanWord = activeWord.replace(/[^a-zA-Z]/g, "").toLowerCase();
-              const alreadySaved = savedWords && savedWords.some((w: any) => w.word === cleanWord);
-              return (
-                <button
-                  onClick={() => !alreadySaved && onSaveWord && onSaveWord(cleanWord, translation)}
-                  disabled={alreadySaved}
-                  className={`px-3 min-h-[44px] text-xs font-editorial font-bold uppercase tracking-[0.1em] border transition-all flex items-center ${
-                    alreadySaved
-                      ? "border-emerald-500/50 text-emerald-400 bg-emerald-950/30"
-                      : "border-[#C5A059] text-[#C5A059] hover:bg-[#C5A059]/15"
-                  }`}
-                >
-                  {alreadySaved ? "✓ SAVED" : "+ MY WORDS"}
-                </button>
-              );
-            })()}
-            <button onClick={() => setActiveWord(null)} className="p-3 text-[#F8F5EE]/70 hover:text-[#F8F5EE]">
-              <X size={14} />
-            </button>
-          </div>
-        </div>
-      )}
-
-      <div className="glass-luxury-card p-5 leading-relaxed relative border-[#C5A059]/30 max-h-[320px] overflow-y-auto">
-        <p className="font-body text-base text-[#F8F5EE] leading-8">
+      {/* Story text */}
+      <div className="card p-5 sm:p-7 max-h-[440px] overflow-y-auto">
+        <p className="text-[18px] text-ink leading-[1.9]">
           {tokens.map((tok: string, i: number) => {
             const isWord = /[a-zA-Z]/.test(tok);
-            if (!isWord) return <span key={i} className="text-[#F8F5EE]/50">{tok}</span>;
+            if (!isWord) return <span key={i}>{tok}</span>;
             const isCurrentlyRead = i === readAlongTokenIndex;
+            const isActive = activeWord === tok;
             return (
-              <span key={i} className="relative inline-block mx-0.5">
-                <span
-                  ref={(el) => { wordRefs.current[i] = el; }}
-                  onClick={() => handleWordClick(tok)}
-                  className={`px-1 py-0.5 rounded font-semibold cursor-pointer transition-all duration-300 ${
-                    isCurrentlyRead
-                      ? "bg-[#C5A059] text-[#09090D] shadow-[0_2px_10px_-2px_rgba(197,160,89,0.6)]"
-                      : "text-[#F8F5EE] hover:text-[#C5A059] hover:bg-[#C5A059]/15 border-b border-[#C5A059]/40"
-                  }`}
-                >
-                  {tok}
-                </span>
+              <span
+                key={i}
+                ref={(el) => { wordRefs.current[i] = el; }}
+                onClick={() => handleWordClick(tok)}
+                className={`rounded-md px-0.5 -mx-0.5 cursor-pointer transition-colors duration-200 ${
+                  isCurrentlyRead
+                    ? "bg-sun text-ink"
+                    : isActive
+                    ? "bg-sky-soft text-sky-deep"
+                    : "hover:bg-sky-soft decoration-ink-3/40 decoration-dotted underline underline-offset-[6px]"
+                }`}
+              >
+                {tok}
               </span>
             );
           })}
         </p>
       </div>
 
-      <div className="flex gap-2">
-        <button
-          onClick={() => setShowChoiceModal(true)}
-          className="flex-1 py-3.5 bg-[#14141C] border border-[#C5A059] text-[#C5A059] font-editorial font-bold text-[10px] tracking-widest uppercase hover:bg-[#C5A059]/10 transition-all flex items-center justify-center gap-2"
-        >
-          <Compass size={14} /> {t.interactiveChoiceTitle}
+      <div className="grid grid-cols-2 gap-3 pt-1">
+        <button onClick={() => setShowChoiceModal(true)} className="btn btn-ghost">
+          <Compass size={18} strokeWidth={2.6} /> <span className="truncate">{t.interactiveChoiceTitle}</span>
         </button>
-        <button
-          onClick={onQuizGate}
-          className="flex-1 py-3.5 bg-gradient-to-r from-[#C5A059] to-[#9A7B38] text-[#09090D] font-editorial font-extrabold text-[10px] tracking-widest uppercase gold-glow flex items-center justify-center gap-1.5"
-        >
-          {t.takeQuiz} <ChevronRight size={14} />
+        <button onClick={onQuizGate} className="btn">
+          {t.takeQuiz} <ChevronRight size={18} strokeWidth={3} />
         </button>
       </div>
 
-      {showChoiceModal && (
-        <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4 animate-pop-in">
-          <div className="w-full max-w-[360px] bg-[#0E0E14] border-2 border-[#C5A059] p-5 rounded-lg shadow-2xl space-y-4 text-center relative">
-            <button onClick={() => setShowChoiceModal(false)} className="absolute top-3 right-3 text-[#C5A059]">
-              <X size={18} />
-            </button>
-
-            <KazakhOrnament className="w-7 h-7 mx-auto text-[#C5A059]" />
-            <h3 className="font-editorial text-sm font-black text-[#F8F5EE] uppercase tracking-wider">{t.interactiveChoiceTitle}</h3>
-            <p className="font-body text-xs text-[#F8F5EE]/80">{currentStory.choicePrompt}</p>
-
-            <div className="space-y-2 pt-1">
-              <button
-                onClick={() => {
-                  setChoiceMade(true);
-                  onReward(20);
-                  setShowChoiceModal(false);
-                }}
-                className="w-full p-3 bg-[#14141C] border border-[#C5A059]/40 hover:border-[#C5A059] text-left font-body text-xs text-[#F8F5EE] transition-all"
-              >
-                {currentStory.choiceOptionA}
-              </button>
-              <button
-                onClick={() => {
-                  setChoiceMade(true);
-                  onReward(10);
-                  setShowChoiceModal(false);
-                }}
-                className="w-full p-3 bg-[#14141C] border border-[#C5A059]/40 hover:border-[#C5A059] text-left font-body text-xs text-[#F8F5EE] transition-all"
-              >
-                {currentStory.choiceOptionB}
+      {/* Word sheet */}
+      <Sheet open={!!activeWord} onClose={() => setActiveWord(null)} label="Word">
+        {activeWord && (
+          <div className="p-6 pt-4">
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <p className="eyebrow">English</p>
+                <h3 className="font-display font-black text-[32px] text-ink leading-tight">{cleanActive}</h3>
+                <p className="text-lg text-sky-deep font-semibold mt-1">{translation}</p>
+              </div>
+              <button onClick={() => safePlayVoice(activeWord)} aria-label="Listen" className="w-12 h-12 rounded-full bg-sky-soft text-sky flex items-center justify-center shrink-0">
+                <Volume2 size={22} />
               </button>
             </div>
-
-            {choiceMade && (
-              <p className="text-[10px] text-emerald-400 font-editorial uppercase tracking-widest">
-                {t.artifactUnlocked}
-              </p>
-            )}
+            <div className="grid grid-cols-2 gap-3 mt-6">
+              <button onClick={() => setActiveWord(null)} className="btn btn-ghost">{t.closeBuklet}</button>
+              <button
+                onClick={() => !alreadySaved && onSaveWord && onSaveWord(cleanActive, translation)}
+                disabled={alreadySaved}
+                className="btn btn-jade"
+              >
+                {alreadySaved ? <><Check size={18} strokeWidth={3} /> Saved</> : <><Plus size={18} strokeWidth={3} /> My words</>}
+              </button>
+            </div>
           </div>
+        )}
+      </Sheet>
+
+      {/* Choice sheet */}
+      <Sheet open={showChoiceModal} onClose={() => setShowChoiceModal(false)} label={t.interactiveChoiceTitle}>
+        <div className="p-6 pt-4 space-y-4">
+          <div className="flex items-center gap-3">
+            <span className="w-11 h-11 rounded-2xl bg-sun-soft flex items-center justify-center shrink-0">
+              <Compass size={22} className="text-sun-deep" />
+            </span>
+            <h3 className="font-display font-black text-xl text-ink">{t.interactiveChoiceTitle}</h3>
+          </div>
+          <p className="text-[15px] text-ink-2">{currentStory.choicePrompt}</p>
+          <div className="space-y-2.5">
+            {[{ label: currentStory.choiceOptionA, xp: 20 }, { label: currentStory.choiceOptionB, xp: 10 }].map((opt) => (
+              <button
+                key={opt.label}
+                onClick={() => {
+                  setChoiceMade(true);
+                  onReward(opt.xp);
+                  setShowChoiceModal(false);
+                }}
+                className="tile w-full p-4 text-left text-[15px] font-medium text-ink hover:border-sky/50"
+              >
+                {opt.label}
+              </button>
+            ))}
+          </div>
+          {choiceMade && <p className="text-sm text-jade-deep font-bold text-center">{t.artifactUnlocked}</p>}
+        </div>
+      </Sheet>
+    </div>
+  );
+}
+
+/* Words tab switcher shared by flashcards and matching. */
+function WordsHeader({ mode, setMode, trailing }: { mode?: string; setMode?: (m: string) => void; trailing?: React.ReactNode }) {
+  return (
+    <>
+      <ScreenHeader eyebrow="Vocabulary" title={mode === "match" ? "Find the pair" : "Flashcards"} trailing={trailing} />
+      {setMode && (
+        <div className="segmented mb-5" role="group" aria-label="Practice mode">
+          <button aria-pressed={mode === "cards"} onClick={() => setMode("cards")}>Flashcards</button>
+          <button aria-pressed={mode === "match"} onClick={() => setMode("match")}>Matching</button>
         </div>
       )}
+    </>
+  );
+}
+
+function EmptyState({ text }: { text: string }) {
+  return (
+    <div className="card p-8 text-center">
+      <span className="mx-auto w-16 h-16 rounded-full bg-sky-soft flex items-center justify-center">
+        <Layers className="text-sky" size={28} />
+      </span>
+      <p className="text-[15px] text-ink-2 leading-relaxed mt-4 max-w-[280px] mx-auto">{text}</p>
     </div>
   );
 }
 
 /* --- 3.5 FLASHCARDS SCREEN --- */
-export function FlashcardsScreen({ savedWords, onReward }: { savedWords: SavedWord[]; onReward: (xp: number) => void }) {
+export function FlashcardsScreen({ savedWords, onReward, mode, setMode }: { savedWords: SavedWord[]; onReward: (xp: number) => void; mode?: string; setMode?: (m: string) => void }) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [flipped, setFlipped] = useState(false);
 
   if (!savedWords || savedWords.length === 0) {
     return (
-      <div className="px-5 pb-6 space-y-4 animate-pop-in">
-        <div className="border-b border-white/[0.06] pb-3">
-          <span className="px-2 py-0.5 terracotta-badge text-[8px]">VOCABULARY DRILL</span>
-          <h2 className="font-editorial text-base font-bold text-[#F8F5EE] uppercase mt-1">FLASHCARDS</h2>
-        </div>
-        <div className="glass-luxury-card p-6 text-center space-y-2">
-          <Layers className="mx-auto text-[#C5A059]/50" size={28} />
-          <p className="font-body text-xs text-[#F8F5EE]/70 leading-relaxed">
-            No words saved yet. Tap any word while reading a story to save it to your flashcards bank!
-          </p>
-        </div>
+      <div className="animate-pop-in">
+        <WordsHeader mode={mode} setMode={setMode} />
+        <EmptyState text="No words saved yet. Tap any word while reading a story to save it here." />
       </div>
     );
   }
@@ -591,61 +616,43 @@ export function FlashcardsScreen({ savedWords, onReward }: { savedWords: SavedWo
   };
 
   return (
-    <div className="px-5 pb-6 space-y-4 animate-pop-in">
-      <div className="border-b border-white/[0.06] pb-3 flex items-center justify-between">
-        <div>
-          <span className="px-2 py-0.5 terracotta-badge text-[8px]">VOCABULARY DRILL</span>
-          <h2 className="font-editorial text-base font-bold text-[#F8F5EE] uppercase mt-1">FLASHCARDS</h2>
-        </div>
-        <span className="text-[10px] font-editorial text-[#C5A059] font-bold">
-          {currentIndex + 1} / {savedWords.length}
-        </span>
-      </div>
+    <div className="animate-pop-in">
+      <WordsHeader mode={mode} setMode={setMode} trailing={<span className="chip text-ink-2">{currentIndex + 1} / {savedWords.length}</span>} />
 
-      <div
+      <div className="track mb-5"><span style={{ width: `${((currentIndex + 1) / savedWords.length) * 100}%` }} /></div>
+
+      <button
         onClick={() => {
           setFlipped(!flipped);
           safePlayVoice(currentWord.word);
         }}
-        className="glass-luxury-card glass-card-hover min-h-[220px] p-6 flex flex-col items-center justify-center text-center cursor-pointer relative overflow-hidden transition-all duration-500"
+        aria-label="Flip card"
+        className="flip block w-full h-[280px]"
       >
-        <span className="absolute top-3 left-3 text-[8px] font-editorial text-[#C5A059]/70 uppercase tracking-widest">
-          TAP TO FLIP
-        </span>
-
-        {!flipped ? (
-          <div className="space-y-2 animate-pop-in">
-            <h3 className="font-editorial text-2xl font-black text-[#F8F5EE]">{currentWord.word}</h3>
-            <p className="text-xs font-body text-[#F8F5EE]/70 italic">English Word</p>
+        <div className={`flip-inner w-full h-full ${flipped ? "is-flipped" : ""}`}>
+          <div className="flip-face card overflow-hidden flex flex-col items-center justify-center p-6">
+            <KilimStrip className="absolute top-0 inset-x-0 h-2 w-full" />
+            <span className="eyebrow">English</span>
+            <span className="font-display font-black text-[40px] text-ink mt-2">{currentWord.word}</span>
+            <span className="mt-6 text-sm text-ink-3 flex items-center gap-1.5"><Volume2 size={15} /> Tap to flip</span>
           </div>
-        ) : (
-          <div className="space-y-2 animate-pop-in">
-            <h3 className="font-editorial text-xl font-extrabold text-[#C5A059]">{currentWord.translation}</h3>
-            <p className="text-xs font-body text-[#F8F5EE]/70">Kazakh Translation</p>
+          <div className="flip-face flip-back rounded-[24px] bg-sky shadow-[0_6px_0_var(--color-sky-deep)] flex flex-col items-center justify-center p-6 text-white">
+            <span className="text-xs font-bold uppercase tracking-[0.08em] text-white/75">Qazaqşa</span>
+            <span className="font-display font-black text-[32px] mt-2 text-center">{currentWord.translation}</span>
           </div>
-        )}
-      </div>
+        </div>
+      </button>
 
-      <div className="flex gap-3">
-        <button
-          onClick={() => handleNext(false)}
-          className="flex-1 py-3 bg-[#14141C] border border-[#B2533E]/50 text-[#B2533E] font-editorial text-[10px] font-bold uppercase tracking-wider hover:bg-[#B2533E]/10"
-        >
-          Still Learning
-        </button>
-        <button
-          onClick={() => handleNext(true)}
-          className="flex-1 py-3 bg-[#14141C] border border-emerald-500/50 text-emerald-400 font-editorial text-[10px] font-bold uppercase tracking-wider hover:bg-emerald-950/20"
-        >
-          I Knew It (+2 XP)
-        </button>
+      <div className="grid grid-cols-2 gap-3 mt-7">
+        <button onClick={() => handleNext(false)} className="btn btn-ghost">Not yet</button>
+        <button onClick={() => handleNext(true)} className="btn btn-jade">I knew it</button>
       </div>
     </div>
   );
 }
 
 /* --- 3.6 MATCHING GAME SCREEN --- */
-export function MatchingGame({ savedWords, onReward }: any) {
+export function MatchingGame({ savedWords, onReward, mode, setMode }: any) {
   const GRID_SIZE = 6;
   const [round, setRound] = useState(0);
   const [tiles, setTiles] = useState<any[]>([]);
@@ -698,56 +705,35 @@ export function MatchingGame({ savedWords, onReward }: any) {
 
   if (!savedWords || savedWords.length < 3) {
     return (
-      <div className="px-5 pb-6 space-y-4 animate-pop-in">
-        <div className="border-b border-white/[0.06] pb-3">
-          <span className="px-2 py-0.5 terracotta-badge text-[8px]">MATCHING GAME</span>
-          <h2 className="font-editorial text-base font-bold text-[#F8F5EE] uppercase mt-1">FIND THE PAIR</h2>
-        </div>
-        <div className="glass-luxury-card p-6 text-center space-y-2">
-          <Layers className="mx-auto text-[#C5A059]/50" size={28} />
-          <p className="font-body text-xs text-[#F8F5EE]/70 leading-relaxed">
-            Save at least 3 words while reading to unlock the matching game.
-          </p>
-        </div>
+      <div className="animate-pop-in">
+        <WordsHeader mode={mode} setMode={setMode} />
+        <EmptyState text="Save at least 3 words while reading to unlock the matching game." />
       </div>
     );
   }
 
   if (roundComplete) {
     return (
-      <div className="px-5 pb-6 space-y-4 animate-pop-in">
-        <div className="border-b border-white/[0.06] pb-3">
-          <span className="px-2 py-0.5 gold-badge text-[8px]">MATCHING GAME</span>
-          <h2 className="font-editorial text-base font-bold text-[#F8F5EE] uppercase mt-1">FIND THE PAIR</h2>
-        </div>
-        <div className="glass-luxury-card p-6 text-center space-y-3">
-          <Trophy className="mx-auto text-[#C5A059]" size={28} />
-          <p className="font-editorial text-sm font-bold text-[#F8F5EE] uppercase">All Matched!</p>
-          <p className="font-body text-xs text-[#F8F5EE]/70">Great recognition speed.</p>
-          <button
-            onClick={() => setRound((r) => r + 1)}
-            className="w-full py-3 bg-gradient-to-r from-[#C5A059] to-[#9A7B38] text-[#09090D] font-editorial font-bold text-xs uppercase"
-          >
-            Play Next Round
-          </button>
+      <div className="animate-pop-in">
+        <WordsHeader mode={mode} setMode={setMode} />
+        <div className="card p-8 text-center">
+          <span className="mx-auto w-20 h-20 rounded-full bg-sun flex items-center justify-center shadow-[0_5px_0_var(--color-sun-deep)]">
+            <Trophy className="text-ink" size={36} />
+          </span>
+          <p className="font-display font-black text-2xl text-ink mt-5">All matched!</p>
+          <p className="text-[15px] text-ink-2 mt-1">Great recognition speed.</p>
+          <button onClick={() => setRound((r) => r + 1)} className="btn w-full mt-6">Next round</button>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="px-5 pb-6 space-y-4 animate-pop-in">
-      <div className="border-b border-white/[0.06] pb-3 flex items-center justify-between">
-        <div>
-          <span className="px-2 py-0.5 terracotta-badge text-[8px]">MATCHING GAME</span>
-          <h2 className="font-editorial text-base font-bold text-[#F8F5EE] uppercase mt-1">FIND THE PAIR</h2>
-        </div>
-        <span className="text-[10px] font-editorial text-[#C5A059] font-bold">
-          Matched: {matchedIds.length} / {tiles.length / 2}
-        </span>
-      </div>
+    <div className="animate-pop-in">
+      <WordsHeader mode={mode} setMode={setMode} trailing={<span className="chip text-ink-2">{matchedIds.length} / {tiles.length / 2}</span>} />
+      <div className="track mb-5"><span style={{ width: `${tiles.length ? (matchedIds.length / (tiles.length / 2)) * 100 : 0}%` }} /></div>
 
-      <div className="grid grid-cols-2 gap-2.5">
+      <div className="grid grid-cols-2 gap-3">
         {tiles.map((tile) => {
           const isMatched = matchedIds.includes(tile.pairId);
           const isSelected = selectedTile?.tileId === tile.tileId;
@@ -758,14 +744,14 @@ export function MatchingGame({ savedWords, onReward }: any) {
               key={tile.tileId}
               onClick={() => handleTileTap(tile)}
               disabled={isMatched}
-              className={`p-3.5 min-h-[64px] text-center rounded-[14px] font-editorial text-xs transition-all duration-200 border flex items-center justify-center ${
+              className={`tile p-3 min-h-[68px] text-center font-display font-bold text-[15px] flex items-center justify-center ${
                 isMatched
-                  ? "bg-emerald-950/20 border-emerald-500/30 text-emerald-400 opacity-40"
+                  ? "tile-correct opacity-50"
                   : isWrong
-                  ? "bg-rose-950/40 border-rose-500 text-rose-300 animate-answer-wrong"
+                  ? "tile-wrong animate-answer-wrong"
                   : isSelected
-                  ? "bg-[#C5A059] border-[#C5A059] text-[#09090D] font-bold scale-[1.02]"
-                  : "bg-[#14141C] border-[#C5A059]/20 text-[#F8F5EE] hover:border-[#C5A059]/60"
+                  ? "tile-selected"
+                  : "text-ink hover:border-sky/40"
               }`}
             >
               {tile.text}
@@ -778,11 +764,12 @@ export function MatchingGame({ savedWords, onReward }: any) {
 }
 
 /* --- 6. QUIZ SCREEN --- */
-export function QuizScreen({ onReward, t, onQuizFinish, questions }: {
+export function QuizScreen({ onReward, t, onQuizFinish, questions, storyTitle }: {
   onReward: (xp: number) => void;
   t: Record<string, string>;
   onQuizFinish?: (correct: number, total: number) => void;
   questions: { type?: string; q?: string; sentence?: string; options: string[]; correct: number }[];
+  storyTitle?: string;
 }) {
   const [qIndex, setQIndex] = useState(0);
   const [selected, setSelected] = useState<number | null>(null);
@@ -865,33 +852,25 @@ export function QuizScreen({ onReward, t, onQuizFinish, questions }: {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [finished]);
 
-  const HeartsRow = () => (
-    <div className="flex items-center gap-1">
-      {Array.from({ length: MAX_HEARTS }, (_, i) => (
-        <Flame key={i} size={13} className={i < hearts ? "text-[#B2533E] fill-[#B2533E]" : "text-[#F8F5EE]/15"} />
-      ))}
-    </div>
+  const heartsChip = (
+    <span className="chip text-felt border-transparent bg-transparent px-0" aria-label={`${hearts} hearts`}>
+      <Heart size={22} className={hearts > 0 ? "fill-felt" : "text-ink-3"} /> {hearts}
+    </span>
   );
 
   if (outOfHearts) {
     return (
-      <div className="px-5 pb-6 space-y-5 animate-pop-in">
-        <div className="border-b border-white/[0.06] pb-3 flex justify-between items-center">
-          <div>
-            <span className="px-2 py-0.5 terracotta-badge text-[8px]">QUIZ MODULE</span>
-            <h2 className="font-editorial text-base font-bold text-[#F8F5EE] uppercase mt-1">{t.quizTitle}</h2>
-          </div>
-          <HeartsRow />
-        </div>
-        <div className="glass-luxury-card p-6 text-center space-y-3">
-          <Flame className="mx-auto text-[#B2533E]" size={30} />
-          <p className="font-editorial text-sm font-bold text-[#F8F5EE] uppercase">Out of Hearts</p>
-          <p className="font-body text-xs text-[#F8F5EE]/70">
-            You've run out of hearts for this attempt. Re-read the story to refresh your memory, then try again from the start.
+      <div className="animate-pop-in">
+        <ScreenHeader eyebrow={storyTitle ? displayTitle(storyTitle) : undefined} title={t.quizTitle} />
+        <div className="card p-8 text-center">
+          <span className="mx-auto w-20 h-20 rounded-full bg-felt-soft flex items-center justify-center">
+            <Heart className="text-felt" size={38} />
+          </span>
+          <p className="font-display font-black text-2xl text-ink mt-5">Out of hearts</p>
+          <p className="text-[15px] text-ink-2 mt-2 leading-relaxed">
+            Re-read the story to refresh your memory, then try again from the start.
           </p>
-          <button onClick={handleRestart} className="w-full py-3 bg-gradient-to-r from-[#C5A059] to-[#9A7B38] text-[#09090D] font-editorial font-bold text-[10px] tracking-widest uppercase gold-glow">
-            Restart Quiz
-          </button>
+          <button onClick={handleRestart} className="btn btn-felt w-full mt-6">Restart quiz</button>
         </div>
       </div>
     );
@@ -899,122 +878,144 @@ export function QuizScreen({ onReward, t, onQuizFinish, questions }: {
 
   if (finished) {
     const passed = correctCount >= Math.ceil(questions.length * 0.6);
+    const accuracy = Math.round((correctCount / questions.length) * 100);
     return (
-      <div className="px-5 pb-6 space-y-5 animate-pop-in">
-        <div className="border-b border-white/[0.06] pb-3 flex justify-between items-center">
-          <div>
-            <span className="px-2 py-0.5 gold-badge text-[8px]">QUIZ MODULE</span>
-            <h2 className="font-editorial text-base font-bold text-[#F8F5EE] uppercase mt-1">{t.quizTitle}</h2>
-          </div>
-          <Trophy className="text-[#C5A059] w-5 h-5" />
-        </div>
-        <div className="glass-luxury-card p-6 text-center space-y-3">
-          <Trophy className={`mx-auto ${passed ? "text-[#C5A059]" : "text-[#F8F5EE]/40"}`} size={30} />
-          <p className="font-editorial text-lg font-black text-[#F8F5EE]">{correctCount} / {questions.length}</p>
-          <p className="font-body text-xs text-[#F8F5EE]/70">
+      <div className="animate-pop-in">
+        <div className="text-center pt-6">
+          <span className={`mx-auto w-28 h-28 rounded-full flex items-center justify-center ${passed ? "bg-sun shadow-[0_6px_0_var(--color-sun-deep)]" : "bg-sand-3 shadow-[0_6px_0_var(--color-line-2)]"}`}>
+            <Trophy className={passed ? "text-ink" : "text-ink-3"} size={52} />
+          </span>
+          <h2 className="large-title mt-6">{passed ? "Lesson complete!" : "Almost there"}</h2>
+          <p className="text-[15px] text-ink-2 mt-2 max-w-[320px] mx-auto">
             {passed ? "Great comprehension! You understood the story well." : "Re-read the story and try again — comprehension takes practice."}
           </p>
-          <button onClick={handleRestart} className="w-full py-3 bg-gradient-to-r from-[#C5A059] to-[#9A7B38] text-[#09090D] font-editorial font-bold text-[10px] tracking-widest uppercase gold-glow">
-            {t.tryAgain}
-          </button>
         </div>
+        <div className="grid grid-cols-3 gap-3 mt-7">
+          {[
+            { label: "Correct", value: `${correctCount}/${questions.length}`, color: "border-sky text-sky-deep", head: "bg-sky" },
+            { label: "Accuracy", value: `${accuracy}%`, color: "border-jade text-jade-deep", head: "bg-jade" },
+            { label: "Hearts", value: `${hearts}`, color: "border-felt text-felt-deep", head: "bg-felt" },
+          ].map((s) => (
+            <div key={s.label} className={`rounded-2xl border-2 overflow-hidden ${s.color}`}>
+              <p className={`${s.head} text-white text-xs font-bold uppercase tracking-[0.06em] py-1 text-center`}>{s.label}</p>
+              <p className="font-display font-black text-xl text-center py-3 bg-card">{s.value}</p>
+            </div>
+          ))}
+        </div>
+        <button onClick={handleRestart} className="btn w-full mt-7">{t.tryAgain}</button>
       </div>
     );
   }
 
+  const isCorrect = submitted && !timedOut && selected === question.correct;
+
   return (
-    <div className="px-5 pb-6 space-y-5 animate-pop-in">
-      <div className="border-b border-white/[0.06] pb-3 flex justify-between items-center">
-        <div>
-          <span className="px-2 py-0.5 gold-badge text-[8px]">QUIZ MODULE</span>
-          <h2 className="font-editorial text-base font-bold text-[#F8F5EE] uppercase mt-1">{t.quizTitle}</h2>
-        </div>
-        <div className="flex items-center gap-2">
-          <HeartsRow />
-          <span className="text-[10px] text-[#C5A059] font-bold bg-[#14141C] px-2.5 py-1 rounded-full border border-[#C5A059]/30">
-            {qIndex + 1} / {questions.length}
-          </span>
-        </div>
+    <div className="animate-pop-in">
+      {/* Progress + hearts */}
+      <div className="flex items-center gap-4 pt-2">
+        <div className="track flex-1"><span style={{ width: `${((qIndex + (submitted ? 1 : 0)) / questions.length) * 100}%` }} /></div>
+        {heartsChip}
       </div>
 
-      <div className="flex items-center gap-2">
-        <div className="flex-1 h-1.5 bg-[#14141C] rounded-full overflow-hidden border border-[#C5A059]/10">
-          <div
-            className={`h-full rounded-full transition-all duration-1000 ease-linear ${timeLeft <= 5 ? "bg-[#B2533E]" : "bg-gradient-to-r from-[#C5A059] to-[#9A7B38]"}`}
-            style={{ width: `${Math.max(0, (timeLeft / QUESTION_TIME) * 100)}%` }}
-          />
-        </div>
-        <span className={`text-xs font-bold tabular-nums w-5 text-right ${timeLeft <= 5 ? "text-[#B2533E]" : "text-[#F8F5EE]/70"}`}>
-          {Math.max(0, timeLeft)}s
+      <div className="flex items-center justify-between mt-5">
+        <p className="eyebrow">{storyTitle ? displayTitle(storyTitle) : t.quizTitle}</p>
+        <span className={`chip h-7 text-[13px] ${timeLeft <= 5 ? "text-felt border-felt/40 bg-felt-soft" : "text-ink-2"}`}>
+          <Timer size={14} /> {Math.max(0, timeLeft)}s
         </span>
       </div>
 
-      <div className="glass-luxury-card p-5 space-y-4">
+      <div className="mt-3 mb-6">
         {question.type === "fillblank" ? (
           <>
-            <span className="text-xs text-[#C5A059] uppercase tracking-[0.1em] font-bold block">FILL IN THE BLANK</span>
-            <p className="font-body text-sm font-semibold text-[#F8F5EE] leading-relaxed">
+            <h2 className="font-display font-black text-[22px] text-ink">Fill in the blank</h2>
+            <p className="text-[18px] text-ink leading-relaxed mt-3">
               {(question.sentence || "").split("___")[0]}
-              <span className="inline-block min-w-[54px] border-b-2 border-[#C5A059] mx-1 text-center text-[#C5A059]">
-                {submitted && selected !== null ? question.options[selected] : " "}
+              <span className="inline-block min-w-[72px] border-b-[3px] border-sky mx-1 text-center text-sky-deep font-bold">
+                {selected !== null ? question.options[selected] : " "}
               </span>
               {(question.sentence || "").split("___")[1]}
             </p>
           </>
         ) : (
-          <p className="font-body text-xs font-semibold text-[#F8F5EE] leading-relaxed">{question.q}</p>
+          <h2 className="font-display font-black text-[22px] leading-snug text-ink">{question.q}</h2>
         )}
+      </div>
 
-        <div className="space-y-2">
-          {question.options.map((opt: string, idx: number) => {
-            let style = "border-[#C5A059]/20 bg-[#14141C]/80 text-[#F8F5EE]/80 hover:border-[#C5A059]/50";
-            let anim = "";
-            if (selected === idx) style = "border-[#C5A059] bg-[#C5A059]/15 text-[#C5A059] font-bold";
-            if (submitted) {
-              if (idx === question.correct) {
-                style = "border-emerald-500/80 bg-emerald-950/50 text-emerald-300 font-bold";
-                anim = "animate-answer-correct";
-              } else if (selected === idx) {
-                style = "border-red-500/80 bg-red-950/50 text-red-300";
-                anim = "animate-answer-wrong";
-              }
+      <div className="space-y-3">
+        {question.options.map((opt: string, idx: number) => {
+          let state = "text-ink hover:border-sky/40";
+          let anim = "";
+          if (selected === idx) state = "tile-selected";
+          if (submitted) {
+            if (idx === question.correct) {
+              state = "tile-correct";
+              anim = "animate-answer-correct";
+            } else if (selected === idx) {
+              state = "tile-wrong";
+              anim = "animate-answer-wrong";
+            } else {
+              state = "text-ink-3";
             }
-            return (
-              <button
-                key={idx}
-                disabled={submitted}
-                onClick={() => setSelected(idx)}
-                className={`w-full text-left p-3.5 border font-body text-xs transition-all flex items-center justify-between ${style} ${anim}`}
-              >
-                <span>{opt}</span>
-                {submitted && idx === question.correct && <CheckCircle2 size={15} className="text-emerald-400" />}
-              </button>
-            );
-          })}
-        </div>
+          }
+          return (
+            <button
+              key={idx}
+              disabled={submitted}
+              onClick={() => setSelected(idx)}
+              className={`tile w-full text-left p-3.5 flex items-center gap-3.5 ${state} ${anim}`}
+            >
+              <span className="w-8 h-8 rounded-lg border-2 border-current/25 flex items-center justify-center font-display font-black text-sm shrink-0 opacity-70">
+                {idx + 1}
+              </span>
+              <span className="flex-1 text-[16px] font-semibold">{opt}</span>
+              {submitted && idx === question.correct && <Check size={20} strokeWidth={3} className="text-jade" />}
+            </button>
+          );
+        })}
       </div>
 
       {!submitted ? (
-        <button
-          onClick={handleCheck}
-          disabled={selected === null}
-          className="w-full py-3.5 bg-gradient-to-r from-[#C5A059] to-[#9A7B38] disabled:opacity-40 text-[#09090D] font-editorial font-extrabold text-xs tracking-[0.18em] uppercase gold-glow rounded-full"
-        >
+        <button onClick={handleCheck} disabled={selected === null} className="btn w-full mt-7">
           {t.checkAnswer}
         </button>
       ) : (
-        <div className="p-4 border border-emerald-500/30 bg-emerald-950/30 backdrop-blur-md text-center space-y-2 animate-pop-in">
-          <p className="font-editorial text-xs font-extrabold text-emerald-400 uppercase tracking-wider">
-            {timedOut ? "Time's Up" : selected === question.correct ? t.correctMsg : t.wrongMsg}
-          </p>
-          <button
-            onClick={handleNext}
-            className="text-xs font-editorial text-[#C5A059] font-bold uppercase hover:text-[#F8F5EE] flex items-center justify-center gap-1 mx-auto"
-          >
-            {qIndex + 1 >= questions.length ? "See Results" : "Next Question"} <ChevronRight size={12} />
+        <div className={`mt-7 rounded-[24px] p-5 animate-pop-in ${isCorrect ? "bg-jade-soft" : "bg-felt-soft"}`}>
+          <div className="flex items-center gap-3">
+            <span className={`w-11 h-11 rounded-full bg-card flex items-center justify-center shrink-0 ${isCorrect ? "text-jade" : "text-felt"}`}>
+              {isCorrect ? <Check size={24} strokeWidth={3.5} /> : <X size={24} strokeWidth={3.5} />}
+            </span>
+            <div className="min-w-0">
+              <p className={`font-display font-black text-xl ${isCorrect ? "text-jade-deep" : "text-felt-deep"}`}>
+                {timedOut ? "Time's up" : isCorrect ? t.correctMsg : t.wrongMsg}
+              </p>
+              {!isCorrect && (
+                <p className="text-[15px] text-felt-deep font-semibold">{question.options[question.correct]}</p>
+              )}
+            </div>
+          </div>
+          <button onClick={handleNext} className={`btn w-full mt-4 ${isCorrect ? "btn-jade" : "btn-felt"}`}>
+            {qIndex + 1 >= questions.length ? "See results" : "Continue"}
           </button>
         </div>
       )}
+    </div>
+  );
+}
+
+/* Score ring for pronunciation results. */
+function ScoreRing({ value, size = 120 }: { value: number; size?: number }) {
+  const stroke = 12;
+  const r = (size - stroke) / 2;
+  const c = 2 * Math.PI * r;
+  const color = value >= 80 ? "var(--color-jade)" : value >= 60 ? "var(--color-sun)" : "var(--color-felt)";
+  return (
+    <div className="relative" style={{ width: size, height: size }}>
+      <svg viewBox={`0 0 ${size} ${size}`} className="w-full h-full -rotate-90">
+        <circle cx={size / 2} cy={size / 2} r={r} stroke="var(--color-sand-2)" strokeWidth={stroke} fill="none" />
+        <circle cx={size / 2} cy={size / 2} r={r} stroke={color} strokeWidth={stroke} fill="none" strokeLinecap="round"
+          strokeDasharray={c} strokeDashoffset={c * (1 - value / 100)} style={{ transition: "stroke-dashoffset 0.8s cubic-bezier(0.16,1,0.3,1)" }} />
+      </svg>
+      <span className="absolute inset-0 flex items-center justify-center font-display font-black text-3xl text-ink">{value}</span>
     </div>
   );
 }
@@ -1132,69 +1133,65 @@ export function SpeakScreen({ onReward, t }: {
       ? t.greatIntonation
       : overallScore >= 70
       ? "Good — close to the target. Listen again and try once more."
-      : "Keep practicing — tap the quote to hear it again, then try to match it closely.";
+      : "Keep practicing — tap the speaker to hear it again, then try to match it closely.";
 
   return (
-    <div className="px-5 pb-6 space-y-5 animate-pop-in">
-      <div className="border-b border-[#C5A059]/20 pb-3 flex justify-between items-center">
-        <div>
-          <span className="px-2 py-0.5 terracotta-badge text-[8px]">SPEECH EVALUATION</span>
-          <h2 className="font-editorial text-base font-bold text-[#F8F5EE] uppercase mt-1">{t.speakTitle}</h2>
+    <div className="animate-pop-in">
+      <ScreenHeader eyebrow="Pronunciation" title={t.speakTitle} />
+
+      <div className="card p-6">
+        <p className="eyebrow">{t.speakSubtitle}</p>
+        <div className="flex items-start gap-4 mt-3">
+          <p className="flex-1 font-display font-extrabold text-[22px] leading-snug text-ink">“{targetPhrase}”</p>
+          <button onClick={() => safePlayVoice(targetPhrase)} aria-label="Listen" className="w-12 h-12 rounded-full bg-sky-soft text-sky flex items-center justify-center shrink-0">
+            <Volume2 size={22} />
+          </button>
         </div>
-        <Mic className="text-[#C5A059] w-5 h-5" />
       </div>
 
-      <div className="glass-luxury-card p-6 text-center space-y-3">
-        <p className="font-body text-xs text-[#F8F5EE]/70">{t.speakSubtitle}</p>
-        <blockquote
-          className="font-editorial text-sm font-bold text-[#C5A059] uppercase tracking-wide leading-relaxed cursor-pointer"
-          onClick={() => safePlayVoice(targetPhrase)}
-        >
-          "{targetPhrase}" 🔊
-        </blockquote>
-      </div>
-
-      <div className="flex flex-col items-center justify-center py-4 space-y-3">
-        <button
-          onClick={toggleRecord}
-          className={`w-20 h-20 rounded-full flex items-center justify-center transition-all ${
-            recording
-              ? "bg-[#B2533E] text-[#F8F5EE] animate-pulse shadow-[0_0_30px_rgba(178,83,62,0.6)]"
-              : "bg-[#14141C] border border-[#C5A059] text-[#C5A059] hover:bg-[#C5A059] hover:text-[#09090D] gold-glow"
-          }`}
-        >
-          {recording ? <MicOff size={28} /> : <Mic size={28} />}
-        </button>
-        <span className="font-editorial text-xs tracking-[0.1em] text-[#C5A059] uppercase">
-          {recording ? t.recording : t.pressMic}
-        </span>
+      <div className="flex flex-col items-center justify-center py-10">
+        <div className="relative">
+          {recording && <span className="absolute inset-0 rounded-full bg-felt/30 animate-ping" />}
+          <button
+            onClick={toggleRecord}
+            aria-label={recording ? "Stop recording" : "Start recording"}
+            className={`relative w-28 h-28 rounded-full flex items-center justify-center text-white transition-transform active:translate-y-[5px] ${
+              recording
+                ? "bg-felt shadow-[0_7px_0_var(--color-felt-deep)] active:shadow-[0_2px_0_var(--color-felt-deep)]"
+                : "bg-sky shadow-[0_7px_0_var(--color-sky-deep)] active:shadow-[0_2px_0_var(--color-sky-deep)]"
+            }`}
+          >
+            {recording ? <MicOff size={44} /> : <Mic size={44} />}
+          </button>
+        </div>
+        <span className="mt-5 text-[15px] font-semibold text-ink-2">{recording ? t.recording : t.pressMic}</span>
       </div>
 
       {speechError && (
-        <div className="glass-luxury-card p-4 text-center space-y-1 animate-pop-in border-[#B2533E]/40">
-          <p className="font-body text-xs text-[#B2533E]">{speechError}</p>
+        <div className="rounded-2xl bg-felt-soft text-felt-deep p-4 text-sm font-medium text-center animate-pop-in">
+          {speechError}
         </div>
       )}
 
       {scores !== null && (
-        <div className="glass-luxury-card p-4 text-center space-y-2 animate-pop-in border-emerald-500/30">
-          <p className="font-editorial text-xl font-extrabold text-emerald-400">{scores.pronunciation}% {t.accuracy}</p>
-          {transcript && <p className="font-body text-xs text-[#F8F5EE]/70 italic">You said: "{transcript}"</p>}
-          <div className="grid grid-cols-3 gap-2 pt-1">
-            <div>
-              <p className="font-editorial text-sm font-bold text-[#C5A059]">{scores.accuracy}%</p>
-              <p className="text-xs text-[#F8F5EE]/70 uppercase tracking-[0.1em]">Accuracy</p>
-            </div>
-            <div>
-              <p className="font-editorial text-sm font-bold text-[#C5A059]">{scores.fluency}%</p>
-              <p className="text-xs text-[#F8F5EE]/70 uppercase tracking-[0.1em]">Fluency</p>
-            </div>
-            <div>
-              <p className="font-editorial text-sm font-bold text-[#C5A059]">{scores.completeness}%</p>
-              <p className="text-xs text-[#F8F5EE]/70 uppercase tracking-[0.1em]">Completeness</p>
+        <div className="card p-6 animate-pop-in">
+          <div className="flex items-center gap-5">
+            <ScoreRing value={scores.pronunciation} />
+            <div className="flex-1 space-y-3">
+              {[
+                { label: "Accuracy", v: scores.accuracy },
+                { label: "Fluency", v: scores.fluency },
+                { label: "Completeness", v: scores.completeness },
+              ].map((m) => (
+                <div key={m.label}>
+                  <div className="flex justify-between text-sm"><span className="text-ink-2">{m.label}</span><b className="text-ink">{m.v}</b></div>
+                  <div className="track h-2 mt-1"><span style={{ width: `${m.v}%` }} /></div>
+                </div>
+              ))}
             </div>
           </div>
-          <p className="font-body text-xs text-[#F8F5EE]/90 pt-1">{feedbackMessage}</p>
+          {transcript && <p className="text-sm text-ink-2 italic mt-5">You said: “{transcript}”</p>}
+          <p className="text-[15px] text-ink mt-2">{feedbackMessage}</p>
         </div>
       )}
     </div>
@@ -1202,163 +1199,152 @@ export function SpeakScreen({ onReward, t }: {
 }
 
 /* --- 8. PROFILE SCREEN --- */
-export function ProfileScreen({ xp, t, savedWordsCount = 0, unlockedAchievements = [], userName = "Learner", onSignOut, streakDays = 0 }: {
+export function ProfileScreen({ xp, t, lang = "kk", setLang, savedWordsCount = 0, unlockedAchievements = [], userName = "Learner", onSignOut, streakDays = 0, quizzesCompleted = 0 }: {
   xp: number;
   t: Record<string, string>;
+  lang?: string;
+  setLang?: (l: string) => void;
   savedWordsCount?: number;
   unlockedAchievements?: string[];
   userName?: string;
   onSignOut: () => void;
   streakDays?: number;
+  quizzesCompleted?: number;
 }) {
   const [showBuklet, setShowBuklet] = useState(false);
+  const rank = Math.floor(xp / 100);
+  const initial = (userName || "?").trim().charAt(0).toUpperCase();
+
+  const stats = [
+    { label: t.streakLabel, value: streakDays, Icon: Flame, cls: "text-felt fill-felt" },
+    { label: t.totalXpLabel, value: xp, Icon: Zap, cls: "text-sun-deep fill-sun" },
+    { label: lang === "kk" ? "Sözder" : "Words", value: savedWordsCount, Icon: Layers, cls: "text-sky" },
+    { label: lang === "kk" ? "Synaqtar" : "Quizzes", value: quizzesCompleted, Icon: Trophy, cls: "text-jade" },
+  ];
+
+  const share = async () => {
+    const shareText = `🏆 ${userName} is learning English through Kazakh folklore on Ertegi English!\n${xp} XP • ${streakDays}-day streak • ${unlockedAchievements.length}/${ACHIEVEMENTS.length} badges unlocked`;
+    const shareUrl = window.location.href;
+    try {
+      if (navigator.share) {
+        await navigator.share({ title: "Ertegi English — My Progress", text: shareText, url: shareUrl });
+      } else {
+        await navigator.clipboard.writeText(`${shareText}\n${shareUrl}`);
+        alert("Copied to clipboard — paste it anywhere to share!");
+      }
+    } catch {
+      // AbortError: user dismissed native share sheet — not an error
+    }
+  };
 
   return (
-    <div className="px-5 pb-6 space-y-5 animate-pop-in">
-      <div className="border-b border-[#C5A059]/20 pb-3 flex justify-between items-center">
-        <div>
-          <span className="px-2 py-0.5 gold-badge text-[8px]">USER PASSPORT</span>
-          <h2 className="font-editorial text-base font-bold text-[#F8F5EE] uppercase mt-1">{t.profileTitle}</h2>
+    <div className="space-y-6 animate-pop-in">
+      {/* Identity */}
+      <div className="card overflow-hidden">
+        <div className="relative h-20 bg-sky">
+          <OrnamentBand className="absolute bottom-1 inset-x-0 h-4 w-full text-white/25" />
         </div>
-        <button
-          onClick={onSignOut}
-          title="Sign out"
-          className="flex items-center gap-1 text-[9px] font-editorial font-bold text-[#F8F5EE]/50 hover:text-[#B2533E] uppercase tracking-wider"
-        >
-          <LogOut size={14} /> Sign Out
-        </button>
-      </div>
-
-      <div className="glass-luxury-card p-5 text-center space-y-3 relative overflow-hidden">
-        <div className="absolute -top-10 -right-10 w-32 h-32 bg-[#C5A059]/15 rounded-full blur-xl pointer-events-none" />
-
-        <div className="w-20 h-20 mx-auto rounded-full border-2 border-[#C5A059] p-1 bg-[#14141C] flex items-center justify-center shadow-lg gold-glow animate-float">
-          <span className="font-editorial text-2xl font-black text-[#C5A059]">II</span>
-        </div>
-
-        <div>
-          <h3 className="font-editorial text-lg font-extrabold text-[#F8F5EE] uppercase tracking-wide">{userName}</h3>
-          <p className="font-body text-xs text-[#C5A059] uppercase tracking-[0.1em] mt-0.5">{t.levelStatus}</p>
-        </div>
-
-        <div className="grid grid-cols-3 gap-2 pt-3 border-t border-[#C5A059]/20">
-          <div className="bg-[#14141C]/90 p-2.5 border border-[#C5A059]/20">
-            <span className="text-xs text-[#F8F5EE]/70 block">{t.totalXpLabel}</span>
-            <span className="font-editorial text-sm font-extrabold text-[#C5A059]">{xp} XP</span>
+        <div className="px-5 pb-5 flex items-end gap-4">
+          <div className="relative w-[88px] h-[88px] shrink-0 -mt-11">
+            <Shanyraq className="absolute -inset-2 w-[104px] h-[104px] text-sun" strokeWidth={2.4} />
+            <div className="absolute inset-0 rounded-full bg-sun border-4 border-card flex items-center justify-center font-display font-black text-4xl text-ink">
+              {initial}
+            </div>
           </div>
-          <div className="bg-[#14141C]/90 p-2.5 border border-[#C5A059]/20">
-            <span className="text-xs text-[#F8F5EE]/70 block">{t.streakLabel}</span>
-            <span className="font-editorial text-sm font-extrabold text-amber-400 flex items-center justify-center gap-1">
-              <Flame size={13} /> {streakDays}d
-            </span>
-          </div>
-          <div className="bg-[#14141C]/90 p-2.5 border border-[#C5A059]/20">
-            <span className="text-xs text-[#F8F5EE]/70 block">WORDS SAVED</span>
-            <span className="font-editorial text-sm font-extrabold text-[#F8F5EE] flex items-center justify-center gap-1">
-              <Layers size={13} className="text-[#C5A059]" /> {savedWordsCount}
-            </span>
+          <div className="min-w-0 pt-3">
+            <h1 className="font-display font-black text-2xl text-ink truncate">{userName}</h1>
+            <p className="text-sm text-ink-2">{t.levelStatus} · Level {rank}</p>
           </div>
         </div>
       </div>
 
-      <div className="glass-luxury-card p-4 space-y-3">
-        <div className="flex items-center justify-between">
-          <h4 className="font-editorial text-xs font-bold text-[#C5A059] uppercase tracking-wider">🏛️ HERITAGE ARTEFACTS VAULT</h4>
-          <span className="text-xs text-[#F8F5EE]/70">{unlockedAchievements.length}/{ACHIEVEMENTS.length}</span>
+      {/* Stats */}
+      <div>
+        <h2 className="font-display font-black text-xl text-ink mb-3">{lang === "kk" ? "Statistika" : "Statistics"}</h2>
+        <div className="grid grid-cols-2 gap-3">
+          {stats.map(({ label, value, Icon, cls }) => (
+            <div key={label} className="tile p-4 flex items-center gap-3">
+              <Icon size={26} className={cls} />
+              <div className="min-w-0">
+                <p className="font-display font-black text-xl text-ink leading-none">{value}</p>
+                <p className="text-[13px] text-ink-2 mt-1 truncate">{label}</p>
+              </div>
+            </div>
+          ))}
         </div>
-        <div className="grid grid-cols-3 gap-2 text-center">
+      </div>
+
+      {/* Achievements */}
+      <div>
+        <div className="flex items-baseline justify-between mb-3">
+          <h2 className="font-display font-black text-xl text-ink">{lang === "kk" ? "Mūra artefaktilerı" : "Achievements"}</h2>
+          <span className="text-sm font-bold text-ink-3">{unlockedAchievements.length}/{ACHIEVEMENTS.length}</span>
+        </div>
+        <div className="card p-4 grid grid-cols-3 sm:grid-cols-5 gap-3">
           {ACHIEVEMENTS.map((a) => {
             const unlocked = unlockedAchievements.includes(a.id);
             return (
-              <div
-                key={a.id}
-                title={a.desc}
-                className={`p-2.5 bg-[#14141C] border ${unlocked ? "border-[#C5A059]/40" : "border-[#C5A059]/20 opacity-50"}`}
-              >
-                <span className="text-xl">{a.icon}</span>
-                <span className={`block font-editorial text-xs tracking-[0.05em] mt-1 ${unlocked ? "text-[#F8F5EE]" : "text-[#F8F5EE]/70"}`}>
-                  {a.title.toUpperCase()}
+              <div key={a.id} title={a.desc} className="text-center">
+                <span className={`mx-auto w-16 h-16 rounded-full flex items-center justify-center text-3xl ${unlocked ? "bg-sun-soft ring-[3px] ring-sun" : "bg-sand-2 grayscale opacity-50"}`}>
+                  {a.icon}
                 </span>
+                <span className={`block text-xs font-semibold mt-2 leading-tight ${unlocked ? "text-ink" : "text-ink-3"}`}>{a.title}</span>
               </div>
             );
           })}
         </div>
       </div>
 
-      <button
-        onClick={() => setShowBuklet(true)}
-        className="rounded-full w-full py-4 bg-gradient-to-r from-[#C5A059] to-[#9A7B38] text-[#09090D] font-editorial font-extrabold text-xs tracking-[0.18em] uppercase gold-glow flex items-center justify-center gap-2"
-      >
-        <Share2 size={16} /> {t.shareBuklet}
-      </button>
-
-      {showBuklet && (
-        <div className="fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex items-center justify-center p-4 animate-pop-in">
-          <div className="w-full max-w-[380px] bg-[#0E0E14] border-2 border-[#C5A059] p-6 rounded-lg shadow-2xl relative space-y-5 text-center">
-            <button onClick={() => setShowBuklet(false)} className="absolute top-4 right-4 text-[#C5A059] hover:text-white">
-              <X size={20} />
-            </button>
-
-            <div className="space-y-1 pt-2">
-              <KazakhOrnament className="w-8 h-8 mx-auto text-[#C5A059]" />
-              <span className="font-editorial text-xs tracking-[0.15em] text-[#C5A059] uppercase block">{t.bukletHeader}</span>
-              <h3 className="font-editorial text-lg font-black text-[#F8F5EE] uppercase tracking-wider">ERTEGI ENGLISH DIPLOMA</h3>
+      {/* Settings — Apple grouped list */}
+      <div className="card overflow-hidden divide-y divide-line">
+        <div className="flex items-center justify-between gap-3 px-4 min-h-[56px]">
+          <span className="text-[16px] text-ink">{lang === "kk" ? "Til" : "Language"}</span>
+          {setLang && (
+            <div className="segmented w-[120px]" role="group" aria-label="Language">
+              <button aria-pressed={lang === "kk"} onClick={() => setLang("kk")}>QAZ</button>
+              <button aria-pressed={lang === "en"} onClick={() => setLang("en")}>ENG</button>
             </div>
+          )}
+        </div>
+        <button onClick={() => setShowBuklet(true)} className="w-full flex items-center gap-3 px-4 min-h-[56px] text-left hover:bg-sand/60">
+          <span className="w-8 h-8 rounded-lg bg-sun flex items-center justify-center"><Share2 size={16} className="text-ink" /></span>
+          <span className="flex-1 text-[16px] text-ink">{t.shareBuklet}</span>
+          <ChevronRight size={18} className="text-ink-3" />
+        </button>
+        <button onClick={onSignOut} className="w-full flex items-center gap-3 px-4 min-h-[56px] text-left hover:bg-sand/60">
+          <span className="w-8 h-8 rounded-lg bg-felt flex items-center justify-center"><LogOut size={16} className="text-white" /></span>
+          <span className="flex-1 text-[16px] text-felt font-medium">Sign out</span>
+        </button>
+      </div>
 
-            <div className="relative w-28 h-28 mx-auto my-3 rounded-full border-4 border-[#C5A059] p-1 bg-gradient-to-b from-[#1C1C24] to-[#0A0A0E] shadow-[0_0_25px_rgba(197,160,89,0.3)] flex items-center justify-center">
-              <div className="w-full h-full rounded-full bg-[#14141C] flex items-center justify-center border border-[#C5A059]/50 overflow-hidden">
-                <span className="font-editorial text-3xl font-black text-[#C5A059]">II</span>
-              </div>
-              <span className="absolute -bottom-2 bg-[#C5A059] text-[#0E0E14] font-editorial font-extrabold text-[8px] px-2 py-0.5 uppercase tracking-widest">
-                PASSPORT
-              </span>
-            </div>
-
-            <div className="space-y-2 bg-[#14141C] p-3.5 border border-[#C5A059]/30 text-left text-xs font-body text-[#F8F5EE]">
-              <div className="flex justify-between border-b border-[#C5A059]/20 pb-1.5">
-                <span className="text-[#F8F5EE]/70">Learner:</span>
-                <span className="font-bold text-[#C5A059]">{userName}</span>
-              </div>
-              <div className="flex justify-between border-b border-[#C5A059]/20 pb-1.5">
-                <span className="text-[#F8F5EE]/70">Active Streak:</span>
-                <span className="font-bold text-amber-400">🔥 {streakDays} Days</span>
-              </div>
-              <div className="flex justify-between border-b border-[#C5A059]/20 pb-1.5">
-                <span className="text-[#F8F5EE]/70">Total XP:</span>
-                <span className="font-bold text-[#C5A059]">{xp} XP</span>
-              </div>
-            </div>
-
-            <div className="pt-2 flex gap-2">
-              <button
-                onClick={async () => {
-                  const shareText = `🏆 ${userName} is learning English through Kazakh folklore on Ertegi English!\n${xp} XP • ${streakDays}-day streak • ${unlockedAchievements.length}/${ACHIEVEMENTS.length} badges unlocked`;
-                  const shareUrl = window.location.href;
-                  try {
-                    if (navigator.share) {
-                      await navigator.share({ title: "Ertegi English — My Progress", text: shareText, url: shareUrl });
-                    } else {
-                      await navigator.clipboard.writeText(`${shareText}\n${shareUrl}`);
-                      alert("Copied to clipboard — paste it anywhere to share!");
-                    }
-                  } catch {
-                    // AbortError: user dismissed native share sheet — not an error
-                  }
-                }}
-                className="flex-1 py-3 bg-gradient-to-r from-[#C5A059] to-[#9A7B38] text-[#09090D] font-editorial font-black text-[10px] tracking-widest uppercase gold-glow flex items-center justify-center gap-1.5"
-              >
-                <Download size={14} /> {t.downloadBuklet}
-              </button>
-              <button
-                onClick={() => setShowBuklet(false)}
-                className="px-4 py-3 bg-[#14141C] border border-[#C5A059]/40 text-[#F8F5EE] font-editorial font-bold text-[10px] uppercase"
-              >
-                {t.closeBuklet}
-              </button>
+      {/* Heritage booklet */}
+      <Sheet open={showBuklet} onClose={() => setShowBuklet(false)} label={t.bukletHeader}>
+        <div className="p-5 pt-3">
+          <div className="relative rounded-[24px] bg-night text-white overflow-hidden p-6 text-center">
+            <OrnamentBand className="absolute top-2 inset-x-0 h-3 w-full text-sun/40" />
+            <OrnamentBand className="absolute bottom-2 inset-x-0 h-3 w-full text-sun/40 rotate-180" />
+            <Shanyraq className="w-14 h-14 mx-auto text-sun mt-3" strokeWidth={3.5} />
+            <p className="text-xs font-bold uppercase tracking-[0.1em] text-sun mt-3">{t.bukletHeader}</p>
+            <h3 className="font-display font-black text-2xl mt-1">{userName}</h3>
+            <div className="grid grid-cols-3 gap-2 mt-5 mb-3">
+              {[
+                { l: "XP", v: xp },
+                { l: lang === "kk" ? "Kün" : "Streak", v: streakDays },
+                { l: lang === "kk" ? "Belgiler" : "Badges", v: `${unlockedAchievements.length}/${ACHIEVEMENTS.length}` },
+              ].map((r) => (
+                <div key={r.l} className="rounded-2xl bg-white/10 py-3">
+                  <p className="font-display font-black text-xl">{r.v}</p>
+                  <p className="text-[11px] text-white/70 uppercase tracking-[0.06em]">{r.l}</p>
+                </div>
+              ))}
             </div>
           </div>
+          <div className="grid grid-cols-2 gap-3 mt-5">
+            <button onClick={() => setShowBuklet(false)} className="btn btn-ghost">{t.closeBuklet}</button>
+            <button onClick={share} className="btn btn-sun"><Share2 size={18} /> {t.downloadBuklet}</button>
+          </div>
         </div>
-      )}
+      </Sheet>
     </div>
   );
 }
