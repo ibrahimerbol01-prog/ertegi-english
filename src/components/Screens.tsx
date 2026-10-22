@@ -15,6 +15,7 @@ import { supabase } from "../lib/supabase";
 import { isDue, MAX_MASTERY } from "../utils/progress";
 import { MaqalCard, StoryHistory } from "./Culture";
 import { LegendDeckEntry } from "./LegendCards";
+import { StoryCover } from "./StoryCover";
 
 /* Small video tile with a night-sky fallback. */
 function StoryVideo({ src, className = "", videoRef, paused }: { src: string; className?: string; videoRef?: React.Ref<HTMLVideoElement>; paused?: boolean }) {
@@ -188,7 +189,7 @@ export function HomeScreen({ onStartRead, onStartQuiz, t, lang, userName = "", s
         onClick={() => (current?.step === "quiz" ? onStartQuiz(featured.id) : onStartRead(featured.id, featuredLevel?.id))}
         className="group relative w-full text-left rounded-[28px] overflow-hidden bg-night shadow-[0_6px_0_#121a31] active:translate-y-[3px] active:shadow-[0_3px_0_#121a31] transition-transform"
       >
-        <StoryVideo src={BG_VIDEO_ASSETS.read} className="absolute inset-0" />
+        <StoryCover id={featured.id} className="absolute inset-0 w-full h-full" />
         <div className="absolute inset-0 bg-gradient-to-t from-night via-night/70 to-night/10" />
         <OrnamentBand className="absolute top-3 inset-x-0 h-3 w-full text-white/15" />
         <div className="relative p-5 pt-24">
@@ -352,7 +353,7 @@ export function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, s
               onClick={() => setSelectedStory(story.id)}
               className="w-full flex items-center gap-4 p-4 text-left hover:bg-sand/60 transition-colors"
             >
-              <StoryVideo src={BG_VIDEO_ASSETS.read} paused className="relative w-[72px] h-[72px] rounded-2xl shrink-0" />
+              <StoryCover id={story.id} className="w-[72px] h-[72px] rounded-2xl shrink-0 shadow-[0_3px_0_var(--color-line-2)]" />
               <div className="flex-1 min-w-0">
                 <p className="eyebrow text-[11px] text-sky-deep">{displayTitle(story.sceneLabel)}</p>
                 <h3 className="font-display font-extrabold text-[17px] text-ink leading-snug mt-0.5">{displayTitle(story.title)}</h3>
@@ -509,18 +510,25 @@ export function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, s
         }
       />
 
+      {/* Only Aldar Köse has an animated scene so far; the other tales show their cover. */}
       <div className="relative rounded-[24px] overflow-hidden h-48 sm:h-56">
-        <StoryVideo src={BG_VIDEO_ASSETS.read} videoRef={videoRef} className="absolute inset-0" />
-        <span className="absolute top-3 left-3 flex items-center gap-1.5 h-7 px-3 rounded-full glass text-ink text-xs font-bold">
-          <span className="w-1.5 h-1.5 rounded-full bg-felt animate-pulse" /> {t.sceneAnimation}
-        </span>
-        <button
-          onClick={toggleVideo}
-          aria-label={isPlaying ? "Pause video" : "Play video"}
-          className="absolute bottom-3 right-3 w-11 h-11 rounded-full glass text-ink flex items-center justify-center"
-        >
-          {isPlaying ? <Pause size={18} className="fill-ink" /> : <Play size={18} className="fill-ink" />}
-        </button>
+        {currentStory.id === "aldar_kose" ? (
+          <>
+            <StoryVideo src={BG_VIDEO_ASSETS.read} videoRef={videoRef} className="absolute inset-0" />
+            <span className="absolute top-3 left-3 flex items-center gap-1.5 h-7 px-3 rounded-full glass text-ink text-xs font-bold">
+              <span className="w-1.5 h-1.5 rounded-full bg-felt animate-pulse" /> {t.sceneAnimation}
+            </span>
+            <button
+              onClick={toggleVideo}
+              aria-label={isPlaying ? "Pause video" : "Play video"}
+              className="absolute bottom-3 right-3 w-11 h-11 rounded-full glass text-ink flex items-center justify-center"
+            >
+              {isPlaying ? <Pause size={18} className="fill-ink" /> : <Play size={18} className="fill-ink" />}
+            </button>
+          </>
+        ) : (
+          <StoryCover id={currentStory.id} className="absolute inset-0 w-full h-full" />
+        )}
       </div>
 
       <StoryHistory storyId={currentStory.id} lang={lang} />
