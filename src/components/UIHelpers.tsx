@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, useMemo } from "react";
 import { createPortal } from "react-dom";
 import { Check } from "lucide-react";
 import { QoshqarMuyiz, Shanyraq, SteppeBackground, KilimStrip } from "./Ornaments";
+import { useLang } from "../lang";
 
 /* Brand mark used across screens: the qoşqar müiız horn pair. */
 export const KazakhOrnament = ({ className = "w-6 h-6 text-sun-deep" }: { className?: string }) => (
@@ -66,6 +67,7 @@ export const XpToast = ({ toast }: { toast: { amount: number; key: number } | nu
 const CONFETTI_COLORS = ["var(--color-sky)", "var(--color-sun)", "var(--color-felt)", "var(--color-jade)"];
 
 export const LevelUpModal = ({ show, rank, onClose }: { show: boolean; rank: number; onClose: () => void }) => {
+  const kk = useLang() === "kk";
   const onCloseRef = useRef(onClose);
   useEffect(() => {
     onCloseRef.current = onClose;
@@ -101,16 +103,17 @@ export const LevelUpModal = ({ show, rank, onClose }: { show: boolean; rank: num
           <span className="mx-auto mt-2 w-20 h-20 rounded-full bg-sun flex items-center justify-center shadow-[0_5px_0_var(--color-sun-deep)]">
             <Shanyraq className="w-12 h-12 text-white" strokeWidth={4} />
           </span>
-          <p className="eyebrow mt-5 text-sun-deep">Rank achieved</p>
-          <h3 className="large-title mt-1">Level {rank}</h3>
-          <p className="text-sm text-ink-2 mt-2">Your dedication to the steppe tales is paying off.</p>
+          <p className="eyebrow mt-5 text-sun-deep">{kk ? "Жаңа деңгей" : "Rank achieved"}</p>
+          <h3 className="large-title mt-1">{kk ? `${rank}-деңгей` : `Level ${rank}`}</h3>
+          <p className="text-sm text-ink-2 mt-2">{kk ? "Дала ертегілеріне берген еңбегің ақталып жатыр." : "Your dedication to the steppe tales is paying off."}</p>
         </div>
       </div>
     </div>
   );
 };
 
-export const AchievementBanner = ({ achievement, onDone }: { achievement: { icon: string; title: string; desc: string } | null; onDone: () => void }) => {
+export const AchievementBanner = ({ achievement, onDone }: { achievement: { icon: string; title: string; desc: string; kk?: { title: string; desc: string } } | null; onDone: () => void }) => {
+  const kk = useLang() === "kk";
   const onDoneRef = useRef(onDone);
   useEffect(() => {
     onDoneRef.current = onDone;
@@ -130,9 +133,9 @@ export const AchievementBanner = ({ achievement, onDone }: { achievement: { icon
       <div className="animate-achievement card glass p-3 flex items-center gap-3">
         <span className="w-11 h-11 rounded-full bg-sun-soft flex items-center justify-center text-2xl shrink-0">{achievement.icon}</span>
         <div className="min-w-0">
-          <p className="eyebrow text-sun-deep">Badge unlocked</p>
-          <p className="font-display text-[15px] font-extrabold text-ink truncate">{achievement.title}</p>
-          <p className="text-xs text-ink-2 truncate">{achievement.desc}</p>
+          <p className="eyebrow text-sun-deep">{kk ? "Белгі ашылды" : "Badge unlocked"}</p>
+          <p className="font-display text-[15px] font-extrabold text-ink truncate">{kk && achievement.kk ? achievement.kk.title : achievement.title}</p>
+          <p className="text-xs text-ink-2 truncate">{kk && achievement.kk ? achievement.kk.desc : achievement.desc}</p>
         </div>
       </div>
     </div>
@@ -212,11 +215,12 @@ export const ScreenHeader = ({ eyebrow, title, trailing, onBack, backLabel }: {
 
 /* Bottom sheet used for word details, choices and the booklet. */
 export const Sheet = ({ open, onClose, children, label }: { open: boolean; onClose: () => void; children: React.ReactNode; label: string }) => {
+  const kk = useLang() === "kk";
   if (!open) return null;
   // Portal to body: animated ancestors would otherwise trap position:fixed.
   return createPortal(
     <div className="fixed inset-0 z-[68] flex items-end sm:items-center justify-center" role="dialog" aria-modal="true" aria-label={label}>
-      <button aria-label="Close" onClick={onClose} className="absolute inset-0 bg-ink/35 backdrop-blur-[2px] animate-pop-in" />
+      <button aria-label={kk ? "Жабу" : "Close"} onClick={onClose} className="absolute inset-0 bg-ink/35 backdrop-blur-[2px] animate-pop-in" />
       <div className="relative w-full sm:max-w-[420px] max-h-[85dvh] overflow-y-auto bg-card rounded-t-[28px] sm:rounded-[28px] shadow-2xl animate-sheet-up sm:animate-pop-in pb-[max(env(safe-area-inset-bottom),16px)]">
         <div className="sm:hidden mx-auto mt-2.5 mb-1 w-10 h-1.5 rounded-full bg-sand-3" />
         {children}
