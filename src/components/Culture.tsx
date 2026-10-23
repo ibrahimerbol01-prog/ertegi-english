@@ -57,14 +57,14 @@ export function MaqalCard({ lang, userId, onReward }: { lang: string; userId?: s
       <KilimStrip className="h-2 w-full" />
       <div className="p-5">
         <div className="flex items-center justify-between gap-3">
-          <p className="eyebrow text-felt">{l === "kk" ? "Künniñ maqaly" : "Proverb of the day"}</p>
+          <p className="eyebrow text-felt">{l === "kk" ? "Күннің мақалы" : "Proverb of the day"}</p>
           <span className="text-xs font-bold text-ink-3">{loadMaqals(userId).length}/{MAQALS.length}</span>
         </div>
         <p className="font-display font-black text-[21px] leading-snug text-ink mt-2">{maqal.kk}</p>
         <p className="text-sm text-ink-2 mt-1 italic">“{maqal.literal}”</p>
 
         <p className="text-sm font-bold text-ink mt-4">
-          {l === "kk" ? "Aǵylşynşa qalaı aıtylady?" : "How do the English say it?"}
+          {l === "kk" ? "Ағылшынша қалай айтылады?" : "How do the English say it?"}
         </p>
         <div className="grid gap-2 mt-2">
           {options.map((opt, i) => {
@@ -84,7 +84,7 @@ export function MaqalCard({ lang, userId, onReward }: { lang: string; userId?: s
         </div>
         {solved && (
           <p className="text-sm text-jade-deep font-semibold mt-3 animate-pop-in">
-            {l === "kk" ? "Durys! Maqal kollekciyaǵa qosyldy · +5 XP" : "Right! Added to your proverb collection · +5 XP"}
+            {l === "kk" ? "Дұрыс! Мақал жинаққа қосылды · +5 XP" : "Right! Added to your proverb collection · +5 XP"}
           </p>
         )}
       </div>
@@ -102,18 +102,18 @@ export function BataModal({ storyId, lang, onClose }: { storyId: string | null; 
   const l = pick(lang);
 
   return createPortal(
-    <div className="fixed inset-0 z-[72] bg-ink/45 backdrop-blur-sm flex items-center justify-center p-5 animate-pop-in" role="dialog" aria-modal="true" aria-label="Bata">
+    <div className="fixed inset-0 z-[72] bg-ink/45 backdrop-blur-sm flex items-center justify-center p-5 animate-pop-in" role="dialog" aria-modal="true" aria-label={l === "kk" ? "Бата" : "Blessing"}>
       <div className="relative w-full max-w-[380px] card overflow-hidden text-center animate-rank-pop">
         <KilimStrip className="h-2.5 w-full" />
         <div className="p-7">
           <span className="mx-auto w-24 h-24 rounded-full bg-sun-soft border-4 border-sun flex items-center justify-center text-sun-deep">
             {ORNAMENTS[oyu.id]("w-14 h-14")}
           </span>
-          <p className="eyebrow text-sun-deep mt-5">{l === "kk" ? "Ertegi aıaqtaldy" : "Tale complete"}</p>
+          <p className="eyebrow text-sun-deep mt-5">{l === "kk" ? "Ертегі аяқталды" : "Tale complete"}</p>
           <h3 className="font-display font-black text-xl text-ink mt-1 leading-snug">{displayTitle(story.title)}</h3>
 
           <div className="mt-5 rounded-2xl bg-sand-2 p-4 text-left">
-            <p className="eyebrow">{l === "kk" ? "Şoqannyñ batasy" : "Shoqan's blessing"}</p>
+            <p className="eyebrow">{l === "kk" ? "Шоқанның батасы" : "Shoqan's blessing"}</p>
             <p className="font-display font-extrabold text-[17px] text-ink leading-snug mt-1.5">{bata.kk}</p>
             <p className="text-sm text-ink-2 mt-1.5">{bata.en}</p>
           </div>
@@ -121,11 +121,11 @@ export function BataModal({ storyId, lang, onClose }: { storyId: string | null; 
           <p className="text-sm text-ink-2 mt-4">
             <span className="inline-flex items-center gap-1.5 font-bold text-ink">
               <Sparkles size={15} className="text-sun-deep" />
-              {l === "kk" ? `Jaña oıu: ${oyu.name}` : `New ornament: ${oyu.name}`}
+              {l === "kk" ? `Жаңа ою: ${oyu.name.kk}` : `New ornament: ${oyu.name.en}`}
             </span>
             <span className="block mt-0.5">{oyu.meaning[l]}</span>
           </p>
-          <button onClick={onClose} className="btn btn-sun w-full mt-6">Äumın</button>
+          <button onClick={onClose} className="btn btn-sun w-full mt-6">{l === "kk" ? "Әумин" : "Amen"}</button>
         </div>
       </div>
     </div>,
@@ -140,11 +140,11 @@ export function OyuKilim({ progress, lang, maqalCount }: { progress: Set<string>
   return (
     <section className="card p-5">
       <div className="flex items-center justify-between">
-        <p className="font-display font-extrabold text-ink text-[17px]">{l === "kk" ? "Meniñ kilemim" : "My kilim"}</p>
+        <p className="font-display font-extrabold text-ink text-[17px]">{l === "kk" ? "Менің кілемім" : "My kilim"}</p>
         <span className="text-sm font-bold text-ink-3">{earned}/{STORIES.length}</span>
       </div>
       <p className="text-sm text-ink-2 mt-1">
-        {l === "kk" ? "Är ertegi üşin bir oıu. Ertegini aıaqtap, batasyn al." : "One ornament for every tale. Finish a tale to earn its blessing."}
+        {l === "kk" ? "Әр ертегі үшін бір ою. Ертегіні аяқтап, батасын ал." : "One ornament for every tale. Finish a tale to earn its blessing."}
       </p>
       <div className="grid grid-cols-3 sm:grid-cols-4 gap-3 mt-4">
         {STORIES.map((s, i) => {
@@ -153,13 +153,13 @@ export function OyuKilim({ progress, lang, maqalCount }: { progress: Set<string>
           return (
             <div key={s.id} className={`aspect-square rounded-2xl flex flex-col items-center justify-center gap-1.5 border-2 ${has ? "bg-sun-soft border-sun text-sun-deep" : "bg-sand-2 border-line text-ink-3"}`}>
               {has ? ORNAMENTS[oyu.id]("w-10 h-10") : <Lock size={20} />}
-              <span className="text-[11px] font-bold text-center px-1 leading-tight">{has ? oyu.name : `${l === "kk" ? "Ertegi" : "Tale"} ${i + 1}`}</span>
+              <span className="text-[11px] font-bold text-center px-1 leading-tight">{has ? oyu.name[l] : `${l === "kk" ? "Ертегі" : "Tale"} ${i + 1}`}</span>
             </div>
           );
         })}
       </div>
       <p className="text-sm text-ink-2 mt-4">
-        {l === "kk" ? `Jinalǵan maqaldar: ${maqalCount}/${MAQALS.length}` : `Proverbs collected: ${maqalCount}/${MAQALS.length}`}
+        {l === "kk" ? `Жиналған мақалдар: ${maqalCount}/${MAQALS.length}` : `Proverbs collected: ${maqalCount}/${MAQALS.length}`}
       </p>
     </section>
   );
@@ -176,7 +176,7 @@ export function StoryHistory({ storyId, lang }: { storyId: string; lang: string 
         <Landmark size={20} />
       </span>
       <div>
-        <p className="text-xs font-bold uppercase tracking-[0.08em] text-sun">{l === "kk" ? "Tarihi derek" : "History"}</p>
+        <p className="text-xs font-bold uppercase tracking-[0.08em] text-sun">{l === "kk" ? "Тарихи дерек" : "History"}</p>
         <p className="text-sm leading-relaxed text-white/90 mt-1">{note[l]}</p>
       </div>
     </div>
@@ -188,9 +188,9 @@ export function TurkicWords({ lang }: { lang: string }) {
   const l = pick(lang);
   return (
     <section className="card p-5">
-      <p className="eyebrow text-sky-deep">{l === "kk" ? "Tamyrlas sözder" : "Words with Kazakh roots"}</p>
+      <p className="eyebrow text-sky-deep">{l === "kk" ? "Түбірлес сөздер" : "Words with Kazakh roots"}</p>
       <p className="text-sm text-ink-2 mt-1">
-        {l === "kk" ? "Būl aǵylşyn sözderi türki tilderinen kelgen." : "These English words came from Turkic languages."}
+        {l === "kk" ? "Бұл ағылшын сөздері түркі тілдерінен келген." : "These English words came from Turkic languages."}
       </p>
       <div className="grid grid-cols-2 gap-2 mt-3">
         {TURKIC_WORDS.map((w) => (

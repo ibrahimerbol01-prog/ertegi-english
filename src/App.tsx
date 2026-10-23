@@ -5,6 +5,7 @@ import AuthScreen from "./AuthScreen";
 import KazakhTalesApp from "./KazakhTalesApp";
 import { IntroScreen } from "./components/Screens";
 import { DICT } from "./constants";
+import { loadLang } from "./lang";
 
 export default function App() {
   const [session, setSession] = useState<Session | null>(null);
@@ -57,7 +58,7 @@ export default function App() {
 
   if (!introSeen) {
     return (
-      <IntroScreen onFinish={() => setIntroSeen(true)} t={DICT.kk} />
+      <IntroScreen onFinish={() => setIntroSeen(true)} t={DICT[loadLang()]} />
     );
   }
 

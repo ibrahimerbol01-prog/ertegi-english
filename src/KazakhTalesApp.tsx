@@ -14,6 +14,7 @@ import {
   QuizScreen, QuizSetup, SpeakScreen, ProfileScreen
 } from "./components/Screens";
 import { DICT, ACHIEVEMENTS, STORIES } from "./constants";
+import { LangContext, loadLang, saveLang, type Lang } from "./lang";
 import type { SavedWord } from "./types";
 import { supabase } from "./lib/supabase";
 import { saveToSupabase } from "./utils/supabase-save";
@@ -42,7 +43,12 @@ export default function KazakhTalesApp({ session }: { session: Session }) {
   const [bataStory, setBataStory] = useState<string | null>(null);
   const [selectedStory, setSelectedStory] = useState<string | null>(null);
   const [xp, setXp] = useState(0);
-  const [lang, setLang] = useState("kk");
+  const [lang, setLangState] = useState<Lang>(loadLang);
+  const setLang = (next: string) => {
+    const l: Lang = next === "en" ? "en" : "kk";
+    setLangState(l);
+    saveLang(l);
+  };
 
   const [streakDays, setStreakDays] = useState(0);
   const lastActiveDateRef = useRef<string | null>(null);
@@ -290,7 +296,7 @@ export default function KazakhTalesApp({ session }: { session: Session }) {
     { id: "home",    label: t.navHome,    Icon: HomeIcon },
     { id: "read",    label: t.navRead,    Icon: BookOpen },
     { id: "quiz",    label: t.navQuiz,    Icon: Trophy   },
-    { id: "words",   label: lang === "kk" ? "Sözder" : "Words", Icon: Layers },
+    { id: "words",   label: lang === "kk" ? "Сөздер" : "Words", Icon: Layers },
     { id: "speak",   label: t.navSpeak,   Icon: Mic      },
     { id: "profile", label: t.navProfile, Icon: User     },
   ] as const;
@@ -305,8 +311,8 @@ export default function KazakhTalesApp({ session }: { session: Session }) {
     ) : null;
 
   const LangToggle = () => (
-    <div className="segmented w-[104px]" role="group" aria-label="Language">
-      <button aria-pressed={lang === "kk"} onClick={() => setLang("kk")}>QAZ</button>
+    <div className="segmented w-[104px]" role="group" aria-label={lang === "kk" ? "Тіл" : "Language"}>
+      <button aria-pressed={lang === "kk"} onClick={() => setLang("kk")}>ҚАЗ</button>
       <button aria-pressed={lang === "en"} onClick={() => setLang("en")}>ENG</button>
     </div>
   );
@@ -324,6 +330,7 @@ export default function KazakhTalesApp({ session }: { session: Session }) {
   );
 
   return (
+    <LangContext.Provider value={lang}>
     <div className="relative h-dvh w-full bg-sand font-body text-ink overflow-hidden flex">
       <LevelUpModal show={showLevelUp} rank={levelUpRank} onClose={() => setShowLevelUp(false)} />
       <BataModal storyId={bataStory} lang={lang} onClose={() => setBataStory(null)} />
@@ -475,18 +482,18 @@ export default function KazakhTalesApp({ session }: { session: Session }) {
               <div className="card p-5 flex items-center gap-4">
                 <DailyGoalRing current={sessionXp} goal={DAILY_GOAL} size={64} />
                 <div>
-                  <p className="font-display font-extrabold text-ink">{lang === "kk" ? "Kündelikti maqsat" : "Daily goal"}</p>
+                  <p className="font-display font-extrabold text-ink">{lang === "kk" ? "Күнделікті мақсат" : "Daily goal"}</p>
                   <p className="text-sm text-ink-2">{Math.min(sessionXp, DAILY_GOAL)} / {DAILY_GOAL} XP</p>
                 </div>
               </div>
               <div className="card p-5">
-                <p className="font-display font-extrabold text-ink">{lang === "kk" ? "Sözdik" : "Vocabulary"}</p>
+                <p className="font-display font-extrabold text-ink">{lang === "kk" ? "Сөздік" : "Vocabulary"}</p>
                 <p className="text-sm text-ink-2 mt-1">
-                  {savedWords.length} {lang === "kk" ? "söz saqtaldy" : "words saved"}
-                  {dueCount > 0 && <> · <b className="text-felt">{dueCount} {lang === "kk" ? "qaitalauğa" : "due"}</b></>}
+                  {savedWords.length} {lang === "kk" ? "сөз сақталды" : "words saved"}
+                  {dueCount > 0 && <> · <b className="text-felt">{dueCount} {lang === "kk" ? "қайталауға" : "due"}</b></>}
                 </p>
                 <button onClick={() => setTab("words")} className="btn btn-ghost btn-sm w-full mt-4">
-                  {lang === "kk" ? "Qaitalau" : "Practice"}
+                  {lang === "kk" ? "Қайталау" : "Practice"}
                 </button>
               </div>
             </aside>
@@ -517,5 +524,6 @@ export default function KazakhTalesApp({ session }: { session: Session }) {
         </nav>
       </div>
     </div>
+    </LangContext.Provider>
   );
 }

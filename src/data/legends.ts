@@ -18,10 +18,10 @@ export interface LegendCard {
 }
 
 export const RARITY: Record<Rarity, { kk: string; en: string; xp: number; tone: string; frame: string }> = {
-  ertegi: { kk: "Ertegi", en: "Tale", xp: 10, tone: "bg-sky", frame: "border-sky" },
-  epos: { kk: "Jyr", en: "Epic", xp: 15, tone: "bg-jade", frame: "border-jade" },
-  anyz: { kk: "Añyz", en: "Legend", xp: 20, tone: "bg-felt", frame: "border-felt" },
-  tarih: { kk: "Tarih", en: "History", xp: 25, tone: "bg-night", frame: "border-sun" },
+  ertegi: { kk: "Ертегі", en: "Tale", xp: 10, tone: "bg-sky", frame: "border-sky" },
+  epos: { kk: "Жыр", en: "Epic", xp: 15, tone: "bg-jade", frame: "border-jade" },
+  anyz: { kk: "Аңыз", en: "Legend", xp: 20, tone: "bg-felt", frame: "border-felt" },
+  tarih: { kk: "Тарих", en: "History", xp: 25, tone: "bg-night", frame: "border-sun" },
 };
 
 export const LEGENDS: LegendCard[] = [
@@ -33,7 +33,7 @@ export const LEGENDS: LegendCard[] = [
       { s: "The rich man wanted the 'magic' coat.", a: true },
     ],
     gap: { sentence: "Aldar Kose had no money, but he had a quick ___.", options: ["horse", "mind", "coat"], answer: 1 },
-    fact: { kk: "«Köse» degen – saqaly joq adam. Aldar – qazaq ertegileriniñ eñ aılaker keıipkeri.", en: "\"Köse\" means a man with no beard. Aldar is the great trickster of Kazakh tales." },
+    fact: { kk: "«Көсе» деген — сақалы жоқ адам. Алдар — қазақ ертегілерінің ең айлакер кейіпкері.", en: "\"Köse\" means a man with no beard. Aldar is the great trickster of Kazakh tales." },
   },
   {
     id: "zhirenshe", name: "Jırenşe şeşen", kk: "Жиренше шешен", rarity: "ertegi", ornament: "tumar",
@@ -43,7 +43,7 @@ export const LEGENDS: LegendCard[] = [
       { s: "Zhirenshe was famous for his strength.", a: false },
     ],
     gap: { sentence: "Zhirenshe was amazed by her ___.", options: ["wisdom", "horse", "song"], answer: 0 },
-    fact: { kk: "Şeşen – sözge şeber, aqyldy adam. Qazaqtar sözdi qarudan da küşti sanaǵan.", en: "A şeşen is a master of words. Kazakhs said a good word is stronger than a weapon." },
+    fact: { kk: "Шешен — сөзге шебер, ақылды адам. Қазақтар сөзді қарудан да күшті санаған.", en: "A şeşen is a master of words. Kazakhs said a good word is stronger than a weapon." },
   },
   {
     id: "tostik", name: "Er Töstik", kk: "Ер Төстік", rarity: "ertegi", ornament: "shanyraq",
@@ -53,7 +53,7 @@ export const LEGENDS: LegendCard[] = [
       { s: "His horse could talk.", a: true },
     ],
     gap: { sentence: "On a long journey he fell into the ___ world.", options: ["frozen", "underground", "golden"], answer: 1 },
-    fact: { kk: "Şalqūıryq – Er Töstiktiñ aqyldy tūlpary. Qazaq ertegilerinde at – adamnyñ eñ jaqyn dosy.", en: "Shalkuiryk is Er Tostik's wise horse. In Kazakh tales a horse is a hero's closest friend." },
+    fact: { kk: "Шалқұйрық — Ер Төстіктің ақылды тұлпары. Қазақ ертегілерінде ат — адамның ең жақын досы.", en: "Shalkuiryk is Er Tostik's wise horse. In Kazakh tales a horse is a hero's closest friend." },
   },
   {
     id: "qobylandy", name: "Qobylandy batyr", kk: "Қобыланды батыр", rarity: "epos", ornament: "qoshqar",
@@ -63,7 +63,7 @@ export const LEGENDS: LegendCard[] = [
       { s: "Qobylandy ran away from the enemies.", a: false },
     ],
     gap: { sentence: "Qobylandy was a brave ___ who protected his people.", options: ["warrior", "farmer", "trader"], answer: 0 },
-    fact: { kk: "«Qobylandy batyr» – qazaqtyñ batyrlyq jyrlarynyñ biri, ony jyraular ǵasyrlar boıy aıtqan.", en: "\"Qobylandy batyr\" is a Kazakh heroic epic, sung by storytellers (zhyrau) for centuries." },
+    fact: { kk: "«Қобыланды батыр» — қазақтың батырлық жырларының бірі, оны жыраулар ғасырлар бойы айтқан.", en: "\"Qobylandy batyr\" is a Kazakh heroic epic, sung by storytellers (zhyrau) for centuries." },
   },
   {
     id: "alpamys", name: "Alpamys batyr", kk: "Алпамыс батыр", rarity: "epos", ornament: "tumar",
@@ -73,7 +73,7 @@ export const LEGENDS: LegendCard[] = [
       { s: "Alpamys lost all hope.", a: false },
     ],
     gap: { sentence: "Enemies tricked him and threw him into a deep ___.", options: ["river", "pit", "forest"], answer: 1 },
-    fact: { kk: "«Alpamys» jyry qazaq, özbek jäne basqa türki halyqtarynda bar.", en: "The Alpamys epic is shared by Kazakhs, Uzbeks and other Turkic peoples." },
+    fact: { kk: "«Алпамыс» жыры қазақ, өзбек және басқа түркі халықтарында бар.", en: "The Alpamys epic is shared by Kazakhs, Uzbeks and other Turkic peoples." },
   },
   {
     id: "qyzzhibek", name: "Qyz Jibek", kk: "Қыз Жібек", rarity: "epos", ornament: "shanyraq",
@@ -83,7 +83,7 @@ export const LEGENDS: LegendCard[] = [
       { s: "Their story has a happy ending.", a: false },
     ],
     gap: { sentence: "Their sad love story is still ___ today.", options: ["sung", "sold", "built"], answer: 0 },
-    fact: { kk: "«Qyz Jibek» – lırıkalyq jyr. 1970 jyly ol boıynşa ataqty fılm tüsirildi.", en: "\"Qyz Zhibek\" is a lyric epic. A famous Kazakh film was made from it in 1970." },
+    fact: { kk: "«Қыз Жібек» — лиро-эпостық жыр. 1970 жылы ол бойынша атақты фильм түсірілді.", en: "\"Qyz Zhibek\" is a lyric epic. A famous Kazakh film was made from it in 1970." },
   },
   {
     id: "qozy", name: "Qozy Körpeş – Baıan Sulu", kk: "Қозы Көрпеш – Баян сұлу", rarity: "epos", ornament: "tumar",
@@ -93,7 +93,7 @@ export const LEGENDS: LegendCard[] = [
       { s: "Kozy and Bayan stayed true to each other.", a: true },
     ],
     gap: { sentence: "Their fathers ___ that Kozy and Bayan would marry.", options: ["forgot", "promised", "refused"], answer: 1 },
-    fact: { kk: "Aıagöz mañynda Qozy Körpeş pen Baıan Sulu kesenesi bar.", en: "A mausoleum named after Kozy Korpesh and Bayan Sulu stands near Ayagoz." },
+    fact: { kk: "Аягөз маңында Қозы Көрпеш пен Баян сұлу кесенесі бар.", en: "A mausoleum named after Kozy Korpesh and Bayan Sulu stands near Ayagoz." },
   },
   {
     id: "qorqyt", name: "Qorqyt Ata", kk: "Қорқыт Ата", rarity: "anyz", ornament: "shanyraq",
@@ -103,7 +103,7 @@ export const LEGENDS: LegendCard[] = [
       { s: "Korkyt found a place where nobody died.", a: false },
     ],
     gap: { sentence: "He came back to the Syr Darya ___.", options: ["mountain", "river", "city"], answer: 1 },
-    fact: { kk: "Qorqyt Ata kesenesi Qyzylorda oblysynda, Syrdarıa boıynda tur.", en: "The Korkyt Ata memorial stands by the Syr Darya in the Kyzylorda region." },
+    fact: { kk: "Қорқыт ата кесенесі Қызылорда облысында, Сырдария бойында тұр.", en: "The Korkyt Ata memorial stands by the Syr Darya in the Kyzylorda region." },
   },
   {
     id: "asan", name: "Asan Qaıǵy", kk: "Асан Қайғы", rarity: "anyz", ornament: "qoshqar",
@@ -113,7 +113,7 @@ export const LEGENDS: LegendCard[] = [
       { s: "Zheruiyk was a land without hunger.", a: true },
     ],
     gap: { sentence: "Asan was a wise man who ___ about his people.", options: ["laughed", "worried", "forgot"], answer: 1 },
-    fact: { kk: "Jeruıyq – qazaq añyzyndaǵy baqytty meken. Asan Qaıǵy XV ǵasyrda ömir sürgen dep sanalady.", en: "Zheruiyk is the land of happiness in Kazakh legend. Asan Kaigy is said to have lived in the 15th century." },
+    fact: { kk: "Жерұйық — қазақ аңызындағы бақытты мекен. Асан Қайғы XV ғасырда өмір сүрген деп саналады.", en: "Zheruiyk is the land of happiness in Kazakh legend. Asan Kaigy is said to have lived in the 15th century." },
   },
   {
     id: "tomiris", name: "Tomırıs", kk: "Томирис", rarity: "tarih", ornament: "tumar",
@@ -123,7 +123,7 @@ export const LEGENDS: LegendCard[] = [
       { s: "Her army defeated Cyrus.", a: true },
     ],
     gap: { sentence: "Tomiris was the queen of the Massagetae, ___ of the steppe.", options: ["nomads", "farmers", "sailors"], answer: 0 },
-    fact: { kk: "Tomırıs turaly grek tarıhşysy Gerodot jazǵan.", en: "The Greek historian Herodotus wrote about Tomiris." },
+    fact: { kk: "Томирис туралы грек тарихшысы Геродот жазған.", en: "The Greek historian Herodotus wrote about Tomiris." },
   },
   {
     id: "khanate", name: "Kereı men Jänibek", kk: "Керей мен Жәнібек", rarity: "tarih", ornament: "shanyraq",
@@ -133,7 +133,7 @@ export const LEGENDS: LegendCard[] = [
       { s: "The Kazakh Khanate began in the twentieth century.", a: false },
     ],
     gap: { sentence: "This was the beginning of the Kazakh ___.", options: ["Khanate", "Empire", "Republic"], answer: 0 },
-    fact: { kk: "Qazaq handyǵy 1465 jyly qūrylǵan dep sanalady. 2015 jyly onyñ 550 jyldyǵy toılandy.", en: "The Kazakh Khanate is dated to 1465. Kazakhstan celebrated its 550th anniversary in 2015." },
+    fact: { kk: "Қазақ хандығы 1465 жылы құрылған деп саналады. 2015 жылы оның 550 жылдығы тойланды.", en: "The Kazakh Khanate is dated to 1465. Kazakhstan celebrated its 550th anniversary in 2015." },
   },
   {
     id: "abylai", name: "Abylaı han", kk: "Абылай хан", rarity: "tarih", ornament: "qoshqar",
@@ -143,7 +143,7 @@ export const LEGENDS: LegendCard[] = [
       { s: "Abylai became khan in 1871.", a: false },
     ],
     gap: { sentence: "He ___ many Kazakh clans.", options: ["divided", "united", "left"], answer: 1 },
-    fact: { kk: "Abylaı hannyñ esimi Almatydaǵy dañǵyl men universitetke berilgen.", en: "An avenue and a university in Almaty are named after Abylai Khan." },
+    fact: { kk: "Абылай ханның есімі Алматыдағы даңғыл мен университетке берілген.", en: "An avenue and a university in Almaty are named after Abylai Khan." },
   },
   {
     id: "shoqan", name: "Şoqan Uälıhanov", kk: "Шоқан Уәлиханов", rarity: "tarih", ornament: "tumar",
@@ -153,6 +153,6 @@ export const LEGENDS: LegendCard[] = [
       { s: "Shokan lived to be very old.", a: false },
     ],
     gap: { sentence: "He wrote down songs, legends and ___.", options: ["recipes", "history", "letters"], answer: 1 },
-    fact: { kk: "Şoqan qyrǵyzdyñ «Manas» jyrynan üzindi jazyp alǵan alǵaşqy ǵalymdardyñ biri.", en: "Shokan was one of the first scholars to write down part of the Kyrgyz epic Manas." },
+    fact: { kk: "Шоқан қырғыздың «Манас» жырынан үзінді жазып алған алғашқы ғалымдардың бірі.", en: "Shokan was one of the first scholars to write down part of the Kyrgyz epic Manas." },
   },
 ];

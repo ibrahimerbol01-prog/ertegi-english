@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import { useLang } from "../lang";
 import {
   ArrowRight, Play, Pause, Volume2, ChevronRight, RotateCcw, Compass, Layers, Trophy,
   Check, X, Flame, Heart, Mic, MicOff, LogOut, Share2, BookOpen, Lock, Timer, Zap, Plus, MessageCircle
@@ -40,6 +41,12 @@ function StoryVideo({ src, className = "", videoRef, paused }: { src: string; cl
   );
 }
 
+/* Picks the Kazakh or English UI string for the current language. */
+function useTr() {
+  const kk = useLang() === "kk";
+  return (kkText: string, enText: string) => (kk ? kkText : enText);
+}
+
 const LEVEL_COLORS: Record<string, { bg: string; edge: string; island: string; soft: string }> = {
   A1: { bg: "bg-jade", edge: "shadow-[0_4px_0_var(--color-jade-deep)]", island: "shadow-[0_7px_0_var(--color-jade-deep)]", soft: "text-jade-deep" },
   A2: { bg: "bg-sky", edge: "shadow-[0_4px_0_var(--color-sky-deep)]", island: "shadow-[0_7px_0_var(--color-sky-deep)]", soft: "text-sky-deep" },
@@ -75,8 +82,8 @@ export function IntroScreen({ onFinish, t }: any) {
           </div>
 
           <h1 className="font-display font-black text-[40px] leading-[1.05] tracking-tight text-ink">
-            Dala añyzdary<br />
-            <span className="text-sky">ağylşyn tilinde</span>
+            Дала аңыздары<br />
+            <span className="text-sky">ағылшын тілінде</span>
           </h1>
           <p className="text-[17px] text-ink-2 max-w-[320px] mx-auto leading-relaxed mt-4">
             {t.homeSubtitle}
@@ -93,13 +100,13 @@ export function IntroScreen({ onFinish, t }: any) {
 
 /* Shoqan's tip of the day on the home path: one per day, same for everyone. */
 const SHOQAN_TIPS = [
-  { kk: "Bir mätindi eki deñgeide oqyp kör: aldymen A2, sosyn B1. Jaña sözder birden közge tüsedi.", en: "Read one tale at two levels: A2 first, then B1. The new words jump out.", ask: "Which words change between the A2 and B1 versions of a tale?" },
-  { kk: "Tanys emes sözdi bas ta, saqta. Ertesi küni ol «Sözder» bölimine qaitalauǵa keledi.", en: "Tap an unknown word and save it. It comes back for review in Words the next day.", ask: "How should I review the words I saved?" },
-  { kk: "«Read along» qosyp, dauyspen birge oqy. Aıtylymǵa jaqsy jattyǵu.", en: "Turn on Read along and read out loud with it. Great practice for pronunciation.", ask: "How can I practise English pronunciation with the stories?" },
-  { kk: "Aldar Köse — ailaker. Aǵylşynda ony «clever» nemese «cunning» dep ataıdy. Aıyrmasy nede?", en: "Aldar Köse is a trickster. In English he is \"clever\" or \"cunning\". What's the difference?", ask: "What is the difference between clever and cunning?" },
-  { kk: "Kün saıyn 10 minut — aptasyna bir saǵattan artyq. Kishkene qadam da qadam.", en: "Ten minutes a day adds up to over an hour a week. Small steps count.", ask: "Give me a 10-minute daily English routine." },
-  { kk: "Quiz-de qatelesseñ, mätinge qaıtyp, sol söılemdi tap. Osylaı este jaqsy qalady.", en: "Missed a quiz question? Go back and find that sentence in the text. It sticks better.", ask: "Why do I keep forgetting new English words?" },
-  { kk: "Jirenşe şeşen üş suraqqa jauap berdi. Sen aǵylşynşa bir suraq qoıyp kör!", en: "Zhirenshe answered three questions. Try asking me one in English!", ask: "What is the fastest thing in the world?" },
+  { kk: "Бір мәтінді екі деңгейде оқып көр: алдымен A2, сосын B1. Жаңа сөздер бірден көзге түседі.", en: "Read one tale at two levels: A2 first, then B1. The new words jump out.", ask: "Which words change between the A2 and B1 versions of a tale?" },
+  { kk: "Таныс емес сөзді бас та, сақта. Ертеңіне ол «Сөздер» бөліміне қайталауға келеді.", en: "Tap an unknown word and save it. It comes back for review in Words the next day.", ask: "How should I review the words I saved?" },
+  { kk: "«Read along» қосып, дауыспен бірге оқы. Айтылымға жақсы жаттығу.", en: "Turn on Read along and read out loud with it. Great practice for pronunciation.", ask: "How can I practise English pronunciation with the stories?" },
+  { kk: "Алдар Көсе — айлакер. Ағылшынша оны «clever» немесе «cunning» дейді. Айырмасы неде?", en: "Aldar Köse is a trickster. In English he is \"clever\" or \"cunning\". What's the difference?", ask: "What is the difference between clever and cunning?" },
+  { kk: "Күн сайын 10 минут — аптасына бір сағаттан артық. Кішкене қадам да қадам.", en: "Ten minutes a day adds up to over an hour a week. Small steps count.", ask: "Give me a 10-minute daily English routine." },
+  { kk: "Сынақта қателессең, мәтінге қайтып, сол сөйлемді тап. Осылай есте жақсы қалады.", en: "Missed a quiz question? Go back and find that sentence in the text. It sticks better.", ask: "Why do I keep forgetting new English words?" },
+  { kk: "Жиренше шешен үш сұраққа жауап берді. Сен ағылшынша бір сұрақ қойып көр!", en: "Zhirenshe answered three questions. Try asking me one in English!", ask: "What is the fastest thing in the world?" },
 ];
 
 /* --- 2. HOME SCREEN: greeting, daily goal, and the caravan path --- */
@@ -166,8 +173,8 @@ export function HomeScreen({ onStartRead, onStartQuiz, t, lang, userName = "", s
   return (
     <div className="space-y-6 animate-pop-in">
       <div className="pt-2">
-        <p className="eyebrow mb-1">{lang === "kk" ? "Bügin" : "Today"}</p>
-        <h1 className="large-title">{lang === "kk" ? "Sälem" : "Hi"}{firstName ? `, ${firstName}` : ""}!</h1>
+        <p className="eyebrow mb-1">{lang === "kk" ? "Бүгін" : "Today"}</p>
+        <h1 className="large-title">{lang === "kk" ? "Сәлем" : "Hi"}{firstName ? `, ${firstName}` : ""}!</h1>
         <p className="text-[15px] text-ink-2 mt-2 leading-relaxed">{t.homeSubtitle}</p>
       </div>
 
@@ -175,11 +182,11 @@ export function HomeScreen({ onStartRead, onStartQuiz, t, lang, userName = "", s
       <div className="card p-4 flex items-center gap-4 xl:hidden">
         <DailyGoalRing current={sessionXp} goal={dailyGoal} size={60} />
         <div className="flex-1 min-w-0">
-          <p className="font-display font-extrabold text-ink text-[17px]">{lang === "kk" ? "Kündelikti maqsat" : "Daily goal"}</p>
+          <p className="font-display font-extrabold text-ink text-[17px]">{lang === "kk" ? "Күнделікті мақсат" : "Daily goal"}</p>
           <p className="text-sm text-ink-2">
             {sessionXp >= dailyGoal
-              ? (lang === "kk" ? "Orındaldy! Jaraısyñ." : "Done for today. Nice work!")
-              : `${dailyGoal - sessionXp} XP ${lang === "kk" ? "qaldy" : "to go"}`}
+              ? (lang === "kk" ? "Орындалды! Жарайсың." : "Done for today. Nice work!")
+              : `${dailyGoal - sessionXp} XP ${lang === "kk" ? "қалды" : "to go"}`}
           </p>
         </div>
       </div>
@@ -194,12 +201,12 @@ export function HomeScreen({ onStartRead, onStartQuiz, t, lang, userName = "", s
         <OrnamentBand className="absolute top-3 inset-x-0 h-3 w-full text-white/15" />
         <div className="relative p-5 pt-[124px]">
           <span className="inline-flex items-center gap-1.5 h-7 px-3 rounded-full bg-white/15 backdrop-blur text-white text-xs font-bold">
-            <BookOpen size={13} /> {featuredLevel ? `${featuredLevel.id} · ${featuredLevel.title}` : current?.step === "quiz" ? t.takeQuiz : displayTitle(featured.sceneLabel)}
+            <BookOpen size={13} /> {featuredLevel ? `${featuredLevel.id} · ${lang === "kk" ? featuredLevel.kkTitle : featuredLevel.title}` : current?.step === "quiz" ? t.takeQuiz : lang === "kk" ? featured.sceneLabelKk : displayTitle(featured.sceneLabel)}
           </span>
           <h2 className="font-display font-black text-white text-2xl leading-tight mt-3">{displayTitle(featured.title)}</h2>
           <p className="text-white/75 text-sm mt-1.5 line-clamp-2">{featured.storyDesc[lang as "en" | "kk"] || featured.storyDesc.en}</p>
           <span className="btn btn-sun btn-sm mt-4 pointer-events-none">
-            <Play size={15} className="fill-ink" /> {lang === "kk" ? "Jalğastyru" : "Continue"}
+            <Play size={15} className="fill-ink" /> {lang === "kk" ? "Жалғастыру" : "Continue"}
           </span>
         </div>
       </button>
@@ -209,13 +216,13 @@ export function HomeScreen({ onStartRead, onStartQuiz, t, lang, userName = "", s
       <div className="flex items-end gap-3">
         <img src="/shoqan-avatar.jpg" alt="Shoqan" className="w-16 h-16 rounded-full object-cover border-[3px] border-sun shadow-[0_4px_0_var(--color-sun-deep)] shrink-0" />
         <div className="relative flex-1 card p-4 rounded-bl-md">
-          <p className="eyebrow text-sun-deep">{lang === "kk" ? "Şoqannyñ keñesi" : "Shoqan's tip"}</p>
+          <p className="eyebrow text-sun-deep">{lang === "kk" ? "Шоқанның кеңесі" : "Shoqan's tip"}</p>
           <p className="text-[15px] text-ink mt-1 leading-snug">{tip[lang === "kk" ? "kk" : "en"]}</p>
           <button
             onClick={() => window.dispatchEvent(new CustomEvent("shoqan:open", { detail: tip.ask }))}
             className="mt-2 text-sm font-bold text-sky-deep"
           >
-            {lang === "kk" ? "Şoqannan suraý ›" : "Ask Shoqan ›"}
+            {lang === "kk" ? "Шоқаннан сұра ›" : "Ask Shoqan ›"}
           </button>
         </div>
       </div>
@@ -234,7 +241,7 @@ export function HomeScreen({ onStartRead, onStartQuiz, t, lang, userName = "", s
             <div className={`relative rounded-[22px] ${unit.bg} ${unit.edge} text-white px-5 py-4 overflow-hidden`}>
               <OrnamentBand className="absolute -bottom-0.5 inset-x-0 h-4 w-full text-white/20" />
               <p className="text-xs font-bold uppercase tracking-[0.08em] text-white/80">
-                {lang === "kk" ? `${si + 1}-bölim` : `Unit ${si + 1}`}
+                {lang === "kk" ? `${si + 1}-бөлім` : `Unit ${si + 1}`}
               </p>
               <div className="flex items-end justify-between gap-3">
                 <h3 className="font-display font-black text-xl leading-tight">{displayTitle(story.title)}</h3>
@@ -249,7 +256,7 @@ export function HomeScreen({ onStartRead, onStartQuiz, t, lang, userName = "", s
                   <PathIsland
                     key={lvl.id}
                     label={lvl.id}
-                    caption={lvl.title}
+                    caption={lang === "kk" ? lvl.kkTitle : lvl.title}
                     color={c.bg}
                     edge={c.island}
                     x={PATH_OFFSETS[li % PATH_OFFSETS.length]}
@@ -263,12 +270,12 @@ export function HomeScreen({ onStartRead, onStartQuiz, t, lang, userName = "", s
               })}
               <PathIsland
                 label="C2"
-                caption={lang === "kk" ? "Jaqynda" : "Coming soon"}
+                caption={lang === "kk" ? "Жақында" : "Coming soon"}
                 color="bg-sand-3"
                 edge="shadow-[0_7px_0_var(--color-line-2)]"
                 x={PATH_OFFSETS[5]}
                 locked
-                ariaLabel={`C2: ${lang === "kk" ? "jaqynda" : "coming soon"}`}
+                ariaLabel={`C2: ${lang === "kk" ? "жақында" : "coming soon"}`}
               />
               <PathIsland
                 caption={t.takeQuiz}
@@ -293,7 +300,7 @@ export function HomeScreen({ onStartRead, onStartQuiz, t, lang, userName = "", s
             <Tumar className="w-10 h-10" strokeWidth={3} />
           </div>
           <p className="text-sm text-ink-3 font-semibold pt-1">
-            {lang === "kk" ? `Taǵy ${comingSoon} añyz jaqynda` : `${comingSoon} more tales coming soon`}
+            {lang === "kk" ? `Тағы ${comingSoon} аңыз жақында` : `${comingSoon} more tales coming soon`}
           </p>
         </div>
       )}
@@ -303,6 +310,7 @@ export function HomeScreen({ onStartRead, onStartQuiz, t, lang, userName = "", s
 
 /* --- 3. READER SCREEN --- */
 export function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, setSelectedLevel, onQuizGate, onLevelDone, t, lang = "kk", onReward, savedWords, onSaveWord }: any) {
+  const tr = useTr();
   const [isPlaying, setIsPlaying] = useState(true);
   const [activeWord, setActiveWord] = useState<string | null>(null);
   const [translation, setTranslation] = useState("");
@@ -343,7 +351,7 @@ export function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, s
   if (!selectedStory) {
     return (
       <div className="animate-pop-in">
-        <ScreenHeader eyebrow={lang === "kk" ? "Kitaphana" : "Library"} title={t.selectStoryTitle} />
+        <ScreenHeader eyebrow={lang === "kk" ? "Кітапхана" : "Library"} title={t.selectStoryTitle} />
         <p className="text-[15px] text-ink-2 -mt-2 mb-4">{t.selectStorySub}</p>
 
         <div className="card overflow-hidden divide-y divide-line">
@@ -355,7 +363,7 @@ export function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, s
             >
               <StoryCover id={story.id} className="w-[72px] h-[72px] rounded-2xl shrink-0 shadow-[0_3px_0_var(--color-line-2)]" />
               <div className="flex-1 min-w-0">
-                <p className="eyebrow text-[11px] text-sky-deep">{displayTitle(story.sceneLabel)}</p>
+                <p className="eyebrow text-[11px] text-sky-deep">{lang === "kk" ? story.sceneLabelKk : displayTitle(story.sceneLabel)}</p>
                 <h3 className="font-display font-extrabold text-[17px] text-ink leading-snug mt-0.5">{displayTitle(story.title)}</h3>
                 <p className="text-sm text-ink-2 line-clamp-1 mt-0.5">{story.storyDesc[lang] || story.storyDesc.en}</p>
               </div>
@@ -374,7 +382,7 @@ export function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, s
       <div className="animate-pop-in">
         <ScreenHeader
           onBack={() => setSelectedStory(null)}
-          backLabel={lang === "kk" ? "Añyzdar" : "Stories"}
+          backLabel={lang === "kk" ? "Аңыздар" : "Stories"}
           eyebrow={displayTitle(currentStory.title)}
           title={t.selectLevelTitle}
         />
@@ -394,8 +402,8 @@ export function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, s
                   {lvl.badge}
                 </span>
                 <div className="flex-1 min-w-0">
-                  <h3 className="font-display font-extrabold text-[17px] text-ink">{lvl.title}</h3>
-                  <p className="text-sm text-ink-2 leading-snug">{lvl.desc}</p>
+                  <h3 className="font-display font-extrabold text-[17px] text-ink">{lang === "kk" ? lvl.kkTitle : lvl.title}</h3>
+                  <p className="text-sm text-ink-2 leading-snug">{lang === "kk" ? lvl.kkDesc : lvl.desc}</p>
                 </div>
                 <ChevronRight size={20} className="text-ink-3 shrink-0" />
               </button>
@@ -504,7 +512,7 @@ export function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, s
       <ScreenHeader
         onBack={() => setSelectedLevel(null)}
         backLabel={t.changeLevel}
-        eyebrow={displayTitle(currentStory.sceneLabel)}
+        eyebrow={lang === "kk" ? currentStory.sceneLabelKk : displayTitle(currentStory.sceneLabel)}
         title={displayTitle(currentStory.title)}
         trailing={
           <span className={`shrink-0 w-12 h-12 rounded-2xl ${levelColor.bg} ${levelColor.edge} flex items-center justify-center font-display font-black text-white`}>
@@ -523,7 +531,7 @@ export function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, s
             </span>
             <button
               onClick={toggleVideo}
-              aria-label={isPlaying ? "Pause video" : "Play video"}
+              aria-label={isPlaying ? tr("Видеоны тоқтату", "Pause video") : tr("Видеоны қосу", "Play video")}
               className="absolute bottom-3 right-3 w-11 h-11 rounded-full glass text-ink flex items-center justify-center"
             >
               {isPlaying ? <Pause size={18} className="fill-ink" /> : <Play size={18} className="fill-ink" />}
@@ -541,7 +549,7 @@ export function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, s
         <div className="flex items-center gap-3">
           <button
             onClick={handleToggleReadAlong}
-            aria-label={isReadAlongPlaying ? "Pause read-along" : "Start read-along"}
+            aria-label={isReadAlongPlaying ? tr("Бірге оқуды тоқтату", "Pause read-along") : tr("Бірге оқуды бастау", "Start read-along")}
             className={`w-12 h-12 rounded-full flex items-center justify-center shrink-0 transition-transform active:translate-y-[3px] ${
               isReadAlongPlaying
                 ? "bg-felt text-white shadow-[0_3px_0_var(--color-felt-deep)] active:shadow-none"
@@ -551,18 +559,18 @@ export function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, s
             {isReadAlongPlaying ? <Pause size={20} className="fill-white" /> : <Play size={20} className="fill-ink ml-0.5" />}
           </button>
           <div className="flex-1 min-w-0">
-            <p className="font-display font-extrabold text-ink text-[15px]">Read along</p>
+            <p className="font-display font-extrabold text-ink text-[15px]">{tr("Бірге оқу", "Read along")}</p>
             <p className="text-sm text-ink-2 truncate">
-              {readAlongTokenIndex !== null ? <>Now: <b className="text-ink">{tokens[readAlongTokenIndex]}</b></> : t.tapWordHint}
+              {readAlongTokenIndex !== null ? <>{tr("Қазір", "Now")}: <b className="text-ink">{tokens[readAlongTokenIndex]}</b></> : t.tapWordHint}
             </p>
           </div>
           {readAlongTokenIndex !== null && (
-            <button onClick={handleRestartReadAlong} aria-label="Restart" className="w-10 h-10 rounded-full flex items-center justify-center text-ink-2 hover:bg-sand-2">
+            <button onClick={handleRestartReadAlong} aria-label={tr("Басынан", "Restart")} className="w-10 h-10 rounded-full flex items-center justify-center text-ink-2 hover:bg-sand-2">
               <RotateCcw size={18} />
             </button>
           )}
         </div>
-        <div className="segmented" role="group" aria-label="Speed">
+        <div className="segmented" role="group" aria-label={tr("Жылдамдық", "Speed")}>
           {READ_SPEEDS.map((s) => (
             <button key={s.key} aria-pressed={readSpeed === s.rate} onClick={() => setReadSpeed(s.rate)}>
               {s.label}
@@ -575,9 +583,9 @@ export function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, s
       <div className="card p-5 sm:p-7 max-h-[440px] overflow-y-auto">
         {savedInText > 0 && (
           <p className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs font-semibold text-ink-2 mb-3">
-            <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded bg-sun-soft border-b-2 border-sun-deep/60" />{lang === "kk" ? "Üırenip jatyrsyñ" : "Learning"}</span>
-            <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded border-b-2 border-jade" />{lang === "kk" ? "Meñgerildi" : "Mastered"}</span>
-            <span className="text-ink-3">{savedInText} {lang === "kk" ? "saqtalǵan söz osy mätinde" : "saved words in this text"}</span>
+            <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded bg-sun-soft border-b-2 border-sun-deep/60" />{lang === "kk" ? "Үйреніп жатырсың" : "Learning"}</span>
+            <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded border-b-2 border-jade" />{lang === "kk" ? "Меңгерілді" : "Mastered"}</span>
+            <span className="text-ink-3">{savedInText} {lang === "kk" ? "сақталған сөз осы мәтінде" : "saved words in this text"}</span>
           </p>
         )}
         <p className="text-[18px] text-ink leading-[1.9]">
@@ -628,16 +636,16 @@ export function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, s
       </div>
 
       {/* Word sheet */}
-      <Sheet open={!!activeWord} onClose={() => setActiveWord(null)} label="Word">
+      <Sheet open={!!activeWord} onClose={() => setActiveWord(null)} label={tr("Сөз", "Word")}>
         {activeWord && (
           <div className="p-6 pt-4">
             <div className="flex items-start justify-between gap-3">
               <div>
-                <p className="eyebrow">English</p>
+                <p className="eyebrow">{tr("Ағылшынша", "English")}</p>
                 <h3 className="font-display font-black text-[32px] text-ink leading-tight">{cleanActive}</h3>
                 <p className="text-lg text-sky-deep font-semibold mt-1">{translation}</p>
               </div>
-              <button onClick={() => safePlayVoice(activeWord)} aria-label="Listen" className="w-12 h-12 rounded-full bg-sky-soft text-sky flex items-center justify-center shrink-0">
+              <button onClick={() => safePlayVoice(activeWord)} aria-label={tr("Тыңдау", "Listen")} className="w-12 h-12 rounded-full bg-sky-soft text-sky flex items-center justify-center shrink-0">
                 <Volume2 size={22} />
               </button>
             </div>
@@ -648,7 +656,7 @@ export function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, s
                 disabled={alreadySaved}
                 className="btn btn-jade"
               >
-                {alreadySaved ? <><Check size={18} strokeWidth={3} /> Saved</> : <><Plus size={18} strokeWidth={3} /> My words</>}
+                {alreadySaved ? <><Check size={18} strokeWidth={3} /> {tr("Сақталды", "Saved")}</> : <><Plus size={18} strokeWidth={3} /> {tr("Сөздігіме", "My words")}</>}
               </button>
             </div>
           </div>
@@ -689,13 +697,14 @@ export function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, s
 
 /* Words tab switcher shared by flashcards and matching. */
 function WordsHeader({ mode, setMode, trailing }: { mode?: string; setMode?: (m: string) => void; trailing?: React.ReactNode }) {
+  const tr = useTr();
   return (
     <>
-      <ScreenHeader eyebrow="Vocabulary" title={mode === "match" ? "Find the pair" : "Flashcards"} trailing={trailing} />
+      <ScreenHeader eyebrow={tr("Сөздік", "Vocabulary")} title={mode === "match" ? tr("Жұбын тап", "Find the pair") : tr("Карточкалар", "Flashcards")} trailing={trailing} />
       {setMode && (
-        <div className="segmented mb-5" role="group" aria-label="Practice mode">
-          <button aria-pressed={mode === "cards"} onClick={() => setMode("cards")}>Flashcards</button>
-          <button aria-pressed={mode === "match"} onClick={() => setMode("match")}>Matching</button>
+        <div className="segmented mb-5" role="group" aria-label={tr("Жаттығу түрі", "Practice mode")}>
+          <button aria-pressed={mode === "cards"} onClick={() => setMode("cards")}>{tr("Карточкалар", "Flashcards")}</button>
+          <button aria-pressed={mode === "match"} onClick={() => setMode("match")}>{tr("Сәйкестендіру", "Matching")}</button>
         </div>
       )}
     </>
@@ -739,7 +748,7 @@ export function FlashcardsScreen({ savedWords, onReview, lang = "kk", mode, setM
     return (
       <div className="animate-pop-in">
         <WordsHeader mode={mode} setMode={setMode} />
-        <EmptyState text="No words saved yet. Tap any word while reading a story to save it here." />
+        <EmptyState text={kk ? "Әзірге сөз сақталмаған. Ертегіні оқып отырып, кез келген сөзді бассаң, ол осында сақталады." : "No words saved yet. Tap any word while reading a story to save it here."} />
       </div>
     );
   }
@@ -757,10 +766,10 @@ export function FlashcardsScreen({ savedWords, onReview, lang = "kk", mode, setM
           <span className="mx-auto w-20 h-20 rounded-full bg-jade flex items-center justify-center shadow-[0_5px_0_var(--color-jade-deep)]">
             <Check className="text-white" size={40} strokeWidth={3.5} />
           </span>
-          <p className="font-display font-black text-2xl text-ink mt-5">{kk ? "Bäri qaitalandy!" : "All caught up!"}</p>
+          <p className="font-display font-black text-2xl text-ink mt-5">{kk ? "Бәрі қайталанды!" : "All caught up!"}</p>
           <p className="text-[15px] text-ink-2 mt-1">
-            {reviewed > 0 && `${reviewed} ${kk ? "söz qaitalandy. " : "words reviewed. "}`}
-            {days !== null && (kk ? `Kelesi qaitalau ${days} künnen keiin.` : `Next review in ${days} day${days > 1 ? "s" : ""}.`)}
+            {reviewed > 0 && `${reviewed} ${kk ? "сөз қайталанды. " : "words reviewed. "}`}
+            {days !== null && (kk ? `Келесі қайталау ${days} күннен кейін.` : `Next review in ${days} day${days > 1 ? "s" : ""}.`)}
           </p>
           <button
             onClick={() => {
@@ -772,7 +781,7 @@ export function FlashcardsScreen({ savedWords, onReview, lang = "kk", mode, setM
             }}
             className="btn btn-ghost w-full mt-6"
           >
-            {kk ? "Bärın qaitalau" : "Practice all anyway"}
+            {kk ? "Бәрін қайталау" : "Practice all anyway"}
           </button>
         </div>
       </div>
@@ -805,35 +814,35 @@ export function FlashcardsScreen({ savedWords, onReview, lang = "kk", mode, setM
           setFlipped(!flipped);
           safePlayVoice(currentWord.word);
         }}
-        aria-label="Flip card"
+        aria-label={kk ? "Карточканы аудару" : "Flip card"}
         className="flip block w-full h-[280px]"
       >
         <div className={`flip-inner w-full h-full ${flipped ? "is-flipped" : ""}`}>
           <div className="flip-face card overflow-hidden flex flex-col items-center justify-center p-6">
             <KilimStrip className="absolute top-0 inset-x-0 h-2 w-full" />
-            <span className="eyebrow">English</span>
+            <span className="eyebrow">{kk ? "Ағылшынша" : "English"}</span>
             <span className="font-display font-black text-[40px] text-ink mt-2">{currentWord.word}</span>
-            <span className="mt-6 text-sm text-ink-3 flex items-center gap-1.5"><Volume2 size={15} /> Tap to flip</span>
-            <span className="absolute bottom-4 flex gap-1.5" aria-label={`Box ${box} of ${MAX_MASTERY}`}>
+            <span className="mt-6 text-sm text-ink-3 flex items-center gap-1.5"><Volume2 size={15} /> {kk ? "Аудару үшін бас" : "Tap to flip"}</span>
+            <span className="absolute bottom-4 flex gap-1.5" aria-label={kk ? `${MAX_MASTERY} қораптың ${box}-сі` : `Box ${box} of ${MAX_MASTERY}`}>
               {Array.from({ length: MAX_MASTERY }, (_, i) => (
                 <span key={i} className={`w-2 h-2 rounded-full ${i < box ? "bg-jade" : "bg-sand-3"}`} />
               ))}
             </span>
           </div>
           <div className="flip-face flip-back rounded-[24px] bg-sky shadow-[0_6px_0_var(--color-sky-deep)] flex flex-col items-center justify-center p-6 text-white">
-            <span className="text-xs font-bold uppercase tracking-[0.08em] text-white/75">Qazaqşa</span>
+            <span className="text-xs font-bold uppercase tracking-[0.08em] text-white/75">Қазақша</span>
             <span className="font-display font-black text-[32px] mt-2 text-center">{currentWord.translation}</span>
           </div>
         </div>
       </button>
 
       <div className="grid grid-cols-2 gap-3 mt-7">
-        <button onClick={() => handleNext(false)} className="btn btn-ghost">{kk ? "Äli bilmeimin" : "Not yet"}</button>
-        <button onClick={() => handleNext(true)} className="btn btn-jade">{kk ? "Bilemin" : "I knew it"}</button>
+        <button onClick={() => handleNext(false)} className="btn btn-ghost">{kk ? "Әлі білмеймін" : "Not yet"}</button>
+        <button onClick={() => handleNext(true)} className="btn btn-jade">{kk ? "Білемін" : "I knew it"}</button>
       </div>
       {!practice && (
         <p className="text-center text-sm text-ink-3 mt-4">
-          {kk ? "Bilseñ, söz keiınırek qaitalanady: 1, 3, 7 kün..." : "Words you know come back later: 1, 3, 7 days..."}
+          {kk ? "Білсең, сөз кейінірек қайталанады: 1, 3, 7 күн..." : "Words you know come back later: 1, 3, 7 days..."}
         </p>
       )}
     </div>
@@ -842,6 +851,7 @@ export function FlashcardsScreen({ savedWords, onReview, lang = "kk", mode, setM
 
 /* --- 3.6 MATCHING GAME SCREEN --- */
 export function MatchingGame({ savedWords, onReward, mode, setMode }: any) {
+  const tr = useTr();
   const GRID_SIZE = 6;
   const [round, setRound] = useState(0);
   const [tiles, setTiles] = useState<any[]>([]);
@@ -896,7 +906,7 @@ export function MatchingGame({ savedWords, onReward, mode, setMode }: any) {
     return (
       <div className="animate-pop-in">
         <WordsHeader mode={mode} setMode={setMode} />
-        <EmptyState text="Save at least 3 words while reading to unlock the matching game." />
+        <EmptyState text={tr("Ойын ашылуы үшін оқу кезінде кемінде 3 сөз сақта.", "Save at least 3 words while reading to unlock the matching game.")} />
       </div>
     );
   }
@@ -909,9 +919,9 @@ export function MatchingGame({ savedWords, onReward, mode, setMode }: any) {
           <span className="mx-auto w-20 h-20 rounded-full bg-sun flex items-center justify-center shadow-[0_5px_0_var(--color-sun-deep)]">
             <Trophy className="text-ink" size={36} />
           </span>
-          <p className="font-display font-black text-2xl text-ink mt-5">All matched!</p>
-          <p className="text-[15px] text-ink-2 mt-1">Great recognition speed.</p>
-          <button onClick={() => setRound((r) => r + 1)} className="btn w-full mt-6">Next round</button>
+          <p className="font-display font-black text-2xl text-ink mt-5">{tr("Бәрі сәйкес келді!", "All matched!")}</p>
+          <p className="text-[15px] text-ink-2 mt-1">{tr("Сөздерді тез таныдың.", "Great recognition speed.")}</p>
+          <button onClick={() => setRound((r) => r + 1)} className="btn w-full mt-6">{tr("Келесі раунд", "Next round")}</button>
         </div>
       </div>
     );
@@ -953,7 +963,7 @@ export function MatchingGame({ savedWords, onReward, mode, setMode }: any) {
 }
 
 /* --- 6a. QUIZ SETUP --- */
-// Pick the text and its level first; the timer only starts after "Bastau".
+// Pick the text and its level first; the timer only starts after "Бастау".
 export function QuizSetup({ storyId, level, onChange, onStart, progress, lang, t }: {
   storyId: string;
   level: string | null;
@@ -970,7 +980,7 @@ export function QuizSetup({ storyId, level, onChange, onStart, progress, lang, t
   const canPick = (sid: string, lvl: string | null) =>
     lvl === null || progress.has(`${sid}:${lvl}`) || (sid === entry.storyId && lvl === entry.level);
   const modes = [
-    { id: null, label: kk ? "Bükil ertegi" : "Whole tale" },
+    { id: null, label: kk ? "Бүкіл ертегі" : "Whole tale" },
     ...LEVEL_DETAILS.map((l) => ({ id: l.id as string | null, label: l.id })),
   ];
   const story = STORIES.find((s: any) => s.id === storyId) || STORIES[0];
@@ -978,9 +988,9 @@ export function QuizSetup({ storyId, level, onChange, onStart, progress, lang, t
 
   return (
     <div className="animate-pop-in">
-      <ScreenHeader eyebrow={kk ? "Synaqqa daıyndal" : "Get ready"} title={t.quizTitle} />
+      <ScreenHeader eyebrow={kk ? "Сынаққа дайындал" : "Get ready"} title={t.quizTitle} />
 
-      <p className="eyebrow mb-2">{kk ? "1. Mätindi tañda" : "1. Choose a text"}</p>
+      <p className="eyebrow mb-2">{kk ? "1. Мәтінді таңда" : "1. Choose a text"}</p>
       <div className="space-y-2">
         {STORIES.map((s: any) => {
           const active = s.id === storyId;
@@ -1002,7 +1012,7 @@ export function QuizSetup({ storyId, level, onChange, onStart, progress, lang, t
         })}
       </div>
 
-      <p className="eyebrow mt-6 mb-2">{kk ? "2. Deñgeıdi tañda" : "2. Choose the level"}</p>
+      <p className="eyebrow mt-6 mb-2">{kk ? "2. Деңгейді таңда" : "2. Choose the level"}</p>
       <div className="flex flex-wrap gap-2">
         {modes.map((m) => {
           const active = m.id === level;
@@ -1014,7 +1024,7 @@ export function QuizSetup({ storyId, level, onChange, onStart, progress, lang, t
               onClick={() => open && onChange(storyId, m.id)}
               disabled={!open}
               aria-pressed={active}
-              title={open ? undefined : (kk ? "Aldymen osy deñgeıdi oqy" : "Read this level first")}
+              title={open ? undefined : (kk ? "Алдымен осы деңгейді оқы" : "Read this level first")}
               className={`tile h-11 px-4 text-sm font-bold flex items-center gap-1.5 ${active ? "tile-selected" : open ? "text-ink" : "text-ink-3 opacity-60"}`}
             >
               {!open && <Lock size={13} />}
@@ -1026,13 +1036,13 @@ export function QuizSetup({ storyId, level, onChange, onStart, progress, lang, t
       </div>
 
       <div className="card p-4 mt-6 grid grid-cols-3 text-center">
-        <div><p className="font-display font-black text-xl text-ink">{count}</p><p className="text-xs text-ink-2">{kk ? "sūraq" : "questions"}</p></div>
-        <div className="border-x-2 border-line"><p className="font-display font-black text-xl text-ink flex items-center justify-center gap-1"><Timer size={18} className="text-sky-deep" />15s</p><p className="text-xs text-ink-2">{kk ? "är sūraqqa" : "per question"}</p></div>
-        <div><p className="font-display font-black text-xl text-ink flex items-center justify-center gap-1"><Heart size={18} className="fill-felt text-felt" />3</p><p className="text-xs text-ink-2">{kk ? "jürek" : "hearts"}</p></div>
+        <div><p className="font-display font-black text-xl text-ink">{count}</p><p className="text-xs text-ink-2">{kk ? "сұрақ" : "questions"}</p></div>
+        <div className="border-x-2 border-line"><p className="font-display font-black text-xl text-ink flex items-center justify-center gap-1"><Timer size={18} className="text-sky-deep" />15s</p><p className="text-xs text-ink-2">{kk ? "әр сұраққа" : "per question"}</p></div>
+        <div><p className="font-display font-black text-xl text-ink flex items-center justify-center gap-1"><Heart size={18} className="fill-felt text-felt" />3</p><p className="text-xs text-ink-2">{kk ? "жүрек" : "hearts"}</p></div>
       </div>
 
       <button onClick={onStart} className="btn w-full mt-6">
-        {kk ? "Bastau" : "Start"} <ArrowRight size={20} />
+        {kk ? "Бастау" : "Start"} <ArrowRight size={20} />
       </button>
     </div>
   );
@@ -1046,6 +1056,7 @@ export function QuizScreen({ onReward, t, onQuizFinish, questions, storyTitle }:
   questions: { type?: string; q?: string; sentence?: string; options: string[]; correct: number }[];
   storyTitle?: string;
 }) {
+  const tr = useTr();
   const [qIndex, setQIndex] = useState(0);
   const [selected, setSelected] = useState<number | null>(null);
   const [submitted, setSubmitted] = useState(false);
@@ -1141,11 +1152,11 @@ export function QuizScreen({ onReward, t, onQuizFinish, questions, storyTitle }:
           <span className="mx-auto w-20 h-20 rounded-full bg-felt-soft flex items-center justify-center">
             <Heart className="text-felt" size={38} />
           </span>
-          <p className="font-display font-black text-2xl text-ink mt-5">Out of hearts</p>
+          <p className="font-display font-black text-2xl text-ink mt-5">{tr("Жүрек таусылды", "Out of hearts")}</p>
           <p className="text-[15px] text-ink-2 mt-2 leading-relaxed">
-            Re-read the story to refresh your memory, then try again from the start.
+            {tr("Ертегіні қайта оқып, есіңе түсір де, сынақты басынан бастап көр.", "Re-read the story to refresh your memory, then try again from the start.")}
           </p>
-          <button onClick={handleRestart} className="btn btn-felt w-full mt-6">Restart quiz</button>
+          <button onClick={handleRestart} className="btn btn-felt w-full mt-6">{tr("Сынақты қайта бастау", "Restart quiz")}</button>
         </div>
       </div>
     );
@@ -1160,16 +1171,16 @@ export function QuizScreen({ onReward, t, onQuizFinish, questions, storyTitle }:
           <span className={`mx-auto w-28 h-28 rounded-full flex items-center justify-center ${passed ? "bg-sun shadow-[0_6px_0_var(--color-sun-deep)]" : "bg-sand-3 shadow-[0_6px_0_var(--color-line-2)]"}`}>
             <Trophy className={passed ? "text-ink" : "text-ink-3"} size={52} />
           </span>
-          <h2 className="large-title mt-6">{passed ? "Lesson complete!" : "Almost there"}</h2>
+          <h2 className="large-title mt-6">{passed ? tr("Сабақ аяқталды!", "Lesson complete!") : tr("Аз қалды", "Almost there")}</h2>
           <p className="text-[15px] text-ink-2 mt-2 max-w-[320px] mx-auto">
-            {passed ? "Great comprehension! You understood the story well." : "Re-read the story and try again — comprehension takes practice."}
+            {passed ? tr("Керемет! Ертегіні жақсы түсіндің.", "Great comprehension! You understood the story well.") : tr("Ертегіні қайта оқып, тағы байқап көр: түсіну жаттығумен келеді.", "Re-read the story and try again — comprehension takes practice.")}
           </p>
         </div>
         <div className="grid grid-cols-3 gap-3 mt-7">
           {[
-            { label: "Correct", value: `${correctCount}/${questions.length}`, color: "border-sky text-sky-deep", head: "bg-sky" },
-            { label: "Accuracy", value: `${accuracy}%`, color: "border-jade text-jade-deep", head: "bg-jade" },
-            { label: "Hearts", value: `${hearts}`, color: "border-felt text-felt-deep", head: "bg-felt" },
+            { label: tr("Дұрыс", "Correct"), value: `${correctCount}/${questions.length}`, color: "border-sky text-sky-deep", head: "bg-sky" },
+            { label: tr("Дәлдік", "Accuracy"), value: `${accuracy}%`, color: "border-jade text-jade-deep", head: "bg-jade" },
+            { label: tr("Жүрек", "Hearts"), value: `${hearts}`, color: "border-felt text-felt-deep", head: "bg-felt" },
           ].map((s) => (
             <div key={s.label} className={`rounded-2xl border-2 overflow-hidden ${s.color}`}>
               <p className={`${s.head} text-white text-xs font-bold uppercase tracking-[0.06em] py-1 text-center`}>{s.label}</p>
@@ -1202,7 +1213,7 @@ export function QuizScreen({ onReward, t, onQuizFinish, questions, storyTitle }:
       <div className="mt-3 mb-6">
         {question.type === "fillblank" ? (
           <>
-            <h2 className="font-display font-black text-[22px] text-ink">Fill in the blank</h2>
+            <h2 className="font-display font-black text-[22px] text-ink">{tr("Бос орынды толтыр", "Fill in the blank")}</h2>
             <p className="text-[18px] text-ink leading-relaxed mt-3">
               {(question.sentence || "").split("___")[0]}
               <span className="inline-block min-w-[72px] border-b-[3px] border-sky mx-1 text-center text-sky-deep font-bold">
@@ -1261,7 +1272,7 @@ export function QuizScreen({ onReward, t, onQuizFinish, questions, storyTitle }:
             </span>
             <div className="min-w-0">
               <p className={`font-display font-black text-xl ${isCorrect ? "text-jade-deep" : "text-felt-deep"}`}>
-                {timedOut ? "Time's up" : isCorrect ? t.correctMsg : t.wrongMsg}
+                {timedOut ? tr("Уақыт бітті", "Time's up") : isCorrect ? t.correctMsg : t.wrongMsg}
               </p>
               {!isCorrect && (
                 <p className="text-[15px] text-felt-deep font-semibold">{question.options[question.correct]}</p>
@@ -1272,18 +1283,18 @@ export function QuizScreen({ onReward, t, onQuizFinish, questions, storyTitle }:
                     const task = question.sentence || question.q || "";
                     const mine = selected !== null ? ` I chose "${question.options[selected]}".` : "";
                     window.dispatchEvent(new CustomEvent("shoqan:open", {
-                      detail: `Why is "${question.options[question.correct]}" the right answer here: "${task}"?${mine} Explain simply, comparing with Kazakh.`,
+                      detail: `Why is "${question.options[question.correct]}" the right answer here: "${task}"?${mine} Explain simply, comparing with Kazakh.${tr(" Answer in Kazakh, in Cyrillic script.", "")}`,
                     }));
                   }}
                   className="mt-2 h-8 px-3 rounded-full bg-card text-felt-deep text-sm font-bold inline-flex items-center gap-1.5"
                 >
-                  <MessageCircle size={15} /> Nege? Şoqannan sura
+                  <MessageCircle size={15} /> {tr("Неге? Шоқаннан сұра", "Why? Ask Shoqan")}
                 </button>
               )}
             </div>
           </div>
           <button onClick={handleNext} className={`btn w-full mt-4 ${isCorrect ? "btn-jade" : "btn-felt"}`}>
-            {qIndex + 1 >= questions.length ? "See results" : "Continue"}
+            {qIndex + 1 >= questions.length ? tr("Нәтижені көру", "See results") : tr("Жалғастыру", "Continue")}
           </button>
         </div>
       )}
@@ -1327,6 +1338,7 @@ export function SpeakScreen({ onReward, t }: {
   onReward: (xp: number) => void;
   t: Record<string, string>;
 }) {
+  const tr = useTr();
   const [recording, setRecording] = useState(false);
   const [scores, setScores] = useState<{
     accuracy: number;
@@ -1418,21 +1430,21 @@ export function SpeakScreen({ onReward, t }: {
             setScores(next);
             if (next.pronunciation >= 50) onReward(Math.round(5 + (next.pronunciation / 100) * 15));
           } else if (result.reason === SpeechSDK.ResultReason.NoMatch) {
-            setSpeechError("Didn't catch that — try speaking a bit louder and closer to the mic.");
+            setSpeechError(tr("Естілмеді. Микрофонға жақынырақ, қаттырақ сөйлеп көр.", "Didn't catch that — try speaking a bit louder and closer to the mic."));
           } else {
-            setSpeechError("Something went wrong with speech recognition. Please try again.");
+            setSpeechError(tr("Сөйлеуді тану кезінде қате шықты. Қайта байқап көр.", "Something went wrong with speech recognition. Please try again."));
           }
           recognizer.close();
         },
         () => {
           setRecording(false);
-          setSpeechError("Something went wrong reaching the speech service. Please try again.");
+          setSpeechError(tr("Дыбыс қызметіне қосылу мүмкін болмады. Қайта байқап көр.", "Something went wrong reaching the speech service. Please try again."));
           recognizer.close();
         }
       );
     } catch (err: unknown) {
       setRecording(false);
-      setSpeechError((err instanceof Error ? err.message : null) || "Couldn't start pronunciation practice — check your microphone permissions.");
+      setSpeechError((err instanceof Error ? err.message : null) || tr("Жаттығу басталмады: микрофонға рұқсатты тексер.", "Couldn't start pronunciation practice — check your microphone permissions."));
     }
   };
 
@@ -1454,14 +1466,14 @@ export function SpeakScreen({ onReward, t }: {
       : overallScore >= 90
       ? t.greatIntonation
       : overallScore >= 70
-      ? "Good — close to the target. Listen again and try once more."
-      : "Keep practicing — tap the speaker to hear it again, then try to match it closely.";
+      ? tr("Жақсы, үлгіге жақын. Тағы тыңдап, қайта айтып көр.", "Good — close to the target. Listen again and try once more.")
+      : tr("Жаттыға бер: динамикті басып тыңда да, үлгіге жақындатып айт.", "Keep practicing — tap the speaker to hear it again, then try to match it closely.");
 
   return (
     <div className="animate-pop-in">
-      <ScreenHeader eyebrow="Pronunciation" title={t.speakTitle} />
+      <ScreenHeader eyebrow={tr("Айтылым", "Pronunciation")} title={t.speakTitle} />
 
-      <div className="segmented mb-4" role="group" aria-label="Level">
+      <div className="segmented mb-4" role="group" aria-label={tr("Деңгей", "Level")}>
         {SPEAK_LEVELS.map((lvl) => (
           <button key={lvl} aria-pressed={speakLevel === lvl} disabled={recording} onClick={() => changePhrase(lvl, 0)}>
             {lvl}
@@ -1476,7 +1488,7 @@ export function SpeakScreen({ onReward, t }: {
         </div>
         <div className="flex items-start gap-4 mt-3">
           <p className="flex-1 font-display font-extrabold text-[22px] leading-snug text-ink">“{targetPhrase}”</p>
-          <button onClick={() => safePlayVoice(targetPhrase)} aria-label="Listen" className="w-12 h-12 rounded-full bg-sky-soft text-sky flex items-center justify-center shrink-0">
+          <button onClick={() => safePlayVoice(targetPhrase)} aria-label={tr("Тыңдау", "Listen")} className="w-12 h-12 rounded-full bg-sky-soft text-sky flex items-center justify-center shrink-0">
             <Volume2 size={22} />
           </button>
         </div>
@@ -1490,7 +1502,7 @@ export function SpeakScreen({ onReward, t }: {
           {recording && <span className="absolute inset-0 rounded-full bg-felt/30 animate-ping" />}
           <button
             onClick={toggleRecord}
-            aria-label={recording ? "Stop recording" : "Start recording"}
+            aria-label={recording ? tr("Жазуды тоқтату", "Stop recording") : tr("Жазуды бастау", "Start recording")}
             className={`relative w-28 h-28 rounded-full flex items-center justify-center text-white transition-transform active:translate-y-[5px] ${
               recording
                 ? "bg-felt shadow-[0_7px_0_var(--color-felt-deep)] active:shadow-[0_2px_0_var(--color-felt-deep)]"
@@ -1515,9 +1527,9 @@ export function SpeakScreen({ onReward, t }: {
             <ScoreRing value={scores.pronunciation} />
             <div className="flex-1 space-y-3">
               {[
-                { label: "Accuracy", v: scores.accuracy },
-                { label: "Fluency", v: scores.fluency },
-                { label: "Completeness", v: scores.completeness },
+                { label: tr("Дәлдік", "Accuracy"), v: scores.accuracy },
+                { label: tr("Еркіндік", "Fluency"), v: scores.fluency },
+                { label: tr("Толықтық", "Completeness"), v: scores.completeness },
               ].map((m) => (
                 <div key={m.label}>
                   <div className="flex justify-between text-sm"><span className="text-ink-2">{m.label}</span><b className="text-ink">{m.v}</b></div>
@@ -1528,7 +1540,7 @@ export function SpeakScreen({ onReward, t }: {
           </div>
           {wordScores.length > 0 && (
             <div className="mt-5">
-              <p className="eyebrow mb-2">Word by word · tap to hear</p>
+              <p className="eyebrow mb-2">{tr("Сөзбе-сөз · тыңдау үшін бас", "Word by word · tap to hear")}</p>
               <div className="flex flex-wrap gap-2">
                 {wordScores.map((w, i) => {
                   const missed = w.error === "Omission";
@@ -1544,7 +1556,7 @@ export function SpeakScreen({ onReward, t }: {
                 })}
               </div>
               {wordScores.some((w) => w.score < 60 || w.error === "Omission") && (
-                <p className="text-sm text-ink-2 mt-3">Red words need work: listen, then record the phrase again.</p>
+                <p className="text-sm text-ink-2 mt-3">{tr("Қызыл сөздерді пысықта: тыңда да, сөйлемді қайта жаз.", "Red words need work: listen, then record the phrase again.")}</p>
               )}
             </div>
           )}
@@ -1577,8 +1589,8 @@ export function ProfileScreen({ xp, t, lang = "kk", setLang, savedWordsCount = 0
   const stats = [
     { label: t.streakLabel, value: streakDays, Icon: Flame, cls: "text-felt fill-felt" },
     { label: t.totalXpLabel, value: xp, Icon: Zap, cls: "text-sun-deep fill-sun" },
-    { label: lang === "kk" ? "Sözder" : "Words", value: savedWordsCount, Icon: Layers, cls: "text-sky" },
-    { label: lang === "kk" ? "Synaqtar" : "Quizzes", value: quizzesCompleted, Icon: Trophy, cls: "text-jade" },
+    { label: lang === "kk" ? "Сөздер" : "Words", value: savedWordsCount, Icon: Layers, cls: "text-sky" },
+    { label: lang === "kk" ? "Сынақтар" : "Quizzes", value: quizzesCompleted, Icon: Trophy, cls: "text-jade" },
   ];
 
   const share = async () => {
@@ -1612,14 +1624,14 @@ export function ProfileScreen({ xp, t, lang = "kk", setLang, savedWordsCount = 0
           </div>
           <div className="min-w-0 pt-3">
             <h1 className="font-display font-black text-2xl text-ink truncate">{userName}</h1>
-            <p className="text-sm text-ink-2">{t.levelStatus} · Level {rank}</p>
+            <p className="text-sm text-ink-2">{t.levelStatus} · {lang === "kk" ? `${rank}-деңгей` : `Level ${rank}`}</p>
           </div>
         </div>
       </div>
 
       {/* Stats */}
       <div>
-        <h2 className="font-display font-black text-xl text-ink mb-3">{lang === "kk" ? "Statistika" : "Statistics"}</h2>
+        <h2 className="font-display font-black text-xl text-ink mb-3">{lang === "kk" ? "Статистика" : "Statistics"}</h2>
         <div className="grid grid-cols-2 gap-3">
           {stats.map(({ label, value, Icon, cls }) => (
             <div key={label} className="tile p-4 flex items-center gap-3">
@@ -1638,18 +1650,18 @@ export function ProfileScreen({ xp, t, lang = "kk", setLang, savedWordsCount = 0
       {/* Achievements */}
       <div>
         <div className="flex items-baseline justify-between mb-3">
-          <h2 className="font-display font-black text-xl text-ink">{lang === "kk" ? "Mūra artefaktilerı" : "Achievements"}</h2>
+          <h2 className="font-display font-black text-xl text-ink">{lang === "kk" ? "Мұра артефактілері" : "Achievements"}</h2>
           <span className="text-sm font-bold text-ink-3">{unlockedAchievements.length}/{ACHIEVEMENTS.length}</span>
         </div>
         <div className="card p-4 grid grid-cols-3 sm:grid-cols-5 gap-3">
           {ACHIEVEMENTS.map((a) => {
             const unlocked = unlockedAchievements.includes(a.id);
             return (
-              <div key={a.id} title={a.desc} className="text-center">
+              <div key={a.id} title={lang === "kk" ? a.kk.desc : a.desc} className="text-center">
                 <span className={`mx-auto w-16 h-16 rounded-full flex items-center justify-center text-3xl ${unlocked ? "bg-sun-soft ring-[3px] ring-sun" : "bg-sand-2 grayscale opacity-50"}`}>
                   {a.icon}
                 </span>
-                <span className={`block text-xs font-semibold mt-2 leading-tight ${unlocked ? "text-ink" : "text-ink-3"}`}>{a.title}</span>
+                <span className={`block text-xs font-semibold mt-2 leading-tight ${unlocked ? "text-ink" : "text-ink-3"}`}>{lang === "kk" ? a.kk.title : a.title}</span>
               </div>
             );
           })}
@@ -1659,10 +1671,10 @@ export function ProfileScreen({ xp, t, lang = "kk", setLang, savedWordsCount = 0
       {/* Settings — Apple grouped list */}
       <div className="card overflow-hidden divide-y divide-line">
         <div className="flex items-center justify-between gap-3 px-4 min-h-[56px]">
-          <span className="text-[16px] text-ink">{lang === "kk" ? "Til" : "Language"}</span>
+          <span className="text-[16px] text-ink">{lang === "kk" ? "Тіл" : "Language"}</span>
           {setLang && (
-            <div className="segmented w-[120px]" role="group" aria-label="Language">
-              <button aria-pressed={lang === "kk"} onClick={() => setLang("kk")}>QAZ</button>
+            <div className="segmented w-[120px]" role="group" aria-label={lang === "kk" ? "Тіл" : "Language"}>
+              <button aria-pressed={lang === "kk"} onClick={() => setLang("kk")}>ҚАЗ</button>
               <button aria-pressed={lang === "en"} onClick={() => setLang("en")}>ENG</button>
             </div>
           )}
@@ -1674,7 +1686,7 @@ export function ProfileScreen({ xp, t, lang = "kk", setLang, savedWordsCount = 0
         </button>
         <button onClick={onSignOut} className="w-full flex items-center gap-3 px-4 min-h-[56px] text-left hover:bg-sand/60">
           <span className="w-8 h-8 rounded-lg bg-felt flex items-center justify-center"><LogOut size={16} className="text-white" /></span>
-          <span className="flex-1 text-[16px] text-felt font-medium">Sign out</span>
+          <span className="flex-1 text-[16px] text-felt font-medium">{lang === "kk" ? "Шығу" : "Sign out"}</span>
         </button>
       </div>
 
@@ -1690,8 +1702,8 @@ export function ProfileScreen({ xp, t, lang = "kk", setLang, savedWordsCount = 0
             <div className="grid grid-cols-3 gap-2 mt-5 mb-3">
               {[
                 { l: "XP", v: xp },
-                { l: lang === "kk" ? "Kün" : "Streak", v: streakDays },
-                { l: lang === "kk" ? "Belgiler" : "Badges", v: `${unlockedAchievements.length}/${ACHIEVEMENTS.length}` },
+                { l: lang === "kk" ? "Күн" : "Streak", v: streakDays },
+                { l: lang === "kk" ? "Белгілер" : "Badges", v: `${unlockedAchievements.length}/${ACHIEVEMENTS.length}` },
               ].map((r) => (
                 <div key={r.l} className="rounded-2xl bg-white/10 py-3">
                   <p className="font-display font-black text-xl">{r.v}</p>

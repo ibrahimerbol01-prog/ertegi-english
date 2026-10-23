@@ -47,8 +47,8 @@ function CardFace({ card, lang, big = false }: { card: LegendCard; lang: Lang; b
       </div>
       <div className={`flex-1 flex flex-col justify-center text-center ${big ? "px-4 py-3" : "px-2 py-2"}`}>
         <p className={`font-bold uppercase tracking-[0.08em] text-ink-3 ${big ? "text-xs mb-1" : "text-[9px] mb-0.5"}`}>{r[lang]}</p>
-        <p className={`font-display font-black text-ink leading-tight ${big ? "text-2xl" : "text-[12px] line-clamp-2"}`}>{card.name}</p>
-        {big && <p className="text-ink-3 font-semibold mt-0.5 text-sm">{card.kk}</p>}
+        <p className={`font-display font-black text-ink leading-tight ${big ? "text-2xl" : "text-[12px] line-clamp-2"}`}>{lang === "kk" ? card.kk : card.name}</p>
+        {big && lang !== "kk" && <p className="text-ink-3 font-semibold mt-0.5 text-sm">{card.kk}</p>}
       </div>
     </div>
   );
@@ -67,7 +67,7 @@ function CardBack({ card, lang }: { card: LegendCard; lang: Lang }) {
         </span>
       </div>
       <div className="py-2 text-center text-[11px] font-bold text-sky-deep flex items-center justify-center gap-1">
-        <Headphones size={13} /> {lang === "kk" ? "Tyñda da aş" : "Listen to unlock"}
+        <Headphones size={13} /> {lang === "kk" ? "Тыңда да аш" : "Listen to unlock"}
       </div>
     </div>
   );
@@ -116,13 +116,13 @@ function Challenge({ card, lang, onWin, onClose }: { card: LegendCard; lang: Lan
     return (
       <div className="p-6 text-center">
         <div className="w-44 mx-auto animate-rank-pop"><CardFace card={card} lang={lang} big /></div>
-        <p className="eyebrow text-sun-deep mt-5">{lang === "kk" ? "Karta seniki!" : "The card is yours!"}</p>
+        <p className="eyebrow text-sun-deep mt-5">{lang === "kk" ? "Карта сенікі!" : "The card is yours!"}</p>
         <p className="text-sm font-bold text-ink mt-1">{score}/3 · +{r.xp} XP</p>
         <div className="mt-4 rounded-2xl bg-sand-2 p-4 text-left">
-          <p className="eyebrow">{lang === "kk" ? "Bilesiñ be?" : "Did you know?"}</p>
+          <p className="eyebrow">{lang === "kk" ? "Білесің бе?" : "Did you know?"}</p>
           <p className="text-sm text-ink mt-1 leading-relaxed">{card.fact[lang]}</p>
         </div>
-        <button onClick={onClose} className="btn btn-sun w-full mt-6">{lang === "kk" ? "Jinaqqa" : "To my deck"}</button>
+        <button onClick={onClose} className="btn btn-sun w-full mt-6">{lang === "kk" ? "Жинаққа" : "To my deck"}</button>
       </div>
     );
   }
@@ -139,7 +139,7 @@ function Challenge({ card, lang, onWin, onClose }: { card: LegendCard; lang: Lan
         onClick={() => setTf((prev) => prev.map((x, j) => (j === i ? value : x)))}
         className={`tile flex-1 py-2.5 text-sm font-bold ${state}`}
       >
-        {value ? (lang === "kk" ? "Ras" : "True") : (lang === "kk" ? "Jalǵan" : "False")}
+        {value ? (lang === "kk" ? "Рас" : "True") : (lang === "kk" ? "Жалған" : "False")}
       </button>
     );
   };
@@ -149,22 +149,22 @@ function Challenge({ card, lang, onWin, onClose }: { card: LegendCard; lang: Lan
   return (
     <div className="p-5">
       <div className="flex items-center justify-between">
-        <p className="eyebrow text-sky-deep">{lang === "kk" ? "Tyñda da jeñ" : "Listen and win"}</p>
+        <p className="eyebrow text-sky-deep">{lang === "kk" ? "Тыңда да жең" : "Listen and win"}</p>
         <span className={`chip h-7 text-[12px] text-white border-0 ${r.tone}`}>{r[lang]} · +{r.xp} XP</span>
       </div>
-      <h3 className="font-display font-black text-xl text-ink mt-2">{card.name}</h3>
+      <h3 className="font-display font-black text-xl text-ink mt-2">{lang === "kk" ? card.kk : card.name}</h3>
 
       <div className="grid grid-cols-[1fr_auto] gap-2 mt-4">
         <button onClick={() => play(0.85)} className="btn">
-          <Headphones size={18} /> {lang === "kk" ? "Tyñdau" : "Listen"}
+          <Headphones size={18} /> {lang === "kk" ? "Тыңдау" : "Listen"}
         </button>
-        <button onClick={() => play(0.6)} className="btn btn-ghost px-4" aria-label={lang === "kk" ? "Baıau" : "Slow"}>
+        <button onClick={() => play(0.6)} className="btn btn-ghost px-4" aria-label={lang === "kk" ? "Баяу" : "Slow"}>
           <Snail size={18} />
         </button>
       </div>
       {!listened && (
         <p className="text-xs text-ink-3 mt-2 text-center">
-          {lang === "kk" ? "Aldymen tyñda, sosyn jauap ber." : "Listen first, then answer."}
+          {lang === "kk" ? "Алдымен тыңда, сосын жауап бер." : "Listen first, then answer."}
         </p>
       )}
 
@@ -200,17 +200,17 @@ function Challenge({ card, lang, onWin, onClose }: { card: LegendCard; lang: Lan
 
       {checked ? (
         <div className="mt-6 rounded-[20px] bg-felt-soft p-4 animate-pop-in">
-          <p className="font-display font-black text-felt-deep">{score}/3 · {lang === "kk" ? "Taǵy bir ret tyñda" : "Listen once more"}</p>
-          <p className="text-sm text-ink-2 mt-1">{lang === "kk" ? "Kartany alu üşin keminde 2 dūrys jauap kerek." : "You need at least 2 right to win the card."}</p>
+          <p className="font-display font-black text-felt-deep">{score}/3 · {lang === "kk" ? "Тағы бір рет тыңда" : "Listen once more"}</p>
+          <p className="text-sm text-ink-2 mt-1">{lang === "kk" ? "Картаны алу үшін кемінде 2 дұрыс жауап керек." : "You need at least 2 right to win the card."}</p>
           <details className="mt-2">
-            <summary className="text-sm font-bold text-sky-deep cursor-pointer">{lang === "kk" ? "Mätindi kör" : "Show the text"}</summary>
+            <summary className="text-sm font-bold text-sky-deep cursor-pointer">{lang === "kk" ? "Мәтінді көр" : "Show the text"}</summary>
             <p className="text-sm text-ink mt-2 leading-relaxed">{card.scene}</p>
           </details>
-          <button onClick={retry} className="btn btn-felt w-full mt-4"><RotateCcw size={18} /> {lang === "kk" ? "Qaıtadan" : "Try again"}</button>
+          <button onClick={retry} className="btn btn-felt w-full mt-4"><RotateCcw size={18} /> {lang === "kk" ? "Қайтадан" : "Try again"}</button>
         </div>
       ) : (
         <button onClick={check} disabled={!ready} className="btn w-full mt-6">
-          {lang === "kk" ? "Tekseru" : "Check"}
+          {lang === "kk" ? "Тексеру" : "Check"}
         </button>
       )}
     </div>
@@ -223,11 +223,11 @@ function CardDetail({ card, lang }: { card: LegendCard; lang: Lang }) {
     <div className="p-6">
       <div className="w-40 mx-auto"><CardFace card={card} lang={lang} big /></div>
       <button onClick={() => safePlayVoice(card.scene)} className="btn w-full mt-5">
-        <Headphones size={18} /> {lang === "kk" ? "Qaıta tyñdau" : "Listen again"}
+        <Headphones size={18} /> {lang === "kk" ? "Қайта тыңдау" : "Listen again"}
       </button>
       <p className="text-[15px] text-ink leading-relaxed mt-4">{card.scene}</p>
       <div className="mt-4 rounded-2xl bg-sand-2 p-4">
-        <p className="eyebrow">{lang === "kk" ? "Bilesiñ be?" : "Did you know?"}</p>
+        <p className="eyebrow">{lang === "kk" ? "Білесің бе?" : "Did you know?"}</p>
         <p className="text-sm text-ink mt-1 leading-relaxed">{card.fact[lang]}</p>
       </div>
     </div>
@@ -244,13 +244,13 @@ function LegendDeck({ lang, owned, onWin, onClose }: {
   const isOwned = (id: string) => owned.includes(id);
 
   return createPortal(
-    <div className="fixed inset-0 z-[66] bg-sand overflow-y-auto animate-pop-in" role="dialog" aria-modal="true" aria-label={lang === "kk" ? "Batyrlar kartalary" : "Batyr cards"}>
+    <div className="fixed inset-0 z-[66] bg-sand overflow-y-auto animate-pop-in" role="dialog" aria-modal="true" aria-label={lang === "kk" ? "Батырлар карталары" : "Batyr cards"}>
       <div className="sticky top-0 z-10 glass border-b border-line/70">
         <div className="mx-auto max-w-[620px] px-4 h-16 flex items-center gap-3">
-          <button onClick={() => { stopVoice(); onClose(); }} aria-label="Close" className="w-10 h-10 rounded-full bg-card border-2 border-line flex items-center justify-center text-ink-2">
+          <button onClick={() => { stopVoice(); onClose(); }} aria-label={lang === "kk" ? "Жабу" : "Close"} className="w-10 h-10 rounded-full bg-card border-2 border-line flex items-center justify-center text-ink-2">
             <X size={20} />
           </button>
-          <p className="font-display font-black text-lg text-ink flex-1">{lang === "kk" ? "Batyrlar kartalary" : "Batyr cards"}</p>
+          <p className="font-display font-black text-lg text-ink flex-1">{lang === "kk" ? "Батырлар карталары" : "Batyr cards"}</p>
           <span className="chip text-sun-deep">{owned.length}/{LEGENDS.length}</span>
         </div>
       </div>
@@ -258,7 +258,7 @@ function LegendDeck({ lang, owned, onWin, onClose }: {
       <div className="mx-auto max-w-[620px] px-4 pt-5 pb-16">
         <p className="text-[15px] text-ink-2 leading-relaxed">
           {lang === "kk"
-            ? "Qazaq ertegileri, jyrlary, añyzdary men tarihy. Aǵylşynşa sahnany tyñda, 3 sūraqqa jauap ber – karta seniki."
+            ? "Қазақ ертегілері, жырлары, аңыздары мен тарихы. Ағылшынша сахнаны тыңда, 3 сұраққа жауап бер — карта сенікі."
             : "Kazakh tales, epics, legends and history. Listen to a scene in English, answer 3 questions, and the card is yours."}
         </p>
         <div className="flex flex-wrap gap-2 mt-3">
@@ -270,14 +270,14 @@ function LegendDeck({ lang, owned, onWin, onClose }: {
         </div>
         <div className="grid grid-cols-3 sm:grid-cols-4 gap-3 mt-5">
           {LEGENDS.map((card) => (
-            <button key={card.id} onClick={() => setActive({ card, play: !isOwned(card.id) })} className="text-left active:scale-[0.97] transition-transform" aria-label={isOwned(card.id) ? card.name : `${RARITY[card.rarity][lang]} card`}>
+            <button key={card.id} onClick={() => setActive({ card, play: !isOwned(card.id) })} className="text-left active:scale-[0.97] transition-transform" aria-label={isOwned(card.id) ? (lang === "kk" ? card.kk : card.name) : lang === "kk" ? `${RARITY[card.rarity][lang]} картасы` : `${RARITY[card.rarity][lang]} card`}>
               {isOwned(card.id) ? <CardFace card={card} lang={lang} /> : <CardBack card={card} lang={lang} />}
             </button>
           ))}
         </div>
       </div>
 
-      <Sheet open={!!active} onClose={close} label={active?.card.name || ""}>
+      <Sheet open={!!active} onClose={close} label={(active && (lang === "kk" ? active.card.kk : active.card.name)) || ""}>
         {active && (active.play
           ? <Challenge key={active.card.id} card={active.card} lang={lang} onWin={() => onWin(active.card)} onClose={close} />
           : <CardDetail card={active.card} lang={lang} />)}
@@ -316,9 +316,9 @@ export function LegendDeckEntry({ lang, userId, onReward }: { lang: string; user
           ))}
         </div>
         <div className="flex-1 min-w-0">
-          <p className="eyebrow text-sky-deep">{l === "kk" ? "Tyñda da jina" : "Listen and collect"}</p>
-          <p className="font-display font-extrabold text-ink text-[17px] mt-0.5">{l === "kk" ? "Batyrlar kartalary" : "Batyr cards"}</p>
-          <p className="text-sm text-ink-2 mt-0.5">{owned.length}/{LEGENDS.length} · {l === "kk" ? "ertegi, jyr, añyz, tarih" : "tales, epics, legends, history"}</p>
+          <p className="eyebrow text-sky-deep">{l === "kk" ? "Тыңда да жина" : "Listen and collect"}</p>
+          <p className="font-display font-extrabold text-ink text-[17px] mt-0.5">{l === "kk" ? "Батырлар карталары" : "Batyr cards"}</p>
+          <p className="text-sm text-ink-2 mt-0.5">{owned.length}/{LEGENDS.length} · {l === "kk" ? "ертегі, жыр, аңыз, тарих" : "tales, epics, legends, history"}</p>
         </div>
         <ChevronRight size={22} className="text-ink-3 shrink-0" />
       </button>

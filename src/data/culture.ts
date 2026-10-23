@@ -79,49 +79,49 @@ export const DEFAULT_BATA = {
 /* One ornament per story, unlocked with its bata. Together they form the
    learner's kilim in the profile. */
 export const OYU = [
-  { id: "qoshqar", name: "Qoşqar müıiz", meaning: { kk: "Küş pen molşylyq", en: "Strength and plenty" } },
-  { id: "shanyraq", name: "Şañyraq", meaning: { kk: "Şañyraq — üıdiñ jüregi", en: "The heart of the home" } },
-  { id: "tumar", name: "Tumar", meaning: { kk: "Qorǵanysh pen sättilik", en: "Protection and good luck" } },
+  { id: "qoshqar", name: { kk: "Қошқар мүйіз", en: "Ram's horn" }, meaning: { kk: "Күш пен молшылық", en: "Strength and plenty" } },
+  { id: "shanyraq", name: { kk: "Шаңырақ", en: "Shanyrak" }, meaning: { kk: "Шаңырақ — үйдің жүрегі", en: "The heart of the home" } },
+  { id: "tumar", name: { kk: "Тұмар", en: "Tumar" }, meaning: { kk: "Қорғаныш пен сәттілік", en: "Protection and good luck" } },
 ] as const;
 export const oyuForStory = (storyIndex: number) => OYU[storyIndex % OYU.length];
 
 /* English words that came from Turkic languages, Kazakh included. */
 export const TURKIC_WORDS = [
-  { en: "khan", kk: "хан", note: { kk: "Türki tilinen kelgen bıleuşi ataǵy.", en: "A ruler's title from Turkic qan." } },
-  { en: "horde", kk: "орда", note: { kk: "«Orda» — hannyñ ordasy, äskeri.", en: "From Turkic orda, the khan's camp." } },
-  { en: "yurt", kk: "киіз үй", note: { kk: "Orys tili arqyly türki «jūrt» sözinen.", en: "Via Russian from Turkic jurt, homeland." } },
-  { en: "koumiss", kk: "қымыз", note: { kk: "«Qymyz» sözi aǵylşynǵa osylaı jetken.", en: "Fermented mare's milk, from qymyz." } },
+  { en: "khan", kk: "хан", note: { kk: "Түркі тілінен келген билеуші атағы.", en: "A ruler's title from Turkic qan." } },
+  { en: "horde", kk: "орда", note: { kk: "«Орда» — ханның ордасы, әскері.", en: "From Turkic orda, the khan's camp." } },
+  { en: "yurt", kk: "киіз үй", note: { kk: "Орыс тілі арқылы түркі «жұрт» сөзінен.", en: "Via Russian from Turkic jurt, homeland." } },
+  { en: "koumiss", kk: "қымыз", note: { kk: "«Қымыз» сөзі ағылшын тіліне осылай жеткен.", en: "Fermented mare's milk, from qymyz." } },
 ];
 
 /* Historical background shown above each tale in the reader. Kept to facts
    that hold for the legend itself, not for invented details. */
 export const STORY_HISTORY: Record<string, { kk: string; en: string }> = {
   aldar_kose: {
-    kk: "Aldar Köse — qazaq fol'klorynyñ ailaker keıipkerı. «Köse» — saqaly joq degen sóz. Ol sarañ baılardy aqylmen jeñedı, sondyqtan halyq ony ǵasyrlar boıy súıip aıtqan.",
+    kk: "Алдар Көсе — қазақ фольклорының айлакер кейіпкері. «Көсе» — сақалы жоқ деген сөз. Ол сараң байларды ақылмен жеңеді, сондықтан халық оны ғасырлар бойы сүйіп айтқан.",
     en: "Aldar Köse is the trickster hero of Kazakh folklore. \"Köse\" means beardless. He outwits greedy rich men, which is why people have retold his tales for centuries.",
   },
   zhirenshe: {
-    kk: "Jirenşe şeşen — añyz boıynşa XV ǵasyrda Qazaq handyǵynyñ negızın qalaǵan Jänıbek hannyñ keñesşısı. «Şeşen» — sózge usta, dana adam.",
+    kk: "Жиренше шешен — аңыз бойынша XV ғасырда Қазақ хандығының негізін қалаған Жәнібек ханның кеңесшісі. «Шешен» — сөзге шебер, дана адам.",
     en: "Zhirenshe Sheshen is, by legend, an adviser to Janibek Khan, a 15th-century founder of the Kazakh Khanate. \"Sheshen\" means a master of words, a wise orator.",
   },
   er_tostik: {
-    kk: "Er Töstik — qazaqtyñ eñ köne äri tanymal batyrlyq ertegileriniñ biri, ol ǵasyrlar boıy auyzdan auyzǵa taralǵan. Alyp qūs Samūryq turaly añyz Astanadaǵy Bäıterek monumentine de negiz bolǵan.",
+    kk: "Ер Төстік — қазақтың ең көне әрі танымал батырлық ертегілерінің бірі, ол ғасырлар бойы ауыздан ауызға таралған. Алып құс Самұрық туралы аңыз Астанадағы Бәйтерек монументіне де негіз болған.",
     en: "Er Tostik is one of the oldest and best-known Kazakh hero tales, passed down by word of mouth for centuries on the steppe. The legend of the giant bird Samruk also inspired the Baiterek monument in Astana, which shows Samruk's golden egg resting in the tree of life.",
   },
   tazsha_bala: {
-    kk: "Tazşa bala — qazaq ertegileriniñ kedeı, biraq tapqyr keıipkeri; ol küşpen emes, aqylmen jeñedi. Irimşikti tas dep körsetip, alypty aldaǵan aıla älemniñ köp halqynyñ ertegilerinde kezdesedi.",
+    kk: "Тазша бала — қазақ ертегілерінің кедей, бірақ тапқыр кейіпкері; ол күшпен емес, ақылмен жеңеді. Ірімшікті тас деп көрсетіп, алыпты алдаған айла әлемнің көп халқының ертегілерінде кездеседі.",
     en: "Tazsha bala (the bald boy) is a classic hero of Kazakh folk tales: a poor, often mocked boy who wins by cleverness, not strength. The trick of squeezing soft cheese as if it were a stone to scare a giant is an old tale type (ATU 1060) told by many peoples across Europe and Asia.",
   },
   ayaz_bi: {
-    kk: "«Aıaz bı» – danalyq pen kişipeıildik turaly qazaq halyq ertegisi. Osyǵan ūqsas Aıaz ben Ǵazna sūltany Mahmūt (XI ǵasyr) turaly añyz Rumidiñ «Mesnevi» dastanynda (XIII ǵasyr) da kezdesedi.",
+    kk: "«Аяз би» — даналық пен кішіпейілділік туралы қазақ халық ертегісі. Осыған ұқсас Аяз бен Ғазна сұлтаны Махмұт (XI ғасыр) туралы аңыз Румидің «Мәснәуи» дастанында (XIII ғасыр) да кездеседі.",
     en: "Ayaz bi is a Kazakh folk tale (ertegi) about wisdom and humility. A very similar story, about Ayaz and Sultan Mahmud of Ghazni (11th century), who kept his old shepherd's clothes and looked at them every day, is also told in Rumi's Masnavi (13th century).",
   },
   asan_kaigy: {
-    kk: "Asan Qaıǵy — XV ǵasyrda ömir sürgen jyrau, añyz boıynşa Jänibek hannyñ keñesşisi bolǵan. Onyñ Jelmaıa tüıesine minip, halqyna Jerūıyqty izdegeni jäne jerlerge bergen baǵalary el arasynda añyz bolyp taraǵan.",
+    kk: "Асан Қайғы — XV ғасырда өмір сүрген жырау, аңыз бойынша Жәнібек ханның кеңесшісі болған. Оның Желмая түйесіне мініп, халқына Жерұйықты іздегені және жерлерге берген бағалары ел арасында аңыз болып тараған.",
     en: "Asan Kaigy was a 15th-century zhyrau (poet-thinker) whom tradition places at the court of Zhanibek Khan, one of the founders of the Kazakh Khanate. Legends of his search for Zheruiyk on the camel Zhelmaya, and his sayings about the lands he visited, have been passed down in Kazakh oral tradition.",
   },
   alpamys: {
-    kk: "Alpamys batyr — türki halyqtaryna ortaq eñ köne batyrlyq jyrlardyñ biri, onyñ özbek nūsqasy «Alpamyş» dep atalady. Jyrdy ǵasyrlar boıy jyraular men aqyndar auyzdan auyzǵa jetkizip keldi.",
+    kk: "Алпамыс батыр — түркі халықтарына ортақ ең көне батырлық жырлардың бірі, оның өзбек нұсқасы «Алпамыш» деп аталады. Жырды ғасырлар бойы жыраулар мен ақындар ауыздан ауызға жеткізіп келді.",
     en: "Alpamys batyr is one of the oldest heroic epics (jyr) shared by several Turkic peoples; the Uzbek version is known as Alpamysh. For centuries it was performed from memory by zhyraus and akyns before it was written down.",
   },
 };

@@ -67,17 +67,17 @@ export function WordCoach({ savedWords, progress, userId, lang, onLearn, onRewar
       {/* Level and the road to the next one */}
       <div className="bg-night text-white p-5">
         <div className="flex items-center justify-between gap-3">
-          <p className="text-xs font-bold uppercase tracking-[0.08em] text-sun">{kk ? "Jeke sözdik" : "Your word coach"}</p>
+          <p className="text-xs font-bold uppercase tracking-[0.08em] text-sun">{kk ? "Жеке сөздік" : "Your word coach"}</p>
           <span className="chip h-7 text-[12px] border-0 bg-white/15 text-white">
             <TrendingUp size={14} /> {profile.level}{profile.next ? ` → ${profile.next}` : ""}
           </span>
         </div>
         <p className="font-display font-black text-2xl mt-2 leading-tight">
-          {kk ? "Künniñ 5 sözi" : "5 words for today"}
+          {kk ? "Күннің 5 сөзі" : "5 words for today"}
         </p>
         <p className="text-sm text-white/75 mt-1">
           {kk
-            ? `Sen ${profile.totalKnown} söz bilesiñ. Sözder seniñ deñgeıiñe saı tañdaldy.`
+            ? `Сен ${profile.totalKnown} сөз білесің. Сөздер сенің деңгейіңе сай таңдалды.`
             : `You know ${profile.totalKnown} words. These are picked for your level.`}
         </p>
 
@@ -85,7 +85,7 @@ export function WordCoach({ savedWords, progress, userId, lang, onLearn, onRewar
           <div className="mt-4">
             <div className="flex items-center justify-between text-xs font-bold text-white/80">
               <span>{profile.level}</span>
-              <span>{kk ? `${profile.next} deñgeıne ${pct}%` : `${pct}% to ${profile.next}`}</span>
+              <span>{kk ? `${profile.next} деңгейіне ${pct}%` : `${pct}% to ${profile.next}`}</span>
             </div>
             <div className="mt-1.5 h-2.5 rounded-full bg-white/15 overflow-hidden">
               <span className="block h-full rounded-full bg-sun transition-[width] duration-700" style={{ width: `${Math.max(4, pct)}%` }} />
@@ -94,7 +94,7 @@ export function WordCoach({ savedWords, progress, userId, lang, onLearn, onRewar
         )}
 
         {/* Mastered words per level */}
-        <div className="grid grid-cols-5 gap-2 mt-4" aria-label={kk ? "Deñgeı boıynşa sözder" : "Words by level"}>
+        <div className="grid grid-cols-5 gap-2 mt-4" aria-label={kk ? "Деңгей бойынша сөздер" : "Words by level"}>
           {profile.stats.map((s) => {
             const fill = Math.min(1, s.mastered / s.goal);
             const current = s.level === profile.level;
@@ -137,15 +137,15 @@ export function WordCoach({ savedWords, progress, userId, lang, onLearn, onRewar
               {isSaved || isKnown ? (
                 <p className="text-sm font-bold text-jade-deep mt-3 flex items-center gap-1.5">
                   <Check size={16} strokeWidth={3} />
-                  {isKnown ? (kk ? "Bilesiñ" : "You know it") : (kk ? "Sözdigiñe qosyldy, qaıtalaımyz" : "Added to your reviews")}
+                  {isKnown ? (kk ? "Білесің" : "You know it") : (kk ? "Сөздігіңе қосылды, қайталаймыз" : "Added to your reviews")}
                 </p>
               ) : (
                 <div className="grid grid-cols-2 gap-2 mt-3">
                   <button onClick={() => onLearn(w.word, w.translation)} className="btn h-11 text-sm">
-                    <Plus size={16} /> {kk ? "Üırenu" : "Learn"}
+                    <Plus size={16} /> {kk ? "Үйрену" : "Learn"}
                   </button>
                   <button onClick={() => know(w)} className="btn btn-ghost h-11 text-sm">
-                    {kk ? "Bilemin" : "I know it"}
+                    {kk ? "Білемін" : "I know it"}
                   </button>
                 </div>
               )}
@@ -154,7 +154,7 @@ export function WordCoach({ savedWords, progress, userId, lang, onLearn, onRewar
         })}
         {today.length > 0 && doneCount === today.length && (
           <p className="text-sm font-semibold text-ink-2 text-center flex items-center justify-center gap-1.5 py-1 animate-pop-in">
-            <Sparkles size={15} className="text-sun-deep" /> {kk ? "Büginge bitti. Erteñ jaña sözder." : "Done for today. New words tomorrow."}
+            <Sparkles size={15} className="text-sun-deep" /> {kk ? "Бүгінге бітті. Ертең жаңа сөздер." : "Done for today. New words tomorrow."}
           </p>
         )}
       </div>
