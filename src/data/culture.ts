@@ -50,6 +50,26 @@ export const BATAS: Record<string, { kk: string; en: string }> = {
     kk: "Сөзің дана, ойың терең болсын! Білімің бақыт әкелсін!",
     en: "May your words be wise and your thoughts deep! May your knowledge bring you happiness!",
   },
+  er_tostik: {
+    kk: "Жүрегің батыл, пейілің кең болсын! Жолың ашық болып, үйіңе аман-есен жет!",
+    en: "May your heart be brave and your spirit generous! May your road be open, and may you reach home safe and sound!",
+  },
+  tazsha_bala: {
+    kk: "Ақылың алда, жолың ашық болсын!",
+    en: "May your wisdom lead the way, and may your road be open!",
+  },
+  ayaz_bi: {
+    kk: "Әліңді біл, тегіңді ұмытпа! Мансап басыңды айналдырмасын, әділ де кішіпейіл бол!",
+    en: "Know your measure and never forget your roots! May high rank never turn your head; be just and humble!",
+  },
+  asan_kaigy: {
+    kk: "Туған жерің құтты болсын, ағайының ынтымақты болсын, дастарханың мол болсын!",
+    en: "May your homeland be blessed, may your kin live in harmony, and may your table always be full!",
+  },
+  alpamys: {
+    kk: "Үмітің сөнбесін, адалдығың айнымасын! Қандай қиындық болса да, жолың ашық болып, еліңе аман-есен орал!",
+    en: "May your hope never fade and your loyalty never waver! Whatever hardship comes, may your road be open and may you return safely to your people!",
+  },
 };
 export const DEFAULT_BATA = {
   kk: "Жолың ашық, ісің оң болсын!",
@@ -59,18 +79,18 @@ export const DEFAULT_BATA = {
 /* One ornament per story, unlocked with its bata. Together they form the
    learner's kilim in the profile. */
 export const OYU = [
-  { id: "qoshqar", name: "Qoşqar müiız", meaning: { kk: "Küş pen molşylyq", en: "Strength and plenty" } },
-  { id: "shanyraq", name: "Şañyraq", meaning: { kk: "Şañyraq — üıdıñ júregı", en: "The heart of the home" } },
+  { id: "qoshqar", name: "Qoşqar müıiz", meaning: { kk: "Küş pen molşylyq", en: "Strength and plenty" } },
+  { id: "shanyraq", name: "Şañyraq", meaning: { kk: "Şañyraq — üıdiñ jüregi", en: "The heart of the home" } },
   { id: "tumar", name: "Tumar", meaning: { kk: "Qorǵanysh pen sättilik", en: "Protection and good luck" } },
 ] as const;
 export const oyuForStory = (storyIndex: number) => OYU[storyIndex % OYU.length];
 
 /* English words that came from Turkic languages, Kazakh included. */
 export const TURKIC_WORDS = [
-  { en: "khan", kk: "хан", note: { kk: "Türkı tılınen kelgen bilеuşı ataǵy.", en: "A ruler's title from Turkic qan." } },
-  { en: "horde", kk: "орда", note: { kk: "«Orda» — hannyñ ordasy, áskerı.", en: "From Turkic orda, the khan's camp." } },
-  { en: "yurt", kk: "киіз үй", note: { kk: "Orys tılı arqyly türkı «jurt» sózınen.", en: "Via Russian from Turkic jurt, homeland." } },
-  { en: "koumiss", kk: "қымыз", note: { kk: "«Qymyz» sózı aǵylşynǵa osylaı jetken.", en: "Fermented mare's milk, from qymyz." } },
+  { en: "khan", kk: "хан", note: { kk: "Türki tilinen kelgen bıleuşi ataǵy.", en: "A ruler's title from Turkic qan." } },
+  { en: "horde", kk: "орда", note: { kk: "«Orda» — hannyñ ordasy, äskeri.", en: "From Turkic orda, the khan's camp." } },
+  { en: "yurt", kk: "киіз үй", note: { kk: "Orys tili arqyly türki «jūrt» sözinen.", en: "Via Russian from Turkic jurt, homeland." } },
+  { en: "koumiss", kk: "қымыз", note: { kk: "«Qymyz» sözi aǵylşynǵa osylaı jetken.", en: "Fermented mare's milk, from qymyz." } },
 ];
 
 /* Historical background shown above each tale in the reader. Kept to facts
@@ -83,5 +103,25 @@ export const STORY_HISTORY: Record<string, { kk: string; en: string }> = {
   zhirenshe: {
     kk: "Jirenşe şeşen — añyz boıynşa XV ǵasyrda Qazaq handyǵynyñ negızın qalaǵan Jänıbek hannyñ keñesşısı. «Şeşen» — sózge usta, dana adam.",
     en: "Zhirenshe Sheshen is, by legend, an adviser to Janibek Khan, a 15th-century founder of the Kazakh Khanate. \"Sheshen\" means a master of words, a wise orator.",
+  },
+  er_tostik: {
+    kk: "Er Töstik — qazaqtyñ eñ köne äri tanymal batyrlyq ertegileriniñ biri, ol ǵasyrlar boıy auyzdan auyzǵa taralǵan. Alyp qūs Samūryq turaly añyz Astanadaǵy Bäıterek monumentine de negiz bolǵan.",
+    en: "Er Tostik is one of the oldest and best-known Kazakh hero tales, passed down by word of mouth for centuries on the steppe. The legend of the giant bird Samruk also inspired the Baiterek monument in Astana, which shows Samruk's golden egg resting in the tree of life.",
+  },
+  tazsha_bala: {
+    kk: "Tazşa bala — qazaq ertegileriniñ kedeı, biraq tapqyr keıipkeri; ol küşpen emes, aqylmen jeñedi. Irimşikti tas dep körsetip, alypty aldaǵan aıla älemniñ köp halqynyñ ertegilerinde kezdesedi.",
+    en: "Tazsha bala (the bald boy) is a classic hero of Kazakh folk tales: a poor, often mocked boy who wins by cleverness, not strength. The trick of squeezing soft cheese as if it were a stone to scare a giant is an old tale type (ATU 1060) told by many peoples across Europe and Asia.",
+  },
+  ayaz_bi: {
+    kk: "«Aıaz bı» – danalyq pen kişipeıildik turaly qazaq halyq ertegisi. Osyǵan ūqsas Aıaz ben Ǵazna sūltany Mahmūt (XI ǵasyr) turaly añyz Rumidiñ «Mesnevi» dastanynda (XIII ǵasyr) da kezdesedi.",
+    en: "Ayaz bi is a Kazakh folk tale (ertegi) about wisdom and humility. A very similar story, about Ayaz and Sultan Mahmud of Ghazni (11th century), who kept his old shepherd's clothes and looked at them every day, is also told in Rumi's Masnavi (13th century).",
+  },
+  asan_kaigy: {
+    kk: "Asan Qaıǵy — XV ǵasyrda ömir sürgen jyrau, añyz boıynşa Jänibek hannyñ keñesşisi bolǵan. Onyñ Jelmaıa tüıesine minip, halqyna Jerūıyqty izdegeni jäne jerlerge bergen baǵalary el arasynda añyz bolyp taraǵan.",
+    en: "Asan Kaigy was a 15th-century zhyrau (poet-thinker) whom tradition places at the court of Zhanibek Khan, one of the founders of the Kazakh Khanate. Legends of his search for Zheruiyk on the camel Zhelmaya, and his sayings about the lands he visited, have been passed down in Kazakh oral tradition.",
+  },
+  alpamys: {
+    kk: "Alpamys batyr — türki halyqtaryna ortaq eñ köne batyrlyq jyrlardyñ biri, onyñ özbek nūsqasy «Alpamyş» dep atalady. Jyrdy ǵasyrlar boıy jyraular men aqyndar auyzdan auyzǵa jetkizip keldi.",
+    en: "Alpamys batyr is one of the oldest heroic epics (jyr) shared by several Turkic peoples; the Uzbek version is known as Alpamysh. For centuries it was performed from memory by zhyraus and akyns before it was written down.",
   },
 };

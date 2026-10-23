@@ -1,4 +1,4 @@
-export const safePlayVoice = (text: string, onFallback?: (msg?: string) => void) => {
+export const safePlayVoice = (text: string, onFallback?: (msg?: string) => void, rate = 0.85) => {
   try {
     if (!("speechSynthesis" in window)) {
       if (onFallback) onFallback("Speech synthesis not supported on this browser.");
@@ -6,7 +6,7 @@ export const safePlayVoice = (text: string, onFallback?: (msg?: string) => void)
     }
     window.speechSynthesis.cancel();
     const utterance = new SpeechSynthesisUtterance(text);
-    utterance.rate = 0.85;
+    utterance.rate = rate;
     utterance.pitch = 0.6;
     utterance.lang = "en-US";
     utterance.onerror = (e) => console.warn("Speech synthesis error:", e);

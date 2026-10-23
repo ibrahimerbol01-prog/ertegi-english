@@ -57,7 +57,7 @@ export function MaqalCard({ lang, userId, onReward }: { lang: string; userId?: s
       <KilimStrip className="h-2 w-full" />
       <div className="p-5">
         <div className="flex items-center justify-between gap-3">
-          <p className="eyebrow text-felt">{l === "kk" ? "Kúnnıñ maqaly" : "Proverb of the day"}</p>
+          <p className="eyebrow text-felt">{l === "kk" ? "Künniñ maqaly" : "Proverb of the day"}</p>
           <span className="text-xs font-bold text-ink-3">{loadMaqals(userId).length}/{MAQALS.length}</span>
         </div>
         <p className="font-display font-black text-[21px] leading-snug text-ink mt-2">{maqal.kk}</p>
@@ -109,7 +109,7 @@ export function BataModal({ storyId, lang, onClose }: { storyId: string | null; 
           <span className="mx-auto w-24 h-24 rounded-full bg-sun-soft border-4 border-sun flex items-center justify-center text-sun-deep">
             {ORNAMENTS[oyu.id]("w-14 h-14")}
           </span>
-          <p className="eyebrow text-sun-deep mt-5">{l === "kk" ? "Ertegı aıaqtaldy" : "Tale complete"}</p>
+          <p className="eyebrow text-sun-deep mt-5">{l === "kk" ? "Ertegi aıaqtaldy" : "Tale complete"}</p>
           <h3 className="font-display font-black text-xl text-ink mt-1 leading-snug">{displayTitle(story.title)}</h3>
 
           <div className="mt-5 rounded-2xl bg-sand-2 p-4 text-left">
@@ -144,7 +144,7 @@ export function OyuKilim({ progress, lang, maqalCount }: { progress: Set<string>
         <span className="text-sm font-bold text-ink-3">{earned}/{STORIES.length}</span>
       </div>
       <p className="text-sm text-ink-2 mt-1">
-        {l === "kk" ? "Ár ertegı úşın bır oıu. Ertegını aıaqtap, batasyn al." : "One ornament for every tale. Finish a tale to earn its blessing."}
+        {l === "kk" ? "Är ertegi üşin bir oıu. Ertegini aıaqtap, batasyn al." : "One ornament for every tale. Finish a tale to earn its blessing."}
       </p>
       <div className="grid grid-cols-3 sm:grid-cols-4 gap-3 mt-4">
         {STORIES.map((s, i) => {
@@ -153,7 +153,7 @@ export function OyuKilim({ progress, lang, maqalCount }: { progress: Set<string>
           return (
             <div key={s.id} className={`aspect-square rounded-2xl flex flex-col items-center justify-center gap-1.5 border-2 ${has ? "bg-sun-soft border-sun text-sun-deep" : "bg-sand-2 border-line text-ink-3"}`}>
               {has ? ORNAMENTS[oyu.id]("w-10 h-10") : <Lock size={20} />}
-              <span className="text-[11px] font-bold text-center px-1 leading-tight">{has ? oyu.name : `${l === "kk" ? "Ertegı" : "Tale"} ${i + 1}`}</span>
+              <span className="text-[11px] font-bold text-center px-1 leading-tight">{has ? oyu.name : `${l === "kk" ? "Ertegi" : "Tale"} ${i + 1}`}</span>
             </div>
           );
         })}
@@ -188,9 +188,9 @@ export function TurkicWords({ lang }: { lang: string }) {
   const l = pick(lang);
   return (
     <section className="card p-5">
-      <p className="eyebrow text-sky-deep">{l === "kk" ? "Tamyrlas sózder" : "Words with Kazakh roots"}</p>
+      <p className="eyebrow text-sky-deep">{l === "kk" ? "Tamyrlas sözder" : "Words with Kazakh roots"}</p>
       <p className="text-sm text-ink-2 mt-1">
-        {l === "kk" ? "Bul aǵylşyn sózderı türkı tılderınen kelgen." : "These English words came from Turkic languages."}
+        {l === "kk" ? "Būl aǵylşyn sözderi türki tilderinen kelgen." : "These English words came from Turkic languages."}
       </p>
       <div className="grid grid-cols-2 gap-2 mt-3">
         {TURKIC_WORDS.map((w) => (

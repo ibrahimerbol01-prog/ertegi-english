@@ -14,6 +14,9 @@ import type { SavedWord } from "../types";
 import { supabase } from "../lib/supabase";
 import { isDue, MAX_MASTERY } from "../utils/progress";
 import { MaqalCard, StoryHistory } from "./Culture";
+import { LegendDeckEntry } from "./LegendCards";
+import { StoryCover } from "./StoryCover";
+import { buildLevelQuiz } from "../utils/levelQuiz";
 
 /* Small video tile with a night-sky fallback. */
 function StoryVideo({ src, className = "", videoRef, paused }: { src: string; className?: string; videoRef?: React.Ref<HTMLVideoElement>; paused?: boolean }) {
@@ -187,10 +190,9 @@ export function HomeScreen({ onStartRead, onStartQuiz, t, lang, userName = "", s
         onClick={() => (current?.step === "quiz" ? onStartQuiz(featured.id) : onStartRead(featured.id, featuredLevel?.id))}
         className="group relative w-full text-left rounded-[28px] overflow-hidden bg-night shadow-[0_6px_0_#121a31] active:translate-y-[3px] active:shadow-[0_3px_0_#121a31] transition-transform"
       >
-        <StoryVideo src={BG_VIDEO_ASSETS.read} className="absolute inset-0" />
-        <div className="absolute inset-0 bg-gradient-to-t from-night via-night/70 to-night/10" />
+        <StoryCover id={featured.id} className="absolute top-4 right-4 w-24 h-24 rounded-[20px] shadow-[0_4px_0_rgba(0,0,0,0.25)] rotate-3" />
         <OrnamentBand className="absolute top-3 inset-x-0 h-3 w-full text-white/15" />
-        <div className="relative p-5 pt-24">
+        <div className="relative p-5 pt-[124px]">
           <span className="inline-flex items-center gap-1.5 h-7 px-3 rounded-full bg-white/15 backdrop-blur text-white text-xs font-bold">
             <BookOpen size={13} /> {featuredLevel ? `${featuredLevel.id} · ${featuredLevel.title}` : current?.step === "quiz" ? t.takeQuiz : displayTitle(featured.sceneLabel)}
           </span>
@@ -219,6 +221,7 @@ export function HomeScreen({ onStartRead, onStartQuiz, t, lang, userName = "", s
       </div>
 
       <MaqalCard lang={lang} userId={userId} onReward={onReward} />
+      <LegendDeckEntry lang={lang} userId={userId} onReward={onReward} />
 
       {/* Caravan path: one unit per story, islands are CEFR levels */}
       {STORIES.map((story: any, si: number) => {
@@ -350,7 +353,7 @@ export function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, s
               onClick={() => setSelectedStory(story.id)}
               className="w-full flex items-center gap-4 p-4 text-left hover:bg-sand/60 transition-colors"
             >
-              <StoryVideo src={BG_VIDEO_ASSETS.read} paused className="relative w-[72px] h-[72px] rounded-2xl shrink-0" />
+              <StoryCover id={story.id} className="w-[72px] h-[72px] rounded-2xl shrink-0 shadow-[0_3px_0_var(--color-line-2)]" />
               <div className="flex-1 min-w-0">
                 <p className="eyebrow text-[11px] text-sky-deep">{displayTitle(story.sceneLabel)}</p>
                 <h3 className="font-display font-extrabold text-[17px] text-ink leading-snug mt-0.5">{displayTitle(story.title)}</h3>
@@ -411,9 +414,12 @@ export function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, s
   }, [] as number[]);
 
   const handleWordClick = (word: string) => {
-    const cleanWord = word.replace(/[^a-zA-Z]/g, "").toLowerCase();
+    // Try the word as written ("didn't"), then without a possessive ("man's" -> "man"), then letters only.
+    const withApostrophe = word.toLowerCase().replace(/[’]/g, "'").replace(/[^a-z']/g, "").replace(/^'+|'+$/g, "");
+    const candidates = [withApostrophe, withApostrophe.replace(/'s$/, ""), withApostrophe.replace(/[^a-z]/g, "")];
+    const found = candidates.map((c) => WORD_TRANSLATIONS[c]).find(Boolean);
     setActiveWord(word);
-    setTranslation(WORD_TRANSLATIONS[cleanWord as keyof typeof WORD_TRANSLATIONS] || "Аудармасы әзірге жоқ");
+    setTranslation(found || "Аудармасы әзірге жоқ");
     safePlayVoice(word);
   };
 
@@ -507,18 +513,25 @@ export function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, s
         }
       />
 
+      {/* Only Aldar Köse has an animated scene so far; the other tales show their cover. */}
       <div className="relative rounded-[24px] overflow-hidden h-48 sm:h-56">
-        <StoryVideo src={BG_VIDEO_ASSETS.read} videoRef={videoRef} className="absolute inset-0" />
-        <span className="absolute top-3 left-3 flex items-center gap-1.5 h-7 px-3 rounded-full glass text-ink text-xs font-bold">
-          <span className="w-1.5 h-1.5 rounded-full bg-felt animate-pulse" /> {t.sceneAnimation}
-        </span>
-        <button
-          onClick={toggleVideo}
-          aria-label={isPlaying ? "Pause video" : "Play video"}
-          className="absolute bottom-3 right-3 w-11 h-11 rounded-full glass text-ink flex items-center justify-center"
-        >
-          {isPlaying ? <Pause size={18} className="fill-ink" /> : <Play size={18} className="fill-ink" />}
-        </button>
+        {currentStory.id === "aldar_kose" ? (
+          <>
+            <StoryVideo src={BG_VIDEO_ASSETS.read} videoRef={videoRef} className="absolute inset-0" />
+            <span className="absolute top-3 left-3 flex items-center gap-1.5 h-7 px-3 rounded-full glass text-ink text-xs font-bold">
+              <span className="w-1.5 h-1.5 rounded-full bg-felt animate-pulse" /> {t.sceneAnimation}
+            </span>
+            <button
+              onClick={toggleVideo}
+              aria-label={isPlaying ? "Pause video" : "Play video"}
+              className="absolute bottom-3 right-3 w-11 h-11 rounded-full glass text-ink flex items-center justify-center"
+            >
+              {isPlaying ? <Pause size={18} className="fill-ink" /> : <Play size={18} className="fill-ink" />}
+            </button>
+          </>
+        ) : (
+          <StoryCover id={currentStory.id} wide className="absolute inset-0 w-full h-full" />
+        )}
       </div>
 
       <StoryHistory storyId={currentStory.id} lang={lang} />
@@ -935,6 +948,92 @@ export function MatchingGame({ savedWords, onReward, mode, setMode }: any) {
           );
         })}
       </div>
+    </div>
+  );
+}
+
+/* --- 6a. QUIZ SETUP --- */
+// Pick the text and its level first; the timer only starts after "Bastau".
+export function QuizSetup({ storyId, level, onChange, onStart, progress, lang, t }: {
+  storyId: string;
+  level: string | null;
+  onChange: (storyId: string, level: string | null) => void;
+  onStart: () => void;
+  progress: Set<string>;
+  lang: string;
+  t: Record<string, string>;
+}) {
+  const kk = lang === "kk";
+  // A level check counts as reading that level, so only levels already read
+  // (or the one the learner just came from in the reader) can be picked here.
+  const [entry] = useState(() => ({ storyId, level }));
+  const canPick = (sid: string, lvl: string | null) =>
+    lvl === null || progress.has(`${sid}:${lvl}`) || (sid === entry.storyId && lvl === entry.level);
+  const modes = [
+    { id: null, label: kk ? "Bükil ertegi" : "Whole tale" },
+    ...LEVEL_DETAILS.map((l) => ({ id: l.id as string | null, label: l.id })),
+  ];
+  const story = STORIES.find((s: any) => s.id === storyId) || STORIES[0];
+  const count = level ? buildLevelQuiz(story.levels[level as keyof typeof story.levels]).length : story.quizQuestions.length;
+
+  return (
+    <div className="animate-pop-in">
+      <ScreenHeader eyebrow={kk ? "Synaqqa daıyndal" : "Get ready"} title={t.quizTitle} />
+
+      <p className="eyebrow mb-2">{kk ? "1. Mätindi tañda" : "1. Choose a text"}</p>
+      <div className="space-y-2">
+        {STORIES.map((s: any) => {
+          const active = s.id === storyId;
+          const done = progress.has(`${s.id}:quiz`);
+          return (
+            <button
+              key={s.id}
+              onClick={() => onChange(s.id, canPick(s.id, level) ? level : null)}
+              aria-pressed={active}
+              className={`tile w-full text-left p-3 flex items-center gap-3 ${active ? "tile-selected" : "text-ink"}`}
+            >
+              <StoryCover id={s.id} className={`w-11 h-11 rounded-xl shrink-0 ${active ? "" : "opacity-80"}`} />
+              <span className="flex-1 min-w-0">
+                <span className="block font-display font-extrabold text-[15px] leading-snug">{displayTitle(s.title)}</span>
+              </span>
+              {done && <Check size={20} strokeWidth={3} className="text-jade shrink-0" />}
+            </button>
+          );
+        })}
+      </div>
+
+      <p className="eyebrow mt-6 mb-2">{kk ? "2. Deñgeıdi tañda" : "2. Choose the level"}</p>
+      <div className="flex flex-wrap gap-2">
+        {modes.map((m) => {
+          const active = m.id === level;
+          const done = m.id ? progress.has(`${storyId}:${m.id}`) : false;
+          const open = canPick(storyId, m.id);
+          return (
+            <button
+              key={m.label}
+              onClick={() => open && onChange(storyId, m.id)}
+              disabled={!open}
+              aria-pressed={active}
+              title={open ? undefined : (kk ? "Aldymen osy deñgeıdi oqy" : "Read this level first")}
+              className={`tile h-11 px-4 text-sm font-bold flex items-center gap-1.5 ${active ? "tile-selected" : open ? "text-ink" : "text-ink-3 opacity-60"}`}
+            >
+              {!open && <Lock size={13} />}
+              {m.label}
+              {done && <Check size={14} strokeWidth={3} className="text-jade" />}
+            </button>
+          );
+        })}
+      </div>
+
+      <div className="card p-4 mt-6 grid grid-cols-3 text-center">
+        <div><p className="font-display font-black text-xl text-ink">{count}</p><p className="text-xs text-ink-2">{kk ? "sūraq" : "questions"}</p></div>
+        <div className="border-x-2 border-line"><p className="font-display font-black text-xl text-ink flex items-center justify-center gap-1"><Timer size={18} className="text-sky-deep" />15s</p><p className="text-xs text-ink-2">{kk ? "är sūraqqa" : "per question"}</p></div>
+        <div><p className="font-display font-black text-xl text-ink flex items-center justify-center gap-1"><Heart size={18} className="fill-felt text-felt" />3</p><p className="text-xs text-ink-2">{kk ? "jürek" : "hearts"}</p></div>
+      </div>
+
+      <button onClick={onStart} className="btn w-full mt-6">
+        {kk ? "Bastau" : "Start"} <ArrowRight size={20} />
+      </button>
     </div>
   );
 }
