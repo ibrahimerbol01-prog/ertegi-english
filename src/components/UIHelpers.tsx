@@ -1,8 +1,9 @@
 import { useState, useEffect, useRef, useMemo } from "react";
 import { createPortal } from "react-dom";
-import { Check } from "lucide-react";
+import { Check, X } from "lucide-react";
 import { QoshqarMuyiz, Shanyraq, SteppeBackground, KilimStrip } from "./Ornaments";
 import { useLang } from "../lang";
+import { useEscape } from "../utils/useEscape";
 
 /* Brand mark used across screens: the qoşqar müiız horn pair. */
 export const KazakhOrnament = ({ className = "w-6 h-6 text-sun-deep" }: { className?: string }) => (
@@ -64,6 +65,20 @@ export const XpToast = ({ toast }: { toast: { amount: number; key: number } | nu
   );
 };
 
+/* The same close button in every pop-up window. */
+export const CloseButton = ({ onClick, className = "" }: { onClick: () => void; className?: string }) => {
+  const kk = useLang() === "kk";
+  return (
+    <button
+      onClick={onClick}
+      aria-label={kk ? "Жабу" : "Close"}
+      className={`w-10 h-10 rounded-full bg-sand-2 text-ink-2 hover:bg-sand-3 flex items-center justify-center shrink-0 ${className}`}
+    >
+      <X size={20} strokeWidth={2.6} />
+    </button>
+  );
+};
+
 const CONFETTI_COLORS = ["var(--color-sky)", "var(--color-sun)", "var(--color-felt)", "var(--color-jade)"];
 
 export const LevelUpModal = ({ show, rank, onClose }: { show: boolean; rank: number; onClose: () => void }) => {
@@ -86,11 +101,12 @@ export const LevelUpModal = ({ show, rank, onClose }: { show: boolean; rank: num
     return () => clearTimeout(timer);
   }, [show]);
 
+  useEscape(show, onClose);
   if (!show) return null;
 
   return (
-    <div className="fixed inset-0 z-[60] bg-ink/40 backdrop-blur-sm flex items-center justify-center p-6 animate-pop-in">
-      <div className="relative w-full max-w-[320px]">
+    <div className="fixed inset-0 z-[60] bg-ink/40 backdrop-blur-sm flex items-center justify-center p-6 animate-pop-in" role="dialog" aria-modal="true" onClick={onClose}>
+      <div className="relative w-full max-w-[320px]" onClick={(e) => e.stopPropagation()}>
         {confetti.map((c) => (
           <span
             key={c.id}
@@ -100,6 +116,7 @@ export const LevelUpModal = ({ show, rank, onClose }: { show: boolean; rank: num
         ))}
         <div className="relative card overflow-hidden p-7 text-center animate-rank-pop">
           <KilimStrip className="absolute top-0 inset-x-0 h-2 w-full" />
+          <CloseButton onClick={onClose} className="absolute top-4 right-4" />
           <span className="mx-auto mt-2 w-20 h-20 rounded-full bg-sun flex items-center justify-center shadow-[0_5px_0_var(--color-sun-deep)]">
             <Shanyraq className="w-12 h-12 text-white" strokeWidth={4} />
           </span>
@@ -130,7 +147,7 @@ export const AchievementBanner = ({ achievement, onDone }: { achievement: { icon
 
   return (
     <div className="fixed top-[max(env(safe-area-inset-top),12px)] left-1/2 -translate-x-1/2 z-[70] w-[calc(100%-32px)] max-w-[380px] pointer-events-none">
-      <div className="animate-achievement card glass p-3 flex items-center gap-3">
+      <div className="animate-achievement card glass p-3 flex items-center gap-3 pointer-events-auto cursor-pointer" onClick={() => onDoneRef.current()}>
         <span className="w-11 h-11 rounded-full bg-sun-soft flex items-center justify-center text-2xl shrink-0">{achievement.icon}</span>
         <div className="min-w-0">
           <p className="eyebrow text-sun-deep">{kk ? "Белгі ашылды" : "Badge unlocked"}</p>
@@ -216,19 +233,17 @@ export const ScreenHeader = ({ eyebrow, title, trailing, onBack, backLabel }: {
 /* Bottom sheet used for word details, choices and the booklet. */
 export const Sheet = ({ open, onClose, children, label }: { open: boolean; onClose: () => void; children: React.ReactNode; label: string }) => {
   const kk = useLang() === "kk";
-  useEffect(() => {
-    if (!open) return;
-    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [open, onClose]);
+  useEscape(open, onClose);
   if (!open) return null;
   // Portal to body: animated ancestors would otherwise trap position:fixed.
   return createPortal(
     <div className="fixed inset-0 z-[68] flex items-end sm:items-center justify-center" role="dialog" aria-modal="true" aria-label={label}>
       <button aria-label={kk ? "Жабу" : "Close"} onClick={onClose} className="absolute inset-0 bg-ink/35 backdrop-blur-[2px] animate-pop-in" />
       <div className="relative w-full sm:max-w-[420px] max-h-[85dvh] overflow-y-auto bg-card rounded-t-[28px] sm:rounded-[28px] shadow-2xl animate-sheet-up sm:animate-pop-in pb-[max(env(safe-area-inset-bottom),16px)]">
-        <div className="sm:hidden mx-auto mt-2.5 mb-1 w-10 h-1.5 rounded-full bg-sand-3" />
+        <div className="sticky top-0 z-10 flex justify-end px-3 pt-3 -mb-2">
+          <div className="sm:hidden absolute left-1/2 -translate-x-1/2 top-2.5 w-10 h-1.5 rounded-full bg-sand-3" />
+          <CloseButton onClick={onClose} />
+        </div>
         {children}
       </div>
     </div>,

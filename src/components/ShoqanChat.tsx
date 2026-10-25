@@ -1,12 +1,15 @@
 import React, { useState, useRef, useEffect } from "react";
-import { X, Send } from "lucide-react";
+import { Send } from "lucide-react";
 import { supabase } from "../lib/supabase";
 import { useLang } from "../lang";
+import { CloseButton } from "./UIHelpers";
+import { useEscape } from "../utils/useEscape";
 
 export const ShoqanChat = () => {
   const kk = useLang() === "kk";
   const tr = (kkText: string, enText: string) => (kk ? kkText : enText);
   const [open, setOpen] = useState(false);
+  useEscape(open, () => setOpen(false));
   const [messages, setMessages] = useState<{ role: "user" | "assistant"; content: string }[]>(() => [
     { role: "assistant", content: kk
       ? "Сәлем! Мен Шоқанмын 👋 Ағылшын тілі, қазақ тілі немесе Ertegi English туралы сұра."
@@ -132,8 +135,8 @@ export const ShoqanChat = () => {
       </button>
 
       {open && (
-        <div className="fixed inset-0 z-[75] bg-ink/35 backdrop-blur-[2px] flex items-end sm:items-center justify-center">
-          <div className="w-full max-w-[480px] mb-0 max-h-[85dvh] h-[75dvh] bg-sand flex flex-col rounded-t-[28px] sm:rounded-[28px] overflow-hidden shadow-2xl animate-sheet-up sm:animate-pop-in">
+        <div className="fixed inset-0 z-[75] bg-ink/35 backdrop-blur-[2px] flex items-end sm:items-center justify-center" role="dialog" aria-modal="true" onClick={() => setOpen(false)}>
+          <div onClick={(e) => e.stopPropagation()} className="w-full max-w-[480px] mb-0 max-h-[85dvh] h-[75dvh] bg-sand flex flex-col rounded-t-[28px] sm:rounded-[28px] overflow-hidden shadow-2xl animate-sheet-up sm:animate-pop-in">
             <div className="flex items-center justify-between px-4 py-3 bg-card border-b border-line">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-full overflow-hidden ring-2 ring-sun shrink-0">
@@ -144,9 +147,7 @@ export const ShoqanChat = () => {
                   <p className="text-xs text-ink-2">{tr("Ағылшын және қазақ тілі көмекшісі", "English & Kazakh helper")}</p>
                 </div>
               </div>
-              <button onClick={() => setOpen(false)} aria-label={tr("Жабу", "Close")} className="w-9 h-9 rounded-full bg-sand-2 text-ink-2 flex items-center justify-center">
-                <X size={18} />
-              </button>
+              <CloseButton onClick={() => setOpen(false)} />
             </div>
 
             <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 space-y-3">
