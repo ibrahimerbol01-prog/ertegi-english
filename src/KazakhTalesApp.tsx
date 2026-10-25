@@ -24,7 +24,7 @@ import { WordCoach } from "./components/WordCoach";
 import { LegendScreen } from "./components/LegendCards";
 import {
   loadProgress, saveProgress, progressKey, loadLocalReviews, saveReview,
-  nextReview, isDue, MAX_MASTERY, type ProgressStep
+  nextReview, lapse, localDay, daysBetween, isDue, MAX_MASTERY, type ProgressStep
 } from "./utils/progress";
 
 export default function KazakhTalesApp({ session }: { session: Session }) {
@@ -122,8 +122,12 @@ export default function KazakhTalesApp({ session }: { session: Session }) {
         setXp(profileRes.data.xp ?? 0);
         setQuizzesCompleted(profileRes.data.quizzes_completed ?? 0);
         setPerfectQuizzes(profileRes.data.perfect_quizzes ?? 0);
-        setStreakDays(profileRes.data.streak_days ?? 0);
         lastActiveDateRef.current = profileRes.data.last_active_date ?? null;
+        // A streak with a missed day is over, even before today's first action.
+        const last = lastActiveDateRef.current;
+        const streak = last && daysBetween(last, localDay()) <= 1 ? (profileRes.data.streak_days ?? 0) : 0;
+        setStreakDays(streak);
+        latestStreakRef.current = { streak_days: streak, last_active_date: last ?? "" };
         if (profileRes.data.display_name) setDisplayName(profileRes.data.display_name as string);
       }
       setProgress(progressSet);
@@ -156,16 +160,12 @@ export default function KazakhTalesApp({ session }: { session: Session }) {
   };
 
   const checkAndUpdateStreak = () => {
-    const today = new Date().toISOString().slice(0, 10);
+    // Any one learning action keeps the streak; it is not tied to the daily XP goal.
+    const today = localDay();
     if (lastActiveDateRef.current === today) return;
 
     let nextStreak = 1;
-    if (lastActiveDateRef.current) {
-      const prevDate = new Date(lastActiveDateRef.current + "T00:00:00Z");
-      const todayDate = new Date(today + "T00:00:00Z");
-      const diffDays = Math.round((todayDate.getTime() - prevDate.getTime()) / 86400000);
-      if (diffDays === 1) nextStreak = streakDays + 1;
-    }
+    if (lastActiveDateRef.current && daysBetween(lastActiveDateRef.current, today) === 1) nextStreak = latestStreakRef.current.streak_days + 1;
 
     lastActiveDateRef.current = today;
     setStreakDays(nextStreak);
@@ -200,15 +200,16 @@ export default function KazakhTalesApp({ session }: { session: Session }) {
     saveProgress(userId, storyId, step, next);
   };
 
-  // Leitner review: "knew it" moves the word up a box, "not yet" back to box 0.
+  // Leitner review: "knew it" moves the word up a box, "not yet" one box back.
   const handleReview = (word: string, known: boolean) => {
     const current = savedWords.find((w) => w.word === word);
     if (!current) return;
-    const mastery = known ? Math.min((current.mastery ?? 0) + 1, MAX_MASTERY) : 0;
-    const nextReviewAt = nextReview(mastery);
+    const up = Math.min((current.mastery ?? 0) + 1, MAX_MASTERY);
+    const { mastery, nextReviewAt } = known ? { mastery: up, nextReviewAt: nextReview(up) } : lapse(current.mastery ?? 0);
     setSavedWords((prev) => prev.map((w) => (w.word === word ? { ...w, mastery, nextReviewAt } : w)));
     saveReview(userId, word, mastery, nextReviewAt);
     if (known) addXp(2);
+    else checkAndUpdateStreak();
   };
 
   const quizStory = STORIES.find((s) => s.id === selectedStory) || STORIES[0];
