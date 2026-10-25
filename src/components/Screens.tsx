@@ -17,6 +17,7 @@ import { supabase } from "../lib/supabase";
 import { isDue, MAX_MASTERY } from "../utils/progress";
 import { MaqalCard, StoryHistory } from "./Culture";
 import { LegendDeckEntry } from "./LegendCards";
+import { CouncilCard } from "./Council";
 import { StoryCover } from "./StoryCover";
 import { buildLevelQuiz } from "../utils/levelQuiz";
 
@@ -230,6 +231,7 @@ export function HomeScreen({ onStartRead, onStartQuiz, t, lang, userName = "", s
 
       <MaqalCard lang={lang} userId={userId} onReward={onReward} />
       <LegendDeckEntry lang={lang} userId={userId} onOpen={onOpenCards} />
+      <CouncilCard lang={lang} userId={userId} progress={progress} onReward={onReward} />
 
       {/* Caravan path: one unit per story, islands are CEFR levels */}
       {STORIES.map((story: any, si: number) => {
