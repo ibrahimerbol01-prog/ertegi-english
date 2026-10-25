@@ -8,6 +8,7 @@ import { DailyGoalRing, ScreenHeader, Sheet, BrandMark } from "./UIHelpers";
 import { displayTitle } from "../utils/text";
 import { Shanyraq, OrnamentBand, Tumar, SteppeBackground, KilimStrip, QoshqarMuyiz } from "./Ornaments";
 import { safePlayVoice } from "../utils/voice";
+import { narrate, alignWords, bestBrowserVoice } from "../utils/narration";
 import {
   BG_VIDEO_ASSETS, STORIES, LEVEL_DETAILS, WORD_TRANSLATIONS, ACHIEVEMENTS
 } from "../constants";
@@ -102,7 +103,7 @@ export function IntroScreen({ onFinish, t }: any) {
 const SHOQAN_TIPS = [
   { kk: "Бір мәтінді екі деңгейде оқып көр: алдымен A2, сосын B1. Жаңа сөздер бірден көзге түседі.", en: "Read one tale at two levels: A2 first, then B1. The new words jump out.", ask: "Which words change between the A2 and B1 versions of a tale?" },
   { kk: "Таныс емес сөзді бас та, сақта. Ертеңіне ол «Сөздер» бөліміне қайталауға келеді.", en: "Tap an unknown word and save it. It comes back for review in Words the next day.", ask: "How should I review the words I saved?" },
-  { kk: "«Read along» қосып, дауыспен бірге оқы. Айтылымға жақсы жаттығу.", en: "Turn on Read along and read out loud with it. Great practice for pronunciation.", ask: "How can I practise English pronunciation with the stories?" },
+  { kk: "«Бірге оқу» батырмасын басып, дауыспен бірге оқы. Айтылымға жақсы жаттығу.", en: "Turn on Read along and read out loud with it. Great practice for pronunciation.", ask: "How can I practise English pronunciation with the stories?" },
   { kk: "Алдар Көсе — айлакер. Ағылшынша оны «clever» немесе «cunning» дейді. Айырмасы неде?", en: "Aldar Köse is a trickster. In English he is \"clever\" or \"cunning\". What's the difference?", ask: "What is the difference between clever and cunning?" },
   { kk: "Күн сайын 10 минут — аптасына бір сағаттан артық. Кішкене қадам да қадам.", en: "Ten minutes a day adds up to over an hour a week. Small steps count.", ask: "Give me a 10-minute daily English routine." },
   { kk: "Сынақта қателессең, мәтінге қайтып, сол сөйлемді тап. Осылай есте жақсы қалады.", en: "Missed a quiz question? Go back and find that sentence in the text. It sticks better.", ask: "Why do I keep forgetting new English words?" },
@@ -319,34 +320,47 @@ export function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, s
   const videoRef = useRef<HTMLVideoElement | null>(null);
 
   const [isReadAlongPlaying, setIsReadAlongPlaying] = useState(false);
+  const [readAlongLoading, setReadAlongLoading] = useState(false);
   const [readAlongTokenIndex, setReadAlongTokenIndex] = useState<number | null>(null);
+  const [readAlongSentence, setReadAlongSentence] = useState<number | null>(null);
   const isPlayingRef = useRef(false);
   const wordRefs = useRef<Record<number, HTMLElement | null>>({});
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const frameRef = useRef<number | null>(null);
 
-  const READ_SPEEDS = [
-    { key: "slow", label: "0.5×", rate: 0.5 },
-    { key: "normal", label: "0.65×", rate: 0.65 },
-    { key: "fast", label: "0.85×", rate: 0.85 },
-    { key: "fluent", label: "1×", rate: 1 },
-  ];
-  const [readSpeed, setReadSpeed] = useState(0.65);
-  const readSpeedRef = useRef(0.65);
+  // Real playback rates: 1× is a person reading at normal pace.
+  const READ_SPEEDS = [0.75, 1, 1.25, 1.5, 2];
+  const [readSpeed, setReadSpeed] = useState(1);
+  const readSpeedRef = useRef(1);
   useEffect(() => {
     readSpeedRef.current = readSpeed;
+    if (audioRef.current) audioRef.current.playbackRate = readSpeed;
   }, [readSpeed]);
 
   useEffect(() => {
     if (readAlongTokenIndex !== null && wordRefs.current[readAlongTokenIndex]) {
-      wordRefs.current[readAlongTokenIndex]?.scrollIntoView({ behavior: "smooth", block: "center" });
+      wordRefs.current[readAlongTokenIndex]?.scrollIntoView({ behavior: "smooth", block: "nearest" });
     }
   }, [readAlongTokenIndex]);
 
+  const stopNarration = () => {
+    isPlayingRef.current = false;
+    if (frameRef.current !== null) cancelAnimationFrame(frameRef.current);
+    frameRef.current = null;
+    audioRef.current?.pause();
+    try { window.speechSynthesis.cancel(); } catch { /* not supported */ }
+  };
+
   useEffect(() => {
+    setReadAlongTokenIndex(null);
+    setReadAlongSentence(null);
+    setIsReadAlongPlaying(false);
     return () => {
-      isPlayingRef.current = false;
-      try { window.speechSynthesis.cancel(); } catch { }
+      stopNarration();
+      audioRef.current = null;
     };
-  }, [selectedLevel]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedLevel, selectedStory]);
 
   if (!selectedStory) {
     return (
@@ -416,79 +430,132 @@ export function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, s
 
   const text = currentStory.levels[selectedLevel as keyof typeof currentStory.levels];
   const tokens = text.split(/(\s+)/);
-  const wordIndices = tokens.reduce((acc: number[], tok: string, i: number) => {
-    if (/[a-zA-Z]/.test(tok)) acc.push(i);
-    return acc;
-  }, [] as number[]);
+  // Character start of each token, and the sentence each token belongs to.
+  const tokenStarts: number[] = [];
+  const sentenceOf: number[] = [];
+  const sentences: number[][] = [[]];
+  tokens.reduce((pos: number, tok: string, i: number) => {
+    tokenStarts.push(pos);
+    sentenceOf[i] = sentences.length - 1;
+    sentences[sentences.length - 1].push(i);
+    if (/[.!?]["”’)]*$/.test(tok)) sentences.push([]);
+    return pos + tok.length;
+  }, 0);
+  if (!sentences[sentences.length - 1].length) sentences.pop();
+  const sentenceText = (si: number) => sentences[si].map((i) => tokens[i]).join("").trim();
+  const tokenAt = (offset: number) => {
+    let lo = 0, hi = tokens.length - 1;
+    while (lo < hi) {
+      const mid = (lo + hi + 1) >> 1;
+      if (tokenStarts[mid] <= offset) lo = mid; else hi = mid - 1;
+    }
+    return lo;
+  };
 
   const handleWordClick = (word: string) => {
     // Try the word as written ("didn't"), then without a possessive ("man's" -> "man"), then letters only.
     const withApostrophe = word.toLowerCase().replace(/[’]/g, "'").replace(/[^a-z']/g, "").replace(/^'+|'+$/g, "");
     const candidates = [withApostrophe, withApostrophe.replace(/'s$/, ""), withApostrophe.replace(/[^a-z]/g, "")];
     const found = candidates.map((c) => WORD_TRANSLATIONS[c]).find(Boolean);
+    if (isReadAlongPlaying) { stopNarration(); setIsReadAlongPlaying(false); }
     setActiveWord(word);
     setTranslation(found || "Аудармасы әзірге жоқ");
     safePlayVoice(word);
   };
 
-  const speakWordAt = (pos: number) => {
-    if (!isPlayingRef.current) return;
-    if (pos >= wordIndices.length) {
-      isPlayingRef.current = false;
-      setIsReadAlongPlaying(false);
-      onLevelDone?.(currentStory.id, selectedLevel);
-      return;
-    }
-    const tokenIdx = wordIndices[pos];
-    setReadAlongTokenIndex(tokenIdx);
-    const word = tokens[tokenIdx];
-    const rate = readSpeedRef.current;
+  const finishReadAlong = () => {
+    stopNarration();
+    setIsReadAlongPlaying(false);
+    setReadAlongTokenIndex(null);
+    setReadAlongSentence(null);
+    onLevelDone?.(currentStory.id, selectedLevel);
+  };
 
-    const fallbackAdvance = () => {
-      if (isPlayingRef.current) setTimeout(() => speakWordAt(pos + 1), Math.max(280, word.length * 90) / rate);
+  const showToken = (ti: number) => {
+    setReadAlongTokenIndex((prev) => (prev === ti ? prev : ti));
+    setReadAlongSentence((prev) => (prev === sentenceOf[ti] ? prev : sentenceOf[ti]));
+  };
+
+  // Neural voice: one audio file for the whole text, highlighted from its word timings.
+  const playNarration = async (fromSentence: number) => {
+    const narration = await narrate(text);
+    if (!isPlayingRef.current) return;
+    const audio = audioRef.current ?? new Audio();
+    if (audio.src !== narration.url) audio.src = narration.url;
+    audioRef.current = audio;
+    audio.playbackRate = readSpeedRef.current;
+    audio.onended = finishReadAlong;
+    const wordTokens = alignWords(narration.words, tokens);
+    const firstToken = sentences[fromSentence][0];
+    const startWord = wordTokens.findIndex((ti) => ti >= firstToken);
+    audio.currentTime = fromSentence > 0 && startWord >= 0 ? narration.words[startWord].time : 0;
+    await audio.play();
+    setReadAlongLoading(false);
+    const tick = () => {
+      if (!isPlayingRef.current) return;
+      const now = audio.currentTime + 0.05;
+      let k = -1;
+      for (let i = 0; i < narration.words.length && narration.words[i].time <= now; i++) if (wordTokens[i] >= 0) k = i;
+      if (k >= 0) showToken(wordTokens[k]);
+      frameRef.current = requestAnimationFrame(tick);
     };
+    tick();
+  };
+
+  // Fallback: the browser voice reads one sentence at a time, never word by word.
+  const speakSentence = (si: number) => {
+    if (!isPlayingRef.current) return;
+    if (si >= sentences.length) { finishReadAlong(); return; }
+    const first = sentences[si].find((i) => /[a-zA-Z]/.test(tokens[i]));
+    if (first !== undefined) showToken(first);
+    const raw = sentences[si].map((i) => tokens[i]).join("");
+    const lead = raw.length - raw.trimStart().length;
+    const next = () => { if (isPlayingRef.current) setTimeout(() => speakSentence(si + 1), 120); };
     try {
-      if ("speechSynthesis" in window) {
-        window.speechSynthesis.cancel();
-        const utter = new SpeechSynthesisUtterance(word);
-        utter.rate = rate;
-        utter.pitch = 0.6;
-        utter.lang = "en-US";
-        utter.onend = () => {
-          if (isPlayingRef.current) setTimeout(() => speakWordAt(pos + 1), 150 / rate);
-        };
-        utter.onerror = fallbackAdvance;
-        window.speechSynthesis.speak(utter);
-      } else {
-        fallbackAdvance();
-      }
+      const utter = new SpeechSynthesisUtterance(raw.trim());
+      const voice = bestBrowserVoice();
+      if (voice) utter.voice = voice;
+      utter.lang = voice?.lang ?? "en-US";
+      utter.rate = readSpeedRef.current;
+      utter.onboundary = (e) => {
+        if (e.name === "word") showToken(tokenAt(tokenStarts[sentences[si][0]] + lead + e.charIndex));
+      };
+      utter.onend = next;
+      utter.onerror = next;
+      window.speechSynthesis.cancel();
+      window.speechSynthesis.speak(utter);
     } catch {
-      fallbackAdvance();
+      setTimeout(next, (sentenceText(si).split(/\s+/).length * 400) / readSpeedRef.current);
     }
   };
 
-  const handleToggleReadAlong = () => {
+  const handleToggleReadAlong = async () => {
     if (isReadAlongPlaying) {
-      isPlayingRef.current = false;
+      stopNarration();
       setIsReadAlongPlaying(false);
-      try { window.speechSynthesis.cancel(); } catch { }
-    } else {
-      isPlayingRef.current = true;
-      setIsReadAlongPlaying(true);
-      let startPos = 0;
-      if (readAlongTokenIndex !== null) {
-        const idx = wordIndices.indexOf(readAlongTokenIndex);
-        startPos = idx >= 0 && idx < wordIndices.length - 1 ? idx + 1 : 0;
-      }
-      speakWordAt(startPos);
+      setReadAlongLoading(false);
+      return;
+    }
+    isPlayingRef.current = true;
+    setIsReadAlongPlaying(true);
+    // Resume from the start of the sentence that was playing.
+    const from = readAlongSentence ?? 0;
+    setReadAlongLoading(true);
+    try {
+      await playNarration(from);
+    } catch {
+      setReadAlongLoading(false);
+      speakSentence(from);
     }
   };
 
   const handleRestartReadAlong = () => {
-    isPlayingRef.current = false;
-    try { window.speechSynthesis.cancel(); } catch { }
+    stopNarration();
+    if (audioRef.current) audioRef.current.currentTime = 0;
     setReadAlongTokenIndex(null);
+    setReadAlongSentence(null);
     setIsReadAlongPlaying(false);
+    setReadAlongLoading(false);
   };
 
   const toggleVideo = () => {
@@ -560,20 +627,28 @@ export function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, s
           </button>
           <div className="flex-1 min-w-0">
             <p className="font-display font-extrabold text-ink text-[15px]">{tr("Бірге оқу", "Read along")}</p>
-            <p className="text-sm text-ink-2 truncate">
-              {readAlongTokenIndex !== null ? <>{tr("Қазір", "Now")}: <b className="text-ink">{tokens[readAlongTokenIndex]}</b></> : t.tapWordHint}
+            <p className="text-sm text-ink-2">
+              {readAlongLoading ? tr("Дауыс дайындалуда…", "Preparing the voice…") : t.tapWordHint}
             </p>
           </div>
-          {readAlongTokenIndex !== null && (
+          {readAlongSentence !== null && (
             <button onClick={handleRestartReadAlong} aria-label={tr("Басынан", "Restart")} className="w-10 h-10 rounded-full flex items-center justify-center text-ink-2 hover:bg-sand-2">
               <RotateCcw size={18} />
             </button>
           )}
         </div>
+        {/* Subtitle: the sentence being read right now */}
+        {readAlongSentence !== null && (
+          <p className="rounded-2xl bg-night text-white/70 px-4 py-3 text-[16px] leading-snug" aria-live="polite">
+            {sentences[readAlongSentence].map((ti) => (
+              <span key={ti} className={ti === readAlongTokenIndex ? "text-sun font-bold" : ""}>{tokens[ti]}</span>
+            ))}
+          </p>
+        )}
         <div className="segmented" role="group" aria-label={tr("Жылдамдық", "Speed")}>
-          {READ_SPEEDS.map((s) => (
-            <button key={s.key} aria-pressed={readSpeed === s.rate} onClick={() => setReadSpeed(s.rate)}>
-              {s.label}
+          {READ_SPEEDS.map((rate) => (
+            <button key={rate} aria-pressed={readSpeed === rate} onClick={() => setReadSpeed(rate)}>
+              {rate}×
             </button>
           ))}
         </div>
@@ -591,7 +666,8 @@ export function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, s
         <p className="text-[18px] text-ink leading-[1.9]">
           {tokens.map((tok: string, i: number) => {
             const isWord = /[a-zA-Z]/.test(tok);
-            if (!isWord) return <span key={i}>{tok}</span>;
+            const inSentence = readAlongSentence !== null && sentenceOf[i] === readAlongSentence;
+            if (!isWord) return <span key={i} className={inSentence ? "bg-sun-soft" : ""}>{tok}</span>;
             const isCurrentlyRead = i === readAlongTokenIndex;
             const isActive = activeWord === tok;
             const mastery = savedMastery.get(cleanTok(tok));
@@ -608,6 +684,8 @@ export function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, s
                 className={`rounded-md px-0.5 -mx-0.5 cursor-pointer transition-colors duration-200 ${
                   isCurrentlyRead
                     ? "bg-sun text-ink"
+                    : inSentence
+                    ? "bg-sun-soft"
                     : isActive
                     ? "bg-sky-soft text-sky-deep"
                     : savedCls
@@ -1081,11 +1159,7 @@ export function QuizScreen({ onReward, t, onQuizFinish, questions, storyTitle }:
       onReward(10 + speedBonus);
       setCorrectCount((c) => c + 1);
     } else {
-      setHearts((h) => {
-        const next = Math.max(h - 1, 0);
-        if (next === 0) setOutOfHearts(true);
-        return next;
-      });
+      setHearts((h) => Math.max(h - 1, 0));
     }
   };
 
@@ -1093,15 +1167,12 @@ export function QuizScreen({ onReward, t, onQuizFinish, questions, storyTitle }:
     if (submitted) return;
     setSubmitted(true);
     setTimedOut(true);
-    setHearts((h) => {
-      const next = Math.max(h - 1, 0);
-      if (next === 0) setOutOfHearts(true);
-      return next;
-    });
+    setHearts((h) => Math.max(h - 1, 0));
   };
 
   const handleNext = () => {
-    if (outOfHearts) return;
+    // The last heart goes on the answer, but the learner sees the right one before the quiz ends.
+    if (hearts === 0) { setOutOfHearts(true); return; }
     if (qIndex + 1 >= questions.length) {
       setFinished(true);
     } else {
@@ -1334,6 +1405,15 @@ const SPEAK_PHRASES: Record<string, string[]> = Object.fromEntries(
   ])
 );
 
+// Share of the target's words the learner actually said. Below half, they read
+// something else, and a pronunciation score would only mislead.
+const speechWords = (s: string) => s.toLowerCase().replace(/’/g, "'").match(/[a-z]+(?:'[a-z]+)?/g) ?? [];
+function matchShare(target: string, said: string) {
+  const heard = new Set(speechWords(said));
+  const wanted = speechWords(target);
+  return wanted.length ? wanted.filter((w) => heard.has(w)).length / wanted.length : 0;
+}
+
 export function SpeakScreen({ onReward, t }: {
   onReward: (xp: number) => void;
   t: Record<string, string>;
@@ -1349,6 +1429,7 @@ export function SpeakScreen({ onReward, t }: {
   const [transcript, setTranscript] = useState<string>("");
   const [wordScores, setWordScores] = useState<{ word: string; score: number; error: string }[]>([]);
   const [speechError, setSpeechError] = useState<string | null>(null);
+  const [misread, setMisread] = useState(false);
   const recognizerRef = useRef<{ stopContinuousRecognitionAsync?: () => void; close?: () => void } | null>(null);
 
   const [speakLevel, setSpeakLevel] = useState("A2");
@@ -1362,6 +1443,7 @@ export function SpeakScreen({ onReward, t }: {
     setTranscript("");
     setWordScores([]);
     setSpeechError(null);
+    setMisread(false);
   };
 
   const toggleRecord = async () => {
@@ -1375,6 +1457,7 @@ export function SpeakScreen({ onReward, t }: {
     }
 
     setSpeechError(null);
+    setMisread(false);
     setScores(null);
     setTranscript("");
     setWordScores([]);
@@ -1414,6 +1497,11 @@ export function SpeakScreen({ onReward, t }: {
           if (result.reason === SpeechSDK.ResultReason.RecognizedSpeech) {
             const assessment = SpeechSDK.PronunciationAssessmentResult.fromResult(result as Parameters<typeof SpeechSDK.PronunciationAssessmentResult.fromResult>[0]);
             setTranscript(result.text);
+            if (matchShare(targetPhrase, result.text) < 0.5 || assessment.completenessScore < 40) {
+              setMisread(true);
+              recognizer.close();
+              return;
+            }
             // Per-word accuracy, so the learner sees exactly which words to fix.
             const words = (assessment.detailResult?.Words ?? []) as { Word: string; PronunciationAssessment?: { AccuracyScore?: number; ErrorType?: string } }[];
             setWordScores(words.map((w) => ({
@@ -1484,7 +1572,7 @@ export function SpeakScreen({ onReward, t }: {
       <div className="card p-6">
         <div className="flex items-center justify-between gap-3">
           <p className="eyebrow">{t.speakSubtitle}</p>
-          <span className="text-xs font-bold text-ink-3">{(phraseIndex % phrases.length) + 1} / {phrases.length}</span>
+          <span className="text-xs font-bold text-ink-3 whitespace-nowrap shrink-0">{(phraseIndex % phrases.length) + 1} / {phrases.length}</span>
         </div>
         <div className="flex items-start gap-4 mt-3">
           <p className="flex-1 font-display font-extrabold text-[22px] leading-snug text-ink">“{targetPhrase}”</p>
@@ -1518,6 +1606,21 @@ export function SpeakScreen({ onReward, t }: {
       {speechError && (
         <div className="rounded-2xl bg-felt-soft text-felt-deep p-4 text-sm font-medium text-center animate-pop-in">
           {speechError}
+        </div>
+      )}
+
+      {misread && (
+        <div className="card p-6 text-center animate-pop-in">
+          <span className="mx-auto w-14 h-14 rounded-full bg-felt-soft text-felt flex items-center justify-center">
+            <X size={28} strokeWidth={3} />
+          </span>
+          <p className="font-display font-black text-xl text-felt-deep mt-3">{tr("Сөйлем дұрыс оқылмады", "That's not the sentence")}</p>
+          <p className="text-[15px] text-ink-2 mt-1">{tr("Жоғарыдағы сөйлемге қарап, қайта оқып көр.", "Look at the sentence above and read it again.")}</p>
+          {transcript && <p className="text-sm text-ink-3 italic mt-3">{tr("Естілгені", "We heard")}: “{transcript}”</p>}
+          <div className="grid grid-cols-2 gap-3 mt-5">
+            <button onClick={() => safePlayVoice(targetPhrase)} className="btn btn-ghost btn-sm"><Volume2 size={16} /> {tr("Тыңдау", "Listen")}</button>
+            <button onClick={toggleRecord} className="btn btn-felt btn-sm"><Mic size={16} /> {tr("Қайталау", "Try again")}</button>
+          </div>
         </div>
       )}
 
@@ -1583,7 +1686,8 @@ export function ProfileScreen({ xp, t, lang = "kk", setLang, savedWordsCount = 0
   kilim?: React.ReactNode;
 }) {
   const [showBuklet, setShowBuklet] = useState(false);
-  const rank = Math.floor(xp / 100);
+  // Levels count from 1: 0–99 XP is level 1.
+  const rank = Math.floor(xp / 100) + 1;
   const initial = (userName || "?").trim().charAt(0).toUpperCase();
 
   const stats = [

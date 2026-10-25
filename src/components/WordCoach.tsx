@@ -127,7 +127,7 @@ export function WordCoach({ savedWords, progress, userId, lang, onLearn, onRewar
                   <div className="flex items-center gap-2 flex-wrap">
                     <p className="font-display font-black text-[19px] text-ink leading-none">{w.word}</p>
                     <span className={`text-[10px] font-bold uppercase tracking-[0.06em] rounded-full px-2 py-0.5 ${stretch ? "bg-sun-soft text-sun-deep" : "bg-sand-2 text-ink-2"}`}>
-                      {w.level}{stretch ? " · +1" : ""}
+                      {w.level}{stretch ? (kk ? " · келесі деңгей" : " · next level") : ""}
                     </span>
                   </div>
                   <p className="text-[15px] font-semibold text-sky-deep mt-1">{w.translation}</p>

@@ -32,9 +32,13 @@ const hasBase = (word: string) => BASE_ENDINGS.some(([re, rep]) => {
   return re.test(word) && base.length >= 3 && !STOP.has(base) && WORD_TRANSLATIONS[base] !== undefined;
 });
 
+// Names and places are written with a capital letter in the dictionary.
 const isLexical = (word: string, translation: string) =>
   word.length >= 3 && !STOP.has(word) && !word.includes("'") && !hasBase(word) &&
-  !/(аты|есім|артикль|көмекші)/.test(translation);
+  !/^\p{Lu}/u.test(translation) && !/(аты|есім|артикль|көмекші)/.test(translation);
+
+// A sentence cut out of dialogue can open a quote it never closes.
+const closeQuotes = (s: string) => ((s.match(/"/g) ?? []).length % 2 ? `${s}"` : s);
 
 let bankCache: LexWord[] | null = null;
 export function wordBank(): LexWord[] {
@@ -45,7 +49,7 @@ export function wordBank(): LexWord[] {
       const text = (story.levels as Record<string, string>)[level] || "";
       const sentences = text.match(/[^.!?]+[.!?]+["”]?/g) ?? [text];
       for (const raw of sentences) {
-        const sentence = raw.trim();
+        const sentence = closeQuotes(raw.trim());
         for (const token of sentence.toLowerCase().match(/[a-z]+(?:'[a-z]+)?/g) ?? []) {
           if (seen.has(token)) continue;
           const translation = WORD_TRANSLATIONS[token];

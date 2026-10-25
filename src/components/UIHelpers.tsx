@@ -104,7 +104,7 @@ export const LevelUpModal = ({ show, rank, onClose }: { show: boolean; rank: num
             <Shanyraq className="w-12 h-12 text-white" strokeWidth={4} />
           </span>
           <p className="eyebrow mt-5 text-sun-deep">{kk ? "Жаңа деңгей" : "Rank achieved"}</p>
-          <h3 className="large-title mt-1">{kk ? `${rank}-деңгей` : `Level ${rank}`}</h3>
+          <h3 className="large-title mt-1">{kk ? `${rank + 1}-деңгей` : `Level ${rank + 1}`}</h3>
           <p className="text-sm text-ink-2 mt-2">{kk ? "Дала ертегілеріне берген еңбегің ақталып жатыр." : "Your dedication to the steppe tales is paying off."}</p>
         </div>
       </div>
@@ -216,6 +216,12 @@ export const ScreenHeader = ({ eyebrow, title, trailing, onBack, backLabel }: {
 /* Bottom sheet used for word details, choices and the booklet. */
 export const Sheet = ({ open, onClose, children, label }: { open: boolean; onClose: () => void; children: React.ReactNode; label: string }) => {
   const kk = useLang() === "kk";
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [open, onClose]);
   if (!open) return null;
   // Portal to body: animated ancestors would otherwise trap position:fixed.
   return createPortal(
