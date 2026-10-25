@@ -102,7 +102,7 @@ export function IntroScreen({ onFinish, t }: any) {
 const SHOQAN_TIPS = [
   { kk: "Бір мәтінді екі деңгейде оқып көр: алдымен A2, сосын B1. Жаңа сөздер бірден көзге түседі.", en: "Read one tale at two levels: A2 first, then B1. The new words jump out.", ask: "Which words change between the A2 and B1 versions of a tale?" },
   { kk: "Таныс емес сөзді бас та, сақта. Ертеңіне ол «Сөздер» бөліміне қайталауға келеді.", en: "Tap an unknown word and save it. It comes back for review in Words the next day.", ask: "How should I review the words I saved?" },
-  { kk: "«Read along» қосып, дауыспен бірге оқы. Айтылымға жақсы жаттығу.", en: "Turn on Read along and read out loud with it. Great practice for pronunciation.", ask: "How can I practise English pronunciation with the stories?" },
+  { kk: "«Бірге оқу» батырмасын басып, дауыспен бірге оқы. Айтылымға жақсы жаттығу.", en: "Turn on Read along and read out loud with it. Great practice for pronunciation.", ask: "How can I practise English pronunciation with the stories?" },
   { kk: "Алдар Көсе — айлакер. Ағылшынша оны «clever» немесе «cunning» дейді. Айырмасы неде?", en: "Aldar Köse is a trickster. In English he is \"clever\" or \"cunning\". What's the difference?", ask: "What is the difference between clever and cunning?" },
   { kk: "Күн сайын 10 минут — аптасына бір сағаттан артық. Кішкене қадам да қадам.", en: "Ten minutes a day adds up to over an hour a week. Small steps count.", ask: "Give me a 10-minute daily English routine." },
   { kk: "Сынақта қателессең, мәтінге қайтып, сол сөйлемді тап. Осылай есте жақсы қалады.", en: "Missed a quiz question? Go back and find that sentence in the text. It sticks better.", ask: "Why do I keep forgetting new English words?" },
@@ -560,7 +560,7 @@ export function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, s
           </button>
           <div className="flex-1 min-w-0">
             <p className="font-display font-extrabold text-ink text-[15px]">{tr("Бірге оқу", "Read along")}</p>
-            <p className="text-sm text-ink-2 truncate">
+            <p className={`text-sm text-ink-2 ${readAlongTokenIndex !== null ? "truncate" : ""}`}>
               {readAlongTokenIndex !== null ? <>{tr("Қазір", "Now")}: <b className="text-ink">{tokens[readAlongTokenIndex]}</b></> : t.tapWordHint}
             </p>
           </div>
@@ -1081,11 +1081,7 @@ export function QuizScreen({ onReward, t, onQuizFinish, questions, storyTitle }:
       onReward(10 + speedBonus);
       setCorrectCount((c) => c + 1);
     } else {
-      setHearts((h) => {
-        const next = Math.max(h - 1, 0);
-        if (next === 0) setOutOfHearts(true);
-        return next;
-      });
+      setHearts((h) => Math.max(h - 1, 0));
     }
   };
 
@@ -1093,15 +1089,12 @@ export function QuizScreen({ onReward, t, onQuizFinish, questions, storyTitle }:
     if (submitted) return;
     setSubmitted(true);
     setTimedOut(true);
-    setHearts((h) => {
-      const next = Math.max(h - 1, 0);
-      if (next === 0) setOutOfHearts(true);
-      return next;
-    });
+    setHearts((h) => Math.max(h - 1, 0));
   };
 
   const handleNext = () => {
-    if (outOfHearts) return;
+    // The last heart goes on the answer, but the learner sees the right one before the quiz ends.
+    if (hearts === 0) { setOutOfHearts(true); return; }
     if (qIndex + 1 >= questions.length) {
       setFinished(true);
     } else {
@@ -1484,7 +1477,7 @@ export function SpeakScreen({ onReward, t }: {
       <div className="card p-6">
         <div className="flex items-center justify-between gap-3">
           <p className="eyebrow">{t.speakSubtitle}</p>
-          <span className="text-xs font-bold text-ink-3">{(phraseIndex % phrases.length) + 1} / {phrases.length}</span>
+          <span className="text-xs font-bold text-ink-3 whitespace-nowrap shrink-0">{(phraseIndex % phrases.length) + 1} / {phrases.length}</span>
         </div>
         <div className="flex items-start gap-4 mt-3">
           <p className="flex-1 font-display font-extrabold text-[22px] leading-snug text-ink">“{targetPhrase}”</p>
@@ -1583,7 +1576,8 @@ export function ProfileScreen({ xp, t, lang = "kk", setLang, savedWordsCount = 0
   kilim?: React.ReactNode;
 }) {
   const [showBuklet, setShowBuklet] = useState(false);
-  const rank = Math.floor(xp / 100);
+  // Levels count from 1: 0–99 XP is level 1.
+  const rank = Math.floor(xp / 100) + 1;
   const initial = (userName || "?").trim().charAt(0).toUpperCase();
 
   const stats = [
