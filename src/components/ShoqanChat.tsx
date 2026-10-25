@@ -156,7 +156,7 @@ export const ShoqanChat = () => {
                   <div
                     className={`max-w-[80%] px-3.5 py-2.5 text-[15px] leading-relaxed rounded-[20px] ${
                       m.role === "user"
-                        ? "bg-sky text-white rounded-br-md"
+                        ? "bg-sky-deep text-white rounded-br-md"
                         : "bg-card text-ink border border-line rounded-bl-md"
                     }`}
                   >

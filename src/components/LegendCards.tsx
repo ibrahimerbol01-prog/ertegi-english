@@ -55,13 +55,13 @@ function CardBack({ card, lang }: { card: LegendCard; lang: Lang }) {
   return (
     <div className="w-full aspect-[3/4] rounded-[22px] overflow-hidden border-[3px] border-line bg-sand-2 flex flex-col shadow-[0_4px_0_var(--color-line-2)]">
       <div className={`h-2 ${r.tone}`} />
-      <div className="flex-1 flex flex-col items-center justify-center gap-2 text-ink-3">
+      <div className="flex-1 flex flex-col items-center justify-center gap-2 text-ink-2">
         <span className="opacity-40">{ORNAMENT[card.ornament]("w-12 h-12")}</span>
         <span className="flex items-center gap-1 text-[11px] font-bold uppercase tracking-[0.08em]">
           <Lock size={12} /> {r[lang]}
         </span>
       </div>
-      <div className="py-2 text-center text-[11px] font-bold text-sky-deep flex items-center justify-center gap-1">
+      <div className="py-2 text-center text-[11px] font-bold text-[#075F75] flex items-center justify-center gap-1">
         <Headphones size={13} /> {lang === "kk" ? "Тыңда да аш" : "Listen to unlock"}
       </div>
     </div>
