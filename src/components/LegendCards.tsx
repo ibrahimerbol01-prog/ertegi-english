@@ -1,9 +1,7 @@
-import { useState } from "react";
-import { createPortal } from "react-dom";
+import { useEffect, useState } from "react";
 import { ChevronRight, Headphones, Lock, RotateCcw, Snail } from "lucide-react";
 import { QoshqarMuyiz, Shanyraq, Tumar, KilimStrip } from "./Ornaments";
-import { CloseButton, Sheet } from "./UIHelpers";
-import { useEscape } from "../utils/useEscape";
+import { ScreenHeader, Sheet } from "./UIHelpers";
 import { safePlayVoice, stopVoice } from "../utils/voice";
 import { LEGENDS, RARITY, type LegendCard, type Ornament } from "../data/legends";
 
@@ -231,64 +229,16 @@ function CardDetail({ card, lang }: { card: LegendCard; lang: Lang }) {
   );
 }
 
-/* The whole deck, full screen. */
-function LegendDeck({ lang, owned, onWin, onClose }: {
-  lang: Lang; owned: string[]; onWin: (card: LegendCard) => void; onClose: () => void;
-}) {
+/* The whole deck: its own tab in the menu. */
+export function LegendScreen({ lang, userId, onReward }: { lang: string; userId?: string; onReward: (xp: number) => void }) {
+  const l = pick(lang);
+  const [owned, setOwned] = useState<string[]>(() => loadCards(userId));
   // play: the card was still locked when opened, so keep the challenge (and its win screen) on.
   const [active, setActive] = useState<{ card: LegendCard; play: boolean } | null>(null);
   const close = () => { stopVoice(); setActive(null); };
-  useEscape(true, () => { stopVoice(); onClose(); });
   const isOwned = (id: string) => owned.includes(id);
-
-  return createPortal(
-    <div className="fixed inset-0 z-[66] bg-sand overflow-y-auto animate-pop-in" role="dialog" aria-modal="true" aria-label={lang === "kk" ? "Батырлар карталары" : "Batyr cards"}>
-      <div className="sticky top-0 z-10 glass border-b border-line/70">
-        <div className="mx-auto max-w-[620px] px-4 h-16 flex items-center gap-3">
-          <CloseButton onClick={() => { stopVoice(); onClose(); }} />
-          <p className="font-display font-black text-lg text-ink flex-1">{lang === "kk" ? "Батырлар карталары" : "Batyr cards"}</p>
-          <span className="chip text-sun-deep">{owned.length}/{LEGENDS.length}</span>
-        </div>
-      </div>
-
-      <div className="mx-auto max-w-[620px] px-4 pt-5 pb-16">
-        <p className="text-[15px] text-ink-2 leading-relaxed">
-          {lang === "kk"
-            ? "Қазақ ертегілері, жырлары, аңыздары мен тарихы. Ағылшынша сахнаны тыңда, 3 сұраққа жауап бер — карта сенікі."
-            : "Kazakh tales, epics, legends and history. Listen to a scene in English, answer 3 questions, and the card is yours."}
-        </p>
-        <div className="flex flex-wrap gap-2 mt-3">
-          {(Object.keys(RARITY) as (keyof typeof RARITY)[]).map((k) => (
-            <span key={k} className="chip h-7 text-[12px] text-ink-2">
-              <span className={`w-2.5 h-2.5 rounded-full ${RARITY[k].tone}`} /> {RARITY[k][lang]} · +{RARITY[k].xp}
-            </span>
-          ))}
-        </div>
-        <div className="grid grid-cols-3 sm:grid-cols-4 gap-3 mt-5">
-          {LEGENDS.map((card) => (
-            <button key={card.id} onClick={() => setActive({ card, play: !isOwned(card.id) })} className="text-left active:scale-[0.97] transition-transform" aria-label={isOwned(card.id) ? (lang === "kk" ? card.kk : card.name) : lang === "kk" ? `${RARITY[card.rarity][lang]} картасы` : `${RARITY[card.rarity][lang]} card`}>
-              {isOwned(card.id) ? <CardFace card={card} lang={lang} /> : <CardBack card={card} lang={lang} />}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      <Sheet open={!!active} onClose={close} label={(active && (lang === "kk" ? active.card.kk : active.card.name)) || ""}>
-        {active && (active.play
-          ? <Challenge key={active.card.id} card={active.card} lang={lang} onWin={() => onWin(active.card)} onClose={close} />
-          : <CardDetail card={active.card} lang={lang} />)}
-      </Sheet>
-    </div>,
-    document.body
-  );
-}
-
-/* Home entry: a fanned stack of cards that opens the deck. */
-export function LegendDeckEntry({ lang, userId, onReward }: { lang: string; userId?: string; onReward: (xp: number) => void }) {
-  const l = pick(lang);
-  const [open, setOpen] = useState(false);
-  const [owned, setOwned] = useState<string[]>(() => loadCards(userId));
-  const preview = [...LEGENDS.filter((c) => owned.includes(c.id)), ...LEGENDS.filter((c) => !owned.includes(c.id))].slice(0, 3);
+  // Leaving the tab stops a scene that is still playing.
+  useEffect(() => () => stopVoice(), []);
 
   const win = (card: LegendCard) => {
     if (owned.includes(card.id)) return;
@@ -298,27 +248,66 @@ export function LegendDeckEntry({ lang, userId, onReward }: { lang: string; user
   };
 
   return (
-    <>
-      <button onClick={() => setOpen(true)} className="card w-full text-left p-5 flex items-center gap-4 overflow-hidden">
-        <div className="relative w-[104px] h-[92px] shrink-0">
-          {preview.map((card, i) => (
-            <div
-              key={card.id}
-              className="absolute top-1 w-[58px]"
-              style={{ left: i * 22, transform: `rotate(${(i - 1) * 9}deg)`, zIndex: i }}
-            >
-              <MiniCard card={card} owned={owned.includes(card.id)} />
-            </div>
-          ))}
-        </div>
-        <div className="flex-1 min-w-0">
-          <p className="eyebrow text-sky-deep">{l === "kk" ? "Тыңда да жина" : "Listen and collect"}</p>
-          <p className="font-display font-extrabold text-ink text-[17px] mt-0.5">{l === "kk" ? "Батырлар карталары" : "Batyr cards"}</p>
-          <p className="text-sm text-ink-2 mt-0.5">{owned.length}/{LEGENDS.length} · {l === "kk" ? "ертегі, жыр, аңыз, тарих" : "tales, epics, legends, history"}</p>
-        </div>
-        <ChevronRight size={22} className="text-ink-3 shrink-0" />
-      </button>
-      {open && <LegendDeck lang={l} owned={owned} onWin={win} onClose={() => setOpen(false)} />}
-    </>
+    <div className="animate-pop-in">
+      <ScreenHeader
+        eyebrow={l === "kk" ? "Тыңда да жина" : "Listen and collect"}
+        title={l === "kk" ? "Батырлар карталары" : "Batyr cards"}
+        trailing={<span className="chip text-sun-deep shrink-0">{owned.length}/{LEGENDS.length}</span>}
+      />
+      <p className="text-[15px] text-ink-2 leading-relaxed -mt-2">
+        {l === "kk"
+          ? "Қазақ ертегілері, жырлары, аңыздары мен тарихы. Ағылшынша сахнаны тыңда, 3 сұраққа жауап бер — карта сенікі."
+          : "Kazakh tales, epics, legends and history. Listen to a scene in English, answer 3 questions, and the card is yours."}
+      </p>
+      <div className="flex flex-wrap gap-2 mt-3">
+        {(Object.keys(RARITY) as (keyof typeof RARITY)[]).map((k) => (
+          <span key={k} className="chip h-7 text-[12px] text-ink-2">
+            <span className={`w-2.5 h-2.5 rounded-full ${RARITY[k].tone}`} /> {RARITY[k][l]} · +{RARITY[k].xp}
+          </span>
+        ))}
+      </div>
+      <div className="grid grid-cols-3 sm:grid-cols-4 gap-3 mt-5">
+        {LEGENDS.map((card) => (
+          <button key={card.id} onClick={() => setActive({ card, play: !isOwned(card.id) })} className="text-left active:scale-[0.97] transition-transform" aria-label={isOwned(card.id) ? (l === "kk" ? card.kk : card.name) : l === "kk" ? `${RARITY[card.rarity][l]} картасы` : `${RARITY[card.rarity][l]} card`}>
+            {isOwned(card.id) ? <CardFace card={card} lang={l} /> : <CardBack card={card} lang={l} />}
+          </button>
+        ))}
+      </div>
+
+      <Sheet open={!!active} onClose={close} label={(active && (l === "kk" ? active.card.kk : active.card.name)) || ""}>
+        {active && (active.play
+          ? <Challenge key={active.card.id} card={active.card} lang={l} onWin={() => win(active.card)} onClose={close} />
+          : <CardDetail card={active.card} lang={l} />)}
+      </Sheet>
+    </div>
+  );
+}
+
+/* Home entry: a fanned stack of cards that opens the deck. */
+export function LegendDeckEntry({ lang, userId, onOpen }: { lang: string; userId?: string; onOpen: () => void }) {
+  const l = pick(lang);
+  const owned = loadCards(userId);
+  const preview = [...LEGENDS.filter((c) => owned.includes(c.id)), ...LEGENDS.filter((c) => !owned.includes(c.id))].slice(0, 3);
+
+  return (
+    <button onClick={onOpen} className="card w-full text-left p-5 flex items-center gap-4 overflow-hidden">
+      <div className="relative w-[104px] h-[92px] shrink-0">
+        {preview.map((card, i) => (
+          <div
+            key={card.id}
+            className="absolute top-1 w-[58px]"
+            style={{ left: i * 22, transform: `rotate(${(i - 1) * 9}deg)`, zIndex: i }}
+          >
+            <MiniCard card={card} owned={owned.includes(card.id)} />
+          </div>
+        ))}
+      </div>
+      <div className="flex-1 min-w-0">
+        <p className="eyebrow text-sky-deep">{l === "kk" ? "Тыңда да жина" : "Listen and collect"}</p>
+        <p className="font-display font-extrabold text-ink text-[17px] mt-0.5">{l === "kk" ? "Батырлар карталары" : "Batyr cards"}</p>
+        <p className="text-sm text-ink-2 mt-0.5">{owned.length}/{LEGENDS.length} · {l === "kk" ? "ертегі, жыр, аңыз, тарих" : "tales, epics, legends, history"}</p>
+      </div>
+      <ChevronRight size={22} className="text-ink-3 shrink-0" />
+    </button>
   );
 }

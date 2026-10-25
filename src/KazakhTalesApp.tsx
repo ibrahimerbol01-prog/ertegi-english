@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import type { Session } from "@supabase/supabase-js";
 import {
-  BookOpen, Trophy, Home as HomeIcon, User, Layers, Mic, Flame, Zap
+  BookOpen, Trophy, Home as HomeIcon, User, Layers, Mic, Flame, Zap, Shield
 } from "lucide-react";
 import {
   LevelUpModal, AchievementBanner, XpToast,
@@ -21,6 +21,7 @@ import { saveToSupabase } from "./utils/supabase-save";
 import { buildLevelQuiz } from "./utils/levelQuiz";
 import { BataModal, OyuKilim, TurkicWords, loadMaqals } from "./components/Culture";
 import { WordCoach } from "./components/WordCoach";
+import { LegendScreen } from "./components/LegendCards";
 import {
   loadProgress, saveProgress, progressKey, loadLocalReviews, saveReview,
   nextReview, isDue, MAX_MASTERY, type ProgressStep
@@ -297,6 +298,7 @@ export default function KazakhTalesApp({ session }: { session: Session }) {
     { id: "read",    label: t.navRead,    Icon: BookOpen },
     { id: "quiz",    label: t.navQuiz,    Icon: Trophy   },
     { id: "words",   label: lang === "kk" ? "Сөздер" : "Words", Icon: Layers },
+    { id: "cards",   label: lang === "kk" ? "Карталар" : "Cards", Icon: Shield },
     { id: "speak",   label: t.navSpeak,   Icon: Mic      },
     { id: "profile", label: t.navProfile, Icon: User     },
   ] as const;
@@ -391,6 +393,7 @@ export default function KazakhTalesApp({ session }: { session: Session }) {
                   progress={progress}
                   userId={userId}
                   onReward={addXp}
+                  onOpenCards={() => setTab("cards")}
                   onStartRead={(storyId: string, level?: string) => {
                     setSelectedStory(storyId);
                     setSelectedLevel(level ?? null);
@@ -459,6 +462,7 @@ export default function KazakhTalesApp({ session }: { session: Session }) {
                   <div className="mt-8"><TurkicWords lang={lang} /></div>
                 </div>
               )}
+              {tab === "cards" && <LegendScreen lang={lang} userId={userId} onReward={addXp} />}
               {tab === "speak" && <SpeakScreen onReward={addXp} t={t} />}
               {tab === "profile" && (
                 <ProfileScreen
@@ -503,7 +507,7 @@ export default function KazakhTalesApp({ session }: { session: Session }) {
 
         {/* Tab bar — mobile only, Apple frosted */}
         <nav className="md:hidden fixed bottom-0 inset-x-0 z-30 glass border-t border-line/70 pb-[max(env(safe-area-inset-bottom),8px)] pt-1.5">
-          <div className="grid grid-cols-6">
+          <div className="grid grid-cols-7">
             {tabs.map(({ id, label, Icon }) => {
               const active = tab === id;
               return (
@@ -517,7 +521,7 @@ export default function KazakhTalesApp({ session }: { session: Session }) {
                     <Icon size={24} strokeWidth={active ? 2.6 : 2} />
                     {wordsBadge(id)}
                   </span>
-                  <span className={`text-[10px] ${active ? "font-bold" : "font-medium"}`}>{label}</span>
+                  <span className={`text-[9px] min-[360px]:text-[10px] max-w-full truncate px-0.5 ${active ? "font-bold" : "font-medium"}`}>{label}</span>
                 </button>
               );
             })}

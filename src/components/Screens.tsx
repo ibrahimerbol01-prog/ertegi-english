@@ -159,7 +159,7 @@ function PathIsland({ label, caption, color, edge, x, onClick, locked, highlight
   );
 }
 
-export function HomeScreen({ onStartRead, onStartQuiz, t, lang, userName = "", sessionXp = 0, dailyGoal = 50, progress = new Set<string>(), userId, onReward = () => {} }: any) {
+export function HomeScreen({ onStartRead, onStartQuiz, t, lang, userName = "", sessionXp = 0, dailyGoal = 50, progress = new Set<string>(), userId, onReward = () => {}, onOpenCards = () => {} }: any) {
   // Next step on the path: first level or quiz not yet finished, in order.
   const steps = STORIES.flatMap((s: any) => [...LEVEL_DETAILS.map((l) => ({ story: s, step: l.id })), { story: s, step: "quiz" }]);
   const current = steps.find((x) => !progress.has(`${x.story.id}:${x.step}`)) || null;
@@ -229,7 +229,7 @@ export function HomeScreen({ onStartRead, onStartQuiz, t, lang, userName = "", s
       </div>
 
       <MaqalCard lang={lang} userId={userId} onReward={onReward} />
-      <LegendDeckEntry lang={lang} userId={userId} onReward={onReward} />
+      <LegendDeckEntry lang={lang} userId={userId} onOpen={onOpenCards} />
 
       {/* Caravan path: one unit per story, islands are CEFR levels */}
       {STORIES.map((story: any, si: number) => {
