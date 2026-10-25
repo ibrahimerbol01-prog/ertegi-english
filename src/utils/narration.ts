@@ -25,12 +25,24 @@ export function narrate(text: string): Promise<Narration> {
   return job;
 }
 
-async function synthesize(text: string): Promise<Narration> {
-  const { data: { session } } = await supabase.auth.getSession();
-  const res = await fetch("/api/azure-token", { headers: { Authorization: `Bearer ${session?.access_token ?? ""}` } });
-  const auth = await res.json();
-  if (!res.ok) throw new Error(auth?.error || "No speech token");
+// Azure tokens live ten minutes; reuse one for eight so each clip starts faster.
+let tokenJob: { at: number; job: Promise<{ token: string; region: string }> } | null = null;
+function speechToken() {
+  if (tokenJob && Date.now() - tokenJob.at < 8 * 60_000) return tokenJob.job;
+  const job = (async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    const res = await fetch("/api/azure-token", { headers: { Authorization: `Bearer ${session?.access_token ?? ""}` } });
+    const body = await res.json();
+    if (!res.ok) throw new Error(body?.error || "No speech token");
+    return body as { token: string; region: string };
+  })();
+  tokenJob = { at: Date.now(), job };
+  job.catch(() => { tokenJob = null; });
+  return job;
+}
 
+async function synthesize(text: string): Promise<Narration> {
+  const auth = await speechToken();
   const SDK = await import("microsoft-cognitiveservices-speech-sdk");
   let lastError: unknown = null;
   for (const voice of VOICES) {
@@ -100,4 +112,50 @@ export function alignWords(words: Narration["words"], tokens: string[]): number[
     }
     return -1;
   });
+}
+
+/* iPhones only let an audio element play if it first plays inside the tap
+   itself. Voice audio arrives a moment later, so each element plays a short
+   silence on the tap to unlock it. */
+const SILENCE = "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAIA+AAACABAAZGF0YQAAAAA=";
+const unlocked = new WeakSet<HTMLAudioElement>();
+export function primeAudio(el: HTMLAudioElement) {
+  if (unlocked.has(el)) return;
+  unlocked.add(el);
+  el.src = SILENCE;
+  el.play().catch(() => { /* nothing to unlock */ });
+}
+
+/* Short clips (a word, a proverb, a card scene) in the same neural voice.
+   One clip plays at a time; a newer request replaces an older one. */
+let clip: HTMLAudioElement | null = null;
+let clipRequest = 0;
+
+export async function speakClip(text: string, rate = 1) {
+  const request = ++clipRequest;
+  stopClip(false);
+  clip = clip ?? new Audio();
+  primeAudio(clip);
+  let url: string;
+  try {
+    ({ url } = await narrate(text));
+  } catch (err) {
+    if (request === clipRequest) throw err;
+    return;
+  }
+  if (request !== clipRequest) return;
+  clip.src = url;
+  clip.playbackRate = rate;
+  try {
+    await clip.play();
+  } catch (err) {
+    // A newer clip interrupting this one is not a failure.
+    if (request === clipRequest) throw err;
+  }
+}
+
+export function stopClip(cancelPending = true) {
+  if (cancelPending) clipRequest++;
+  clip?.pause();
+  try { window.speechSynthesis?.cancel(); } catch { /* not supported */ }
 }

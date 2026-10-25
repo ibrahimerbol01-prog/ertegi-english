@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { createPortal } from "react-dom";
-import { ChevronRight, Headphones, Lock, RotateCcw, Snail, X } from "lucide-react";
+import { ChevronRight, Headphones, Lock, RotateCcw, Snail } from "lucide-react";
 import { QoshqarMuyiz, Shanyraq, Tumar, KilimStrip } from "./Ornaments";
-import { Sheet } from "./UIHelpers";
-import { safePlayVoice } from "../utils/voice";
+import { CloseButton, Sheet } from "./UIHelpers";
+import { useEscape } from "../utils/useEscape";
+import { safePlayVoice, stopVoice } from "../utils/voice";
 import { LEGENDS, RARITY, type LegendCard, type Ornament } from "../data/legends";
 
 type Lang = "kk" | "en";
@@ -29,10 +30,6 @@ const ORNAMENT: Record<Ornament, (cls: string) => React.ReactNode> = {
   qoshqar: (cls) => <QoshqarMuyiz className={cls} strokeWidth={4} />,
   shanyraq: (cls) => <Shanyraq className={cls} strokeWidth={4} />,
   tumar: (cls) => <Tumar className={cls} strokeWidth={2.6} />,
-};
-
-const stopVoice = () => {
-  try { window.speechSynthesis?.cancel(); } catch { /* not supported */ }
 };
 
 /* Front of a collected card. */
@@ -155,10 +152,10 @@ function Challenge({ card, lang, onWin, onClose }: { card: LegendCard; lang: Lan
       <h3 className="font-display font-black text-xl text-ink mt-2">{lang === "kk" ? card.kk : card.name}</h3>
 
       <div className="grid grid-cols-[1fr_auto] gap-2 mt-4">
-        <button onClick={() => play(0.85)} className="btn">
+        <button onClick={() => play(1)} className="btn">
           <Headphones size={18} /> {lang === "kk" ? "Тыңдау" : "Listen"}
         </button>
-        <button onClick={() => play(0.6)} className="btn btn-ghost px-4" aria-label={lang === "kk" ? "Баяу" : "Slow"}>
+        <button onClick={() => play(0.75)} className="btn btn-ghost px-4" aria-label={lang === "kk" ? "Баяу" : "Slow"}>
           <Snail size={18} />
         </button>
       </div>
@@ -241,15 +238,14 @@ function LegendDeck({ lang, owned, onWin, onClose }: {
   // play: the card was still locked when opened, so keep the challenge (and its win screen) on.
   const [active, setActive] = useState<{ card: LegendCard; play: boolean } | null>(null);
   const close = () => { stopVoice(); setActive(null); };
+  useEscape(true, () => { stopVoice(); onClose(); });
   const isOwned = (id: string) => owned.includes(id);
 
   return createPortal(
     <div className="fixed inset-0 z-[66] bg-sand overflow-y-auto animate-pop-in" role="dialog" aria-modal="true" aria-label={lang === "kk" ? "Батырлар карталары" : "Batyr cards"}>
       <div className="sticky top-0 z-10 glass border-b border-line/70">
         <div className="mx-auto max-w-[620px] px-4 h-16 flex items-center gap-3">
-          <button onClick={() => { stopVoice(); onClose(); }} aria-label={lang === "kk" ? "Жабу" : "Close"} className="w-10 h-10 rounded-full bg-card border-2 border-line flex items-center justify-center text-ink-2">
-            <X size={20} />
-          </button>
+          <CloseButton onClick={() => { stopVoice(); onClose(); }} />
           <p className="font-display font-black text-lg text-ink flex-1">{lang === "kk" ? "Батырлар карталары" : "Batyr cards"}</p>
           <span className="chip text-sun-deep">{owned.length}/{LEGENDS.length}</span>
         </div>

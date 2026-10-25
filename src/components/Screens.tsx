@@ -7,8 +7,8 @@ import {
 import { DailyGoalRing, ScreenHeader, Sheet, BrandMark } from "./UIHelpers";
 import { displayTitle } from "../utils/text";
 import { Shanyraq, OrnamentBand, Tumar, SteppeBackground, KilimStrip, QoshqarMuyiz } from "./Ornaments";
-import { safePlayVoice } from "../utils/voice";
-import { narrate, alignWords, bestBrowserVoice } from "../utils/narration";
+import { safePlayVoice, stopVoice } from "../utils/voice";
+import { narrate, alignWords, bestBrowserVoice, primeAudio } from "../utils/narration";
 import {
   BG_VIDEO_ASSETS, STORIES, LEVEL_DETAILS, WORD_TRANSLATIONS, ACHIEVEMENTS
 } from "../constants";
@@ -535,6 +535,11 @@ export function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, s
       setIsReadAlongPlaying(false);
       setReadAlongLoading(false);
       return;
+    }
+    stopVoice();
+    if (!audioRef.current) {
+      audioRef.current = new Audio();
+      primeAudio(audioRef.current);
     }
     isPlayingRef.current = true;
     setIsReadAlongPlaying(true);
@@ -1127,7 +1132,8 @@ export function QuizSetup({ storyId, level, onChange, onStart, progress, lang, t
 }
 
 /* --- 6. QUIZ SCREEN --- */
-export function QuizScreen({ onReward, t, onQuizFinish, questions, storyTitle }: {
+export function QuizScreen({ onReward, t, onQuizFinish, questions, storyTitle, onExit }: {
+  onExit?: () => void;
   onReward: (xp: number) => void;
   t: Record<string, string>;
   onQuizFinish?: (correct: number, total: number) => void;
@@ -1228,6 +1234,7 @@ export function QuizScreen({ onReward, t, onQuizFinish, questions, storyTitle }:
             {tr("Ертегіні қайта оқып, есіңе түсір де, сынақты басынан бастап көр.", "Re-read the story to refresh your memory, then try again from the start.")}
           </p>
           <button onClick={handleRestart} className="btn btn-felt w-full mt-6">{tr("Сынақты қайта бастау", "Restart quiz")}</button>
+          {onExit && <button onClick={onExit} className="btn btn-ghost w-full mt-3">{tr("Сынақтарға оралу", "Back to quizzes")}</button>}
         </div>
       </div>
     );
@@ -1260,6 +1267,7 @@ export function QuizScreen({ onReward, t, onQuizFinish, questions, storyTitle }:
           ))}
         </div>
         <button onClick={handleRestart} className="btn w-full mt-7">{t.tryAgain}</button>
+        {onExit && <button onClick={onExit} className="btn btn-ghost w-full mt-3">{tr("Сынақтарға оралу", "Back to quizzes")}</button>}
       </div>
     );
   }
@@ -1268,8 +1276,13 @@ export function QuizScreen({ onReward, t, onQuizFinish, questions, storyTitle }:
 
   return (
     <div className="animate-pop-in">
-      {/* Progress + hearts */}
+      {/* Exit + progress + hearts */}
       <div className="flex items-center gap-4 pt-2">
+        {onExit && (
+          <button onClick={onExit} aria-label={tr("Сынақтан шығу", "Leave quiz")} className="w-9 h-9 -ml-1 rounded-full text-ink-3 hover:bg-sand-2 flex items-center justify-center shrink-0">
+            <X size={22} strokeWidth={2.6} />
+          </button>
+        )}
         <div className="track flex-1"><span style={{ width: `${((qIndex + (submitted ? 1 : 0)) / questions.length) * 100}%` }} /></div>
         {heartsChip}
       </div>

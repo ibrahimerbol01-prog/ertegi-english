@@ -441,6 +441,7 @@ export default function KazakhTalesApp({ session }: { session: Session }) {
                   onReward={addXp}
                   t={t}
                   onQuizFinish={handleQuizFinish}
+                  onExit={() => setQuizStarted(false)}
                   storyTitle={`${(STORIES.find((s) => s.id === selectedStory) || STORIES[0]).title}${quizLevel ? ` · ${quizLevel}` : ""}`}
                   questions={quizQuestions}
                 />
