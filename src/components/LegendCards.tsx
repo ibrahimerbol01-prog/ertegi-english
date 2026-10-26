@@ -145,7 +145,7 @@ function Challenge({ card, lang, onWin, onClose }: { card: LegendCard; lang: Lan
     <div className="p-5">
       <div className="flex items-center justify-between">
         <p className="eyebrow text-sky-deep">{lang === "kk" ? "Тыңда да жең" : "Listen and win"}</p>
-        <span className={`chip h-7 text-[12px] text-white border-0 ${r.tone}`}>{r[lang]} · +{r.xp} XP</span>
+        <span className={`chip h-7 text-[12px] text-white border-0 ${r.tone} shadow-[inset_0_0_0_99px_rgba(0,0,0,0.28)]`}>{r[lang]} · +{r.xp} XP</span>
       </div>
       <h3 className="font-display font-black text-xl text-ink mt-2">{lang === "kk" ? card.kk : card.name}</h3>
 

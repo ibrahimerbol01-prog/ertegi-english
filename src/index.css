@@ -96,7 +96,7 @@
   }
   .tile:active:not(:disabled) { transform: translateY(2px); border-bottom-width: 2px; margin-bottom: 2px; }
   .tile-selected { background: var(--color-sky-soft); border-color: var(--color-sky); color: #075F75; }
-  .tile-correct { background: var(--color-jade-soft); border-color: var(--color-jade); color: var(--color-jade-deep); }
+  .tile-correct { background: var(--color-jade-soft); border-color: var(--color-jade); color: #0F6E4B; }
   .tile-wrong { background: var(--color-felt-soft); border-color: var(--color-felt); color: var(--color-felt-deep); }
 
   /* Duolingo 3D button. Colour comes from a modifier. */
@@ -283,6 +283,9 @@
    every `text-*` use gets the darker, readable shade at once. */
 .text-sun-deep { color: #9A6200; }
 .text-sky { color: var(--color-sky-deep); }
+/* The -deep tones are also used as text on their pale tints (selected, correct). */
+.text-sky-deep { color: #09718B; }
+.text-jade-deep { color: #0F6E4B; }
 .text-felt { color: #C4441E; }
 .text-jade { color: #147A55; }
 
