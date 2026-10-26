@@ -1,7 +1,8 @@
 import { useRef, useState } from "react";
+import { STORIES } from "../constants";
 import { BookOpen, Check, ChevronRight, ClipboardList, Clock, LogOut, Trophy, Users } from "lucide-react";
 import {
-  cleanCode, errorText, joinClass, leaveClass,
+  cleanCode, codeHasBadLetters, errorText, joinClass, leaveClass,
   type Assignment, type ClassError, type MyClass,
 } from "../utils/classes";
 import { dueText, refreshClasses, stepLabel, storyTitle, useMyClasses } from "../utils/useMyClasses";
@@ -32,13 +33,14 @@ export function JoinClassSheet({ open, onClose, lang, defaultName, initialCode =
   if (open && openedWith !== initialCode) {
     setOpenedWith(initialCode);
     setCode(cleanCode(initialCode));
-    setName(defaultName);
+    setName(defaultName.slice(0, 30));
     setError(null);
     setJoined(null);
   }
   if (!open && openedWith !== null) setOpenedWith(null);
 
-  const ready = cleanCode(code).length === 6 && name.trim().length > 0 && name.trim().length <= 30;
+  const badLetters = codeHasBadLetters(code);
+  const ready = !badLetters && cleanCode(code).length === 6 && name.trim().length > 0 && name.trim().length <= 30;
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -71,34 +73,40 @@ export function JoinClassSheet({ open, onClose, lang, defaultName, initialCode =
           <form onSubmit={submit} noValidate>
             <h2 className="font-display font-black text-2xl text-ink">{kk ? "Сыныпқа қосылу" : "Join a class"}</h2>
             <p className="text-[15px] text-ink-2 mt-1">{kk ? "Мұғалім берген 6 таңбалы кодты жаз." : "Type the 6-character code from your teacher."}</p>
-            <label className="block mt-5">
-              <span className="text-sm font-bold text-ink">{kk ? "Сынып коды" : "Class code"}</span>
-              <input
-                value={code}
-                onChange={(e) => { setCode(cleanCode(e.target.value)); setError(null); }}
-                className="field mt-1.5 font-display font-black tracking-[0.3em] uppercase text-xl"
-                inputMode="text"
-                autoCapitalize="characters"
-                autoComplete="off"
-                spellCheck={false}
-                placeholder="ABC234"
-                aria-invalid={error === "not_found"}
-              />
-            </label>
-            <label className="block mt-4">
-              <span className="text-sm font-bold text-ink">{kk ? "Сыныптағы атың" : "Your name in class"}</span>
-              <input
-                value={name}
-                onChange={(e) => { setName(e.target.value.slice(0, 30)); setError(null); }}
-                className="field mt-1.5"
-                autoComplete="nickname"
-                maxLength={30}
-              />
-              <span className="block text-[13px] text-ink-2 mt-1.5">
-                {kk ? "Тек атыңды немесе лақап атыңды жаз. Тегіңді, телефоныңды жазба." : "Just a first name or a nickname. No surname or phone number."}
-              </span>
-            </label>
-            {error && <p role="alert" className="mt-4 text-[14px] font-semibold text-felt-deep">{errorText(error, kk)}</p>}
+            <label htmlFor="join-code" className="block mt-5 text-sm font-bold text-ink">{kk ? "Сынып коды" : "Class code"}</label>
+            <input
+              id="join-code"
+              value={code}
+              onChange={(e) => { setCode(cleanCode(e.target.value)); setError(null); }}
+              className="field mt-1.5 font-display font-black tracking-[0.3em] uppercase text-xl"
+              inputMode="text"
+              autoCapitalize="characters"
+              autoComplete="off"
+              spellCheck={false}
+              placeholder="ABC234"
+              aria-invalid={error === "not_found" || badLetters}
+              aria-describedby={error ? "join-error" : badLetters ? "join-code-hint" : undefined}
+            />
+            {badLetters && (
+              <p id="join-code-hint" className="text-[13px] text-felt-deep font-semibold mt-1.5">
+                {kk ? "Кодта I, O, 0, 1 болмайды: мұғалімнен кодты тексер." : "Codes never have I, O, 0 or 1: check the code with your teacher."}
+              </p>
+            )}
+            <label htmlFor="join-name" className="block mt-4 text-sm font-bold text-ink">{kk ? "Сыныптағы атың" : "Your name in class"}</label>
+            <input
+              id="join-name"
+              value={name}
+              onChange={(e) => { setName(e.target.value.slice(0, 30)); setError(null); }}
+              className="field mt-1.5"
+              autoComplete="given-name"
+              maxLength={30}
+              aria-describedby="join-name-hint"
+              aria-invalid={error === "nickname_taken" || error === "bad_nickname"}
+            />
+            <p id="join-name-hint" className="text-[13px] text-ink-2 mt-1.5">
+              {kk ? "Тек атыңды немесе лақап атыңды жаз. Тегіңді, телефоныңды жазба." : "Just a first name or a nickname. No surname or phone number."}
+            </p>
+            {error && <p id="join-error" role="alert" className="mt-4 text-[14px] font-semibold text-felt-deep">{errorText(error, kk)}</p>}
             <div className="grid grid-cols-2 gap-3 mt-6">
               <button type="button" onClick={onClose} className="btn btn-ghost">{kk ? "Артқа" : "Back"}</button>
               <button type="submit" disabled={!ready || busy} className="btn">{busy ? "…" : kk ? "Қосылу" : "Join"}</button>
@@ -121,14 +129,17 @@ export function AssignmentsCard({ lang, userId, progress, onStartRead, onStartQu
   const kk = lang === "kk";
   const { classes } = useMyClasses(userId);
   const [showAll, setShowAll] = useState(false);
-  if (!classes || classes.length === 0) return null;
+  const open_ = (classes ?? []).filter((c) => !c.archived);
+  if (open_.length === 0) return null;
 
-  const items = classes.flatMap((c) => c.assignments.map((a) => ({ a, cls: c.name, done: progress.has(`${a.story_id}:${a.step}`) })));
+  // An assignment on a tale this version of the app doesn't have is left out.
+  const known = (id: string) => STORIES.some((s: { id: string }) => s.id === id);
+  const items = open_.flatMap((c) => c.assignments.filter((a) => known(a.story_id)).map((a) => ({ a, cls: c.name, done: progress.has(`${a.story_id}:${a.step}`) })));
   const dueSort = (x: Assignment) => (x.due_at ? new Date(x.due_at).getTime() : Infinity);
   items.sort((x, y) => Number(x.done) - Number(y.done) || dueSort(x.a) - dueSort(y.a));
   const open = items.filter((i) => !i.done).length;
   const shown = showAll ? items : items.slice(0, 4);
-  const multi = classes.length > 1;
+  const multi = open_.length > 1;
 
   const start = (a: Assignment) => (a.step === "quiz" ? onStartQuiz(a.story_id) : onStartRead(a.story_id, a.step));
 
@@ -139,7 +150,7 @@ export function AssignmentsCard({ lang, userId, progress, onStartRead, onStartQu
           <ClipboardList size={24} />
         </span>
         <div className="min-w-0 flex-1">
-          <p className="eyebrow text-sky-deep">{multi ? (kk ? "Сыныптар" : "Classes") : classes[0].name}</p>
+          <p className="eyebrow text-sky-deep">{multi ? (kk ? "Сыныптар" : "Classes") : open_[0].name}</p>
           <h2 id="assignments-title" className="font-display font-extrabold text-ink text-[17px] leading-snug">
             {items.length === 0
               ? (kk ? "Әзірге тапсырма жоқ" : "No assignments yet")
@@ -166,11 +177,13 @@ export function AssignmentsCard({ lang, userId, progress, onStartRead, onStartQu
                     <span className={`block font-bold text-[15px] truncate ${done ? "text-ink-2 line-through decoration-2" : "text-ink"}`}>
                       {storyTitle(a.story_id)}
                     </span>
-                    <span className={`flex items-center gap-1 text-[13px] min-w-0 ${overdue ? "text-felt-deep font-semibold" : "text-ink-2"}`}>
-                      <b className="font-bold shrink-0">{stepLabel(a.step, kk)}</b> ·
-                      {done ? <span>{kk ? "орындалды" : "done"}</span> : <><Clock size={13} className="shrink-0" /> <span className="truncate">{dueText(a.due_at, kk)}</span></>}
-                      {multi && <span className="truncate"> · {cls}</span>}
+                    <span className={`flex flex-wrap items-center gap-x-1.5 text-[13px] ${overdue ? "text-felt-deep font-semibold" : "text-ink-2"}`}>
+                      <b className="font-bold whitespace-nowrap">{stepLabel(a.step, kk)}</b>
+                      {done
+                        ? <span className="whitespace-nowrap">· {kk ? "орындалды" : "done"}</span>
+                        : <span className="inline-flex items-center gap-1 whitespace-nowrap">· <Clock size={13} aria-hidden /> {dueText(a.due_at, kk)}</span>}
                     </span>
+                    {multi && <span className="block text-[12px] text-ink-2 truncate">{cls}</span>}
                     {a.note && !done && <span className="block text-[13px] text-ink-2 mt-0.5 line-clamp-2">«{a.note}»</span>}
                   </span>
                   {!done && <ChevronRight size={20} className="text-ink-3 shrink-0" />}
@@ -211,22 +224,22 @@ export function MyClassesSection({ lang, userId, defaultName }: { lang: string; 
 
   return (
     <div>
-      <h2 className="font-display font-black text-xl text-ink mb-3">{kk ? "Менің сыныбым" : "My classes"}</h2>
+      <h2 className="font-display font-black text-xl text-ink mb-3">{(classes?.length ?? 0) > 1 ? (kk ? "Менің сыныптарым" : "My classes") : (kk ? "Менің сыныбым" : "My class")}</h2>
       <div className="card overflow-hidden divide-y divide-line">
         {(classes ?? []).map((c) => (
           <div key={c.class_id} className="flex items-center gap-3 px-4 min-h-[60px]">
             <span className="w-8 h-8 rounded-lg bg-sky-soft text-sky-deep flex items-center justify-center shrink-0"><Users size={16} /></span>
             <span className="flex-1 min-w-0">
               <span className="block text-[16px] text-ink truncate">{c.name}</span>
-              <span className="block text-[13px] text-ink-2 truncate">{kk ? "Атың" : "Your name"}: {c.nickname}</span>
+              <span className="block text-[13px] text-ink-2 truncate">{kk ? "Атың" : "Your name"}: {c.nickname}{c.archived ? (kk ? " · мұрағатта" : " · archived") : ""}</span>
             </span>
             <button onClick={() => { setLeaveError(null); setLeaving(c); }} className="btn btn-ghost btn-sm !text-felt-deep">
-              <LogOut size={15} /> {kk ? "Шығу" : "Leave"}
+              <LogOut size={15} aria-hidden /> {kk ? "Сыныптан шығу" : "Leave"}
             </button>
           </div>
         ))}
         <button ref={joinBtn} onClick={() => setJoinOpen(true)} className="w-full flex items-center gap-3 px-4 min-h-[56px] text-left hover:bg-sand/60">
-          <span className="w-8 h-8 rounded-lg bg-sky flex items-center justify-center text-white font-black">+</span>
+          <span className="w-8 h-8 rounded-lg bg-sky-deep flex items-center justify-center text-white font-black" aria-hidden>+</span>
           <span className="flex-1 text-[16px] text-ink">{kk ? "Сыныпқа кодпен қосылу" : "Join a class with a code"}</span>
           <ChevronRight size={18} className="text-ink-3" />
         </button>

@@ -23,7 +23,7 @@ import { WordCoach } from "./components/WordCoach";
 import { LegendScreen } from "./components/LegendCards";
 import { TeacherScreen } from "./components/Teacher";
 import { AssignmentsCard, JoinClassSheet, MyClassesSection } from "./components/StudentClasses";
-import { flushQuizResults, saveQuizResult, takePendingClass } from "./utils/classes";
+import { clearPendingClass, flushQuizResults, peekPendingClass, saveQuizResult } from "./utils/classes";
 import {
   loadProgress, saveProgress, progressKey, loadLocalReviews, saveReview,
   nextReview, lapse, localDay, daysBetween, isDue, MAX_MASTERY, type ProgressStep
@@ -40,7 +40,7 @@ export default function KazakhTalesApp({ session }: { session: Session }) {
 
   const [tab, setTab] = useState("home");
   // A class link opened before sign-in: offer to join once the app is open.
-  const [pendingCode, setPendingCode] = useState<string | null>(takePendingClass);
+  const [pendingCode, setPendingCode] = useState<string | null>(peekPendingClass);
   const [isTeacher, setIsTeacher] = useState(() => {
     try { return localStorage.getItem(`ertegi_is_teacher_${userId}`) === "1"; } catch { return false; }
   });
@@ -344,6 +344,12 @@ export default function KazakhTalesApp({ session }: { session: Session }) {
     );
   };
 
+  // The name offered in a class: the first name only, never a surname or the
+  // email prefix the display name falls back to.
+  const classNick = displayName && !userEmail.toLowerCase().startsWith(`${displayName.toLowerCase()}@`)
+    ? displayName.trim().split(/\s+/)[0].slice(0, 30)
+    : "";
+
   // Quiz scores saved offline go up on start and whenever the connection returns.
   useEffect(() => {
     void flushQuizResults(userId);
@@ -413,9 +419,9 @@ export default function KazakhTalesApp({ session }: { session: Session }) {
       <SaveErrorToast show={showSaveError} message={t.saveError} />
       <JoinClassSheet
         open={!!pendingCode}
-        onClose={() => setPendingCode(null)}
+        onClose={() => { clearPendingClass(); setPendingCode(null); }}
         lang={lang}
-        defaultName={displayName}
+        defaultName={classNick}
         initialCode={pendingCode ?? ""}
       />
 
@@ -472,7 +478,7 @@ export default function KazakhTalesApp({ session }: { session: Session }) {
         </header>
 
         <div ref={scrollRef} className="flex-1 overflow-y-auto">
-          <div className="mx-auto w-full max-w-[1040px] flex gap-8 px-4 md:px-8 pt-4 xl:pt-10 pb-44 md:pb-28">
+          <div className="mx-auto w-full max-w-[1040px] flex gap-8 px-4 md:px-8 pt-4 xl:pt-10 pb-44 md:pb-36">
             <main className="flex-1 min-w-0 max-w-[620px] mx-auto">
               {tab === "home" && (
                 <HomeScreen
@@ -514,7 +520,6 @@ export default function KazakhTalesApp({ session }: { session: Session }) {
                   selectedLevel={selectedLevel}
                   setSelectedLevel={setSelectedLevel}
                   onQuizGate={() => { setQuizLevel(selectedLevel as ProgressStep | null); setQuizStarted(false); setTab("quiz"); }}
-                  onLevelDone={(storyId: string, level: ProgressStep) => markStep(storyId, level)}
                   t={t}
                   lang={lang}
                   onReward={addXp}
@@ -574,7 +579,7 @@ export default function KazakhTalesApp({ session }: { session: Session }) {
                   streakDays={streakDays}
                   quizzesCompleted={quizzesCompleted}
                   kilim={<OyuKilim progress={progress} lang={lang} maqalCount={loadMaqals(userId).length} />}
-                  classes={<MyClassesSection lang={lang} userId={userId} defaultName={displayName} />}
+                  classes={<MyClassesSection lang={lang} userId={userId} defaultName={classNick} />}
                   onOpenTeacher={() => setTab("teacher")}
                 />
               )}
@@ -611,7 +616,8 @@ export default function KazakhTalesApp({ session }: { session: Session }) {
         <nav className="md:hidden fixed bottom-0 inset-x-0 z-30 glass border-t border-line/70 pb-[max(env(safe-area-inset-bottom),8px)] pt-1.5">
           <div className="grid grid-cols-7">
             {tabs.map(({ id, label, Icon }) => {
-              const active = tab === id;
+              // The teacher cabinet opens from Profile, so Profile stays lit there.
+              const active = tab === id || (tab === "teacher" && id === "profile");
               return (
                 <button
                   key={id}

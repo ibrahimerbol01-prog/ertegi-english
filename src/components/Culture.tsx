@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { Check, Lock, Sparkles } from "lucide-react";
+import { ArrowRight, Check, Lock, Sparkles } from "lucide-react";
 import { IconScroll } from "./Icons";
 import { QoshqarMuyiz, Shanyraq, Tumar, KilimStrip } from "./Ornaments";
 import { safePlayVoice } from "../utils/voice";
 import { CloseButton } from "./UIHelpers";
+import { useDialogFocus } from "../utils/useDialogFocus";
 import { useEscape } from "../utils/useEscape";
 import { STORIES } from "../constants";
 import { displayTitle } from "../utils/text";
@@ -39,11 +40,28 @@ const ORNAMENTS = {
 
 /* Maqal of the day: a Kazakh proverb, pick its English twin. */
 export function MaqalCard({ lang, userId, onReward }: { lang: string; userId?: string; onReward: (xp: number) => void }) {
-  const [day] = useState(() => dayNumber());
+  // Starts on today's proverb; "next" walks on to proverbs not yet collected.
+  const [day, setDay] = useState(() => dayNumber());
   const { index, maqal, options, correct } = maqalOfDay(day);
   const [picked, setPicked] = useState<number | null>(() => (loadMaqals(userId).includes(index) ? correct : null));
   const solved = picked === correct;
   const l = pick(lang);
+  const collected = loadMaqals(userId);
+  const titleRef = useRef<HTMLParagraphElement>(null);
+
+  const nextDay = (() => {
+    for (let k = 1; k <= MAQALS.length; k++) {
+      if (!collected.includes((day + k) % MAQALS.length)) return day + k;
+    }
+    return null;
+  })();
+
+  const goNext = () => {
+    if (nextDay === null) return;
+    setDay(nextDay);
+    setPicked(null);
+    requestAnimationFrame(() => titleRef.current?.focus());
+  };
 
   const choose = (i: number) => {
     if (solved) return;
@@ -61,9 +79,9 @@ export function MaqalCard({ lang, userId, onReward }: { lang: string; userId?: s
       <div className="p-5">
         <div className="flex items-center justify-between gap-3">
           <p className="eyebrow text-felt">{l === "kk" ? "Күннің мақалы" : "Proverb of the day"}</p>
-          <span className="text-xs font-bold text-ink-3">{loadMaqals(userId).length}/{MAQALS.length}</span>
+          <span className="text-xs font-bold text-ink-3">{collected.length}/{MAQALS.length}</span>
         </div>
-        <p className="font-display font-black text-[21px] leading-snug text-ink mt-2">{maqal.kk}</p>
+        <p ref={titleRef} tabIndex={-1} className="font-display font-black text-[21px] leading-snug text-ink mt-2 outline-none">{maqal.kk}</p>
         <p className="text-sm text-ink-2 mt-1 italic">“{maqal.literal}”</p>
 
         <p className="text-sm font-bold text-ink mt-4">
@@ -90,6 +108,21 @@ export function MaqalCard({ lang, userId, onReward }: { lang: string; userId?: s
             {l === "kk" ? "Дұрыс! Мақал жинаққа қосылды · +5 XP" : "Right! Added to your proverb collection · +5 XP"}
           </p>
         )}
+        {solved && nextDay !== null && (
+          <button
+            type="button"
+            onClick={goNext}
+            className="btn btn-ghost btn-sm mt-3 w-full"
+          >
+            {l === "kk" ? "Келесі мақал" : "Next proverb"}
+            <ArrowRight size={18} strokeWidth={2.6} />
+          </button>
+        )}
+        {solved && nextDay === null && (
+          <p className="text-sm text-ink-2 font-semibold mt-2">
+            {l === "kk" ? `Барлық ${MAQALS.length} мақал жиналды!` : `All ${MAQALS.length} proverbs collected!`}
+          </p>
+        )}
       </div>
     </section>
   );
@@ -98,6 +131,7 @@ export function MaqalCard({ lang, userId, onReward }: { lang: string; userId?: s
 /* Bata: an elder's blessing when a whole tale is finished, plus its ornament. */
 export function BataModal({ storyId, lang, onClose }: { storyId: string | null; lang: string; onClose: () => void }) {
   useEscape(!!storyId, onClose);
+  const boxRef = useDialogFocus<HTMLDivElement>(!!storyId);
   if (!storyId) return null;
   const storyIndex = Math.max(0, STORIES.findIndex((s) => s.id === storyId));
   const story = STORIES[storyIndex];
@@ -107,7 +141,7 @@ export function BataModal({ storyId, lang, onClose }: { storyId: string | null; 
 
   return createPortal(
     <div className="fixed inset-0 z-[72] bg-ink/45 backdrop-blur-sm flex items-center justify-center p-5 animate-pop-in" role="dialog" aria-modal="true" aria-label={l === "kk" ? "Бата" : "Blessing"} onClick={onClose}>
-      <div className="relative w-full max-w-[380px] card overflow-hidden text-center animate-rank-pop" onClick={(e) => e.stopPropagation()}>
+      <div ref={boxRef} className="relative w-full max-w-[380px] card overflow-hidden text-center animate-rank-pop outline-none" onClick={(e) => e.stopPropagation()}>
         <KilimStrip className="h-2.5 w-full" />
         <CloseButton onClick={onClose} className="absolute top-5 right-4" />
         <div className="p-7">

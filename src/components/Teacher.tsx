@@ -10,7 +10,7 @@ import {
   ASSIGN_STEPS, addAssignment, cellFor, classLink, classReport, createClass, daysAway, deleteAssignment,
   dueAtEndOf, errorText, helpFlags, newClassCode, renameClass, setArchived, setMemberRemoved, studentReport,
   teacherClasses,
-  type AssignStep, type Assignment, type Cell, type ClassError, type ClassReport, type ClassRow, type Member,
+  type AssignStep, type Assignment, type Cell, type ClassError, type ClassReport, type ClassRow, type Member, type Result,
   type StudentReport,
 } from "../utils/classes";
 import { ScreenHeader, Sheet } from "./UIHelpers";
@@ -37,6 +37,12 @@ function Notice({ error, kk, onRetry }: { error: ClassError; kk: boolean; onRetr
   );
 }
 
+// dd.mm by hand: not every browser has Kazakh month names.
+const shortDate = (iso: string) => {
+  const d = new Date(iso);
+  return `${String(d.getDate()).padStart(2, "0")}.${String(d.getMonth() + 1).padStart(2, "0")}`;
+};
+
 async function copyText(text: string): Promise<boolean> {
   try {
     await navigator.clipboard.writeText(text);
@@ -51,15 +57,24 @@ function CopyButton({ text, label, done, Icon }: { text: string; label: string; 
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
   useEffect(() => () => { if (timer.current) clearTimeout(timer.current); }, []);
   const run = async () => {
-    setState((await copyText(text)) ? "ok" : "fail");
+    const ok = await copyText(text);
     if (timer.current) clearTimeout(timer.current);
-    timer.current = setTimeout(() => setState("idle"), 2000);
+    setState(ok ? "ok" : "fail");
+    // A failed copy keeps the text on screen until the next try.
+    if (ok) timer.current = setTimeout(() => setState("idle"), 2000);
   };
   return (
-    <button onClick={run} className="btn btn-ghost btn-sm" aria-live="polite">
-      {state === "ok" ? <Check size={15} strokeWidth={3} /> : <Icon size={15} />}
-      {state === "ok" ? done : state === "fail" ? text : label}
-    </button>
+    <>
+      <button onClick={run} className="btn btn-ghost btn-sm">
+        {state === "ok" ? <Check size={15} strokeWidth={3} aria-hidden /> : <Icon size={15} aria-hidden />}
+        {state === "ok" ? done : label}
+      </button>
+      <span role="status" className="sr-only">{state === "ok" ? done : ""}</span>
+      {/* No clipboard (old browser, blocked): show the text, selected, to copy by hand. */}
+      {state === "fail" && (
+        <input readOnly value={text} onFocus={(e) => e.currentTarget.select()} autoFocus aria-label={label} className="field !min-h-[40px] text-[14px] basis-full" />
+      )}
+    </>
   );
 }
 
@@ -72,6 +87,13 @@ export function TeacherScreen({ lang, onBack, onTeacher }: { lang: string; onBac
   const [name, setName] = useState("");
   const [busy, setBusy] = useState(false);
   const [createError, setCreateError] = useState<ClassError | null>(null);
+  // Opening or leaving a class swaps the whole screen: move focus to its title.
+  const firstView = useRef(true);
+  useEffect(() => {
+    if (firstView.current) { firstView.current = false; return; }
+    window.scrollTo({ top: 0 });
+    document.querySelector<HTMLElement>("main h1")?.focus();
+  }, [openId]);
   const [showArchived, setShowArchived] = useState(false);
 
   const [attempt, setAttempt] = useState(0);
@@ -132,8 +154,9 @@ export function TeacherScreen({ lang, onBack, onTeacher }: { lang: string; onBac
       />
 
       {error && <Notice error={error} kk={kk} onRetry={load} />}
+      {!classes && !error && <div role="status" className="card p-6 text-center text-ink-2">{kk ? "Жүктеліп жатыр…" : "Loading…"}</div>}
 
-      {classes && active.length === 0 && !error && (
+      {classes && classes.length === 0 && !error && (
         <div className="card p-5">
           <h2 className="font-display font-extrabold text-ink text-[17px]">{kk ? "Бірінші сыныпты аш" : "Start your first class"}</h2>
           <ol className="mt-3 space-y-2 text-[15px] text-ink-2 list-decimal pl-5">
@@ -255,21 +278,21 @@ function ClassView({ cls, kk, onBack, onChange }: { cls: ClassRow; kk: boolean; 
         </div>
       )}
 
-      <div className="segmented" role="tablist" aria-label={kk ? "Сынып бөлімдері" : "Class sections"}>
+      <div className="segmented" role="group" aria-label={kk ? "Сынып бөлімдері" : "Class sections"}>
         {([
           ["progress", kk ? "Прогресс" : "Progress"],
           ["tasks", kk ? "Тапсырмалар" : "Assignments"],
           ["settings", kk ? "Баптау" : "Settings"],
         ] as [Tab, string][]).map(([id, label]) => (
-          <button key={id} role="tab" aria-selected={tab === id} aria-pressed={tab === id} onClick={() => setTab(id)}>{label}</button>
+          <button key={id} aria-pressed={tab === id} onClick={() => setTab(id)}>{label}</button>
         ))}
       </div>
 
       {error && <Notice error={error} kk={kk} onRetry={load} />}
-      {!report && !error && <div className="card p-6 text-center text-ink-2">{kk ? "Жүктеліп жатыр…" : "Loading…"}</div>}
+      {!report && !error && <div role="status" className="card p-6 text-center text-ink-2">{kk ? "Жүктеліп жатыр…" : "Loading…"}</div>}
 
       {report && tab === "progress" && (
-        <ProgressTab kk={kk} cls={cls} members={members} assignments={report.assignments} onOpen={setStudent} onGoTasks={() => setTab("tasks")} />
+        <ProgressTab kk={kk} cls={cls} members={members} goneCount={gone.length} assignments={report.assignments} onOpen={setStudent} onGoTasks={() => setTab("tasks")} />
       )}
       {report && tab === "tasks" && (
         <TasksTab kk={kk} classId={cls.id} archived={archived} members={members} assignments={report.assignments} onChanged={load} />
@@ -291,7 +314,7 @@ function ClassView({ cls, kk, onBack, onChange }: { cls: ClassRow; kk: boolean; 
 }
 
 const awayText = (days: number | null, kk: boolean) =>
-  days === null ? (kk ? "әлі кірмеген" : "never active")
+  days === null ? (kk ? "әлі бастамаған" : "not started yet")
     : days === 0 ? (kk ? "бүгін" : "today")
     : days === 1 ? (kk ? "кеше" : "yesterday")
     : kk ? `${days} күн бұрын` : `${days} days ago`;
@@ -299,7 +322,7 @@ const awayText = (days: number | null, kk: boolean) =>
 function CellBadge({ cell, kk }: { cell: Cell } & Kk) {
   const score = cell.score !== null ? `${cell.score}%` : "";
   const map = {
-    done: { cls: cell.score !== null && cell.score < 60 ? "bg-sun-soft text-[#8A5A00]" : "bg-jade-soft text-jade-deep", text: score || "✓", sr: kk ? "орындады" : "done" },
+    done: { cls: cell.score !== null && cell.score < 60 ? "bg-sun-soft text-[#8A5A00]" : "bg-jade-soft text-[#0F6E4B]", text: score || "✓", sr: kk ? "орындады" : "done" },
     late: { cls: "bg-sun-soft text-[#8A5A00]", text: score || "✓", sr: kk ? "кеш орындады" : "done late" },
     overdue: { cls: "bg-felt-soft text-felt-deep", text: "!", sr: kk ? "мерзімі өтті" : "overdue" },
     // Tried but not passed yet: the score shows, in red.
@@ -316,14 +339,19 @@ function CellBadge({ cell, kk }: { cell: Cell } & Kk) {
   );
 }
 
-function ProgressTab({ kk, cls, members, assignments, onOpen, onGoTasks }: {
-  kk: boolean; cls: ClassRow; members: Member[]; assignments: Assignment[];
+function ProgressTab({ kk, cls, members, goneCount, assignments, onOpen, onGoTasks }: {
+  kk: boolean; cls: ClassRow; members: Member[]; goneCount: number; assignments: Assignment[];
   onOpen: (m: Member) => void; onGoTasks: () => void;
 }) {
   if (members.length === 0) {
     return (
       <div className="card p-5">
-        <h2 className="font-display font-extrabold text-ink text-[17px]">{kk ? "Сыныпта әлі оқушы жоқ" : "No learners yet"}</h2>
+        <h2 className="font-display font-extrabold text-ink text-[17px]">
+          {goneCount > 0 ? (kk ? "Қазір сыныпта оқушы жоқ" : "No learners in the class now") : (kk ? "Сыныпта әлі оқушы жоқ" : "No learners yet")}
+        </h2>
+        {goneCount > 0 && (
+          <p className="text-[15px] text-ink-2 mt-1.5">{kk ? `Шыққандар (${goneCount}) «Баптау» бөлімінде.` : `Those who left (${goneCount}) are listed in Settings.`}</p>
+        )}
         <p className="text-[15px] text-ink-2 mt-1.5">
           {cls.archived_at
             ? (kk ? "Мұрағаттағы сыныпқа қосылуға болмайды." : "Nobody can join an archived class.")
@@ -334,13 +362,16 @@ function ProgressTab({ kk, cls, members, assignments, onOpen, onGoTasks }: {
   }
 
   const shown = assignments.slice(0, 12); // newest first
-  const help = members
+  // Away longest first, then low scores, then late work. An archived class needs no chasing.
+  const weight = (flags: { kind: string; detail: number }[]) =>
+    flags.reduce((sum, f) => sum + (f.kind === "away" ? 100 + (f.detail < 0 ? 0 : f.detail) : f.kind === "low" ? 10 * f.detail : f.detail), 0);
+  const help = cls.archived_at ? [] : members
     .map((m) => ({ m, flags: helpFlags(m, assignments) }))
     .filter((x) => x.flags.length > 0)
-    .sort((a, b) => b.flags.length - a.flags.length);
+    .sort((a, b) => weight(b.flags) - weight(a.flags));
 
   const flagText = (f: { kind: string; detail: number }) =>
-    f.kind === "away" ? (f.detail < 0 ? (kk ? "әлі кірмеген" : "never active") : (kk ? `${f.detail} күн кірмеген` : `away ${f.detail} days`))
+    f.kind === "away" ? (f.detail < 0 ? (kk ? "әлі бастамаған" : "not started yet") : (kk ? `${f.detail} күн кірмеген` : `away ${f.detail} days`))
       : f.kind === "low" ? (kk ? `төмен ұпай: ${f.detail}` : `low score: ${f.detail}`)
       : (kk ? `мерзімі өтті: ${f.detail}` : `overdue: ${f.detail}`);
 
@@ -388,9 +419,10 @@ function ProgressTab({ kk, cls, members, assignments, onOpen, onGoTasks }: {
       )}
 
       <div className="card overflow-hidden">
-        <div className="overflow-x-auto">
+        {/* Focusable, so the columns on the right can be scrolled to with the arrow keys. */}
+        <div className="relative overflow-x-auto" role="region" tabIndex={0} aria-labelledby="grid-caption">
           <table className="w-full text-left border-collapse min-w-[360px]">
-            <caption className="sr-only">{kk ? "Оқушылар мен тапсырмалар" : "Learners and assignments"}</caption>
+            <caption id="grid-caption" className="sr-only">{kk ? "Оқушылар мен тапсырмалар" : "Learners and assignments"}</caption>
             <thead>
               <tr className="border-b-2 border-line">
                 <th scope="col" className="sticky left-0 z-[1] bg-card px-4 py-3 text-[13px] font-bold text-ink-2">{kk ? "Оқушы" : "Learner"}</th>
@@ -409,7 +441,7 @@ function ProgressTab({ kk, cls, members, assignments, onOpen, onGoTasks }: {
                 return (
                   <tr key={m.user_id} className="border-b border-line last:border-0">
                     <th scope="row" className="sticky left-0 z-[1] bg-card px-4 py-2">
-                      <button onClick={() => onOpen(m)} className="font-bold text-sky-deep text-[15px] text-left min-h-[40px] max-w-[140px] truncate block">{m.nickname}</button>
+                      <button onClick={() => onOpen(m)} title={m.nickname} className="font-bold text-sky-deep text-[15px] text-left min-h-[40px] max-w-[140px] truncate block">{m.nickname}</button>
                     </th>
                     <td className={`px-2 py-2 text-[13px] whitespace-nowrap ${away === null || away >= 7 ? "text-felt-deep font-semibold" : "text-ink-2"}`}>{awayText(away, kk)}</td>
                     {shown.map((a) => (
@@ -426,7 +458,7 @@ function ProgressTab({ kk, cls, members, assignments, onOpen, onGoTasks }: {
         )}
       </div>
       <p className="text-[12px] text-ink-2 flex flex-wrap gap-x-4 gap-y-1">
-        <span><b className="text-jade-deep">80%</b> {kk ? "орындады, ұпайы" : "done, score"}</span>
+        <span><b className="text-[#0F6E4B]">80%</b> {kk ? "орындады, ұпайы" : "done, score"}</span>
         <span><b className="text-[#8A5A00]">⏱</b> {kk ? "кеш орындады" : "done late"}</span>
         <span><b className="text-felt-deep">!</b> {kk ? "мерзімі өтті" : "overdue"}</span>
         <span><b className="text-felt-deep">40%</b> {kk ? "тапсырды, бірақ өтпеді" : "tried, not passed"}</span>
@@ -471,10 +503,16 @@ function TasksTab({ kk, classId, archived, members, assignments, onChanged }: {
     onChanged();
   };
 
+  const [removing, setRemoving] = useState(false);
+  const [removeError, setRemoveError] = useState<ClassError | null>(null);
   const remove = async (id: string) => {
+    if (removing) return;
+    setRemoving(true);
+    setRemoveError(null);
     const res = await deleteAssignment(id);
+    setRemoving(false);
+    if (!res.ok) { setRemoveError(res.error); return; }
     setConfirmId(null);
-    if (!res.ok) { setError(res.error); return; }
     onChanged();
   };
 
@@ -516,8 +554,9 @@ function TasksTab({ kk, classId, archived, members, assignments, onChanged }: {
           {duplicate && <p className="text-[13px] text-[#8A5A00] font-semibold">{kk ? "Бұл тапсырма бұрын да берілген. Қайта беруге болады." : "You've given this one before. You can give it again."}</p>}
           {error && <p role="alert" className="text-[14px] font-semibold text-felt-deep">{errorText(error, kk)}</p>}
           <button type="submit" disabled={busy || dueBad} className="btn w-full">
-            {saved ? <><Check size={18} strokeWidth={3} /> {kk ? "Берілді" : "Assigned"}</> : <><Plus size={18} /> {kk ? "Тапсырма беру" : "Assign"}</>}
+            {saved ? <><Check size={18} strokeWidth={3} aria-hidden /> {kk ? "Берілді" : "Assigned"}</> : <><Plus size={18} aria-hidden /> {kk ? "Тапсырма беру" : "Assign"}</>}
           </button>
+          <span role="status" className="sr-only">{saved ? (kk ? "Тапсырма берілді" : "Assignment added") : ""}</span>
         </form>
       )}
 
@@ -533,12 +572,12 @@ function TasksTab({ kk, classId, archived, members, assignments, onChanged }: {
                     {a.step === "quiz" ? <Trophy size={18} /> : <BookOpen size={18} />}
                   </span>
                   <span className="flex-1 min-w-0">
-                    <span className="block font-bold text-ink text-[15px] truncate">{storyTitle(a.story_id)} · {stepLabel(a.step, kk)}</span>
+                    <span className="flex items-center gap-1.5 min-w-0"><span className="shrink-0 px-1.5 rounded-md bg-sand-2 text-[12px] font-bold text-ink-2">{a.step === "quiz" ? (kk ? "Сынақ" : "Quiz") : a.step}</span><span className="font-bold text-ink text-[15px] truncate">{storyTitle(a.story_id)}</span></span>
                     <span className="block text-[13px] text-ink-2">{dueText(a.due_at, kk)} · {kk ? `${doneCount}/${members.length} орындады` : `${doneCount}/${members.length} done`}</span>
                     {a.note && <span className="block text-[13px] text-ink-2 truncate">«{a.note}»</span>}
                   </span>
                   {!confirming && (
-                    <button onClick={() => setConfirmId(a.id)} aria-label={kk ? "Тапсырманы өшіру" : "Delete assignment"} className="w-10 h-10 rounded-full text-ink-2 hover:bg-sand-2 flex items-center justify-center shrink-0">
+                    <button onClick={() => { setConfirmId(a.id); setRemoveError(null); }} aria-label={kk ? "Тапсырманы өшіру" : "Delete assignment"} className="w-10 h-10 rounded-full text-ink-2 hover:bg-sand-2 flex items-center justify-center shrink-0">
                       <Trash2 size={18} />
                     </button>
                   )}
@@ -546,8 +585,9 @@ function TasksTab({ kk, classId, archived, members, assignments, onChanged }: {
                 {confirming && (
                   <div className="mt-3 flex flex-wrap items-center gap-2">
                     <span className="text-[14px] text-ink flex-1 min-w-[160px]">{kk ? "Өшіресің бе? Оқушылардың прогресі сақталады." : "Delete it? Learners keep their progress."}</span>
-                    <button onClick={() => setConfirmId(null)} className="btn btn-ghost btn-sm">{kk ? "Артқа" : "Back"}</button>
-                    <button onClick={() => remove(a.id)} className="btn btn-felt btn-sm">{kk ? "Өшіру" : "Delete"}</button>
+                    <button onClick={() => { setConfirmId(null); setRemoveError(null); }} className="btn btn-ghost btn-sm">{kk ? "Артқа" : "Back"}</button>
+                    <button onClick={() => remove(a.id)} disabled={removing} className="btn btn-felt btn-sm">{kk ? "Өшіру" : "Delete"}</button>
+                    {removeError && <p role="alert" className="basis-full text-[14px] font-semibold text-felt-deep">{errorText(removeError, kk)}</p>}
                   </div>
                 )}
               </li>
@@ -567,34 +607,44 @@ function SettingsTab({ kk, cls, gone, onChange, onChanged, onArchived }: {
   const [error, setError] = useState<ClassError | null>(null);
   const [savedName, setSavedName] = useState(false);
   const [confirm, setConfirm] = useState<"code" | "archive" | null>(null);
+  // One request at a time: a double tap must not make two codes.
+  const [busy, setBusy] = useState(false);
   const archived = !!cls.archived_at;
+  const savedTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(() => () => { if (savedTimer.current) clearTimeout(savedTimer.current); }, []);
+
+  const act = async <T,>(run: () => Promise<Result<T>>): Promise<T | undefined> => {
+    if (busy) return undefined;
+    setBusy(true);
+    setError(null);
+    const res = await run();
+    setBusy(false);
+    setConfirm(null);
+    if (!res.ok) { setError(res.error); return undefined; }
+    return res.data;
+  };
 
   const saveName = async (e: React.FormEvent) => {
     e.preventDefault();
     const next = name.trim();
     if (!next || next === cls.name) return;
-    const res = await renameClass(cls.id, next);
-    if (!res.ok) { setError(res.error); return; }
+    if ((await act(() => renameClass(cls.id, next))) === undefined) return;
     onChange({ ...cls, name: next });
     setSavedName(true);
-    setTimeout(() => setSavedName(false), 2000);
+    if (savedTimer.current) clearTimeout(savedTimer.current);
+    savedTimer.current = setTimeout(() => setSavedName(false), 2000);
   };
   const regenerate = async () => {
-    const res = await newClassCode(cls.id);
-    setConfirm(null);
-    if (!res.ok) { setError(res.error); return; }
-    onChange({ ...cls, code: res.data });
+    const code = await act(() => newClassCode(cls.id));
+    if (code) onChange({ ...cls, code });
   };
   const toggleArchive = async () => {
-    const res = await setArchived(cls.id, !archived);
-    setConfirm(null);
-    if (!res.ok) { setError(res.error); return; }
+    if ((await act(() => setArchived(cls.id, !archived))) === undefined) return;
     onChange({ ...cls, archived_at: archived ? null : new Date().toISOString() });
     if (!archived) onArchived();
   };
   const restore = async (m: Member) => {
-    const res = await setMemberRemoved(cls.id, m.user_id, false);
-    if (!res.ok) { setError(res.error); return; }
+    if ((await act(() => setMemberRemoved(cls.id, m.user_id, false))) === undefined) return;
     onChanged();
   };
 
@@ -605,8 +655,8 @@ function SettingsTab({ kk, cls, gone, onChange, onChanged, onArchived }: {
         <label htmlFor="class-name" className="text-sm font-bold text-ink">{kk ? "Сынып аты" : "Class name"}</label>
         <div className="flex gap-3 mt-1.5">
           <input id="class-name" value={name} onChange={(e) => setName(e.target.value.slice(0, 60))} maxLength={60} className="field flex-1" />
-          <button type="submit" disabled={!name.trim() || name.trim() === cls.name} className="btn btn-sm !min-h-[50px]">
-            {savedName ? <Check size={18} strokeWidth={3} /> : (kk ? "Сақтау" : "Save")}
+          <button type="submit" disabled={busy || !name.trim() || name.trim() === cls.name} className="btn btn-sm !min-h-[50px]">
+            {savedName ? <><Check size={18} strokeWidth={3} aria-hidden /> {kk ? "Сақталды" : "Saved"}</> : (kk ? "Сақтау" : "Save")}
           </button>
         </div>
       </form>
@@ -618,7 +668,7 @@ function SettingsTab({ kk, cls, gone, onChange, onChanged, onArchived }: {
           {confirm === "code" ? (
             <div className="flex gap-2 mt-3">
               <button onClick={() => setConfirm(null)} className="btn btn-ghost btn-sm">{kk ? "Артқа" : "Back"}</button>
-              <button onClick={regenerate} className="btn btn-sm">{kk ? "Иә, жаңа код" : "Yes, new code"}</button>
+              <button onClick={regenerate} disabled={busy} className="btn btn-sm">{kk ? "Иә, жаңа код" : "Yes, new code"}</button>
             </div>
           ) : (
             <button onClick={() => setConfirm("code")} className="btn btn-ghost btn-sm mt-3"><RotateCcw size={15} /> {kk ? "Жаңа код жасау" : "Make a new code"}</button>
@@ -633,8 +683,8 @@ function SettingsTab({ kk, cls, gone, onChange, onChanged, onArchived }: {
             {gone.map((m) => (
               <li key={m.user_id} className="flex items-center gap-3 py-2 min-h-[48px]">
                 <span className="flex-1 min-w-0 truncate text-ink">{m.nickname}</span>
-                <span className="text-[13px] text-ink-2">{m.removed ? (kk ? "мұғалім шығарды" : "removed") : (kk ? "өзі шықты" : "left")}</span>
-                {m.removed && <button onClick={() => restore(m)} className="btn btn-ghost btn-sm">{kk ? "Қайтару" : "Bring back"}</button>}
+                <span className="text-[13px] text-ink-2">{m.removed ? (kk ? "мұғалім шығарды" : "removed") : (kk ? "шықты, кодпен қайта кіре алады" : "left, can rejoin with the code")}</span>
+                {m.removed && <button onClick={() => restore(m)} disabled={busy} className="btn btn-ghost btn-sm">{kk ? "Қайта кіруге рұқсат" : "Allow back"}</button>}
               </li>
             ))}
           </ul>
@@ -651,10 +701,10 @@ function SettingsTab({ kk, cls, gone, onChange, onChanged, onArchived }: {
         {confirm === "archive" ? (
           <div className="flex gap-2 mt-3">
             <button onClick={() => setConfirm(null)} className="btn btn-ghost btn-sm">{kk ? "Артқа" : "Back"}</button>
-            <button onClick={toggleArchive} className="btn btn-felt btn-sm">{kk ? "Иә, мұрағатқа" : "Yes, archive"}</button>
+            <button onClick={toggleArchive} disabled={busy} className="btn btn-felt btn-sm">{kk ? "Иә, мұрағатқа" : "Yes, archive"}</button>
           </div>
         ) : (
-          <button onClick={() => (archived ? toggleArchive() : setConfirm("archive"))} className="btn btn-ghost btn-sm mt-3">
+          <button onClick={() => (archived ? toggleArchive() : setConfirm("archive"))} disabled={busy} className="btn btn-ghost btn-sm mt-3">
             <Archive size={15} /> {archived ? (kk ? "Қайта ашу" : "Restore") : (kk ? "Мұрағатқа" : "Archive")}
           </button>
         )}
@@ -671,6 +721,8 @@ function StudentSheet({ kk, classId, member, assignments, onClose, onRemoved }: 
   const [detail, setDetail] = useState<StudentReport | null>(null);
   const [error, setError] = useState<ClassError | null>(null);
   const [confirm, setConfirm] = useState(false);
+  const [removing, setRemoving] = useState(false);
+  const [removeError, setRemoveError] = useState<ClassError | null>(null);
   const [shownFor, setShownFor] = useState<string | null>(null);
 
   // A new learner opens with a clean sheet.
@@ -680,6 +732,7 @@ function StudentSheet({ kk, classId, member, assignments, onClose, onRemoved }: 
     setDetail(null);
     setError(null);
     setConfirm(false);
+    setRemoveError(null);
   }
 
   useEffect(() => {
@@ -693,9 +746,13 @@ function StudentSheet({ kk, classId, member, assignments, onClose, onRemoved }: 
   }, [classId, id]);
 
   const remove = async () => {
-    if (!member) return;
+    if (!member || removing) return;
+    setRemoving(true);
+    setRemoveError(null);
     const res = await setMemberRemoved(classId, member.user_id, true);
-    if (!res.ok) { setError(res.error); return; }
+    setRemoving(false);
+    // Shown by the button, where the teacher is looking on a phone.
+    if (!res.ok) { setRemoveError(res.error); return; }
     onRemoved();
   };
 
@@ -705,7 +762,8 @@ function StudentSheet({ kk, classId, member, assignments, onClose, onRemoved }: 
   const weak = (detail?.words ?? []).filter((w) => w.mastery <= 1).slice(0, 12);
   const tales = m ? STORIES.map((s: { id: string; title: string }) => ({
     title: displayTitle(s.title),
-    steps: ["A1", "A2", "B1", "B2", "C1", "quiz"].filter((st) => m.steps.some((x) => x.story_id === s.id && x.step === st)),
+    // Every tale comes with the learner's report; the class report has only the assigned ones.
+    steps: ["A1", "A2", "B1", "B2", "C1", "quiz"].filter((st) => (detail?.steps ?? m.steps).some((x) => x.story_id === s.id && x.step === st)),
   })).filter((t) => t.steps.length > 0) : [];
 
   return (
@@ -713,7 +771,7 @@ function StudentSheet({ kk, classId, member, assignments, onClose, onRemoved }: 
       {m && (
         <div className="px-5 pb-5 pt-1 space-y-5">
           <div>
-            <h2 className="font-display font-black text-2xl text-ink">{m.nickname}</h2>
+            <h2 className="font-display font-black text-2xl text-ink [overflow-wrap:anywhere]">{m.nickname}</h2>
             <p className="text-[14px] text-ink-2">{kk ? "Соңғы рет" : "Last seen"}: {awayText(away, kk)}</p>
           </div>
 
@@ -737,7 +795,7 @@ function StudentSheet({ kk, classId, member, assignments, onClose, onRemoved }: 
               <ul className="mt-2 space-y-1.5">
                 {assignments.slice(0, 8).map((a) => (
                   <li key={a.id} className="flex items-center gap-3 text-[14px]">
-                    <span className="flex-1 min-w-0 truncate text-ink">{storyTitle(a.story_id)} · {stepLabel(a.step, kk)}</span>
+                    <span className="flex-1 min-w-0 flex items-center gap-1.5"><span className="shrink-0 px-1.5 rounded-md bg-sand-2 text-[12px] font-bold text-ink-2">{a.step === "quiz" ? (kk ? "Сынақ" : "Quiz") : a.step}</span><span className="truncate text-ink">{storyTitle(a.story_id)}</span></span>
                     <CellBadge cell={cellFor(m, a)} kk={kk} />
                   </li>
                 ))}
@@ -759,7 +817,7 @@ function StudentSheet({ kk, classId, member, assignments, onClose, onRemoved }: 
           </div>
 
           {error && <Notice error={error} kk={kk} />}
-          {!detail && !error && <p className="text-[14px] text-ink-2">{kk ? "Жүктеліп жатыр…" : "Loading…"}</p>}
+          {!detail && !error && <p role="status" className="text-[14px] text-ink-2">{kk ? "Жүктеліп жатыр…" : "Loading…"}</p>}
 
           {detail && (
             <>
@@ -786,9 +844,9 @@ function StudentSheet({ kk, classId, member, assignments, onClose, onRemoved }: 
                         const pct = Math.round((q.score / q.total) * 100);
                         return (
                           <li key={i} className="flex items-center gap-3 text-[14px]">
-                            <span className="flex-1 min-w-0 truncate text-ink">{storyTitle(q.story_id)} · {stepLabel(q.step, kk)}</span>
-                            <span className="text-ink-2 text-[12px]">{new Date(q.created_at).toLocaleDateString(kk ? "kk-KZ" : "en-GB", { day: "numeric", month: "short" })}</span>
-                            <span className={`font-bold ${pct >= 60 ? "text-jade-deep" : "text-felt-deep"}`}>{q.score}/{q.total}</span>
+                            <span className="flex-1 min-w-0 flex items-center gap-1.5"><span className="shrink-0 px-1.5 rounded-md bg-sand-2 text-[12px] font-bold text-ink-2">{q.step === "quiz" ? (kk ? "Сынақ" : "Quiz") : q.step}</span><span className="truncate text-ink">{storyTitle(q.story_id)}</span></span>
+                            <span className="text-ink-2 text-[12px]">{shortDate(q.created_at)}</span>
+                            <span className={`font-bold ${pct >= 60 ? "text-[#0F6E4B]" : "text-felt-deep"}`}>{q.score}/{q.total}</span>
                           </li>
                         );
                       })}
@@ -802,12 +860,13 @@ function StudentSheet({ kk, classId, member, assignments, onClose, onRemoved }: 
             {confirm ? (
               <div className="rounded-2xl bg-felt-soft/60 p-4">
                 <p className="text-[14px] text-ink">
-                  {kk ? `${m.nickname} сыныптан шығады. Оның прогресі өзінде қалады. Баптау бөлімінен қайтаруға болады.` : `${m.nickname} leaves the class. Their progress stays theirs. You can bring them back in Settings.`}
+                  {kk ? `${m.nickname} сыныптан шығады, сен оның прогресін енді көрмейсің. Прогресі өзінде қалады. Баптау бөлімінде қайта кіруге рұқсат бере аласың.` : `${m.nickname} leaves the class and you won't see their progress any more. It stays theirs. In Settings you can allow them back.`}
                 </p>
                 <div className="grid grid-cols-2 gap-2 mt-3">
-                  <button onClick={() => setConfirm(false)} className="btn btn-ghost btn-sm">{kk ? "Артқа" : "Back"}</button>
-                  <button onClick={remove} className="btn btn-felt btn-sm">{kk ? "Шығару" : "Remove"}</button>
+                  <button onClick={() => { setConfirm(false); setRemoveError(null); }} className="btn btn-ghost btn-sm">{kk ? "Артқа" : "Back"}</button>
+                  <button onClick={remove} disabled={removing} className="btn btn-felt btn-sm">{kk ? "Шығару" : "Remove"}</button>
                 </div>
+                {removeError && <p role="alert" className="text-[14px] font-semibold text-felt-deep mt-2">{errorText(removeError, kk)}</p>}
               </div>
             ) : (
               <div className="grid grid-cols-2 gap-2">
