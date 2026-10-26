@@ -17,6 +17,7 @@ import { supabase } from "../lib/supabase";
 import { isDue, MAX_MASTERY } from "../utils/progress";
 import { MaqalCard, StoryHistory } from "./Culture";
 import { LegendDeckEntry } from "./LegendCards";
+import { TrailButton } from "./ThinkingTrail";
 import { CouncilCard } from "./Council";
 import { WeekWordsCard } from "./WeekWords";
 import { currentWeek, weekWordOf } from "../data/weekWords";
@@ -316,7 +317,7 @@ export function HomeScreen({ onStartRead, onStartQuiz, t, lang, userName = "", s
 }
 
 /* --- 3. READER SCREEN --- */
-export function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, setSelectedLevel, onQuizGate, onLevelDone, t, lang = "kk", onReward, savedWords, onSaveWord }: any) {
+export function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, setSelectedLevel, onQuizGate, onLevelDone, t, lang = "kk", onReward, savedWords, onSaveWord, userId }: any) {
   const tr = useTr();
   const [isPlaying, setIsPlaying] = useState(true);
   const [activeWord, setActiveWord] = useState<string | null>(null);
@@ -731,6 +732,7 @@ export function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, s
           <Compass size={18} strokeWidth={2.6} /> {t.interactiveChoiceTitle}
         </button>
       </div>
+      <TrailButton storyId={currentStory.id} level={selectedLevel} text={text} lang={lang} userId={userId} onReward={onReward} />
 
       {/* Word sheet */}
       <Sheet open={!!activeWord} onClose={() => setActiveWord(null)} label={tr("Сөз", "Word")}>

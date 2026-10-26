@@ -431,6 +431,7 @@ export default function KazakhTalesApp({ session }: { session: Session }) {
                   onReward={addXp}
                   savedWords={savedWords}
                   onSaveWord={handleSaveWord}
+                  userId={userId}
                 />
               )}
               {tab === "quiz" && !quizStarted && (
