@@ -27,12 +27,12 @@ export const RARITY: Record<Rarity, { kk: string; en: string; xp: number; tone: 
 export const LEGENDS: LegendCard[] = [
   {
     id: "aldar", name: "Aldar Köse", kk: "Алдар Көсе", rarity: "ertegi", ornament: "qoshqar",
-    scene: "Aldar Kose had no money, but he had a quick mind. One cold day he met a rich man in a warm fur coat. Aldar said his thin coat was magic and kept him warm. The greedy rich man swapped coats, and Aldar rode away laughing.",
+    scene: "Aldar Köse had no money, but he had a quick mind. One cold day he met a rich man in a warm fur coat. Aldar said his thin coat was magic and kept him warm. The greedy rich man swapped coats, and Aldar rode away laughing.",
     tf: [
-      { s: "Aldar Kose was a rich man.", a: false },
+      { s: "Aldar Köse was a rich man.", a: false },
       { s: "The rich man wanted the 'magic' coat.", a: true },
     ],
-    gap: { sentence: "Aldar Kose had no money, but he had a quick ___.", options: ["horse", "mind", "coat"], answer: 1 },
+    gap: { sentence: "Aldar Köse had no money, but he had a quick ___.", options: ["horse", "mind", "coat"], answer: 1 },
     fact: { kk: "«Көсе» деген — сақалы жоқ адам. Алдар — қазақ ертегілерінің ең айлакер кейіпкері.", en: "\"Köse\" means a man with no beard. Aldar is the great trickster of Kazakh tales." },
   },
   {

@@ -5,7 +5,7 @@ import { useLang } from "../lang";
 import { CloseButton } from "./UIHelpers";
 import { useEscape } from "../utils/useEscape";
 
-export const ShoqanChat = () => {
+export const ShoqanChat = ({ hidden = false }: { hidden?: boolean }) => {
   const kk = useLang() === "kk";
   const tr = (kkText: string, enText: string) => (kk ? kkText : enText);
   const [open, setOpen] = useState(false);
@@ -125,17 +125,22 @@ export const ShoqanChat = () => {
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerUp}
         onPointerCancel={handlePointerUp}
+        // Keyboard (Enter/Space) clicks have detail 0; pointer taps are handled on pointer-up.
+        onClick={(e) => { if (e.detail === 0) setOpen(true); }}
+        aria-label={tr("Шоқаннан сұра", "Ask Shoqan")}
+        aria-hidden={hidden || undefined}
+        tabIndex={hidden ? -1 : undefined}
         style={{ left: pos.x, top: pos.y }}
         className={`fixed z-[65] w-16 h-16 rounded-full overflow-hidden border-[3px] border-card ring-2 ring-sun shadow-[0_4px_0_var(--color-sun-deep),0_10px_24px_-8px_rgba(28,35,51,0.35)] transition-transform touch-none cursor-grab active:cursor-grabbing ${
-          open ? "scale-0" : "scale-100"
+          open || hidden ? "scale-0 pointer-events-none" : "scale-100"
         }`}
         title={tr("Шоқаннан сұра: жылжыту үшін сүйре, ашу үшін бас", "Ask Shoqan — drag to move, tap to open")}
       >
-        <img src="/shoqan-avatar.jpg" alt={tr("Шоқан", "Shoqan")} className="w-full h-full object-cover pointer-events-none" draggable={false} />
+        <img src="/shoqan-avatar.jpg" alt="" className="w-full h-full object-cover pointer-events-none" draggable={false} />
       </button>
 
       {open && (
-        <div className="fixed inset-0 z-[75] bg-ink/35 backdrop-blur-[2px] flex items-end sm:items-center justify-center" role="dialog" aria-modal="true" onClick={() => setOpen(false)}>
+        <div className="fixed inset-0 z-[75] bg-ink/35 backdrop-blur-[2px] flex items-end sm:items-center justify-center" role="dialog" aria-modal="true" aria-label={tr("Шоқанмен сөйлесу", "Chat with Shoqan")} onClick={() => setOpen(false)}>
           <div onClick={(e) => e.stopPropagation()} className="w-full max-w-[480px] mb-0 max-h-[85dvh] h-[75dvh] bg-sand flex flex-col rounded-t-[28px] sm:rounded-[28px] overflow-hidden shadow-2xl animate-sheet-up sm:animate-pop-in">
             <div className="flex items-center justify-between px-4 py-3 bg-card border-b border-line">
               <div className="flex items-center gap-3">
@@ -156,7 +161,7 @@ export const ShoqanChat = () => {
                   <div
                     className={`max-w-[80%] px-3.5 py-2.5 text-[15px] leading-relaxed rounded-[20px] ${
                       m.role === "user"
-                        ? "bg-sky text-white rounded-br-md"
+                        ? "bg-sky-deep text-white rounded-br-md"
                         : "bg-card text-ink border border-line rounded-bl-md"
                     }`}
                   >

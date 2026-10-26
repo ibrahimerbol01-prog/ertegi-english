@@ -87,6 +87,15 @@ export default function KazakhTalesApp({ session }: { session: Session }) {
     last_active_date: "",
   });
 
+  // Profile writes send absolute values, so they wait until the server profile
+  // has loaded. Until then, gains collect here and are added on top of it.
+  const profileReadyRef = useRef(false);
+  const pendingRef = useRef({ xp: 0, quizzes: 0, perfect: 0, active: false });
+  const saveProfile = (patch: () => Record<string, unknown>) => {
+    if (!profileReadyRef.current) return;
+    saveToSupabase(async () => supabase.from("profiles").update(patch()).eq("id", userId), onSaveError);
+  };
+
   useEffect(() => { latestXpRef.current = xp; }, [xp]);
   useEffect(() => { latestQuizzesRef.current = quizzesCompleted; }, [quizzesCompleted]);
   useEffect(() => { latestPerfectRef.current = perfectQuizzes; }, [perfectQuizzes]);
@@ -106,6 +115,52 @@ export default function KazakhTalesApp({ session }: { session: Session }) {
   useEffect(() => {
     let cancelled = false;
 
+    type ProfileRow = {
+      xp?: number | null; quizzes_completed?: number | null; perfect_quizzes?: number | null;
+      streak_days?: number | null; last_active_date?: string | null; display_name?: string | null;
+    };
+
+    const applyProfile = (row: ProfileRow | null) => {
+      const p = pendingRef.current;
+      const baseXp = row?.xp ?? 0;
+      // Loading saved XP is not a level-up; start the rank baseline here.
+      prevXpRef.current = baseXp;
+      latestXpRef.current = baseXp + p.xp;
+      latestQuizzesRef.current = (row?.quizzes_completed ?? 0) + p.quizzes;
+      latestPerfectRef.current = (row?.perfect_quizzes ?? 0) + p.perfect;
+      setXp(latestXpRef.current);
+      setQuizzesCompleted(latestQuizzesRef.current);
+      setPerfectQuizzes(latestPerfectRef.current);
+      setStreakDays(row?.streak_days ?? 0);
+      latestStreakRef.current = { streak_days: row?.streak_days ?? 0, last_active_date: row?.last_active_date ?? "" };
+      lastActiveDateRef.current = row?.last_active_date ?? null;
+      if (row?.display_name) setDisplayName(row.display_name);
+      profileReadyRef.current = true;
+      // Progress made while the profile was unreachable is written once, on top of the server values.
+      if (p.xp || p.quizzes || p.perfect) {
+        saveProfile(() => ({
+          xp: latestXpRef.current,
+          quizzes_completed: latestQuizzesRef.current,
+          perfect_quizzes: latestPerfectRef.current,
+        }));
+      }
+      const wasActive = p.active;
+      pendingRef.current = { xp: 0, quizzes: 0, perfect: 0, active: false };
+      if (wasActive) checkAndUpdateStreak();
+    };
+
+    // A failed profile read must never be treated as an empty profile: retry with backoff.
+    const retryProfile = (attempt: number) => {
+      const delay = [2000, 5000, 15000, 30000][Math.min(attempt, 3)];
+      setTimeout(async () => {
+        if (cancelled) return;
+        const res = await supabase.from("profiles").select("*").eq("id", userId).maybeSingle();
+        if (cancelled) return;
+        if (res.error) retryProfile(attempt + 1);
+        else applyProfile(res.data as ProfileRow | null);
+      }, delay);
+    };
+
     const loadUserData = async () => {
       const [profileRes, wordsRes, achievementsRes, progressSet] = await Promise.all([
         supabase.from("profiles").select("*").eq("id", userId).maybeSingle(),
@@ -116,16 +171,8 @@ export default function KazakhTalesApp({ session }: { session: Session }) {
 
       if (cancelled) return;
 
-      if (profileRes.data) {
-        // Loading saved XP is not a level-up; start the rank baseline here.
-        prevXpRef.current = profileRes.data.xp ?? 0;
-        setXp(profileRes.data.xp ?? 0);
-        setQuizzesCompleted(profileRes.data.quizzes_completed ?? 0);
-        setPerfectQuizzes(profileRes.data.perfect_quizzes ?? 0);
-        setStreakDays(profileRes.data.streak_days ?? 0);
-        lastActiveDateRef.current = profileRes.data.last_active_date ?? null;
-        if (profileRes.data.display_name) setDisplayName(profileRes.data.display_name as string);
-      }
+      if (profileRes.error) retryProfile(0);
+      else applyProfile(profileRes.data as ProfileRow | null);
       setProgress(progressSet);
       if (wordsRes.data) {
         const localReviews = loadLocalReviews(userId);
@@ -144,7 +191,10 @@ export default function KazakhTalesApp({ session }: { session: Session }) {
       setDataLoaded(true);
     };
 
-    loadUserData().catch(() => setDataLoaded(true));
+    loadUserData().catch(() => {
+      setDataLoaded(true);
+      if (!profileReadyRef.current) retryProfile(0);
+    });
 
     return () => { cancelled = true; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -156,6 +206,7 @@ export default function KazakhTalesApp({ session }: { session: Session }) {
   };
 
   const checkAndUpdateStreak = () => {
+    if (!profileReadyRef.current) { pendingRef.current.active = true; return; }
     const today = new Date().toISOString().slice(0, 10);
     if (lastActiveDateRef.current === today) return;
 
@@ -164,16 +215,13 @@ export default function KazakhTalesApp({ session }: { session: Session }) {
       const prevDate = new Date(lastActiveDateRef.current + "T00:00:00Z");
       const todayDate = new Date(today + "T00:00:00Z");
       const diffDays = Math.round((todayDate.getTime() - prevDate.getTime()) / 86400000);
-      if (diffDays === 1) nextStreak = streakDays + 1;
+      if (diffDays === 1) nextStreak = latestStreakRef.current.streak_days + 1;
     }
 
     lastActiveDateRef.current = today;
     setStreakDays(nextStreak);
     latestStreakRef.current = { streak_days: nextStreak, last_active_date: today };
-    saveToSupabase(
-      async () => supabase.from("profiles").update(latestStreakRef.current).eq("id", userId),
-      onSaveError
-    );
+    saveProfile(() => latestStreakRef.current);
   };
 
   const addXp = (amount: number) => {
@@ -182,10 +230,8 @@ export default function KazakhTalesApp({ session }: { session: Session }) {
     latestXpRef.current += amount;
     setXp(latestXpRef.current);
     setSessionXp((prev: number) => prev + amount);
-    saveToSupabase(
-      async () => supabase.from("profiles").update({ xp: latestXpRef.current }).eq("id", userId),
-      onSaveError
-    );
+    if (!profileReadyRef.current) pendingRef.current.xp += amount;
+    saveProfile(() => ({ xp: latestXpRef.current }));
     checkAndUpdateStreak();
     setXpToast({ amount, key: Date.now() + Math.random() });
     if (xpToastTimer.current) clearTimeout(xpToastTimer.current);
@@ -226,17 +272,13 @@ export default function KazakhTalesApp({ session }: { session: Session }) {
     }
     latestQuizzesRef.current += 1;
     setQuizzesCompleted(latestQuizzesRef.current);
-    saveToSupabase(
-      async () => supabase.from("profiles").update({ quizzes_completed: latestQuizzesRef.current }).eq("id", userId),
-      onSaveError
-    );
+    if (!profileReadyRef.current) pendingRef.current.quizzes += 1;
+    saveProfile(() => ({ quizzes_completed: latestQuizzesRef.current }));
     if (correctCount === total) {
       latestPerfectRef.current += 1;
       setPerfectQuizzes(latestPerfectRef.current);
-      saveToSupabase(
-        async () => supabase.from("profiles").update({ perfect_quizzes: latestPerfectRef.current }).eq("id", userId),
-        onSaveError
-      );
+      if (!profileReadyRef.current) pendingRef.current.perfect += 1;
+      saveProfile(() => ({ perfect_quizzes: latestPerfectRef.current }));
     }
   };
 
@@ -340,7 +382,8 @@ export default function KazakhTalesApp({ session }: { session: Session }) {
         achievement={achievementQueue[0] || null}
         onDone={() => setAchievementQueue((prev) => prev.slice(1))}
       />
-      <ShoqanChat />
+      {/* The quiz is a focus mode: Shoqan steps aside so he never covers the answer buttons. */}
+      <ShoqanChat hidden={tab === "quiz" && quizStarted} />
       <SaveErrorToast show={showSaveError} message={t.saveError} />
 
       <StaticOrnamentBg />
@@ -386,7 +429,7 @@ export default function KazakhTalesApp({ session }: { session: Session }) {
         </header>
 
         <div ref={scrollRef} className="flex-1 overflow-y-auto">
-          <div className="mx-auto w-full max-w-[1040px] flex gap-8 px-4 md:px-8 pt-4 xl:pt-10 pb-28 md:pb-10">
+          <div className="mx-auto w-full max-w-[1040px] flex gap-8 px-4 md:px-8 pt-4 xl:pt-10 pb-44 md:pb-28">
             <main className="flex-1 min-w-0 max-w-[620px] mx-auto">
               {tab === "home" && (
                 <HomeScreen
