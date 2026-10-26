@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
-import { ChevronRight, Headphones, Lock, RotateCcw, Snail } from "lucide-react";
+import { ChevronRight, Headphones, Lock, RotateCcw } from "lucide-react";
 import { QoshqarMuyiz, Shanyraq, Tumar, KilimStrip } from "./Ornaments";
 import { ScreenHeader, Sheet } from "./UIHelpers";
-import { safePlayVoice, stopVoice } from "../utils/voice";
-import { LEGENDS, RARITY, type LegendCard, type Ornament } from "../data/legends";
+import { stopVoice } from "../utils/voice";
+import { ScenePlayer } from "./ScenePlayer";
+import { LEGENDS, PASS, RARITY, type LegendCard, type Ornament, type Question } from "../data/legends";
 
 type Lang = "kk" | "en";
 const pick = (lang: string) => (lang === "kk" ? "kk" : "en") as Lang;
@@ -79,31 +80,29 @@ function MiniCard({ card, owned }: { card: LegendCard; owned: boolean }) {
   );
 }
 
-/* Listening challenge: two true/false lines and one gap, then the card is yours. */
+/* Listening challenge: six questions on the scene; four right and the card is yours. */
 function Challenge({ card, lang, onWin, onClose }: { card: LegendCard; lang: Lang; onWin: () => void; onClose: () => void }) {
-  const [tf, setTf] = useState<(boolean | null)[]>([null, null]);
-  const [gap, setGap] = useState<number | null>(null);
+  const total = card.qs.length;
+  const [answers, setAnswers] = useState<(number | null)[]>(() => card.qs.map(() => null));
   const [checked, setChecked] = useState(false);
   const [listened, setListened] = useState(false);
   const r = RARITY[card.rarity];
 
-  const tfOk = card.tf.map((q, i) => tf[i] === q.a);
-  const gapOk = gap === card.gap.answer;
-  const score = tfOk.filter(Boolean).length + (gapOk ? 1 : 0);
-  const won = checked && score >= 2;
-  const ready = tf.every((x) => x !== null) && gap !== null;
+  // True/false answers are stored as 1 (true) or 0 (false).
+  const rightAnswer = (q: Question) => (q.kind === "tf" ? (q.a ? 1 : 0) : q.answer);
+  const isRight = card.qs.map((q, i) => answers[i] === rightAnswer(q));
+  const score = isRight.filter(Boolean).length;
+  const won = checked && score >= PASS;
+  const answered = answers.filter((x) => x !== null).length;
+  const ready = answered === total;
 
-  const play = (rate: number) => {
-    setListened(true);
-    safePlayVoice(card.scene, undefined, rate);
-  };
+  const choose = (i: number, value: number) => setAnswers((prev) => prev.map((x, j) => (j === i ? value : x)));
   const check = () => {
     setChecked(true);
-    if (score >= 2) onWin();
+    if (score >= PASS) onWin();
   };
   const retry = () => {
-    setTf([null, null]);
-    setGap(null);
+    setAnswers(card.qs.map(() => null));
     setChecked(false);
   };
 
@@ -112,7 +111,7 @@ function Challenge({ card, lang, onWin, onClose }: { card: LegendCard; lang: Lan
       <div className="p-6 text-center">
         <div className="w-44 mx-auto animate-rank-pop"><CardFace card={card} lang={lang} big /></div>
         <p className="eyebrow text-sun-deep mt-5">{lang === "kk" ? "Карта сенікі!" : "The card is yours!"}</p>
-        <p className="text-sm font-bold text-ink mt-1">{score}/3 · +{r.xp} XP</p>
+        <p className="text-sm font-bold text-ink mt-1">{score}/{total} · +{r.xp} XP</p>
         <div className="mt-4 rounded-2xl bg-sand-2 p-4 text-left">
           <p className="eyebrow">{lang === "kk" ? "Білесің бе?" : "Did you know?"}</p>
           <p className="text-sm text-ink mt-1 leading-relaxed">{card.fact[lang]}</p>
@@ -122,24 +121,24 @@ function Challenge({ card, lang, onWin, onClose }: { card: LegendCard; lang: Lan
     );
   }
 
-  const tfButton = (i: number, value: boolean) => {
-    const chosen = tf[i] === value;
+  const option = (i: number, value: number, label: string) => {
+    const chosen = answers[i] === value;
+    const correct = rightAnswer(card.qs[i]) === value;
     let state = chosen ? "tile-selected" : "text-ink";
-    if (checked && chosen) state = tfOk[i] ? "tile-correct" : "tile-wrong animate-answer-wrong";
-    if (checked && !chosen && card.tf[i].a === value) state = "tile-correct";
+    if (checked && chosen) state = correct ? "tile-correct" : "tile-wrong animate-answer-wrong";
+    if (checked && !chosen && correct) state = "tile-correct";
     return (
       <button
+        key={label}
         disabled={checked}
         aria-pressed={chosen}
-        onClick={() => setTf((prev) => prev.map((x, j) => (j === i ? value : x)))}
-        className={`tile flex-1 py-2.5 text-sm font-bold ${state}`}
+        onClick={() => choose(i, value)}
+        className={`tile flex-1 min-w-0 px-2 py-2.5 text-sm font-bold leading-tight ${state}`}
       >
-        {value ? (lang === "kk" ? "Рас" : "True") : (lang === "kk" ? "Жалған" : "False")}
+        {label}
       </button>
     );
   };
-
-  const [before, after] = card.gap.sentence.split("___");
 
   return (
     <div className="p-5">
@@ -149,63 +148,55 @@ function Challenge({ card, lang, onWin, onClose }: { card: LegendCard; lang: Lan
       </div>
       <h3 className="font-display font-black text-xl text-ink mt-2">{lang === "kk" ? card.kk : card.name}</h3>
 
-      <div className="grid grid-cols-[1fr_auto] gap-2 mt-4">
-        <button onClick={() => play(1)} className="btn">
-          <Headphones size={18} /> {lang === "kk" ? "Тыңдау" : "Listen"}
-        </button>
-        <button onClick={() => play(0.75)} className="btn btn-ghost px-4" aria-label={lang === "kk" ? "Баяу" : "Slow"}>
-          <Snail size={18} />
-        </button>
+      <div className="mt-4">
+        <ScenePlayer text={card.scene} lang={lang} onPlay={() => setListened(true)} />
       </div>
-      {!listened && (
-        <p className="text-xs text-ink-3 mt-2 text-center">
-          {lang === "kk" ? "Алдымен тыңда, сосын жауап бер." : "Listen first, then answer."}
-        </p>
-      )}
+      <p className="text-xs text-ink-3 mt-2 text-center">
+        {!listened
+          ? (lang === "kk" ? "Алдымен тыңда, сосын жауап бер. Қажет болса, ойнатқышты кері айналдыр." : "Listen first, then answer. Drag the slider back to hear a part again.")
+          : (lang === "kk" ? `Жауап берілді: ${answered}/${total} · картаға ${PASS} дұрыс жауап керек` : `Answered: ${answered}/${total} · ${PASS} right wins the card`)}
+      </p>
 
-      <div className="mt-5 space-y-4">
-        {card.tf.map((q, i) => (
-          <div key={q.s}>
-            <p className="text-[15px] font-semibold text-ink">{i + 1}. {q.s}</p>
-            <div className="flex gap-2 mt-2">{tfButton(i, true)}{tfButton(i, false)}</div>
-          </div>
-        ))}
-        <div>
-          <p className="text-[15px] font-semibold text-ink">
-            3. {before}
-            <span className="inline-block min-w-[64px] border-b-[3px] border-sky mx-1 text-center text-sky-deep font-bold">
-              {gap !== null ? card.gap.options[gap] : " "}
-            </span>
-            {after}
-          </p>
-          <div className="flex gap-2 mt-2">
-            {card.gap.options.map((opt, i) => {
-              let state = gap === i ? "tile-selected" : "text-ink";
-              if (checked && gap === i) state = gapOk ? "tile-correct" : "tile-wrong animate-answer-wrong";
-              if (checked && gap !== i && i === card.gap.answer) state = "tile-correct";
-              return (
-                <button key={opt} disabled={checked} aria-pressed={gap === i} onClick={() => setGap(i)} className={`tile flex-1 py-2.5 text-sm font-bold ${state}`}>
-                  {opt}
-                </button>
-              );
-            })}
-          </div>
-        </div>
-      </div>
+      <ol className="mt-5 space-y-4">
+        {card.qs.map((q, i) => {
+          const [before, after] = q.s.split("___");
+          return (
+            <li key={q.s}>
+              <p lang="en" className="text-[15px] font-semibold text-ink">
+                {i + 1}.{" "}
+                {q.kind === "gap" ? (
+                  <>
+                    {before}
+                    <span className="inline-block min-w-[64px] border-b-[3px] border-sky mx-1 text-center text-sky-deep font-bold">
+                      {answers[i] !== null ? q.options[answers[i]!] : " "}
+                    </span>
+                    {after}
+                  </>
+                ) : q.s}
+              </p>
+              <div className={`flex gap-2 mt-2 ${q.kind === "mc" ? "flex-col" : ""}`}>
+                {q.kind === "tf"
+                  ? [option(i, 1, lang === "kk" ? "Рас" : "True"), option(i, 0, lang === "kk" ? "Жалған" : "False")]
+                  : q.options.map((opt, k) => option(i, k, opt))}
+              </div>
+            </li>
+          );
+        })}
+      </ol>
 
       {checked ? (
         <div className="mt-6 rounded-[20px] bg-felt-soft p-4 animate-pop-in">
-          <p className="font-display font-black text-felt-deep">{score}/3 · {lang === "kk" ? "Тағы бір рет тыңда" : "Listen once more"}</p>
-          <p className="text-sm text-ink-2 mt-1">{lang === "kk" ? "Картаны алу үшін кемінде 2 дұрыс жауап керек." : "You need at least 2 right to win the card."}</p>
+          <p className="font-display font-black text-felt-deep">{score}/{total} · {lang === "kk" ? "Тағы бір рет тыңда" : "Listen once more"}</p>
+          <p className="text-sm text-ink-2 mt-1">{lang === "kk" ? `Картаны алу үшін кемінде ${PASS} дұрыс жауап керек.` : `You need at least ${PASS} right to win the card.`}</p>
           <details className="mt-2">
             <summary className="text-sm font-bold text-sky-deep cursor-pointer">{lang === "kk" ? "Мәтінді көр" : "Show the text"}</summary>
-            <p className="text-sm text-ink mt-2 leading-relaxed">{card.scene}</p>
+            <p lang="en" className="text-sm text-ink mt-2 leading-relaxed">{card.scene}</p>
           </details>
           <button onClick={retry} className="btn btn-felt w-full mt-4"><RotateCcw size={18} /> {lang === "kk" ? "Қайтадан" : "Try again"}</button>
         </div>
       ) : (
         <button onClick={check} disabled={!ready} className="btn w-full mt-6">
-          {lang === "kk" ? "Тексеру" : "Check"}
+          {ready ? (lang === "kk" ? "Тексеру" : "Check") : (lang === "kk" ? `Тағы ${total - answered} сұрақ қалды` : `${total - answered} more to answer`)}
         </button>
       )}
     </div>
@@ -217,10 +208,8 @@ function CardDetail({ card, lang }: { card: LegendCard; lang: Lang }) {
   return (
     <div className="p-6">
       <div className="w-40 mx-auto"><CardFace card={card} lang={lang} big /></div>
-      <button onClick={() => safePlayVoice(card.scene)} className="btn w-full mt-5">
-        <Headphones size={18} /> {lang === "kk" ? "Қайта тыңдау" : "Listen again"}
-      </button>
-      <p className="text-[15px] text-ink leading-relaxed mt-4">{card.scene}</p>
+      <div className="mt-5"><ScenePlayer text={card.scene} lang={lang} /></div>
+      <p lang="en" className="text-[15px] text-ink leading-relaxed mt-4">{card.scene}</p>
       <div className="mt-4 rounded-2xl bg-sand-2 p-4">
         <p className="eyebrow">{lang === "kk" ? "Білесің бе?" : "Did you know?"}</p>
         <p className="text-sm text-ink mt-1 leading-relaxed">{card.fact[lang]}</p>
@@ -259,8 +248,8 @@ export function LegendScreen({ lang, userId, onReward }: { lang: string; userId?
       />
       <p className="text-[15px] text-ink-2 leading-relaxed -mt-2">
         {l === "kk"
-          ? "Қазақ ертегілері, жырлары, аңыздары мен тарихы. Ағылшынша сахнаны тыңда, 3 сұраққа жауап бер — карта сенікі."
-          : "Kazakh tales, epics, legends and history. Listen to a scene in English, answer 3 questions, and the card is yours."}
+          ? "Қазақ ертегілері, жырлары, аңыздары мен тарихы. Ағылшынша сахнаны тыңда, 6 сұраққа жауап бер — карта сенікі."
+          : "Kazakh tales, epics, legends and history. Listen to a scene in English, answer 6 questions, and the card is yours."}
       </p>
       <div className="flex flex-wrap gap-2 mt-3">
         {(Object.keys(RARITY) as (keyof typeof RARITY)[]).map((k) => (
