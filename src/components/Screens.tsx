@@ -2,7 +2,8 @@ import { useState, useRef, useEffect } from "react";
 import { useLang } from "../lang";
 import {
   ArrowRight, Play, Pause, Volume2, ChevronRight, RotateCcw, Compass, Trophy,
-  Check, X, Mic, MicOff, LogOut, Share2, BookOpen, Lock, Plus, MessageCircle
+  Check, X, Mic, MicOff, LogOut, Share2, BookOpen, Lock, Plus, MessageCircle,
+  GraduationCap,
 } from "lucide-react";
 import { DailyGoalRing, ScreenHeader, Sheet, BrandMark } from "./UIHelpers";
 import { displayTitle, foldAccents } from "../utils/text";
@@ -166,7 +167,7 @@ function PathIsland({ label, caption, color, edge, x, onClick, locked, highlight
   );
 }
 
-export function HomeScreen({ onStartRead, onStartQuiz, t, lang, userName = "", sessionXp = 0, dailyGoal = 50, progress = new Set<string>(), userId, onReward = () => {}, onOpenCards = () => {} }: any) {
+export function HomeScreen({ onStartRead, onStartQuiz, t, lang, userName = "", sessionXp = 0, dailyGoal = 50, progress = new Set<string>(), userId, onReward = () => {}, onOpenCards = () => {}, assignments = null }: any) {
   // Next step on the path: first level or quiz not yet finished, in order.
   const steps = STORIES.flatMap((s: any) => [...LEVEL_DETAILS.map((l) => ({ story: s, step: l.id })), { story: s, step: "quiz" }]);
   const current = steps.find((x) => !progress.has(`${x.story.id}:${x.step}`)) || null;
@@ -198,6 +199,9 @@ export function HomeScreen({ onStartRead, onStartQuiz, t, lang, userName = "", s
           </p>
         </div>
       </div>
+
+      {/* The teacher's assignments come first: they have a due date. */}
+      {assignments}
 
       {/* Continue card: only once there is progress, otherwise the first island is the start */}
       {progress.size > 0 && (
@@ -1770,7 +1774,7 @@ export function SpeakScreen({ onReward, t }: {
 }
 
 /* --- 8. PROFILE SCREEN --- */
-export function ProfileScreen({ xp, t, lang = "kk", setLang, savedWordsCount = 0, unlockedAchievements = [], userName = "Learner", onSignOut, streakDays = 0, quizzesCompleted = 0, kilim }: {
+export function ProfileScreen({ xp, t, lang = "kk", setLang, savedWordsCount = 0, unlockedAchievements = [], userName = "Learner", onSignOut, streakDays = 0, quizzesCompleted = 0, kilim, classes, onOpenTeacher }: {
   xp: number;
   t: Record<string, string>;
   lang?: string;
@@ -1782,6 +1786,8 @@ export function ProfileScreen({ xp, t, lang = "kk", setLang, savedWordsCount = 0
   streakDays?: number;
   quizzesCompleted?: number;
   kilim?: React.ReactNode;
+  classes?: React.ReactNode;
+  onOpenTeacher?: () => void;
 }) {
   const [showBuklet, setShowBuklet] = useState(false);
   // Levels count from 1: 0–99 XP is level 1.
@@ -1869,8 +1875,20 @@ export function ProfileScreen({ xp, t, lang = "kk", setLang, savedWordsCount = 0
         </div>
       </div>
 
+      {classes}
+
       {/* Settings — Apple grouped list */}
       <div className="card overflow-hidden divide-y divide-line">
+        {onOpenTeacher && (
+          <button onClick={onOpenTeacher} className="w-full flex items-center gap-3 px-4 min-h-[56px] text-left hover:bg-sand/60">
+            <span className="w-8 h-8 rounded-lg bg-night flex items-center justify-center"><GraduationCap size={16} className="text-white" /></span>
+            <span className="flex-1 min-w-0">
+              <span className="block text-[16px] text-ink">{lang === "kk" ? "Мұғалім кабинеті" : "Teacher cabinet"}</span>
+              <span className="block text-[13px] text-ink-2">{lang === "kk" ? "Сынып ашу, тапсырма беру, прогресті көру" : "Create classes, give assignments, see progress"}</span>
+            </span>
+            <ChevronRight size={18} className="text-ink-3" />
+          </button>
+        )}
         <div className="flex items-center justify-between gap-3 px-4 min-h-[56px]">
           <span className="text-[16px] text-ink">{lang === "kk" ? "Тіл" : "Language"}</span>
           {setLang && (
