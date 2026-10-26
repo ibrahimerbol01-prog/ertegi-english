@@ -235,6 +235,20 @@
 }
 .animate-float { animation: float-slow 4s ease-in-out infinite; }
 
+/* Batyr cards: slow sun rays, twinkling stars and a shine that sweeps across. */
+@keyframes spin-slow { to { transform: rotate(360deg); } }
+.animate-spin-slow { animation: spin-slow 22s linear infinite; }
+@keyframes twinkle {
+  0%, 100% { opacity: 0; transform: scale(0.4) rotate(0deg); }
+  50% { opacity: 1; transform: scale(1) rotate(45deg); }
+}
+.animate-twinkle { animation: twinkle 2.6s ease-in-out infinite; }
+@keyframes card-shine {
+  0%, 72% { transform: translateX(-160%) skewX(-18deg); }
+  100% { transform: translateX(260%) skewX(-18deg); }
+}
+.animate-card-shine { animation: card-shine 5.5s ease-in-out infinite; }
+
 @keyframes xp-float {
   0% { opacity: 0; transform: translateY(-4px) scale(0.75); }
   15% { opacity: 1; transform: translateY(2px) scale(1.15); }
