@@ -22,7 +22,7 @@ import { WordCoach } from "./components/WordCoach";
 import { LegendScreen } from "./components/LegendCards";
 import {
   loadProgress, saveProgress, progressKey, loadLocalReviews, saveReview,
-  nextReview, isDue, MAX_MASTERY, type ProgressStep
+  nextReview, lapse, localDay, daysBetween, isDue, MAX_MASTERY, type ProgressStep
 } from "./utils/progress";
 
 export default function KazakhTalesApp({ session }: { session: Session }) {
@@ -120,8 +120,12 @@ export default function KazakhTalesApp({ session }: { session: Session }) {
         setXp(profileRes.data.xp ?? 0);
         setQuizzesCompleted(profileRes.data.quizzes_completed ?? 0);
         setPerfectQuizzes(profileRes.data.perfect_quizzes ?? 0);
-        setStreakDays(profileRes.data.streak_days ?? 0);
         lastActiveDateRef.current = profileRes.data.last_active_date ?? null;
+        // A streak with a missed day is over, even before today's first action.
+        const last = lastActiveDateRef.current;
+        const streak = last && daysBetween(last, localDay()) <= 1 ? (profileRes.data.streak_days ?? 0) : 0;
+        setStreakDays(streak);
+        latestStreakRef.current = { streak_days: streak, last_active_date: last ?? "" };
         if (profileRes.data.display_name) setDisplayName(profileRes.data.display_name as string);
       }
       setProgress(progressSet);
@@ -154,16 +158,12 @@ export default function KazakhTalesApp({ session }: { session: Session }) {
   };
 
   const checkAndUpdateStreak = () => {
-    const today = new Date().toISOString().slice(0, 10);
+    // Any one learning action keeps the streak; it is not tied to the daily XP goal.
+    const today = localDay();
     if (lastActiveDateRef.current === today) return;
 
     let nextStreak = 1;
-    if (lastActiveDateRef.current) {
-      const prevDate = new Date(lastActiveDateRef.current + "T00:00:00Z");
-      const todayDate = new Date(today + "T00:00:00Z");
-      const diffDays = Math.round((todayDate.getTime() - prevDate.getTime()) / 86400000);
-      if (diffDays === 1) nextStreak = streakDays + 1;
-    }
+    if (lastActiveDateRef.current && daysBetween(lastActiveDateRef.current, today) === 1) nextStreak = latestStreakRef.current.streak_days + 1;
 
     lastActiveDateRef.current = today;
     setStreakDays(nextStreak);
@@ -198,23 +198,28 @@ export default function KazakhTalesApp({ session }: { session: Session }) {
     saveProgress(userId, storyId, step, next);
   };
 
-  // Leitner review: "knew it" moves the word up a box, "not yet" back to box 0.
+  // Leitner review: "knew it" moves the word up a box, "not yet" one box back.
   const handleReview = (word: string, known: boolean) => {
     const current = savedWords.find((w) => w.word === word);
     if (!current) return;
-    const mastery = known ? Math.min((current.mastery ?? 0) + 1, MAX_MASTERY) : 0;
-    const nextReviewAt = nextReview(mastery);
+    const up = Math.min((current.mastery ?? 0) + 1, MAX_MASTERY);
+    const { mastery, nextReviewAt } = known ? { mastery: up, nextReviewAt: nextReview(up) } : lapse(current.mastery ?? 0);
     setSavedWords((prev) => prev.map((w) => (w.word === word ? { ...w, mastery, nextReviewAt } : w)));
     saveReview(userId, word, mastery, nextReviewAt);
     if (known) addXp(2);
+    else checkAndUpdateStreak();
   };
 
   const quizStory = STORIES.find((s) => s.id === selectedStory) || STORIES[0];
   const quizQuestions = quizLevel && quizLevel !== "quiz" && quizLevel in quizStory.levels
     ? buildLevelQuiz(quizStory.levels[quizLevel as keyof typeof quizStory.levels])
     : quizStory.quizQuestions;
+  // Where a wrong answer points back to: the level just read, or the whole tale.
+  const quizTexts: string[] = quizLevel && quizLevel !== "quiz" && quizLevel in quizStory.levels
+    ? [quizStory.levels[quizLevel as keyof typeof quizStory.levels]]
+    : Object.values(quizStory.levels);
 
-  const handleQuizFinish = (correctCount: number, total: number) => {
+  const handleQuizFinish = (correctCount: number, total: number, firstTry: number) => {
     const storyId = selectedStory || STORIES[0].id;
     const step = quizLevel ?? "quiz";
     if (correctCount >= Math.ceil(total * 0.6)) {
@@ -228,7 +233,8 @@ export default function KazakhTalesApp({ session }: { session: Session }) {
       async () => supabase.from("profiles").update({ quizzes_completed: latestQuizzesRef.current }).eq("id", userId),
       onSaveError
     );
-    if (correctCount === total) {
+    // Perfect means every answer right first time, not after a hint.
+    if (firstTry === total) {
       latestPerfectRef.current += 1;
       setPerfectQuizzes(latestPerfectRef.current);
       saveToSupabase(
@@ -445,6 +451,7 @@ export default function KazakhTalesApp({ session }: { session: Session }) {
                   onExit={() => setQuizStarted(false)}
                   storyTitle={`${(STORIES.find((s) => s.id === selectedStory) || STORIES[0]).title}${quizLevel ? ` · ${quizLevel}` : ""}`}
                   questions={quizQuestions}
+                  sourceTexts={quizTexts}
                 />
               )}
               {tab === "words" && (
