@@ -17,6 +17,8 @@ import { supabase } from "../lib/supabase";
 import { isDue, MAX_MASTERY } from "../utils/progress";
 import { MaqalCard, StoryHistory } from "./Culture";
 import { LegendDeckEntry } from "./LegendCards";
+import { WeekWordsCard } from "./WeekWords";
+import { currentWeek, weekWordOf } from "../data/weekWords";
 import { StoryCover } from "./StoryCover";
 import { buildLevelQuiz } from "../utils/levelQuiz";
 import { findEvidence } from "../utils/evidence";
@@ -229,6 +231,7 @@ export function HomeScreen({ onStartRead, onStartQuiz, t, lang, userName = "", s
         </div>
       </div>
 
+      <WeekWordsCard lang={lang} userId={userId} progress={progress} onReward={onReward} />
       <MaqalCard lang={lang} userId={userId} onReward={onReward} />
       <LegendDeckEntry lang={lang} userId={userId} onOpen={onOpenCards} />
 
@@ -579,6 +582,9 @@ export function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, s
   const savedMastery = new Map<string, number>((savedWords || []).map((w: any) => [w.word, w.mastery ?? 0]));
   const cleanTok = (tok: string) => tok.replace(/[^a-zA-Z]/g, "").toLowerCase();
   const savedInText = new Set(tokens.map(cleanTok).filter((w: string) => savedMastery.has(w))).size;
+  const { week } = currentWeek();
+  const activeWeekWord = activeWord ? weekWordOf(week, activeWord) : null;
+  const weekInText = tokens.some((tok: string) => !savedMastery.has(cleanTok(tok)) && !!weekWordOf(week, tok));
 
   return (
     <div className="space-y-4 animate-pop-in relative">
@@ -662,11 +668,14 @@ export function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, s
 
       {/* Story text */}
       <div className="card p-5 sm:p-7 max-h-[440px] overflow-y-auto">
-        {savedInText > 0 && (
+        {(savedInText > 0 || weekInText) && (
           <p className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs font-semibold text-ink-2 mb-3">
-            <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded bg-sun-soft border-b-2 border-sun-deep/60" />{lang === "kk" ? "Үйреніп жатырсың" : "Learning"}</span>
-            <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded border-b-2 border-jade" />{lang === "kk" ? "Меңгерілді" : "Mastered"}</span>
-            <span className="text-ink-3">{savedInText} {lang === "kk" ? "сақталған сөз осы мәтінде" : "saved words in this text"}</span>
+            {weekInText && <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded border-b-2 border-dashed border-sky" />{lang === "kk" ? "Апта сөзі" : "Word of the week"}</span>}
+            {savedInText > 0 && <>
+              <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded bg-sun-soft border-b-2 border-sun-deep/60" />{lang === "kk" ? "Үйреніп жатырсың" : "Learning"}</span>
+              <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded border-b-2 border-jade" />{lang === "kk" ? "Меңгерілді" : "Mastered"}</span>
+              <span className="text-ink-3">{savedInText} {lang === "kk" ? "сақталған сөз осы мәтінде" : "saved words in this text"}</span>
+            </>}
           </p>
         )}
         <p className="text-[18px] text-ink leading-[1.9]">
@@ -677,7 +686,9 @@ export function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, s
             const isCurrentlyRead = i === readAlongTokenIndex;
             const isActive = activeWord === tok;
             const mastery = savedMastery.get(cleanTok(tok));
-            const savedCls = mastery === undefined
+            const savedCls = mastery === undefined && weekWordOf(week, tok)
+              ? "font-bold text-sky-deep hover:bg-sky-soft decoration-sky decoration-dashed decoration-2 underline underline-offset-[6px]"
+              : mastery === undefined
               ? "hover:bg-sky-soft decoration-ink-3/40 decoration-dotted underline underline-offset-[6px]"
               : mastery >= MAX_MASTERY
               ? "hover:bg-jade-soft decoration-jade decoration-2 underline underline-offset-[6px]"
@@ -728,6 +739,12 @@ export function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, s
                 <p className="eyebrow">{tr("Ағылшынша", "English")}</p>
                 <h3 className="font-display font-black text-[32px] text-ink leading-tight">{cleanActive}</h3>
                 <p className="text-lg text-sky-deep font-semibold mt-1">{translation}</p>
+                {activeWeekWord && (
+                  <p className="mt-2 inline-flex flex-wrap items-center gap-x-2 rounded-xl bg-sky-soft px-2.5 py-1 text-[13px] font-semibold text-sky-deep">
+                    <span className="font-black">{tr("Апта сөзі", "Word of the week")}</span>
+                    <span>{activeWeekWord.family}</span>
+                  </p>
+                )}
               </div>
               <button onClick={() => safePlayVoice(activeWord)} aria-label={tr("Тыңдау", "Listen")} className="w-12 h-12 rounded-full bg-sky-soft text-sky flex items-center justify-center shrink-0">
                 <Volume2 size={22} />
