@@ -215,8 +215,12 @@ export default function KazakhTalesApp({ session }: { session: Session }) {
   const quizQuestions = quizLevel && quizLevel !== "quiz" && quizLevel in quizStory.levels
     ? buildLevelQuiz(quizStory.levels[quizLevel as keyof typeof quizStory.levels])
     : quizStory.quizQuestions;
+  // Where a wrong answer points back to: the level just read, or the whole tale.
+  const quizTexts: string[] = quizLevel && quizLevel !== "quiz" && quizLevel in quizStory.levels
+    ? [quizStory.levels[quizLevel as keyof typeof quizStory.levels]]
+    : Object.values(quizStory.levels);
 
-  const handleQuizFinish = (correctCount: number, total: number) => {
+  const handleQuizFinish = (correctCount: number, total: number, firstTry: number) => {
     const storyId = selectedStory || STORIES[0].id;
     const step = quizLevel ?? "quiz";
     if (correctCount >= Math.ceil(total * 0.6)) {
@@ -230,7 +234,8 @@ export default function KazakhTalesApp({ session }: { session: Session }) {
       async () => supabase.from("profiles").update({ quizzes_completed: latestQuizzesRef.current }).eq("id", userId),
       onSaveError
     );
-    if (correctCount === total) {
+    // Perfect means every answer right first time, not after a hint.
+    if (firstTry === total) {
       latestPerfectRef.current += 1;
       setPerfectQuizzes(latestPerfectRef.current);
       saveToSupabase(
@@ -447,6 +452,7 @@ export default function KazakhTalesApp({ session }: { session: Session }) {
                   onExit={() => setQuizStarted(false)}
                   storyTitle={`${(STORIES.find((s) => s.id === selectedStory) || STORIES[0]).title}${quizLevel ? ` · ${quizLevel}` : ""}`}
                   questions={quizQuestions}
+                  sourceTexts={quizTexts}
                 />
               )}
               {tab === "words" && (
