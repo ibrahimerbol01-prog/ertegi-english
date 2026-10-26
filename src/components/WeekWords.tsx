@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 import { ChevronRight, MessageCircle, Volume2, Check, WifiOff, Pencil } from "lucide-react";
 import { STORIES } from "../constants";
-import { currentWeek, wordsUsed, type Week } from "../data/weekWords";
+import { currentWeek, wordsUsed, type Dilemma, type Week } from "../data/weekWords";
 import { supabase } from "../lib/supabase";
 import { safePlayVoice } from "../utils/voice";
 import { Sheet } from "./UIHelpers";
 
-/* Words of the week and the debate (Word Generation): use the week's
+/* Words of the week and a daily debate (Word Generation): use the week's
    words in an argument, hear Shoqan disagree, answer him, then decide again. */
 
 type Side = "yes" | "no";
@@ -24,7 +24,8 @@ interface Entry {
 }
 const EMPTY: Entry = { side: null, text: "", objection: "", objectionKk: "", offline: false, reply: "", finalSide: null, submitted: false, xpGiven: 0 };
 
-const storeKey = (userId: string | undefined, week: string) => `ertegi_debate_${userId || "guest"}_${week}`;
+// One answer per day. Monday's key is the week start, so answers saved before daily questions carry over.
+const storeKey = (userId: string | undefined, day: string) => `ertegi_debate_${userId || "guest"}_${day}`;
 function loadEntry(userId: string | undefined, week: string): Entry {
   try {
     const raw = JSON.parse(localStorage.getItem(storeKey(userId, week)) || "null");
@@ -38,12 +39,13 @@ function saveEntry(userId: string | undefined, week: string, entry: Entry) {
 }
 
 // Synced to Supabase when the debate_entries table exists; local storage keeps working without it.
-function syncEntry(userId: string | undefined, week: Week, weekStart: string, entry: Entry) {
+// The week_start column holds the day of the answer now that there is a question a day.
+function syncEntry(userId: string | undefined, week: Week, day: string, entry: Entry) {
   if (!userId) return;
   supabase
     .from("debate_entries")
     .upsert({
-      user_id: userId, week_start: weekStart, side: entry.finalSide ?? entry.side, text: entry.text, reply_text: entry.reply,
+      user_id: userId, week_start: day, side: entry.finalSide ?? entry.side, text: entry.text, reply_text: entry.reply,
       words_used: wordsUsed(week, `${entry.text} ${entry.reply}`), updated_at: new Date().toISOString(),
     }, { onConflict: "user_id,week_start" })
     .then(() => {}, () => {});
@@ -81,16 +83,34 @@ function copiedFromTale(s: string) {
   return false;
 }
 
-export function WeekWordsCard({ lang, userId, progress = new Set<string>(), onReward = () => {} }: {
+type CardProps = {
   lang: string;
   userId?: string;
   progress?: Set<string>;
   onReward?: (xp: number) => void;
-}) {
+};
+
+// A new day starts from a fresh card, even if the app stayed open past midnight.
+export function WeekWordsCard(props: CardProps) {
+  return <DailyCard key={currentWeek().dayKey} {...props} />;
+}
+
+const DAY_LETTERS = { kk: ["Дс", "Сс", "Ср", "Бс", "Жм", "Сб", "Жс"], en: ["M", "T", "W", "T", "F", "S", "S"] };
+
+function DailyCard({ lang, userId, progress = new Set<string>(), onReward = () => {} }: CardProps) {
   const kk = lang === "kk";
-  const { week, startKey } = currentWeek();
+  const { week, startKey, weekday, dayKey, dilemma } = currentWeek();
   const seen = encounters(week, progress);
-  const [entry, setEntry] = useState<Entry>(() => loadEntry(userId, startKey));
+  const [entry, setEntry] = useState<Entry>(() => loadEntry(userId, dayKey));
+  // Days of this week already argued: the dots on the card.
+  const done = Array.from({ length: 7 }, (_, i) => {
+    if (i === weekday) return entry.submitted;
+    if (i > weekday) return false;
+    const [y, m, d] = startKey.split("-").map(Number);
+    const day = new Date(y, m - 1, d + i);
+    const key = `${day.getFullYear()}-${String(day.getMonth() + 1).padStart(2, "0")}-${String(day.getDate()).padStart(2, "0")}`;
+    return loadEntry(userId, key).submitted;
+  });
   const [showDebate, setShowDebate] = useState(false);
   const cardRef = useRef<HTMLButtonElement>(null);
 
@@ -108,9 +128,10 @@ export function WeekWordsCard({ lang, userId, progress = new Set<string>(), onRe
             <p className="eyebrow text-sky-deep">{kk ? "Апта сөздері" : "Words of the week"} · {kk ? week.theme.kk : week.theme.en}</p>
             <p className="font-display font-extrabold text-ink text-[17px] mt-0.5">
               {entry.submitted
-                ? (kk ? "Пікірталас: жауабың сақталды" : "Debate: your answer is saved")
-                : (kk ? "Пікірталас ашық" : "The debate is open")}
+                ? (kk ? "Бүгінгі жауабың сақталды" : "Today's answer is saved")
+                : (kk ? "Бүгінгі пікірталас" : "Today's debate")}
             </p>
+            <p className="text-[14px] text-ink-2 mt-0.5 leading-snug line-clamp-2">{kk ? dilemma.kk : dilemma.en}</p>
           </div>
           {entry.submitted ? <Check size={22} strokeWidth={3} className="text-jade shrink-0 mt-1" /> : <ChevronRight size={22} className="text-ink-3 shrink-0 mt-1" />}
         </div>
@@ -127,16 +148,29 @@ export function WeekWordsCard({ lang, userId, progress = new Set<string>(), onRe
             );
           })}
         </div>
+        <div className="flex items-center gap-1.5 mt-3" aria-label={kk ? `Осы аптада ${done.filter(Boolean).length}/7 пікірталас` : `${done.filter(Boolean).length}/7 debates this week`}>
+          {DAY_LETTERS[kk ? "kk" : "en"].map((d, i) => (
+            <span
+              key={i}
+              aria-hidden="true"
+              className={`h-7 min-w-7 px-1 rounded-full grid place-items-center text-[11px] font-bold ${done[i] ? "bg-jade text-white" : i === weekday ? "border-2 border-sky text-sky-deep" : "bg-sand-2 text-ink-3"}`}
+            >
+              {done[i] ? <Check size={13} strokeWidth={3.5} /> : d}
+            </span>
+          ))}
+        </div>
+        <p className="text-[12px] font-semibold text-ink-3 mt-1.5">{kk ? "Күн сайын жаңа сұрақ" : "A new question every day"}</p>
       </button>
 
       <Sheet open={showDebate} onClose={close} label={kk ? "Апта сөздері" : "Words of the week"}>
         <Debate
-          key={startKey}
+          key={dayKey}
+          dilemma={dilemma}
           kk={kk}
           week={week}
           entry={entry}
-          onChange={(next) => { setEntry(next); saveEntry(userId, startKey, next); }}
-          onSubmit={(next) => syncEntry(userId, week, startKey, next)}
+          onChange={(next) => { setEntry(next); saveEntry(userId, dayKey, next); }}
+          onSubmit={(next) => syncEntry(userId, week, dayKey, next)}
           onReward={onReward}
           seen={seen}
         />
@@ -145,9 +179,10 @@ export function WeekWordsCard({ lang, userId, progress = new Set<string>(), onRe
   );
 }
 
-function Debate({ kk, week, entry, onChange, onSubmit, onReward, seen }: {
+function Debate({ kk, week, dilemma, entry, onChange, onSubmit, onReward, seen }: {
   kk: boolean;
   week: Week;
+  dilemma: Dilemma;
   entry: Entry;
   onChange: (e: Entry) => void;
   onSubmit: (e: Entry) => void;
@@ -175,7 +210,7 @@ function Debate({ kk, week, entry, onChange, onSubmit, onReward, seen }: {
 
   const askShoqan = async (side: Side, text: string) => {
     setLoading(true);
-    const fallback = week.counter[side];
+    const fallback = dilemma.counter[side];
     let objection = fallback.en;
     let objectionKk = fallback.kk;
     let offline = true;
@@ -188,7 +223,7 @@ function Debate({ kk, week, entry, onChange, onSubmit, onReward, seen }: {
         body: JSON.stringify({
           messages: [{
             role: "user",
-            content: `Debate practice for an English learner (A2–B1). The question: "${week.dilemma.en}" The learner answered "${side === "yes" ? "Yes" : "No"}" and wrote: "${text}". Take the other side and disagree politely in two short, simple English sentences, using one of these words: ${week.words.map((x) => x.word).join(", ")}. End with a question. Then on a new line write the Kazakh translation in Cyrillic, starting with "KK:". Don't correct grammar.`,
+            content: `Debate practice for an English learner (A2–B1). The question: "${dilemma.en}" The learner answered "${side === "yes" ? "Yes" : "No"}" and wrote: "${text}". Take the other side and disagree politely in two short, simple English sentences, using one of these words: ${week.words.map((x) => x.word).join(", ")}. End with a question. Then on a new line write the Kazakh translation in Cyrillic, starting with "KK:". Don't correct grammar.`,
           }],
         }),
       });
@@ -225,14 +260,14 @@ function Debate({ kk, week, entry, onChange, onSubmit, onReward, seen }: {
   return (
     <div className="p-6 pt-2">
       {/* Right padding keeps the title and Listen clear of the sheet's close button. */}
-      <p className="eyebrow text-sky-deep pr-12">{tr("Апта сөздері · пікірталас", "Words of the week · debate")}</p>
+      <p className="eyebrow text-sky-deep pr-12">{tr("Бүгінгі пікірталас · апта сөздері", "Today's debate · words of the week")}</p>
       <div className="flex items-start gap-2 mt-1 pr-12">
-        <h3 className="font-display font-black text-[20px] text-ink leading-snug flex-1">{week.dilemma.en}</h3>
-        <button onClick={() => safePlayVoice(week.dilemma.en)} aria-label={tr("Тыңдау", "Listen")} className="w-11 h-11 rounded-full bg-sky-soft text-sky flex items-center justify-center shrink-0">
+        <h3 className="font-display font-black text-[20px] text-ink leading-snug flex-1">{dilemma.en}</h3>
+        <button onClick={() => safePlayVoice(dilemma.en)} aria-label={tr("Тыңдау", "Listen")} className="w-11 h-11 rounded-full bg-sky-soft text-sky flex items-center justify-center shrink-0">
           <Volume2 size={20} />
         </button>
       </div>
-      {kk && <p className="text-[14px] text-ink-2 mt-1 leading-relaxed">{week.dilemma.kk}</p>}
+      {kk && <p className="text-[14px] text-ink-2 mt-1 leading-relaxed">{dilemma.kk}</p>}
 
       {step === 1 && (
         <div className="mt-5">
@@ -379,9 +414,9 @@ function Debate({ kk, week, entry, onChange, onSubmit, onReward, seen }: {
               <p className="text-[15px] text-ink mt-1 leading-relaxed">{entry.reply}</p>
             </div>
           </div>
-          {/* A new week brings a new debate, so this one stays editable until Sunday. */}
+          {/* Tomorrow brings a new question, so today's answer stays editable until midnight. */}
           <button onClick={() => { onChange({ ...entry, objection: "", objectionKk: "", reply: "", finalSide: null, submitted: false }); setStep(2); }} className="btn btn-ghost w-full mt-4">
-            <Pencil size={16} /> {tr("Жексенбіге дейін өзгертуге болады", "You can change it until Sunday")}
+            <Pencil size={16} /> {tr("Бүгін түн ортасына дейін өзгертуге болады", "You can change it until midnight")}
           </button>
         </div>
       )}
