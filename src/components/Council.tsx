@@ -293,7 +293,7 @@ function CouncilRound({ q, kk, vote, onChange, onPush, onReward }: {
                 {q.options.map((opt, i) => (
                   <div key={i} className="flex items-center gap-2">
                     <span className="w-6 font-display font-black text-sm text-ink-2 shrink-0">{String.fromCharCode(65 + i)}</span>
-                    <div className="flex-1 h-6 rounded-lg bg-sand-2 overflow-hidden" aria-label={`${opt}: ${share(i)}%`}>
+                    <div className="flex-1 h-6 rounded-lg bg-sand-2 overflow-hidden" role="img" aria-label={`${opt}: ${share(i)}%`}>
                       <div className={`h-full ${i === vote.first ? "bg-sky" : "bg-sand-3"}`} style={{ width: `${share(i)}%` }} />
                     </div>
                     <span className="w-10 text-right text-sm font-bold text-ink-2 tabular-nums shrink-0">{share(i)}%</span>
