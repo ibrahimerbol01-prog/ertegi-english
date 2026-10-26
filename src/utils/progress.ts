@@ -47,13 +47,28 @@ export function saveProgress(userId: string, storyId: string, step: ProgressStep
 }
 
 /* Leitner boxes: mastery 0..5, days until the next review per box. */
-export const REVIEW_INTERVAL_DAYS = [0, 1, 3, 7, 14, 30];
+// Gaps that keep growing across a school year (Cepeda et al.: the best gap is a
+// share of how long the word must be remembered). Box 0 is a new word.
+export const REVIEW_INTERVAL_DAYS = [0, 1, 3, 7, 16, 35, 90];
 export const MAX_MASTERY = REVIEW_INTERVAL_DAYS.length - 1;
 
 export function nextReview(mastery: number, from = new Date()): string {
   const days = REVIEW_INTERVAL_DAYS[Math.min(Math.max(mastery, 0), MAX_MASTERY)];
   return new Date(from.getTime() + days * 86400000).toISOString();
 }
+
+// A forgotten word drops one box, not to the start, and comes back tomorrow.
+export function lapse(mastery: number, from = new Date()): { mastery: number; nextReviewAt: string } {
+  return { mastery: Math.max(mastery - 1, 0), nextReviewAt: new Date(from.getTime() + 86400000).toISOString() };
+}
+
+// The learner's own calendar day (Kazakhstan is UTC+5, so UTC would roll over at 5 am).
+export function localDay(d = new Date()): string {
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+}
+
+export const daysBetween = (a: string, b: string) =>
+  Math.round((new Date(b + "T00:00:00Z").getTime() - new Date(a + "T00:00:00Z").getTime()) / 86400000);
 
 export const isDue = (nextReviewAt: string | null | undefined, now = Date.now()) =>
   !nextReviewAt || new Date(nextReviewAt).getTime() <= now;
