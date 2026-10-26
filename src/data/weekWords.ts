@@ -34,7 +34,7 @@ export const WEEKS: Week[] = [
     ],
     dilemma: {
       kk: "Алдар Көсе бай адамның шапанын айламен алды. Ол кедей болғандықтан, бұл әділ ме?",
-      en: "Aldar Kose took the rich man's coat with a trick. Was that fair, because he was poor?",
+      en: "Aldar Köse took the rich man's coat with a trick. He was poor. Does that make it fair?",
     },
     counter: {
       yes: {
@@ -42,7 +42,7 @@ export const WEEKS: Week[] = [
         kk: "Бірақ айла бәрібір өтірік. Бай адам қорқып, шапанынан айырылды. Адамды қорқыту әділ ме, тіпті ол бай болса да?",
       },
       no: {
-        en: "But Aldar Kose was poor and cold, and nobody was hurt. Can a clever trick be a kind of justice?",
+        en: "But Aldar Köse was poor and cold, and nobody was hurt. Can a clever trick be a kind of justice?",
         kk: "Бірақ Алдар Көсе кедей әрі тоңып жүрді, ешкім зардап шеккен жоқ. Ақылды айла әділдіктің бір түрі бола ала ма?",
       },
     },
@@ -152,7 +152,8 @@ export function currentWeek(now = new Date()) {
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
   const days = Math.round((today.getTime() - EPOCH.getTime()) / 86400000);
   const index = Math.floor(days / 7);
-  const start = new Date(EPOCH.getTime() + index * 7 * 86400000);
+  // Calendar arithmetic, not milliseconds, so a DST change cannot shift the week start.
+  const start = new Date(EPOCH.getFullYear(), EPOCH.getMonth(), EPOCH.getDate() + index * 7);
   const startKey = `${start.getFullYear()}-${String(start.getMonth() + 1).padStart(2, "0")}-${String(start.getDate()).padStart(2, "0")}`;
   // 0 = Monday … 6 = Sunday.
   const weekday = ((days % 7) + 7) % 7;
