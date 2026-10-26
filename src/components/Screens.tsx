@@ -914,7 +914,7 @@ export function FlashcardsScreen({ savedWords, onReview, lang = "kk", mode, setM
             </span>
           </div>
           <div className="flip-face flip-back rounded-[24px] bg-sky shadow-[0_6px_0_var(--color-sky-deep)] flex flex-col items-center justify-center p-6 text-white">
-            <span className="text-xs font-bold uppercase tracking-[0.08em] text-white">Қазақша</span>
+            <span className="text-xs font-bold uppercase tracking-[0.08em] text-white/75">Қазақша</span>
             <span className="font-display font-black text-[32px] mt-2 text-center">{currentWord.translation}</span>
           </div>
         </div>
