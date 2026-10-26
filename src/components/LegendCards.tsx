@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
-import { ChevronRight, Headphones, Lock, RotateCcw, Snail } from "lucide-react";
+import { ChevronRight, Headphones, Lock, RotateCcw } from "lucide-react";
 import { QoshqarMuyiz, Shanyraq, Tumar, KilimStrip } from "./Ornaments";
 import { ScreenHeader, Sheet } from "./UIHelpers";
-import { safePlayVoice, stopVoice } from "../utils/voice";
-import { LEGENDS, RARITY, type LegendCard, type Ornament } from "../data/legends";
+import { stopVoice } from "../utils/voice";
+import { ScenePlayer } from "./ScenePlayer";
+import { LEGENDS, PASS, RARITY, type LegendCard, type Ornament, type Question } from "../data/legends";
 
 type Lang = "kk" | "en";
 const pick = (lang: string) => (lang === "kk" ? "kk" : "en") as Lang;
@@ -30,80 +31,147 @@ const ORNAMENT: Record<Ornament, (cls: string) => React.ReactNode> = {
   tumar: (cls) => <Tumar className={cls} strokeWidth={2.6} />,
 };
 
-/* Front of a collected card. */
-function CardFace({ card, lang, big = false }: { card: LegendCard; lang: Lang; big?: boolean }) {
-  const r = RARITY[card.rarity];
-  const legendary = card.rarity === "tarih";
+/* Colours of each kind of card: a bright face, a deep edge, a soft paper and
+   a text colour that keeps 4.5:1 on that paper. */
+const LOOK: Record<LegendCard["rarity"], { face: string; deep: string; soft: string; text: string; mark: string }> = {
+  ertegi: { face: "#12A3C6", deep: "#0B7E9A", soft: "#E1F4F9", text: "#075F75", mark: "#FFFFFF" },
+  epos: { face: "#22B07D", deep: "#15805A", soft: "#DDF5EA", text: "#0F6E4B", mark: "#FFFFFF" },
+  anyz: { face: "#E4572E", deep: "#B53D1A", soft: "#FDE6DE", text: "#9E3415", mark: "#FFFFFF" },
+  tarih: { face: "#2B3B66", deep: "#1F2B4D", soft: "#E4E8F3", text: "#1F2B4D", mark: "#FFB81F" },
+};
+
+/* Four-point star for the twinkles. */
+const Star = ({ className, style }: { className: string; style?: React.CSSProperties }) => (
+  <svg viewBox="0 0 10 10" className={className} style={style} aria-hidden="true">
+    <path d="M5 0 C5.6 3.6 6.4 4.4 10 5 C6.4 5.6 5.6 6.4 5 10 C4.4 6.4 3.6 5.6 0 5 C3.6 4.4 4.4 3.6 5 0Z" fill="#FFB81F" />
+  </svg>
+);
+
+/* The card's emblem: its ornament on a glossy medallion with a sun rim,
+   slow rays behind it and a couple of twinkling stars. `delay` staggers the
+   motion so a grid of cards doesn't move in step. */
+function Emblem({ card, size, delay = 0, onColor = false }: { card: LegendCard; size: "s" | "m" | "l"; delay?: number; onColor?: boolean }) {
+  const look = LOOK[card.rarity];
+  const box = { s: "w-[50px] h-[50px]", m: "w-[58px] h-[58px] sm:w-[70px] sm:h-[70px]", l: "w-[84px] h-[84px]" }[size];
+  const glyph = { s: "w-7 h-7", m: "w-8 h-8 sm:w-10 sm:h-10", l: "w-12 h-12" }[size];
+  const t = (s: number) => ({ animationDelay: `${-((delay * 0.7 + s) % 6)}s` });
   return (
-    <div className={`w-full aspect-[3/4] rounded-[22px] overflow-hidden border-[3px] ${r.frame} bg-card flex flex-col shadow-[0_4px_0_var(--color-line-2)]`}>
-      <div className={`relative flex-[1.25] ${r.tone} flex items-center justify-center ${legendary ? "text-sun" : "text-white/90"}`}>
-        <KilimStrip className="absolute top-0 inset-x-0 h-1.5 w-full opacity-80" />
-        {ORNAMENT[card.ornament](big ? "w-24 h-24" : "w-14 h-14")}
+    <div className="relative grid place-items-center">
+      <svg viewBox="0 0 100 100" className={`absolute w-[150%] h-[150%] animate-spin-slow`} style={t(0)} aria-hidden="true">
+        {Array.from({ length: 12 }, (_, i) => (
+          <path key={i} d="M50 4 L54 20 L46 20 Z" fill={onColor ? "#FFFFFF" : look.face} opacity={onColor ? (i % 2 ? 0.14 : 0.26) : i % 2 ? 0.16 : 0.28} transform={`rotate(${i * 30} 50 50)`} />
+        ))}
+      </svg>
+      <div className="animate-float" style={t(0.5)}>
+        <div
+          className={`relative ${box} rounded-full grid place-items-center overflow-hidden`}
+          style={onColor ? {
+            // A won card: a gold coin with the ornament struck in the card's colour.
+            background: "radial-gradient(circle at 32% 28%, #FFE7A3 0%, #FFB81F 50%, #D98E00 100%)",
+            boxShadow: `0 0 0 3px #FFFFFF, 0 5px 0 3px ${look.deep}`,
+          } : {
+            background: `radial-gradient(circle at 32% 28%, ${look.face} 0%, ${look.face} 45%, ${look.deep} 100%)`,
+            boxShadow: `0 0 0 3px #FFB81F, 0 0 0 5px ${look.deep}33, 0 5px 0 4px ${look.deep}`,
+          }}
+        >
+          <span className="absolute left-[14%] top-[10%] w-[46%] h-[30%] rounded-full bg-white/30 blur-[2px] -rotate-[20deg]" />
+          <span style={{ color: onColor ? look.deep : look.mark, filter: `drop-shadow(0 2px 0 ${onColor ? "#FFFFFF99" : look.deep})` }} className="relative">
+            {ORNAMENT[card.ornament](glyph)}
+          </span>
+        </div>
       </div>
-      <div className={`flex-1 flex flex-col justify-center text-center ${big ? "px-4 py-3" : "px-2 py-2"}`}>
-        <p className={`font-bold uppercase tracking-[0.08em] text-ink-3 ${big ? "text-xs mb-1" : "text-[9px] mb-0.5"}`}>{r[lang]}</p>
-        <p className={`font-display font-black text-ink leading-tight ${big ? "text-2xl" : "text-[12px] line-clamp-2"}`}>{lang === "kk" ? card.kk : card.name}</p>
-        {big && lang !== "kk" && <p className="text-ink-3 font-semibold mt-0.5 text-sm">{card.kk}</p>}
-      </div>
+      <Star className="absolute -top-1 -right-2 w-3.5 h-3.5 animate-twinkle" style={t(1.2)} />
+      <Star className="absolute bottom-1 -left-2.5 w-2.5 h-2.5 animate-twinkle" style={t(2.4)} />
     </div>
   );
 }
 
-/* Back of a card that is still to be won. */
-function CardBack({ card, lang }: { card: LegendCard; lang: Lang }) {
+/* Front of a collected card. */
+function CardFace({ card, lang, big = false, index = 0 }: { card: LegendCard; lang: Lang; big?: boolean; index?: number }) {
   const r = RARITY[card.rarity];
+  const look = LOOK[card.rarity];
   return (
-    <div className="w-full aspect-[3/4] rounded-[22px] overflow-hidden border-[3px] border-line bg-sand-2 flex flex-col shadow-[0_4px_0_var(--color-line-2)]">
-      <div className={`h-2 ${r.tone}`} />
-      <div className="flex-1 flex flex-col items-center justify-center gap-2 text-ink-2">
-        <span className="opacity-40">{ORNAMENT[card.ornament]("w-12 h-12")}</span>
-        <span className="flex items-center gap-1 text-[11px] font-bold uppercase tracking-[0.08em]">
-          <Lock size={12} /> {r[lang]}
+    <div
+      className="relative w-full aspect-[3/4] rounded-[22px] overflow-hidden border-[3px] border-sun bg-card flex flex-col"
+      style={{ boxShadow: `0 4px 0 #D98E00, 0 8px 22px -8px ${look.face}99` }}
+    >
+      <div className="relative flex-[1.3] flex items-center justify-center overflow-hidden pt-1.5" style={{ background: `linear-gradient(160deg, ${look.face} 0%, ${look.deep} 100%)` }}>
+        <KilimStrip className="absolute top-0 inset-x-0 h-1.5 w-full" />
+        <Emblem card={card} size={big ? "l" : "s"} delay={index} onColor />
+      </div>
+      <div className={`flex-1 flex flex-col justify-center text-center ${big ? "px-4 py-3" : "px-2 py-2"}`}>
+        <p className={`font-bold uppercase tracking-[0.08em] ${big ? "text-xs mb-1" : "text-[9px] mb-0.5"}`} style={{ color: look.text }}>{r[lang]}</p>
+        <p className={`font-display font-black text-ink leading-tight ${big ? "text-2xl" : "text-[12px] line-clamp-2"}`}>{lang === "kk" ? card.kk : card.name}</p>
+        {big && lang !== "kk" && <p className="text-ink-3 font-semibold mt-0.5 text-sm">{card.kk}</p>}
+      </div>
+      <span className="pointer-events-none absolute inset-y-0 left-0 w-1/3 bg-gradient-to-r from-transparent via-white/60 to-transparent animate-card-shine" style={{ animationDelay: `${-(index * 0.9) % 5.5}s` }} />
+    </div>
+  );
+}
+
+/* Back of a card that is still to be won: already in full colour, with a lock. */
+function CardBack({ card, lang, index = 0 }: { card: LegendCard; lang: Lang; index?: number }) {
+  const r = RARITY[card.rarity];
+  const look = LOOK[card.rarity];
+  return (
+    <div
+      className="relative w-full aspect-[3/4] rounded-[22px] overflow-hidden border-[3px] flex flex-col transition-transform duration-200 group-hover:-translate-y-1"
+      style={{ borderColor: `${look.face}55`, background: `linear-gradient(170deg, ${look.soft} 0%, #FFFFFF 95%)`, boxShadow: `0 4px 0 ${look.face}55` }}
+    >
+      <div className="h-2" style={{ background: look.face }} />
+      <div className="flex-1 flex flex-col items-center justify-center gap-3 pt-2">
+        <Emblem card={card} size="m" delay={index} />
+        <span className="flex items-center gap-1 text-[11px] font-black uppercase tracking-[0.08em]" style={{ color: look.text }}>
+          <Lock size={12} strokeWidth={3} /> {r[lang]}
         </span>
       </div>
-      <div className="py-2 text-center text-[11px] font-bold text-[#075F75] flex items-center justify-center gap-1">
-        <Headphones size={13} /> {lang === "kk" ? "Тыңда да аш" : "Listen to unlock"}
+      <div className="py-2 text-center text-[11px] font-bold flex items-center justify-center gap-1" style={{ color: look.text, background: `${look.face}1F` }}>
+        <Headphones size={13} strokeWidth={2.6} /> {lang === "kk" ? "Тыңда да аш" : "Listen to unlock"}
       </div>
+      <span className="pointer-events-none absolute inset-y-0 left-0 w-1/3 bg-gradient-to-r from-transparent via-white/70 to-transparent animate-card-shine" style={{ animationDelay: `${-(index * 0.9) % 5.5}s` }} />
     </div>
   );
 }
 
 /* Tiny card for the home preview: colour and ornament only. */
 function MiniCard({ card, owned }: { card: LegendCard; owned: boolean }) {
-  const r = RARITY[card.rarity];
+  const look = LOOK[card.rarity];
   return (
-    <div className={`relative w-full aspect-[3/4] rounded-xl overflow-hidden border-2 flex items-center justify-center shadow-[0_3px_0_var(--color-line-2)] ${owned ? `${r.tone} ${r.frame} ${card.rarity === "tarih" ? "text-sun" : "text-white"}` : "bg-card border-line text-ink-3"}`}>
-      {!owned && <span className={`absolute top-0 inset-x-0 h-1.5 ${r.tone}`} />}
-      {owned ? ORNAMENT[card.ornament]("w-8 h-8") : <span className="opacity-35">{ORNAMENT[card.ornament]("w-7 h-7")}</span>}
+    <div
+      className="relative w-full aspect-[3/4] rounded-xl overflow-hidden border-2 flex items-center justify-center"
+      style={owned
+        ? { background: `radial-gradient(circle at 35% 30%, ${look.face}, ${look.deep})`, borderColor: "#FFB81F", boxShadow: "0 3px 0 #D98E00", color: look.mark }
+        : { background: `linear-gradient(170deg, ${look.soft}, #FFFFFF)`, borderColor: `${look.face}55`, boxShadow: `0 3px 0 ${look.face}55`, color: look.face }}
+    >
+      {!owned && <span className="absolute top-0 inset-x-0 h-1.5" style={{ background: look.face }} />}
+      {ORNAMENT[card.ornament]("w-8 h-8")}
     </div>
   );
 }
 
-/* Listening challenge: two true/false lines and one gap, then the card is yours. */
+/* Listening challenge: six questions on the scene; four right and the card is yours. */
 function Challenge({ card, lang, onWin, onClose }: { card: LegendCard; lang: Lang; onWin: () => void; onClose: () => void }) {
-  const [tf, setTf] = useState<(boolean | null)[]>([null, null]);
-  const [gap, setGap] = useState<number | null>(null);
+  const total = card.qs.length;
+  const [answers, setAnswers] = useState<(number | null)[]>(() => card.qs.map(() => null));
   const [checked, setChecked] = useState(false);
   const [listened, setListened] = useState(false);
   const r = RARITY[card.rarity];
 
-  const tfOk = card.tf.map((q, i) => tf[i] === q.a);
-  const gapOk = gap === card.gap.answer;
-  const score = tfOk.filter(Boolean).length + (gapOk ? 1 : 0);
-  const won = checked && score >= 2;
-  const ready = tf.every((x) => x !== null) && gap !== null;
+  // True/false answers are stored as 1 (true) or 0 (false).
+  const rightAnswer = (q: Question) => (q.kind === "tf" ? (q.a ? 1 : 0) : q.answer);
+  const isRight = card.qs.map((q, i) => answers[i] === rightAnswer(q));
+  const score = isRight.filter(Boolean).length;
+  const won = checked && score >= PASS;
+  const answered = answers.filter((x) => x !== null).length;
+  const ready = answered === total;
 
-  const play = (rate: number) => {
-    setListened(true);
-    safePlayVoice(card.scene, undefined, rate);
-  };
+  const choose = (i: number, value: number) => setAnswers((prev) => prev.map((x, j) => (j === i ? value : x)));
   const check = () => {
     setChecked(true);
-    if (score >= 2) onWin();
+    if (score >= PASS) onWin();
   };
   const retry = () => {
-    setTf([null, null]);
-    setGap(null);
+    setAnswers(card.qs.map(() => null));
     setChecked(false);
   };
 
@@ -112,7 +180,7 @@ function Challenge({ card, lang, onWin, onClose }: { card: LegendCard; lang: Lan
       <div className="p-6 text-center">
         <div className="w-44 mx-auto animate-rank-pop"><CardFace card={card} lang={lang} big /></div>
         <p className="eyebrow text-sun-deep mt-5">{lang === "kk" ? "Карта сенікі!" : "The card is yours!"}</p>
-        <p className="text-sm font-bold text-ink mt-1">{score}/3 · +{r.xp} XP</p>
+        <p className="text-sm font-bold text-ink mt-1">{score}/{total} · +{r.xp} XP</p>
         <div className="mt-4 rounded-2xl bg-sand-2 p-4 text-left">
           <p className="eyebrow">{lang === "kk" ? "Білесің бе?" : "Did you know?"}</p>
           <p className="text-sm text-ink mt-1 leading-relaxed">{card.fact[lang]}</p>
@@ -122,24 +190,24 @@ function Challenge({ card, lang, onWin, onClose }: { card: LegendCard; lang: Lan
     );
   }
 
-  const tfButton = (i: number, value: boolean) => {
-    const chosen = tf[i] === value;
+  const option = (i: number, value: number, label: string) => {
+    const chosen = answers[i] === value;
+    const correct = rightAnswer(card.qs[i]) === value;
     let state = chosen ? "tile-selected" : "text-ink";
-    if (checked && chosen) state = tfOk[i] ? "tile-correct" : "tile-wrong animate-answer-wrong";
-    if (checked && !chosen && card.tf[i].a === value) state = "tile-correct";
+    if (checked && chosen) state = correct ? "tile-correct" : "tile-wrong animate-answer-wrong";
+    if (checked && !chosen && correct) state = "tile-correct";
     return (
       <button
+        key={label}
         disabled={checked}
         aria-pressed={chosen}
-        onClick={() => setTf((prev) => prev.map((x, j) => (j === i ? value : x)))}
-        className={`tile flex-1 py-2.5 text-sm font-bold ${state}`}
+        onClick={() => choose(i, value)}
+        className={`tile flex-1 min-w-0 px-2 py-2.5 text-sm font-bold leading-tight ${state}`}
       >
-        {value ? (lang === "kk" ? "Рас" : "True") : (lang === "kk" ? "Жалған" : "False")}
+        {label}
       </button>
     );
   };
-
-  const [before, after] = card.gap.sentence.split("___");
 
   return (
     <div className="p-5">
@@ -149,63 +217,55 @@ function Challenge({ card, lang, onWin, onClose }: { card: LegendCard; lang: Lan
       </div>
       <h3 className="font-display font-black text-xl text-ink mt-2">{lang === "kk" ? card.kk : card.name}</h3>
 
-      <div className="grid grid-cols-[1fr_auto] gap-2 mt-4">
-        <button onClick={() => play(1)} className="btn">
-          <Headphones size={18} /> {lang === "kk" ? "Тыңдау" : "Listen"}
-        </button>
-        <button onClick={() => play(0.75)} className="btn btn-ghost px-4" aria-label={lang === "kk" ? "Баяу" : "Slow"}>
-          <Snail size={18} />
-        </button>
+      <div className="mt-4">
+        <ScenePlayer text={card.scene} lang={lang} onPlay={() => setListened(true)} />
       </div>
-      {!listened && (
-        <p className="text-xs text-ink-3 mt-2 text-center">
-          {lang === "kk" ? "Алдымен тыңда, сосын жауап бер." : "Listen first, then answer."}
-        </p>
-      )}
+      <p className="text-xs text-ink-3 mt-2 text-center">
+        {!listened
+          ? (lang === "kk" ? "Алдымен тыңда, сосын жауап бер. Қажет болса, ойнатқышты кері айналдыр." : "Listen first, then answer. Drag the slider back to hear a part again.")
+          : (lang === "kk" ? `Жауап берілді: ${answered}/${total} · картаға ${PASS} дұрыс жауап керек` : `Answered: ${answered}/${total} · ${PASS} right wins the card`)}
+      </p>
 
-      <div className="mt-5 space-y-4">
-        {card.tf.map((q, i) => (
-          <div key={q.s}>
-            <p className="text-[15px] font-semibold text-ink">{i + 1}. {q.s}</p>
-            <div className="flex gap-2 mt-2">{tfButton(i, true)}{tfButton(i, false)}</div>
-          </div>
-        ))}
-        <div>
-          <p className="text-[15px] font-semibold text-ink">
-            3. {before}
-            <span className="inline-block min-w-[64px] border-b-[3px] border-sky mx-1 text-center text-sky-deep font-bold">
-              {gap !== null ? card.gap.options[gap] : " "}
-            </span>
-            {after}
-          </p>
-          <div className="flex gap-2 mt-2">
-            {card.gap.options.map((opt, i) => {
-              let state = gap === i ? "tile-selected" : "text-ink";
-              if (checked && gap === i) state = gapOk ? "tile-correct" : "tile-wrong animate-answer-wrong";
-              if (checked && gap !== i && i === card.gap.answer) state = "tile-correct";
-              return (
-                <button key={opt} disabled={checked} aria-pressed={gap === i} onClick={() => setGap(i)} className={`tile flex-1 py-2.5 text-sm font-bold ${state}`}>
-                  {opt}
-                </button>
-              );
-            })}
-          </div>
-        </div>
-      </div>
+      <ol className="mt-5 space-y-4">
+        {card.qs.map((q, i) => {
+          const [before, after] = q.s.split("___");
+          return (
+            <li key={q.s}>
+              <p lang="en" className="text-[15px] font-semibold text-ink">
+                {i + 1}.{" "}
+                {q.kind === "gap" ? (
+                  <>
+                    {before}
+                    <span className="inline-block min-w-[64px] border-b-[3px] border-sky mx-1 text-center text-sky-deep font-bold">
+                      {answers[i] !== null ? q.options[answers[i]!] : " "}
+                    </span>
+                    {after}
+                  </>
+                ) : q.s}
+              </p>
+              <div className={`flex gap-2 mt-2 ${q.kind === "mc" ? "flex-col" : ""}`}>
+                {q.kind === "tf"
+                  ? [option(i, 1, lang === "kk" ? "Рас" : "True"), option(i, 0, lang === "kk" ? "Жалған" : "False")]
+                  : q.options.map((opt, k) => option(i, k, opt))}
+              </div>
+            </li>
+          );
+        })}
+      </ol>
 
       {checked ? (
         <div className="mt-6 rounded-[20px] bg-felt-soft p-4 animate-pop-in">
-          <p className="font-display font-black text-felt-deep">{score}/3 · {lang === "kk" ? "Тағы бір рет тыңда" : "Listen once more"}</p>
-          <p className="text-sm text-ink-2 mt-1">{lang === "kk" ? "Картаны алу үшін кемінде 2 дұрыс жауап керек." : "You need at least 2 right to win the card."}</p>
+          <p className="font-display font-black text-felt-deep">{score}/{total} · {lang === "kk" ? "Тағы бір рет тыңда" : "Listen once more"}</p>
+          <p className="text-sm text-ink-2 mt-1">{lang === "kk" ? `Картаны алу үшін кемінде ${PASS} дұрыс жауап керек.` : `You need at least ${PASS} right to win the card.`}</p>
           <details className="mt-2">
             <summary className="text-sm font-bold text-sky-deep cursor-pointer">{lang === "kk" ? "Мәтінді көр" : "Show the text"}</summary>
-            <p className="text-sm text-ink mt-2 leading-relaxed">{card.scene}</p>
+            <p lang="en" className="text-sm text-ink mt-2 leading-relaxed">{card.scene}</p>
           </details>
           <button onClick={retry} className="btn btn-felt w-full mt-4"><RotateCcw size={18} /> {lang === "kk" ? "Қайтадан" : "Try again"}</button>
         </div>
       ) : (
         <button onClick={check} disabled={!ready} className="btn w-full mt-6">
-          {lang === "kk" ? "Тексеру" : "Check"}
+          {ready ? (lang === "kk" ? "Тексеру" : "Check") : (lang === "kk" ? `Тағы ${total - answered} сұрақ қалды` : `${total - answered} more to answer`)}
         </button>
       )}
     </div>
@@ -217,10 +277,8 @@ function CardDetail({ card, lang }: { card: LegendCard; lang: Lang }) {
   return (
     <div className="p-6">
       <div className="w-40 mx-auto"><CardFace card={card} lang={lang} big /></div>
-      <button onClick={() => safePlayVoice(card.scene)} className="btn w-full mt-5">
-        <Headphones size={18} /> {lang === "kk" ? "Қайта тыңдау" : "Listen again"}
-      </button>
-      <p className="text-[15px] text-ink leading-relaxed mt-4">{card.scene}</p>
+      <div className="mt-5"><ScenePlayer text={card.scene} lang={lang} /></div>
+      <p lang="en" className="text-[15px] text-ink leading-relaxed mt-4">{card.scene}</p>
       <div className="mt-4 rounded-2xl bg-sand-2 p-4">
         <p className="eyebrow">{lang === "kk" ? "Білесің бе?" : "Did you know?"}</p>
         <p className="text-sm text-ink mt-1 leading-relaxed">{card.fact[lang]}</p>
@@ -259,8 +317,8 @@ export function LegendScreen({ lang, userId, onReward }: { lang: string; userId?
       />
       <p className="text-[15px] text-ink-2 leading-relaxed -mt-2">
         {l === "kk"
-          ? "Қазақ ертегілері, жырлары, аңыздары мен тарихы. Ағылшынша сахнаны тыңда, 3 сұраққа жауап бер — карта сенікі."
-          : "Kazakh tales, epics, legends and history. Listen to a scene in English, answer 3 questions, and the card is yours."}
+          ? "Қазақ ертегілері, жырлары, аңыздары мен тарихы. Ағылшынша сахнаны тыңда, 6 сұраққа жауап бер — карта сенікі."
+          : "Kazakh tales, epics, legends and history. Listen to a scene in English, answer 6 questions, and the card is yours."}
       </p>
       <div className="flex flex-wrap gap-2 mt-3">
         {(Object.keys(RARITY) as (keyof typeof RARITY)[]).map((k) => (
@@ -270,9 +328,9 @@ export function LegendScreen({ lang, userId, onReward }: { lang: string; userId?
         ))}
       </div>
       <div className="grid grid-cols-3 sm:grid-cols-4 gap-3 mt-5">
-        {LEGENDS.map((card) => (
-          <button key={card.id} onClick={() => setActive({ card, play: !isOwned(card.id) })} className="text-left active:scale-[0.97] transition-transform" aria-label={isOwned(card.id) ? (l === "kk" ? card.kk : card.name) : l === "kk" ? `${RARITY[card.rarity][l]} картасы` : `${RARITY[card.rarity][l]} card`}>
-            {isOwned(card.id) ? <CardFace card={card} lang={l} /> : <CardBack card={card} lang={l} />}
+        {LEGENDS.map((card, i) => (
+          <button key={card.id} onClick={() => setActive({ card, play: !isOwned(card.id) })} className="group text-left active:scale-[0.97] transition-transform" aria-label={isOwned(card.id) ? (l === "kk" ? card.kk : card.name) : l === "kk" ? `${RARITY[card.rarity][l]} картасы` : `${RARITY[card.rarity][l]} card`}>
+            {isOwned(card.id) ? <CardFace card={card} lang={l} index={i} /> : <CardBack card={card} lang={l} index={i} />}
           </button>
         ))}
       </div>

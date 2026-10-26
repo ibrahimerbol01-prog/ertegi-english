@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState } from "react";
-import { ChevronRight, Lock, MessageCircle, Volume2, Check, WifiOff, Pencil } from "lucide-react";
+import { ChevronRight, MessageCircle, Volume2, Check, WifiOff, Pencil } from "lucide-react";
 import { STORIES } from "../constants";
 import { currentWeek, wordsUsed, type Week } from "../data/weekWords";
 import { supabase } from "../lib/supabase";
 import { safePlayVoice } from "../utils/voice";
 import { Sheet } from "./UIHelpers";
 
-/* Words of the week and the Friday debate (Word Generation): use the week's
+/* Words of the week and the debate (Word Generation): use the week's
    words in an argument, hear Shoqan disagree, answer him, then decide again. */
 
 type Side = "yes" | "no";
@@ -88,11 +88,8 @@ export function WeekWordsCard({ lang, userId, progress = new Set<string>(), onRe
   onReward?: (xp: number) => void;
 }) {
   const kk = lang === "kk";
-  const { week, startKey, weekday } = currentWeek();
+  const { week, startKey } = currentWeek();
   const seen = encounters(week, progress);
-  const allMet = week.words.every((ww) => (seen.get(ww.word) ?? 0) >= 2);
-  // Open from Friday, or earlier once every word has been met in two tales.
-  const open = weekday >= 4 || allMet;
   const [entry, setEntry] = useState<Entry>(() => loadEntry(userId, startKey));
   const [showDebate, setShowDebate] = useState(false);
   const cardRef = useRef<HTMLButtonElement>(null);
@@ -112,12 +109,10 @@ export function WeekWordsCard({ lang, userId, progress = new Set<string>(), onRe
             <p className="font-display font-extrabold text-ink text-[17px] mt-0.5">
               {entry.submitted
                 ? (kk ? "Пікірталас: жауабың сақталды" : "Debate: your answer is saved")
-                : open
-                  ? (kk ? "Пікірталас ашық" : "The debate is open")
-                  : (kk ? "Жұма: пікірталас" : "Friday: debate")}
+                : (kk ? "Пікірталас ашық" : "The debate is open")}
             </p>
           </div>
-          {entry.submitted ? <Check size={22} strokeWidth={3} className="text-jade shrink-0 mt-1" /> : open ? <ChevronRight size={22} className="text-ink-3 shrink-0 mt-1" /> : <Lock size={18} className="text-ink-3 shrink-0 mt-1" />}
+          {entry.submitted ? <Check size={22} strokeWidth={3} className="text-jade shrink-0 mt-1" /> : <ChevronRight size={22} className="text-ink-3 shrink-0 mt-1" />}
         </div>
         <div className="flex flex-wrap gap-2 mt-3">
           {week.words.map((ww) => {
@@ -132,13 +127,6 @@ export function WeekWordsCard({ lang, userId, progress = new Set<string>(), onRe
             );
           })}
         </div>
-        {!open && (
-          <p className="text-[13px] text-ink-2 mt-3 leading-relaxed">
-            {kk
-              ? `Пікірталас жұмада ашылады (${4 - weekday} күн қалды). Әр сөзді екі ертегіден тапсаң, ертерек ашылады.`
-              : `The debate opens on Friday (${4 - weekday} day${4 - weekday > 1 ? "s" : ""} left). Meet every word in two tales to open it sooner.`}
-          </p>
-        )}
       </button>
 
       <Sheet open={showDebate} onClose={close} label={kk ? "Апта сөздері" : "Words of the week"}>
@@ -146,8 +134,6 @@ export function WeekWordsCard({ lang, userId, progress = new Set<string>(), onRe
           key={startKey}
           kk={kk}
           week={week}
-          open={open}
-          weekday={weekday}
           entry={entry}
           onChange={(next) => { setEntry(next); saveEntry(userId, startKey, next); }}
           onSubmit={(next) => syncEntry(userId, week, startKey, next)}
@@ -159,11 +145,9 @@ export function WeekWordsCard({ lang, userId, progress = new Set<string>(), onRe
   );
 }
 
-function Debate({ kk, week, open, weekday, entry, onChange, onSubmit, onReward, seen }: {
+function Debate({ kk, week, entry, onChange, onSubmit, onReward, seen }: {
   kk: boolean;
   week: Week;
-  open: boolean;
-  weekday: number;
   entry: Entry;
   onChange: (e: Entry) => void;
   onSubmit: (e: Entry) => void;
@@ -188,20 +172,6 @@ function Debate({ kk, week, open, weekday, entry, onChange, onSubmit, onReward, 
   useEffect(() => {
     if (step === 2) textRef.current?.focus();
   }, [step]);
-
-  if (!open) {
-    return (
-      <div className="p-6 pt-2">
-        <p className="eyebrow text-sky-deep pr-12">{tr("Апта сөздері", "Words of the week")}</p>
-        <h3 className="font-display font-black text-[24px] text-ink leading-tight mt-1 pr-12">{tr("Пікірталас жұмада ашылады", "The debate opens on Friday")}</h3>
-        <p className="text-[15px] text-ink-2 mt-2 leading-relaxed">
-          {tr(`${4 - weekday} күн қалды. Оған дейін сөздерді ертегілерден тауып, мағынасын біліп ал. Әр сөзді екі ертегіден кездестірсең, пікірталас ертерек ашылады.`,
-            `${4 - weekday} day${4 - weekday > 1 ? "s" : ""} to go. Until then, find these words in the tales. Meet each word in two tales and the debate opens sooner.`)}
-        </p>
-        <WordList kk={kk} week={week} seen={seen} />
-      </div>
-    );
-  }
 
   const askShoqan = async (side: Side, text: string) => {
     setLoading(true);

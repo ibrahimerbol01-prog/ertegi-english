@@ -1,5 +1,5 @@
 /* Words of the week (Word Generation, Snow & Lawrence): five words that come
-   back in several tales, and a dilemma from the tales to argue on Friday.
+   back in several tales, and a dilemma from the tales to argue any day of the week.
    Every word here appears in two or more tales (most in three or more), so a learner meets it
    again across days, not only inside one story. */
 
