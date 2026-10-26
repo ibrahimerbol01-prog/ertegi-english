@@ -10,8 +10,10 @@ const STOP = new Set([
   "than", "then", "also", "just", "some", "only", "will", "would", "could", "said", "says", "one", "all", "any",
 ]);
 const stem = (w: string) => w.replace(/(ing|ed|es|s)$/, "");
+// Accents are folded so "Köse" and "Kose" count as the same name.
+const fold = (s: string) => s.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 const keywords = (s: string) =>
-  [...new Set((s.toLowerCase().match(/[a-z]+/g) ?? []).filter((w) => w.length >= 3 && !STOP.has(w)).map(stem))];
+  [...new Set((fold(s).toLowerCase().match(/[a-z]+/g) ?? []).filter((w) => w.length >= 3 && !STOP.has(w)).map(stem))];
 
 export function findEvidence(question: Question, texts: string[]): string | null {
   const answer = question.options[question.correct];
@@ -23,7 +25,7 @@ export function findEvidence(question: Question, texts: string[]): string | null
   const wanted = keywords(`${question.q ?? ""} ${answer}`);
   const answerWords = keywords(answer);
   // Names in the question (Tazsha, the khan's Ayaz) must appear, or the sentence is about someone else.
-  const names = keywords((question.q ?? "").match(/\b[A-Z][a-z]+/g)?.filter((w, i) => i > 0 || !/^(What|Why|Who|How|When|Where|Which)$/.test(w)).join(" ") ?? "");
+  const names = keywords(fold(question.q ?? "").match(/\b[A-Z][a-z]+/g)?.filter((w, i) => i > 0 || !/^(What|Why|Who|How|When|Where|Which)$/.test(w)).join(" ") ?? "");
   let best: { text: string; score: number } | null = null;
   for (const text of texts) {
     for (const raw of text.match(/[^.!?]+[.!?]+["”]?/g) ?? []) {

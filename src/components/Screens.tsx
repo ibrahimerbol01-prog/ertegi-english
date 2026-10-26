@@ -1287,12 +1287,12 @@ export function QuizScreen({ onReward, t, onQuizFinish, questions, storyTitle, o
         </div>
         <div className="grid grid-cols-3 gap-3 mt-7">
           {[
-            { label: tr("Дұрыс", "Correct"), value: `${correct}/${total}`, color: "border-sky text-sky-deep", head: "bg-sky" },
-            { label: tr("Бірден", "First try"), value: `${firstTry}/${total}`, color: "border-jade text-jade-deep", head: "bg-jade" },
-            { label: "XP", value: practice ? "—" : `+${firstTry * 10 + (correct - firstTry) * 5}`, color: "border-sun-deep text-ink", head: "bg-sun-deep" },
+            { label: tr("Дұрыс", "Correct"), value: `${correct}/${total}`, color: "border-sky text-sky-deep", head: "bg-sky-deep text-white" },
+            { label: tr("Бірден", "First try"), value: `${firstTry}/${total}`, color: "border-jade text-jade-deep", head: "bg-[#15805A] text-white" },
+            { label: "XP", value: practice ? "—" : `+${firstTry * 10 + (correct - firstTry) * 5}`, color: "border-sun-deep text-ink", head: "bg-sun-deep text-ink" },
           ].map((s) => (
             <div key={s.label} className={`rounded-2xl border-2 overflow-hidden ${s.color}`}>
-              <p className={`${s.head} text-white text-xs font-bold uppercase tracking-[0.06em] py-1 text-center truncate px-1`}>{s.label}</p>
+              <p className={`${s.head} text-xs font-bold uppercase tracking-[0.06em] py-1 text-center truncate px-1`}>{s.label}</p>
               <p className="font-display font-black text-xl text-center py-3 bg-card">{s.value}</p>
             </div>
           ))}
@@ -1334,7 +1334,7 @@ export function QuizScreen({ onReward, t, onQuizFinish, questions, storyTitle, o
         {isGap ? (
           <>
             <h2 className="font-display font-black text-[22px] text-ink">{tr("Бос орынды толтыр", "Fill in the blank")}</h2>
-            <p className="text-[18px] text-ink leading-relaxed mt-3">
+            <p lang="en" className="text-[18px] text-ink leading-relaxed mt-3">
               {(question.sentence || "").split("___")[0]}
               <span className={`inline-block min-w-[72px] border-b-[3px] mx-1 text-center font-bold ${done ? (status === "correct" ? "border-jade text-jade-deep" : "border-felt text-felt-deep") : "border-sky text-sky-deep"}`}>
                 {blank}
@@ -1343,11 +1343,11 @@ export function QuizScreen({ onReward, t, onQuizFinish, questions, storyTitle, o
             </p>
           </>
         ) : (
-          <h2 className="font-display font-black text-[22px] leading-snug text-ink">{question.q}</h2>
+          <h2 lang="en" className="font-display font-black text-[22px] leading-snug text-ink">{question.q}</h2>
         )}
       </div>
 
-      <div className="space-y-3">
+      <div lang="en" className="space-y-3">
         {question.options.map((opt: string, idx: number) => {
           const ruledOut = wrongPicks.includes(idx);
           let state = "text-ink hover:border-sky/40";
