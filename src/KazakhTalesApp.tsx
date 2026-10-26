@@ -1,8 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import type { Session } from "@supabase/supabase-js";
-import {
-  BookOpen, Trophy, Home as HomeIcon, User, Layers, Mic, Flame, Zap, Shield
-} from "lucide-react";
+import { IconYurt, IconBook, IconTrophy, IconCards, IconShield, IconMic, IconLearner, IconFlame, IconBolt } from "./components/Icons";
 import {
   LevelUpModal, AchievementBanner, XpToast,
   StaticOrnamentBg, SaveErrorToast, BrandMark, DailyGoalRing
@@ -300,20 +298,20 @@ export default function KazakhTalesApp({ session }: { session: Session }) {
   }
 
   const tabs = [
-    { id: "home",    label: t.navHome,    Icon: HomeIcon },
-    { id: "read",    label: t.navRead,    Icon: BookOpen },
-    { id: "quiz",    label: t.navQuiz,    Icon: Trophy   },
-    { id: "words",   label: lang === "kk" ? "Сөздер" : "Words", Icon: Layers },
-    { id: "cards",   label: lang === "kk" ? "Карталар" : "Cards", Icon: Shield },
-    { id: "speak",   label: t.navSpeak,   Icon: Mic      },
-    { id: "profile", label: t.navProfile, Icon: User     },
+    { id: "home",    label: t.navHome,    Icon: IconYurt },
+    { id: "read",    label: t.navRead,    Icon: IconBook },
+    { id: "quiz",    label: t.navQuiz,    Icon: IconTrophy },
+    { id: "words",   label: lang === "kk" ? "Сөздер" : "Words", Icon: IconCards },
+    { id: "cards",   label: lang === "kk" ? "Карталар" : "Cards", Icon: IconShield },
+    { id: "speak",   label: t.navSpeak,   Icon: IconMic },
+    { id: "profile", label: t.navProfile, Icon: IconLearner },
   ] as const;
 
   const dueCount = savedWords.filter((w) => isDue(w.nextReviewAt)).length;
 
   const wordsBadge = (id: string) =>
     id === "words" && dueCount > 0 ? (
-      <span className="absolute -top-1 -right-1.5 min-w-[18px] h-[18px] px-1 rounded-full bg-felt text-[10px] text-white flex items-center justify-center font-bold ring-2 ring-card">
+      <span className="absolute -top-1 -right-1.5 min-w-[18px] h-[18px] px-1 rounded-full bg-[#C4441E] text-[10px] text-white flex items-center justify-center font-bold ring-2 ring-card">
         {dueCount}
       </span>
     ) : null;
@@ -328,10 +326,10 @@ export default function KazakhTalesApp({ session }: { session: Session }) {
   const StatChips = () => (
     <div className="flex items-center gap-2">
       <span className="chip text-felt" title={t.streakLabel}>
-        <Flame size={16} className="fill-felt" /> {streakDays}
+        <IconFlame size={18} /> {streakDays}
       </span>
       <span className="chip relative text-sun-deep" title={t.totalXpLabel}>
-        <Zap size={16} className="fill-sun text-sun-deep" /> {xp}
+        <IconBolt size={18} /> {xp}
         <XpToast toast={xpToast} />
       </span>
     </div>
@@ -367,7 +365,7 @@ export default function KazakhTalesApp({ session }: { session: Session }) {
                 className={`flex items-center gap-4 px-4 min-h-[52px] rounded-2xl border-2 transition-colors w-full ${active ? "bg-sky-soft border-sky/60 text-sky-deep" : "border-transparent text-ink-2 hover:bg-sand-2"}`}
               >
                 <span className="relative">
-                  <Icon size={24} strokeWidth={active ? 2.6 : 2.2} />
+                  <Icon size={30} />
                   {wordsBadge(id)}
                 </span>
                 <span className="font-display text-[15px] font-extrabold tracking-wide uppercase">{label}</span>
@@ -523,10 +521,11 @@ export default function KazakhTalesApp({ session }: { session: Session }) {
                   key={id}
                   onClick={() => { if (id === "quiz") { setQuizLevel(null); setQuizStarted(false); } setTab(id); }}
                   aria-current={active ? "page" : undefined}
-                  className={`flex flex-col items-center justify-center gap-0.5 min-h-[50px] ${active ? "text-sky" : "text-ink-3"}`}
+                  className={`flex flex-col items-center justify-center gap-0.5 min-h-[50px] ${active ? "text-sky-deep" : "text-ink-2"}`}
                 >
-                  <span className="relative">
-                    <Icon size={24} strokeWidth={active ? 2.6 : 2} />
+                  {/* The active tab is in colour on a soft pill; the rest stay grey, so the state reads at a glance. */}
+                  <span className={`relative px-2 py-0.5 rounded-full transition-colors ${active ? "bg-sky-soft" : ""}`}>
+                    <Icon size={28} muted={!active} className={`transition-transform duration-200 ${active ? "scale-110" : ""}`} />
                     {wordsBadge(id)}
                   </span>
                   <span className={`text-[9px] min-[360px]:text-[10px] max-w-full truncate px-0.5 ${active ? "font-bold" : "font-medium"}`}>{label}</span>

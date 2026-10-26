@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { createPortal } from "react-dom";
-import { Check, Landmark, Lock, Sparkles } from "lucide-react";
+import { Check, Lock, Sparkles } from "lucide-react";
+import { IconScroll } from "./Icons";
 import { QoshqarMuyiz, Shanyraq, Tumar, KilimStrip } from "./Ornaments";
 import { safePlayVoice } from "../utils/voice";
 import { CloseButton } from "./UIHelpers";
@@ -155,8 +156,16 @@ export function OyuKilim({ progress, lang, maqalCount }: { progress: Set<string>
           const oyu = oyuForStory(i);
           const has = progress.has(`${s.id}:quiz`);
           return (
-            <div key={s.id} className={`aspect-square rounded-2xl flex flex-col items-center justify-center gap-1.5 border-2 ${has ? "bg-sun-soft border-sun text-sun-deep" : "bg-sand-2 border-line text-ink-3"}`}>
-              {has ? ORNAMENTS[oyu.id]("w-10 h-10") : <Lock size={20} />}
+            <div key={s.id} className={`aspect-square rounded-2xl flex flex-col items-center justify-center gap-1.5 border-2 ${has ? "bg-sun-soft border-sun text-sun-deep" : "bg-sand-2 border-line text-ink-2"}`}>
+              {has ? ORNAMENTS[oyu.id]("w-10 h-10") : (
+                // A faint outline of the ornament still to be earned, with a lock on it.
+                <span className="relative">
+                  <span className="block text-line-2">{ORNAMENTS[oyu.id]("w-10 h-10")}</span>
+                  <span className="absolute -right-1.5 -bottom-1 w-5 h-5 rounded-full bg-ink-2 text-white flex items-center justify-center ring-2 ring-sand-2">
+                    <Lock size={11} strokeWidth={3} aria-hidden="true" />
+                  </span>
+                </span>
+              )}
               <span className="text-[11px] font-bold text-center px-1 leading-tight">{has ? oyu.name[l] : `${l === "kk" ? "Ертегі" : "Tale"} ${i + 1}`}</span>
             </div>
           );
@@ -176,8 +185,8 @@ export function StoryHistory({ storyId, lang }: { storyId: string; lang: string 
   const l = pick(lang);
   return (
     <div className="rounded-2xl bg-night text-white p-4 flex gap-3">
-      <span className="w-10 h-10 rounded-xl bg-white/15 flex items-center justify-center shrink-0">
-        <Landmark size={20} />
+      <span className="w-11 h-11 rounded-xl bg-white/10 flex items-center justify-center shrink-0">
+        <IconScroll size={30} />
       </span>
       <div>
         <p className="text-xs font-bold uppercase tracking-[0.08em] text-sun">{l === "kk" ? "Тарихи дерек" : "History"}</p>

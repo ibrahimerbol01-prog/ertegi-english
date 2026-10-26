@@ -3,6 +3,7 @@ import { createPortal } from "react-dom";
 import { Check, X } from "lucide-react";
 import { QoshqarMuyiz, Shanyraq, SteppeBackground, KilimStrip } from "./Ornaments";
 import { useLang } from "../lang";
+import { Badge } from "./Icons";
 import { useEscape } from "../utils/useEscape";
 
 /* Brand mark used across screens: the qoşqar müiız horn pair. */
@@ -129,7 +130,7 @@ export const LevelUpModal = ({ show, rank, onClose }: { show: boolean; rank: num
   );
 };
 
-export const AchievementBanner = ({ achievement, onDone }: { achievement: { icon: string; title: string; desc: string; kk?: { title: string; desc: string } } | null; onDone: () => void }) => {
+export const AchievementBanner = ({ achievement, onDone }: { achievement: { icon: string; badge?: { glyph: string; color: string }; title: string; desc: string; kk?: { title: string; desc: string } } | null; onDone: () => void }) => {
   const kk = useLang() === "kk";
   const onDoneRef = useRef(onDone);
   useEffect(() => {
@@ -148,7 +149,9 @@ export const AchievementBanner = ({ achievement, onDone }: { achievement: { icon
   return (
     <div className="fixed top-[max(env(safe-area-inset-top),12px)] left-1/2 -translate-x-1/2 z-[70] w-[calc(100%-32px)] max-w-[380px] pointer-events-none">
       <div className="animate-achievement card glass p-3 flex items-center gap-3 pointer-events-auto cursor-pointer" onClick={() => onDoneRef.current()}>
-        <span className="w-11 h-11 rounded-full bg-sun-soft flex items-center justify-center text-2xl shrink-0">{achievement.icon}</span>
+        {achievement.badge
+          ? <Badge glyph={achievement.badge.glyph} color={achievement.badge.color} size={48} className="shrink-0" />
+          : <span className="w-11 h-11 rounded-full bg-sun-soft flex items-center justify-center text-2xl shrink-0" aria-hidden="true">{achievement.icon}</span>}
         <div className="min-w-0">
           <p className="eyebrow text-sun-deep">{kk ? "Белгі ашылды" : "Badge unlocked"}</p>
           <p className="font-display text-[15px] font-extrabold text-ink truncate">{kk && achievement.kk ? achievement.kk.title : achievement.title}</p>
