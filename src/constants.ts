@@ -1700,7 +1700,7 @@ export const DICT = {
     takeQuiz: "Take quiz",
     correctMsg: "Excellent!",
     wrongMsg: "Correct answer:",
-    storyDesc: "A tale of wit and cleverness featuring Aldar Kose and the rich man's coat.",
+    storyDesc: "A tale of wit and cleverness featuring Aldar Köse and the rich man's coat.",
     sceneAnimation: "Cinematic scene",
     selectLevelTitle: "Choose your level",
     selectLevelSub: "Choose your target English level to unlock the tailored text:",
@@ -1717,7 +1717,7 @@ export const DICT = {
     downloadBuklet: "Share",
     tapWordHint: "Tap any word to see its translation and hear the voice audio.",
     interactiveChoiceTitle: "Choose the plot",
-    choicePrompt: "What should Aldar Kose do in this situation?",
+    choicePrompt: "What should Aldar Köse do in this situation?",
     artifactUnlocked: "New cultural artefact unlocked! 🏛️",
     saveError: "Progress not saved — check your connection"
   }
@@ -1746,39 +1746,39 @@ export const STORIES = [
     title: "ALDAR KÖSE & THE RICH MAN'S COAT",
     sceneLabel: "CHAPTER I · STEPPE LEGENDS",
     sceneLabelKk: "I тарау · Дала аңыздары",
-    storyDesc: { en: "A tale of wit and cleverness featuring Aldar Kose and the rich man's coat.", kk: "Алдар Көсе мен байдың шапаны туралы айлакерлік пен тапқырлық аңызы." },
-    choicePrompt: "What should Aldar Kose do in this situation?",
+    storyDesc: { en: "A tale of wit and cleverness featuring Aldar Köse and the rich man's coat.", kk: "Алдар Көсе мен байдың шапаны туралы айлакерлік пен тапқырлық аңызы." },
+    choicePrompt: "What should Aldar Köse do in this situation?",
     choiceOptionA: "✨ A) Use a clever joke to trick the wealthy merchant",
     choiceOptionB: "🐴 B) Walk past him proudly without saying a word",
     levels: {
-      A1: "Aldar Kose is a poor man. He has no coat. He has no horse. But he is very clever. One day he sees a rich man on the road. The rich man has a big warm coat. Aldar Kose wants the coat. He has an idea. He looks behind the rich man. He shouts, \"Look! A wolf!\" The rich man is scared. He jumps down. He runs away fast. He drops his warm coat on the ground. Aldar Kose takes the coat. He puts it on. Now he is warm. He rides the horse home. He tells his friends the story. They laugh and laugh. They love his clever tricks.",
-      A2: "Aldar Kose is a poor but very clever man. He does not have a coat or a horse. One day, he meets a rich man on the dusty road. The rich man is riding a fine horse and wearing a beautiful warm coat. Aldar Kose really wants that coat, so he thinks of a clever plan. He points behind the rich man and shouts, \"Look! A hungry wolf is coming!\" The rich man is very afraid. He jumps off his horse and runs away as fast as he can. In his panic, he drops his warm coat on the ground. Aldar Kose picks up the coat and puts it on. He rides the horse back to his village, laughing quietly. When the villagers hear the story, they laugh too and praise Aldar Kose for his clever trick.",
-      B1: "Aldar Kose is a poor man, but he is famous for his cleverness. He owns no coat and no horse. One day, while walking along a dusty road, he meets an extremely rich and proud man riding a fine horse and wearing a thick, warm coat. Aldar Kose decides that he wants that coat for himself, so he comes up with a clever plan. He looks over the rich man's shoulder with a frightened expression and shouts that a pack of hungry wolves is running toward them. The rich man panics immediately. He jumps down from his horse, drops his heavy coat so that he can run faster, and disappears down the road without looking back. Aldar Kose calmly picks up the warm coat, puts it on, and climbs onto the horse. He rides back to his village feeling very pleased with himself. That evening, he tells the story to his neighbors, and everyone laughs at how the proud rich man was outsmarted by a poor but clever man.",
-      B2: "Although Aldar Kose owns nothing but the clothes on his back, he is renowned across the steppe for his sharp wit. One dusty afternoon, as he wanders along a lonely road, he comes across an arrogant, wealthy man riding a fine horse and wrapped in a magnificent, thick coat. Aldar Kose immediately decides that he deserves that coat far more than its owner does, and within moments he has invented a plan. Feigning terror, he glances over the rich man's shoulder and cries out that a pack of wolves is racing toward them across the steppe. Convinced by Aldar Kose's performance, the wealthy man panics, leaps from his horse, and tears off his coat so that he can run unhindered. He sprints away without a backward glance, leaving both horse and coat behind. Aldar Kose calmly gathers the abandoned coat, puts it on, mounts the horse, and rides home at a leisurely pace, thoroughly amused by how easily wealth can be separated from foolishness. When he later recounts the tale to his neighbors, the whole village roars with laughter at the rich man's expense.",
-      C1: "Despite possessing neither coat nor horse, Aldar Kose has earned a reputation across the steppe for his cunning wit and silver tongue. One scorching afternoon, as he trudges along a dusty, deserted road, fate delivers him an encounter with an insufferably wealthy merchant, resplendent in a magnificent coat and mounted upon a fine horse. Aldar Kose, ever alert to opportunity, resolves at once that such a coat is wasted on so vain a man, and within moments he has conceived an ingenious scheme. Adopting an expression of pure terror, he glances over the merchant's shoulder and cries that a ravenous pack of wolves is bearing down upon them across the open steppe. Thoroughly convinced, the merchant is overcome with panic; he flings himself from his horse, tears off his heavy coat to lighten his flight, and flees down the road without so much as a backward glance. Aldar Kose, suppressing his laughter, calmly retrieves the abandoned coat, mounts the merchant's horse, and rides home at an unhurried pace, marveling at how easily pride and wealth can be parted from good sense. That evening, as he recounts the tale by the fire, the entire village erupts in laughter, and Aldar Kose's legend as the steppe's most cunning trickster grows a little larger still.",
+      A1: "Aldar Köse is a poor man. He has no coat. He has no horse. But he is very clever. One day he sees a rich man on the road. The rich man has a big warm coat. Aldar Köse wants the coat. He has an idea. He looks behind the rich man. He shouts, \"Look! A wolf!\" The rich man is scared. He jumps down. He runs away fast. He drops his warm coat on the ground. Aldar Köse takes the coat. He puts it on. Now he is warm. He rides the horse home. He tells his friends the story. They laugh and laugh. They love his clever tricks.",
+      A2: "Aldar Köse is a poor but very clever man. He does not have a coat or a horse. One day, he meets a rich man on the dusty road. The rich man is riding a fine horse and wearing a beautiful warm coat. Aldar Köse really wants that coat, so he thinks of a clever plan. He points behind the rich man and shouts, \"Look! A hungry wolf is coming!\" The rich man is very afraid. He jumps off his horse and runs away as fast as he can. In his panic, he drops his warm coat on the ground. Aldar Köse picks up the coat and puts it on. He rides the horse back to his village, laughing quietly. When the villagers hear the story, they laugh too and praise Aldar Köse for his clever trick.",
+      B1: "Aldar Köse is a poor man, but he is famous for his cleverness. He owns no coat and no horse. One day, while walking along a dusty road, he meets an extremely rich and proud man riding a fine horse and wearing a thick, warm coat. Aldar Köse decides that he wants that coat for himself, so he comes up with a clever plan. He looks over the rich man's shoulder with a frightened expression and shouts that a pack of hungry wolves is running toward them. The rich man panics immediately. He jumps down from his horse, drops his heavy coat so that he can run faster, and disappears down the road without looking back. Aldar Köse calmly picks up the warm coat, puts it on, and climbs onto the horse. He rides back to his village feeling very pleased with himself. That evening, he tells the story to his neighbors, and everyone laughs at how the proud rich man was outsmarted by a poor but clever man.",
+      B2: "Although Aldar Köse owns nothing but the clothes on his back, he is renowned across the steppe for his sharp wit. One dusty afternoon, as he wanders along a lonely road, he comes across an arrogant, wealthy man riding a fine horse and wrapped in a magnificent, thick coat. Aldar Köse immediately decides that he deserves that coat far more than its owner does, and within moments he has invented a plan. Feigning terror, he glances over the rich man's shoulder and cries out that a pack of wolves is racing toward them across the steppe. Convinced by Aldar Köse's performance, the wealthy man panics, leaps from his horse, and tears off his coat so that he can run unhindered. He sprints away without a backward glance, leaving both horse and coat behind. Aldar Köse calmly gathers the abandoned coat, puts it on, mounts the horse, and rides home at a leisurely pace, thoroughly amused by how easily wealth can be separated from foolishness. When he later recounts the tale to his neighbors, the whole village roars with laughter at the rich man's expense.",
+      C1: "Despite possessing neither coat nor horse, Aldar Köse has earned a reputation across the steppe for his cunning wit and silver tongue. One scorching afternoon, as he trudges along a dusty, deserted road, fate delivers him an encounter with an insufferably wealthy merchant, resplendent in a magnificent coat and mounted upon a fine horse. Aldar Köse, ever alert to opportunity, resolves at once that such a coat is wasted on so vain a man, and within moments he has conceived an ingenious scheme. Adopting an expression of pure terror, he glances over the merchant's shoulder and cries that a ravenous pack of wolves is bearing down upon them across the open steppe. Thoroughly convinced, the merchant is overcome with panic; he flings himself from his horse, tears off his heavy coat to lighten his flight, and flees down the road without so much as a backward glance. Aldar Köse, suppressing his laughter, calmly retrieves the abandoned coat, mounts the merchant's horse, and rides home at an unhurried pace, marveling at how easily pride and wealth can be parted from good sense. That evening, as he recounts the tale by the fire, the entire village erupts in laughter, and Aldar Köse's legend as the steppe's most cunning trickster grows a little larger still.",
     },
     quizQuestions: [
       {
         type: "mcq",
-        q: "Why was Aldar Kose famous across the steppe?",
+        q: "Why was Aldar Köse famous across the steppe?",
         options: ["His rich golden coat", "His sharp wit and cleverness", "His large army of horses", "His castle in the mountains"],
         correct: 1
       },
       {
         type: "mcq",
-        q: "What did Aldar Kose NOT own?",
+        q: "What did Aldar Köse NOT own?",
         options: ["A coat and a horse", "A house and land", "Books and gold", "Sheep and camels"],
         correct: 0
       },
       {
         type: "fillblank",
-        sentence: "Aldar Kose shouted, \"Look! A ___ is coming!\"",
+        sentence: "Aldar Köse shouted, \"Look! A ___ is coming!\"",
         options: ["merchant", "wolf", "horse", "villager"],
         correct: 1
       },
       {
         type: "mcq",
-        q: "What trick did Aldar Kose use to get the coat?",
+        q: "What trick did Aldar Köse use to get the coat?",
         options: ["He offered to buy it", "He challenged the man to a race", "He shouted that wolves were coming", "He asked the man's wife for it"],
         correct: 2
       },
@@ -1797,7 +1797,7 @@ export const STORIES = [
       {
         type: "mcq",
         q: "How did the story end?",
-        options: ["The rich man caught Aldar Kose", "Aldar Kose lost the horse too", "Aldar Kose rode home and the village laughed at the story", "The wolves really did appear"],
+        options: ["The rich man caught Aldar Köse", "Aldar Köse lost the horse too", "Aldar Köse rode home and the village laughed at the story", "The wolves really did appear"],
         correct: 2
       },
     ],

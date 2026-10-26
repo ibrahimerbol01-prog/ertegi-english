@@ -154,7 +154,8 @@ export default function AuthScreen() {
   };
 
   const handleGoogleSignIn = async () => {
-    if (!agreed) {
+    // In sign-in mode there is no checkbox: the note under the button says that continuing means agreeing.
+    if (mode === "signup" && !agreed) {
       setError(tr("Алдымен құпиялық саясатына келіс: төмендегі белгіні қой.", "Please agree to the Privacy Policy first — check the box below."));
       return;
     }
@@ -204,6 +205,15 @@ export default function AuthScreen() {
               </svg>
               {tr("Google арқылы кіру", "Continue with Google")}
             </button>
+            {mode === "signin" && (
+              <p className="-mt-1 text-xs text-ink-2 text-center leading-relaxed">
+                {tr("Google арқылы кірсең,", "By continuing with Google you agree to the")}{" "}
+                <button type="button" onClick={() => setShowPolicy(true)} className="text-sky font-semibold">
+                  {tr("құпиялық саясатымен", "Privacy Policy")}
+                </button>
+                {kk && " келісесің"}
+              </p>
+            )}
             <div className="flex items-center gap-3">
               <div className="flex-1 h-px bg-line" />
               <span className="text-xs font-semibold text-ink-3 uppercase tracking-wider">{tr("немесе", "or")}</span>

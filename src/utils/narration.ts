@@ -1,4 +1,5 @@
 import { supabase } from "../lib/supabase";
+import { foldAccents } from "./text";
 
 /* Story narration for read-along: a neural Azure voice reads the whole text in
    one go, so sentences join the way a person reads them. Word timings come
@@ -94,7 +95,7 @@ export function bestBrowserVoice(): SpeechSynthesisVoice | null {
 
 /* Match spoken words to the reader's tokens in order. Matching by text, not by
    character offset, keeps the two in step whatever the voice does with quotes. */
-const clean = (s: string) => s.toLowerCase().replace(/[^a-z0-9]/g, "");
+const clean = (s: string) => foldAccents(s).toLowerCase().replace(/[^a-z0-9]/g, "");
 export function alignWords(words: Narration["words"], tokens: string[]): number[] {
   let cursor = 0;
   return words.map((w) => {

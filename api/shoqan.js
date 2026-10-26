@@ -18,7 +18,7 @@ When the learner asks about a quiz question they have not answered yet, do not g
 
 THE APP'S SCREENS (bottom navigation, Kazakh labels):
 - Басты (Home) — overview, daily goal ring, story selection
-- Оқу (Read) — pick a CEFR level (A1-C1), read the Aldar Kose story, tap any word for its translation, "Read Along" plays the story aloud word-by-word with adjustable speed, an interactive visual-novel mode lets the reader make choices in English
+- Оқу (Read) — pick a CEFR level (A1-C1), read the Aldar Köse story, tap any word for its translation, "Read Along" plays the story aloud word-by-word with adjustable speed, an interactive visual-novel mode lets the reader make choices in English
 - The home path — each tale is a unit with islands A1-C1 (reading + a short 4-question check per level) and a final story quiz; finishing a tale earns Shoqan's bata (blessing) and a Kazakh ornament (oıu) for the learner's kilim. Home also shows Shoqan's tip of the day and a Kazakh proverb of the day to match with its English equivalent.
 - Сынақ (Quiz) — 7 questions per attempt, no timer and no lives. A wrong answer shows the sentence from the tale that holds the answer and gives one more try; after a second miss the right answer is shown. 10 XP for a first-try answer, 5 for a second-try one. Missed questions can be practised again at the end.
 - Сөздер (Vocabulary) — every word the learner has tapped and saved, reviewed as flashcards ("I knew it" / "Not yet", in Leitner boxes) or a "find the pair" matching game

@@ -5,7 +5,7 @@ import {
   Check, X, Mic, MicOff, LogOut, Share2, BookOpen, Lock, Plus, MessageCircle
 } from "lucide-react";
 import { DailyGoalRing, ScreenHeader, Sheet, BrandMark } from "./UIHelpers";
-import { displayTitle } from "../utils/text";
+import { displayTitle, foldAccents } from "../utils/text";
 import { Shanyraq, OrnamentBand, Tumar, SteppeBackground, KilimStrip, QoshqarMuyiz } from "./Ornaments";
 import { safePlayVoice, stopVoice } from "../utils/voice";
 import { narrate, alignWords, bestBrowserVoice, primeAudio } from "../utils/narration";
@@ -55,8 +55,8 @@ function useTr() {
 }
 
 const LEVEL_COLORS: Record<string, { bg: string; edge: string; island: string; soft: string }> = {
-  A1: { bg: "bg-jade", edge: "shadow-[0_4px_0_var(--color-jade-deep)]", island: "shadow-[0_7px_0_var(--color-jade-deep)]", soft: "text-jade-deep" },
-  A2: { bg: "bg-sky", edge: "shadow-[0_4px_0_var(--color-sky-deep)]", island: "shadow-[0_7px_0_var(--color-sky-deep)]", soft: "text-sky-deep" },
+  A1: { bg: "bg-[#15805A]", edge: "shadow-[0_4px_0_#0F6446]", island: "shadow-[0_7px_0_#0F6446]", soft: "text-jade-deep" },
+  A2: { bg: "bg-sky-deep", edge: "shadow-[0_4px_0_#075F75]", island: "shadow-[0_7px_0_#075F75]", soft: "text-sky-deep" },
   B1: { bg: "bg-sun", edge: "shadow-[0_4px_0_var(--color-sun-deep)]", island: "shadow-[0_7px_0_var(--color-sun-deep)]", soft: "text-sun-deep" },
   B2: { bg: "bg-felt", edge: "shadow-[0_4px_0_var(--color-felt-deep)]", island: "shadow-[0_7px_0_var(--color-felt-deep)]", soft: "text-felt-deep" },
   C1: { bg: "bg-night", edge: "shadow-[0_4px_0_#121a31]", island: "shadow-[0_7px_0_#121a31]", soft: "text-night" },
@@ -118,10 +118,11 @@ const SHOQAN_TIPS = [
 
 /* --- 2. HOME SCREEN: greeting, daily goal, and the caravan path --- */
 const PATH_OFFSETS = [0, 52, 78, 52, 0, -52, -78, -52];
+// Fills are one step deeper than the brand tokens so white text keeps 4.5:1 (same values as .btn).
 const UNIT_COLORS = [
-  { bg: "bg-sky", edge: "shadow-[0_4px_0_var(--color-sky-deep)]" },
-  { bg: "bg-felt", edge: "shadow-[0_4px_0_var(--color-felt-deep)]" },
-  { bg: "bg-jade", edge: "shadow-[0_4px_0_var(--color-jade-deep)]" },
+  { bg: "bg-sky-deep", edge: "shadow-[0_4px_0_#075F75]" },
+  { bg: "bg-[#C4441E]", edge: "shadow-[0_4px_0_#973213]" },
+  { bg: "bg-[#15805A]", edge: "shadow-[0_4px_0_#0F6446]" },
   { bg: "bg-night", edge: "shadow-[0_4px_0_#121a31]" },
 ];
 
@@ -249,12 +250,12 @@ export function HomeScreen({ onStartRead, onStartQuiz, t, lang, userName = "", s
           <section key={story.id} className="space-y-6">
             <div className={`relative rounded-[22px] ${unit.bg} ${unit.edge} text-white px-5 py-4 overflow-hidden`}>
               <OrnamentBand className="absolute -bottom-0.5 inset-x-0 h-4 w-full text-white/20" />
-              <p className="text-xs font-bold uppercase tracking-[0.08em] text-white/80">
+              <p className="text-xs font-bold uppercase tracking-[0.08em] text-white">
                 {lang === "kk" ? `${si + 1}-бөлім` : `Unit ${si + 1}`}
               </p>
               <div className="flex items-end justify-between gap-3">
                 <h3 className="font-display font-black text-xl leading-tight">{displayTitle(story.title)}</h3>
-                <span className="text-sm font-bold bg-white/20 rounded-full px-3 h-7 flex items-center shrink-0">{doneCount}/{LEVEL_DETAILS.length + 1}</span>
+                <span className="text-sm font-bold bg-black/20 rounded-full px-3 h-7 flex items-center shrink-0">{doneCount}/{LEVEL_DETAILS.length + 1}</span>
               </div>
             </div>
 
@@ -462,7 +463,7 @@ export function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, s
 
   const handleWordClick = (word: string) => {
     // Try the word as written ("didn't"), then without a possessive ("man's" -> "man"), then letters only.
-    const withApostrophe = word.toLowerCase().replace(/[’]/g, "'").replace(/[^a-z']/g, "").replace(/^'+|'+$/g, "");
+    const withApostrophe = foldAccents(word).toLowerCase().replace(/[’]/g, "'").replace(/[^a-z']/g, "").replace(/^'+|'+$/g, "");
     const candidates = [withApostrophe, withApostrophe.replace(/'s$/, ""), withApostrophe.replace(/[^a-z]/g, "")];
     const found = candidates.map((c) => WORD_TRANSLATIONS[c]).find(Boolean);
     if (isReadAlongPlaying) { stopNarration(); setIsReadAlongPlaying(false); }
@@ -579,12 +580,12 @@ export function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, s
     }
   };
 
-  const cleanActive = activeWord ? activeWord.replace(/[^a-zA-Z]/g, "").toLowerCase() : "";
+  const cleanActive = activeWord ? foldAccents(activeWord).replace(/[^a-zA-Z]/g, "").toLowerCase() : "";
   const alreadySaved = !!activeWord && savedWords && savedWords.some((w: any) => w.word === cleanActive);
   const levelColor = LEVEL_COLORS[selectedLevel] || LEVEL_COLORS.A1;
   // Saved words: learning ones get a sun highlight, mastered ones a jade underline.
   const savedMastery = new Map<string, number>((savedWords || []).map((w: any) => [w.word, w.mastery ?? 0]));
-  const cleanTok = (tok: string) => tok.replace(/[^a-zA-Z]/g, "").toLowerCase();
+  const cleanTok = (tok: string) => foldAccents(tok).replace(/[^a-zA-Z]/g, "").toLowerCase();
   const savedInText = new Set(tokens.map(cleanTok).filter((w: string) => savedMastery.has(w))).size;
   const { week } = currentWeek();
   const activeWeekWord = activeWord ? weekWordOf(week, activeWord) : null;
@@ -671,7 +672,7 @@ export function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, s
       </div>
 
       {/* Story text */}
-      <div className="card p-5 sm:p-7 max-h-[440px] overflow-y-auto">
+      <div tabIndex={0} role="region" aria-label={lang === "kk" ? "Ертегі мәтіні" : "Story text"} className="card p-5 sm:p-7 max-h-[440px] overflow-y-auto">
         {(savedInText > 0 || weekInText) && (
           <p className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs font-semibold text-ink-2 mb-3">
             {weekInText && <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded border-b-2 border-dashed border-sky" />{lang === "kk" ? "Апта сөзі" : "Word of the week"}</span>}
@@ -682,7 +683,7 @@ export function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, s
             </>}
           </p>
         )}
-        <p className="text-[18px] text-ink leading-[1.9]">
+        <p lang="en" className="text-[18px] text-ink leading-[1.9]">
           {tokens.map((tok: string, i: number) => {
             const isWord = /[a-zA-Z]/.test(tok);
             const inSentence = readAlongSentence !== null && sentenceOf[i] === readAlongSentence;
@@ -1504,7 +1505,7 @@ const SPEAK_PHRASES: Record<string, string[]> = Object.fromEntries(
 
 // Share of the target's words the learner actually said. Below half, they read
 // something else, and a pronunciation score would only mislead.
-const speechWords = (s: string) => s.toLowerCase().replace(/’/g, "'").match(/[a-z]+(?:'[a-z]+)?/g) ?? [];
+const speechWords = (s: string) => foldAccents(s).toLowerCase().replace(/’/g, "'").match(/[a-z]+(?:'[a-z]+)?/g) ?? [];
 function matchShare(target: string, said: string) {
   const heard = new Set(speechWords(said));
   const wanted = speechWords(target);

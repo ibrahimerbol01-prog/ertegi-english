@@ -11,3 +11,6 @@ export const displayTitle = (s: string) =>
         if (i > 0 && SMALL_WORDS.has(lower)) return lower;
         return lower.charAt(0).toUpperCase() + lower.slice(1);
       }).join(" ");
+
+// Strip diacritics so "Köse" in the text matches "Kose" from speech recognition or TTS word timings.
+export const foldAccents = (s: string) => s.normalize("NFD").replace(/[̀-ͯ]/g, "");
