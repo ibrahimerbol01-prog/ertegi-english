@@ -6,6 +6,10 @@ import KazakhTalesApp from "./KazakhTalesApp";
 import { IntroScreen } from "./components/Screens";
 import { DICT } from "./constants";
 import { loadLang } from "./lang";
+import { capturePendingClass } from "./utils/classes";
+
+// A class link (?class=CODE) is remembered before the intro and sign-in, then offered after.
+capturePendingClass();
 
 export default function App() {
   const [session, setSession] = useState<Session | null>(null);

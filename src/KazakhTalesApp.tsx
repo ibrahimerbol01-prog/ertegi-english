@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import { Users } from "lucide-react";
 import type { Session } from "@supabase/supabase-js";
 import { IconYurt, IconBook, IconTrophy, IconCards, IconShield, IconMic, IconLearner, IconFlame, IconBolt } from "./components/Icons";
 import {
@@ -20,6 +21,9 @@ import { buildLevelQuiz } from "./utils/levelQuiz";
 import { BataModal, OyuKilim, TurkicWords, loadMaqals } from "./components/Culture";
 import { WordCoach } from "./components/WordCoach";
 import { LegendScreen } from "./components/LegendCards";
+import { TeacherScreen } from "./components/Teacher";
+import { AssignmentsCard, JoinClassSheet, MyClassesSection } from "./components/StudentClasses";
+import { flushQuizResults, saveQuizResult, takePendingClass } from "./utils/classes";
 import {
   loadProgress, saveProgress, progressKey, loadLocalReviews, saveReview,
   nextReview, lapse, localDay, daysBetween, isDue, MAX_MASTERY, type ProgressStep
@@ -35,6 +39,15 @@ export default function KazakhTalesApp({ session }: { session: Session }) {
   const scrollRef = useRef<HTMLDivElement | null>(null);
 
   const [tab, setTab] = useState("home");
+  // A class link opened before sign-in: offer to join once the app is open.
+  const [pendingCode, setPendingCode] = useState<string | null>(takePendingClass);
+  const [isTeacher, setIsTeacher] = useState(() => {
+    try { return localStorage.getItem(`ertegi_is_teacher_${userId}`) === "1"; } catch { return false; }
+  });
+  const markTeacher = (yes: boolean) => {
+    setIsTeacher(yes);
+    try { if (yes) localStorage.setItem(`ertegi_is_teacher_${userId}`, "1"); else localStorage.removeItem(`ertegi_is_teacher_${userId}`); } catch { /* storage blocked */ }
+  };
   const [selectedLevel, setSelectedLevel] = useState<string | null>(null);
   // Set when the quiz was opened from the reader: a short check for that level only.
   const [quizLevel, setQuizLevel] = useState<ProgressStep | null>(null);
@@ -267,6 +280,8 @@ export default function KazakhTalesApp({ session }: { session: Session }) {
   const handleQuizFinish = (correctCount: number, total: number, firstTry: number) => {
     const storyId = selectedStory || STORIES[0].id;
     const step = quizLevel ?? "quiz";
+    // The score goes to the teacher's report; it waits on the device while offline.
+    saveQuizResult(userId, storyId, step, correctCount, total, firstTry);
     if (correctCount >= Math.ceil(total * 0.6)) {
       // First time a whole tale is finished: the elder's blessing and its ornament.
       if (step === "quiz" && !progress.has(progressKey(storyId, "quiz"))) setBataStory(storyId);
@@ -329,6 +344,14 @@ export default function KazakhTalesApp({ session }: { session: Session }) {
     );
   };
 
+  // Quiz scores saved offline go up on start and whenever the connection returns.
+  useEffect(() => {
+    void flushQuizResults(userId);
+    const online = () => void flushQuizResults(userId);
+    window.addEventListener("online", online);
+    return () => window.removeEventListener("online", online);
+  }, [userId]);
+
   // Each screen starts at the top, like a new page.
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: 0 });
@@ -388,6 +411,13 @@ export default function KazakhTalesApp({ session }: { session: Session }) {
       {/* The quiz is a focus mode: Shoqan steps aside so he never covers the answer buttons. */}
       <ShoqanChat hidden={tab === "quiz" && quizStarted} />
       <SaveErrorToast show={showSaveError} message={t.saveError} />
+      <JoinClassSheet
+        open={!!pendingCode}
+        onClose={() => setPendingCode(null)}
+        lang={lang}
+        defaultName={displayName}
+        initialCode={pendingCode ?? ""}
+      />
 
       <StaticOrnamentBg />
 
@@ -414,6 +444,16 @@ export default function KazakhTalesApp({ session }: { session: Session }) {
               </button>
             );
           })}
+          {(isTeacher || tab === "teacher") && (
+            <button
+              onClick={() => setTab("teacher")}
+              aria-current={tab === "teacher" ? "page" : undefined}
+              className={`flex items-center gap-4 px-4 min-h-[52px] rounded-2xl border-2 transition-colors w-full mt-3 ${tab === "teacher" ? "bg-sky-soft border-sky/60 text-sky-deep" : "border-transparent text-ink-2 hover:bg-sand-2"}`}
+            >
+              <span className="w-[30px] h-[30px] rounded-lg bg-night text-white flex items-center justify-center"><Users size={18} /></span>
+              <span className="font-display text-[15px] font-extrabold tracking-wide uppercase">{lang === "kk" ? "Мұғалім" : "Teacher"}</span>
+            </button>
+          )}
         </nav>
         <div className="px-6 pb-6 space-y-4">
           <LangToggle />
@@ -456,6 +496,15 @@ export default function KazakhTalesApp({ session }: { session: Session }) {
                   userName={displayName}
                   sessionXp={sessionXp}
                   dailyGoal={DAILY_GOAL}
+                  assignments={
+                    <AssignmentsCard
+                      lang={lang}
+                      userId={userId}
+                      progress={progress}
+                      onStartRead={(storyId: string, level?: string) => { setSelectedStory(storyId); setSelectedLevel(level ?? null); setTab("read"); }}
+                      onStartQuiz={(storyId: string) => { setSelectedStory(storyId); setQuizLevel(null); setQuizStarted(false); setTab("quiz"); }}
+                    />
+                  }
                 />
               )}
               {tab === "read" && (
@@ -525,7 +574,12 @@ export default function KazakhTalesApp({ session }: { session: Session }) {
                   streakDays={streakDays}
                   quizzesCompleted={quizzesCompleted}
                   kilim={<OyuKilim progress={progress} lang={lang} maqalCount={loadMaqals(userId).length} />}
+                  classes={<MyClassesSection lang={lang} userId={userId} defaultName={displayName} />}
+                  onOpenTeacher={() => setTab("teacher")}
                 />
+              )}
+              {tab === "teacher" && (
+                <TeacherScreen lang={lang} onBack={() => setTab("profile")} onTeacher={markTeacher} />
               )}
             </main>
 
