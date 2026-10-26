@@ -19,7 +19,7 @@ const WRITTEN: CouncilQuestion[] = [
   {
     id: "aldar_kose:why-praise",
     storyId: "aldar_kose",
-    prompt: "Why did the villagers praise Aldar Kose?",
+    prompt: "Why did the villagers praise Aldar Köse?",
     promptKk: "Ауыл адамдары Алдар Көсені неге мақтады?",
     options: [
       "Because he was rich now",
@@ -28,7 +28,7 @@ const WRITTEN: CouncilQuestion[] = [
       "Because he saved them from a wolf",
     ],
     correct: 1,
-    evidence: "When the villagers hear the story, they laugh too and praise Aldar Kose for his clever trick.",
+    evidence: "When the villagers hear the story, they laugh too and praise Aldar Köse for his clever trick.",
     reasons: [
       "He had a fine coat and a horse now, so people respected him.",
       "They laughed at the story. A poor man used his head and beat a rich man.",

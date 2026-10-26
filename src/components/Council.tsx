@@ -39,7 +39,8 @@ function saveVote(userId: string | undefined, id: string, vote: Vote) {
 }
 
 // Reasons others see go through a teacher first; this only keeps obvious junk out of the queue.
-const BLOCKED = /\b(fuck|shit|bitch|idiot|stupid|дурак|тупой|сука|ахмақ|есек)\b/i;
+// \b ignores Cyrillic letters, so word edges are checked with Unicode letter classes.
+const BLOCKED = /(?<!\p{L})(fuck|shit|bitch|idiot|stupid|дурак|тупой|сука|ахмақ|есек)(?!\p{L})/iu;
 const cleanReason = (s: string) => s.replace(/\s+/g, " ").trim().slice(0, 140);
 
 function pushVote(userId: string | undefined, q: CouncilQuestion, round: 1 | 2, choice: number, confidence: Confidence | null, reason: string) {
@@ -49,6 +50,8 @@ function pushVote(userId: string | undefined, q: CouncilQuestion, round: 1 | 2, 
     .upsert({
       user_id: userId, question_id: q.id, round, choice, confidence,
       reason: round === 1 && reason && !BLOCKED.test(reason) ? reason : null,
+      // A changed reason goes back to the teacher; RLS also refuses approved = true from students.
+      approved: false,
     }, { onConflict: "user_id,question_id,round" })
     .then(() => {}, () => {});
 }
@@ -167,13 +170,14 @@ function CouncilRound({ q, kk, vote, onChange, onPush, onReward }: {
     setLoading(false);
     if (s && s.total >= 10) {
       const right = s.counts[q.correct] / s.total;
-      if (right > 0.7) return finish(pick, { ...vote, first: pick, confidence, reason: r });
+      // Only a learner who was right skips the second round; no round-2 vote is recorded for them.
+      if (right > 0.7 && pick === q.correct) return finish(pick, { ...vote, first: pick, confidence, reason: r }, false);
       if (right < 0.3) return setStage("reread");
     }
     setStage("council");
   };
 
-  const finish = (final: number, base: Vote = vote) => {
+  const finish = (final: number, base: Vote = vote, secondRound = true) => {
     const firstRight = base.first === q.correct;
     const finalRight = final === q.correct;
     const wroteReason = (base.reason.match(/[a-z]+/gi) ?? []).length >= 3;
@@ -181,7 +185,7 @@ function CouncilRound({ q, kk, vote, onChange, onPush, onReward }: {
     const xp = (finalRight ? 10 : 3) + (!firstRight && finalRight ? 5 : 0) + (wroteReason ? 3 : 0);
     const next = { ...base, second: final, done: true, xp: Math.max(base.xp, xp) };
     onChange(next);
-    onPush(2, final, null, "");
+    if (secondRound) onPush(2, final, null, "");
     if (!base.done) onReward(xp);
     setStage("result");
   };
