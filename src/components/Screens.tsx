@@ -824,6 +824,7 @@ export function FlashcardsScreen({ savedWords, onReview, lang = "kk", mode, setM
   const [sessionSize, setSessionSize] = useState(queue.length);
   const [reviewed, setReviewed] = useState(0);
   const [practice, setPractice] = useState(false);
+  const [missed, setMissed] = useState<Set<string>>(() => new Set());
   const [flipped, setFlipped] = useState(false);
   const [openedAt] = useState(() => Date.now());
   const kk = lang === "kk";
@@ -876,8 +877,10 @@ export function FlashcardsScreen({ savedWords, onReview, lang = "kk", mode, setM
   const box = currentWord.mastery ?? 0;
 
   const handleNext = (known: boolean) => {
-    // Free practice doesn't move words between boxes.
-    if (!practice) onReview(currentWord.word, known);
+    // Free practice doesn't move words between boxes. A word missed in this
+    // session drops one box once; getting it right on the second pass doesn't undo that.
+    if (!practice && !missed.has(currentWord.word)) onReview(currentWord.word, known);
+    if (!known) setMissed((m) => new Set(m).add(currentWord.word));
     setFlipped(false);
     setQueue((q) => (known || practice ? q.slice(1) : [...q.slice(1), q[0]]));
     if (known || practice) setReviewed((r) => r + 1);
