@@ -40,7 +40,7 @@ interface Trail {
 }
 
 const CLAIMS: Record<string, { en: string; kk: string }> = {
-  aldar_kose: { en: "Was Aldar Kose right to take the coat?", kk: "Алдар Көсе шапанды алып дұрыс істеді ме?" },
+  aldar_kose: { en: "Was Aldar Köse right to take the coat?", kk: "Алдар Көсе шапанды алып дұрыс істеді ме?" },
   zhirenshe: { en: "Is a wise word stronger than a khan's power?", kk: "Дана сөз ханның билігінен күшті ме?" },
   er_tostik: { en: "Was Er Tostik right to fight when it was \"not his fight\"?", kk: "«Бұл менің соғысым емес» болса да, Ер Төстік соғысып дұрыс істеді ме?" },
   tazsha_bala: { en: "Was it right for Tazsha to trick the giant?", kk: "Тазша дәуді алдап дұрыс істеді ме?" },
@@ -223,14 +223,14 @@ function TrailFlow({ kk, claimQ, level, text, past, draft, onDraft, onSave, onFe
 
   return (
     <div className="p-6 pt-2">
-      <p className="eyebrow text-jade-deep pr-12">{tr("Ой ізі", "Thinking trail")} · {level}</p>
-      <h3 className="font-display font-black text-[20px] text-ink leading-snug mt-1 pr-12">{claimQ.en}</h3>
+      <p className="eyebrow text-[#0F6E4B] pr-12">{tr("Ой ізі", "Thinking trail")} · {level}</p>
+      <h3 lang="en" className="font-display font-black text-[20px] text-ink leading-snug mt-1 pr-12">{claimQ.en}</h3>
       {kk && <p className="text-[14px] text-ink-2 mt-1">{claimQ.kk}</p>}
 
       {step >= 1 && step <= 3 && (
         <ol className="flex gap-1.5 mt-4" aria-label={tr("Қадамдар", "Steps")}>
           {steps.map((s, i) => (
-            <li key={s} className={`flex-1 rounded-full h-7 text-[12px] font-bold flex items-center justify-center ${i + 1 === step ? "bg-jade text-white" : i + 1 < step ? "bg-jade-soft text-jade-deep" : "bg-sand-2 text-ink-3"}`} aria-current={i + 1 === step ? "step" : undefined}>
+            <li key={s} className={`flex-1 rounded-full h-7 text-[12px] font-bold flex items-center justify-center ${i + 1 === step ? "bg-[#15805A] text-white" : i + 1 < step ? "bg-jade-soft text-[#0F6E4B]" : "bg-sand-2 text-ink-2"}`} aria-current={i + 1 === step ? "step" : undefined}>
               {i + 1}. {s}
             </li>
           ))}
