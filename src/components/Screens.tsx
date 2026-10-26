@@ -3,7 +3,6 @@ import { useLang } from "../lang";
 import {
   ArrowRight, Play, Pause, Volume2, ChevronRight, RotateCcw, Compass, Trophy,
   Check, X, Mic, MicOff, LogOut, Share2, BookOpen, Lock, Plus, MessageCircle,
-  GraduationCap,
 } from "lucide-react";
 import { DailyGoalRing, ScreenHeader, Sheet, BrandMark } from "./UIHelpers";
 import { displayTitle, foldAccents } from "../utils/text";
@@ -1771,7 +1770,7 @@ export function SpeakScreen({ onReward, t }: {
 }
 
 /* --- 8. PROFILE SCREEN --- */
-export function ProfileScreen({ xp, t, lang = "kk", setLang, savedWordsCount = 0, unlockedAchievements = [], userName = "Learner", onSignOut, streakDays = 0, quizzesCompleted = 0, kilim, classes, onOpenTeacher }: {
+export function ProfileScreen({ xp, t, lang = "kk", setLang, savedWordsCount = 0, unlockedAchievements = [], userName = "Learner", onSignOut, streakDays = 0, quizzesCompleted = 0, kilim, classes, roleSwitch }: {
   xp: number;
   t: Record<string, string>;
   lang?: string;
@@ -1784,7 +1783,7 @@ export function ProfileScreen({ xp, t, lang = "kk", setLang, savedWordsCount = 0
   quizzesCompleted?: number;
   kilim?: React.ReactNode;
   classes?: React.ReactNode;
-  onOpenTeacher?: () => void;
+  roleSwitch?: React.ReactNode;
 }) {
   const [showBuklet, setShowBuklet] = useState(false);
   // Levels count from 1: 0–99 XP is level 1.
@@ -1876,16 +1875,7 @@ export function ProfileScreen({ xp, t, lang = "kk", setLang, savedWordsCount = 0
 
       {/* Settings — Apple grouped list */}
       <div className="card overflow-hidden divide-y divide-line">
-        {onOpenTeacher && (
-          <button onClick={onOpenTeacher} className="w-full flex items-center gap-3 px-4 min-h-[56px] text-left hover:bg-sand/60">
-            <span className="w-8 h-8 rounded-lg bg-night flex items-center justify-center"><GraduationCap size={16} className="text-white" /></span>
-            <span className="flex-1 min-w-0">
-              <span className="block text-[16px] text-ink">{lang === "kk" ? "Мұғалім кабинеті" : "Teacher cabinet"}</span>
-              <span className="block text-[13px] text-ink-2">{lang === "kk" ? "Сынып ашу, тапсырма беру, прогресті көру" : "Create classes, give assignments, see progress"}</span>
-            </span>
-            <ChevronRight size={18} className="text-ink-3" />
-          </button>
-        )}
+        {roleSwitch}
         <div className="flex items-center justify-between gap-3 px-4 min-h-[56px]">
           <span className="text-[16px] text-ink">{lang === "kk" ? "Тіл" : "Language"}</span>
           {setLang && (

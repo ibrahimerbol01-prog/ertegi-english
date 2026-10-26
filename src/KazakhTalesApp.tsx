@@ -1,7 +1,6 @@
 import { useState, useRef, useEffect } from "react";
-import { Users } from "lucide-react";
 import type { Session } from "@supabase/supabase-js";
-import { IconYurt, IconBook, IconTrophy, IconCards, IconShield, IconMic, IconLearner, IconFlame, IconBolt } from "./components/Icons";
+import { IconYurt, IconBook, IconTrophy, IconCards, IconShield, IconMic, IconLearner, IconFlame, IconBolt, IconBoard } from "./components/Icons";
 import {
   LevelUpModal, AchievementBanner, XpToast,
   StaticOrnamentBg, SaveErrorToast, BrandMark, DailyGoalRing
@@ -22,6 +21,9 @@ import { BataModal, OyuKilim, TurkicWords, loadMaqals } from "./components/Cultu
 import { WordCoach } from "./components/WordCoach";
 import { LegendScreen } from "./components/LegendCards";
 import { TeacherScreen } from "./components/Teacher";
+import { TeacherProfile } from "./components/TeacherProfile";
+import { RoleSwitchRow } from "./components/RolePicker";
+import type { Role } from "./utils/role";
 import { AssignmentsCard, JoinClassSheet, MyClassesSection } from "./components/StudentClasses";
 import { clearPendingClass, flushQuizResults, peekPendingClass, saveQuizResult } from "./utils/classes";
 import {
@@ -29,7 +31,9 @@ import {
   nextReview, lapse, localDay, daysBetween, isDue, MAX_MASTERY, type ProgressStep
 } from "./utils/progress";
 
-export default function KazakhTalesApp({ session }: { session: Session }) {
+export default function KazakhTalesApp({ session, role, onRoleChange }: { session: Session; role: Role; onRoleChange: (r: Role) => Promise<boolean> }) {
+  // Teachers get their own space: classes, the tales to preview, and a profile.
+  const teacher = role === "teacher";
   const userId: string = session.user.id;
   const userEmail: string = session.user.email || "";
   const [displayName, setDisplayName] = useState<string>(
@@ -38,16 +42,9 @@ export default function KazakhTalesApp({ session }: { session: Session }) {
   const [dataLoaded, setDataLoaded] = useState(false);
   const scrollRef = useRef<HTMLDivElement | null>(null);
 
-  const [tab, setTab] = useState("home");
+  const [tab, setTab] = useState(teacher ? "teacher" : "home");
   // A class link opened before sign-in: offer to join once the app is open.
   const [pendingCode, setPendingCode] = useState<string | null>(peekPendingClass);
-  const [isTeacher, setIsTeacher] = useState(() => {
-    try { return localStorage.getItem(`ertegi_is_teacher_${userId}`) === "1"; } catch { return false; }
-  });
-  const markTeacher = (yes: boolean) => {
-    setIsTeacher(yes);
-    try { if (yes) localStorage.setItem(`ertegi_is_teacher_${userId}`, "1"); else localStorage.removeItem(`ertegi_is_teacher_${userId}`); } catch { /* storage blocked */ }
-  };
   const [selectedLevel, setSelectedLevel] = useState<string | null>(null);
   // Set when the quiz was opened from the reader: a short check for that level only.
   const [quizLevel, setQuizLevel] = useState<ProgressStep | null>(null);
@@ -367,7 +364,11 @@ export default function KazakhTalesApp({ session }: { session: Session }) {
     return <div className="min-h-dvh w-full bg-sand" />;
   }
 
-  const tabs = [
+  const tabs: { id: string; label: string; Icon: typeof IconYurt }[] = teacher ? [
+    { id: "teacher", label: lang === "kk" ? "Сыныптар" : "Classes", Icon: IconBoard },
+    { id: "read",    label: lang === "kk" ? "Ертегілер" : "Tales", Icon: IconBook },
+    { id: "profile", label: t.navProfile, Icon: IconLearner },
+  ] : [
     { id: "home",    label: t.navHome,    Icon: IconYurt },
     { id: "read",    label: t.navRead,    Icon: IconBook },
     { id: "quiz",    label: t.navQuiz,    Icon: IconTrophy },
@@ -375,7 +376,9 @@ export default function KazakhTalesApp({ session }: { session: Session }) {
     { id: "cards",   label: lang === "kk" ? "Карталар" : "Cards", Icon: IconShield },
     { id: "speak",   label: t.navSpeak,   Icon: IconMic },
     { id: "profile", label: t.navProfile, Icon: IconLearner },
-  ] as const;
+  ];
+  // A teacher's quiz opens from a tale, so "Tales" stays lit there.
+  const isActive = (id: string) => tab === id || (teacher && tab === "quiz" && id === "read");
 
   const dueCount = savedWords.filter((w) => isDue(w.nextReviewAt)).length;
 
@@ -415,10 +418,11 @@ export default function KazakhTalesApp({ session }: { session: Session }) {
         onDone={() => setAchievementQueue((prev) => prev.slice(1))}
       />
       {/* The quiz is a focus mode: Shoqan steps aside so he never covers the answer buttons. */}
-      <ShoqanChat hidden={tab === "quiz" && quizStarted} />
+      {/* Teachers meet Shoqan only while previewing a tale, as their learners do. */}
+      <ShoqanChat hidden={(tab === "quiz" && quizStarted) || (teacher && tab !== "read")} />
       <SaveErrorToast show={showSaveError} message={t.saveError} />
       <JoinClassSheet
-        open={!!pendingCode}
+        open={!!pendingCode && !teacher}
         onClose={() => { clearPendingClass(); setPendingCode(null); }}
         lang={lang}
         defaultName={classNick}
@@ -434,7 +438,7 @@ export default function KazakhTalesApp({ session }: { session: Session }) {
         </div>
         <nav className="flex flex-col flex-1 px-4 gap-1.5">
           {tabs.map(({ id, label, Icon }) => {
-            const active = tab === id;
+            const active = isActive(id);
             return (
               <button
                 key={id}
@@ -450,16 +454,6 @@ export default function KazakhTalesApp({ session }: { session: Session }) {
               </button>
             );
           })}
-          {(isTeacher || tab === "teacher") && (
-            <button
-              onClick={() => setTab("teacher")}
-              aria-current={tab === "teacher" ? "page" : undefined}
-              className={`flex items-center gap-4 px-4 min-h-[52px] rounded-2xl border-2 transition-colors w-full mt-3 ${tab === "teacher" ? "bg-sky-soft border-sky/60 text-sky-deep" : "border-transparent text-ink-2 hover:bg-sand-2"}`}
-            >
-              <span className="w-[30px] h-[30px] rounded-lg bg-night text-white flex items-center justify-center"><Users size={18} /></span>
-              <span className="font-display text-[15px] font-extrabold tracking-wide uppercase">{lang === "kk" ? "Мұғалім" : "Teacher"}</span>
-            </button>
-          )}
         </nav>
         <div className="px-6 pb-6 space-y-4">
           <LangToggle />
@@ -474,7 +468,7 @@ export default function KazakhTalesApp({ session }: { session: Session }) {
         <header className="xl:hidden glass border-b border-line/70 flex items-center gap-3 px-4 md:px-8 pt-[max(env(safe-area-inset-top),12px)] pb-3">
           <div className="md:hidden"><BrandMark compact /></div>
           <div className="md:hidden"><LangToggle /></div>
-          <div className="ml-auto"><StatChips /></div>
+          {!teacher && <div className="ml-auto"><StatChips /></div>}
         </header>
 
         <div ref={scrollRef} className="flex-1 overflow-y-auto">
@@ -566,7 +560,18 @@ export default function KazakhTalesApp({ session }: { session: Session }) {
               )}
               {tab === "cards" && <LegendScreen lang={lang} userId={userId} onReward={addXp} />}
               {tab === "speak" && <SpeakScreen onReward={addXp} t={t} />}
-              {tab === "profile" && (
+              {tab === "profile" && teacher && (
+                <TeacherProfile
+                  lang={lang}
+                  setLang={setLang}
+                  userName={displayName}
+                  email={userEmail}
+                  onOpenClasses={() => setTab("teacher")}
+                  roleSwitch={<RoleSwitchRow kk={lang === "kk"} to="student" onSwitch={onRoleChange} />}
+                  onSignOut={handleSignOut}
+                />
+              )}
+              {tab === "profile" && !teacher && (
                 <ProfileScreen
                   xp={xp}
                   t={t}
@@ -580,16 +585,14 @@ export default function KazakhTalesApp({ session }: { session: Session }) {
                   quizzesCompleted={quizzesCompleted}
                   kilim={<OyuKilim progress={progress} lang={lang} maqalCount={loadMaqals(userId).length} />}
                   classes={<MyClassesSection lang={lang} userId={userId} defaultName={classNick} />}
-                  onOpenTeacher={() => setTab("teacher")}
+                  roleSwitch={<RoleSwitchRow kk={lang === "kk"} to="teacher" onSwitch={onRoleChange} />}
                 />
               )}
-              {tab === "teacher" && (
-                <TeacherScreen lang={lang} onBack={() => setTab("profile")} onTeacher={markTeacher} />
-              )}
+              {tab === "teacher" && teacher && <TeacherScreen lang={lang} />}
             </main>
 
             {/* Right rail — wide desktop only, Duolingo-style widgets */}
-            <aside className="hidden xl:flex flex-col gap-4 w-[300px] shrink-0 pt-2 sticky top-0 self-start">
+            {!teacher && <aside className="hidden xl:flex flex-col gap-4 w-[300px] shrink-0 pt-2 sticky top-0 self-start">
               <StatChips />
               <div className="card p-5 flex items-center gap-4">
                 <DailyGoalRing current={sessionXp} goal={DAILY_GOAL} size={64} />
@@ -608,16 +611,15 @@ export default function KazakhTalesApp({ session }: { session: Session }) {
                   {lang === "kk" ? "Қайталау" : "Practice"}
                 </button>
               </div>
-            </aside>
+            </aside>}
           </div>
         </div>
 
         {/* Tab bar — mobile only, Apple frosted */}
         <nav className="md:hidden fixed bottom-0 inset-x-0 z-30 glass border-t border-line/70 pb-[max(env(safe-area-inset-bottom),8px)] pt-1.5">
-          <div className="grid grid-cols-7">
+          <div className={`grid ${teacher ? "grid-cols-3" : "grid-cols-7"}`}>
             {tabs.map(({ id, label, Icon }) => {
-              // The teacher cabinet opens from Profile, so Profile stays lit there.
-              const active = tab === id || (tab === "teacher" && id === "profile");
+              const active = isActive(id);
               return (
                 <button
                   key={id}

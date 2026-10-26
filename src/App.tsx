@@ -6,7 +6,9 @@ import KazakhTalesApp from "./KazakhTalesApp";
 import { IntroScreen } from "./components/Screens";
 import { DICT } from "./constants";
 import { loadLang } from "./lang";
-import { capturePendingClass } from "./utils/classes";
+import { capturePendingClass, peekPendingClass } from "./utils/classes";
+import { RoleScreen } from "./components/RolePicker";
+import { guessRole, peekPendingRole, roleOf, saveRole, switchRole, takePendingRole, type Role } from "./utils/role";
 
 // A class link (?class=CODE) is remembered before the intro and sign-in, then offered after.
 capturePendingClass();
@@ -18,6 +20,8 @@ export default function App() {
   // the marketing/hero landing ("BASTAU"), not part of the authenticated
   // product itself, so it doesn't need to know about sessions at all.
   const [introSeen, setIntroSeen] = useState(false);
+  // Bumped after a role is saved on this device only, so the app re-reads it.
+  const [, setRoleTick] = useState(0);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
@@ -60,6 +64,28 @@ export default function App() {
       });
   }, [session]);
 
+  // A role chosen on the Google sign-up form, or one that only reached this
+  // device, is sent to the account once a session is here.
+  useEffect(() => {
+    if (!session) return;
+    const meta = session.user.user_metadata?.role;
+    if (meta === "student" || meta === "teacher") { takePendingRole(); return; }
+    const role = takePendingRole() ?? roleOf(session);
+    if (role) saveRole(session, role).then(() => setRoleTick((n) => n + 1));
+  }, [session]);
+
+  const pickRole = async (role: Role) => {
+    if (!session) return;
+    await saveRole(session, role);
+    setRoleTick((n) => n + 1);
+  };
+  const changeRole = async (role: Role) => {
+    if (!session) return false;
+    const ok = await switchRole(session, role);
+    setRoleTick((n) => n + 1);
+    return ok;
+  };
+
   if (!introSeen) {
     return (
       <IntroScreen onFinish={() => setIntroSeen(true)} t={DICT[loadLang()]} />
@@ -76,5 +102,18 @@ export default function App() {
     );
   }
 
-  return <KazakhTalesApp session={session} />;
+  const role = roleOf(session) ?? peekPendingRole();
+  if (!role) {
+    const kk = loadLang() === "kk";
+    return (
+      <RoleScreen
+        kk={kk}
+        initial={peekPendingClass() ? "student" : guessRole(session.user.id)}
+        onPick={pickRole}
+        onSignOut={() => { supabase.auth.signOut(); }}
+      />
+    );
+  }
+
+  return <KazakhTalesApp key={role} session={session} role={role} onRoleChange={changeRole} />;
 }

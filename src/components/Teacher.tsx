@@ -79,7 +79,7 @@ function CopyButton({ text, label, done, Icon }: { text: string; label: string; 
 }
 
 /* --- class list --- */
-export function TeacherScreen({ lang, onBack, onTeacher }: { lang: string; onBack?: () => void; onTeacher?: (yes: boolean) => void }) {
+export function TeacherScreen({ lang, onBack }: { lang: string; onBack?: () => void }) {
   const kk = lang === "kk";
   const [classes, setClasses] = useState<ClassRow[] | null>(null);
   const [error, setError] = useState<ClassError | null>(null);
@@ -98,8 +98,6 @@ export function TeacherScreen({ lang, onBack, onTeacher }: { lang: string; onBac
 
   const [attempt, setAttempt] = useState(0);
   const load = () => setAttempt((n) => n + 1);
-  const onTeacherRef = useRef(onTeacher);
-  useEffect(() => { onTeacherRef.current = onTeacher; }, [onTeacher]);
   useEffect(() => {
     let live = true;
     teacherClasses().then((res) => {
@@ -107,8 +105,6 @@ export function TeacherScreen({ lang, onBack, onTeacher }: { lang: string; onBac
       if (res.ok) {
         setClasses(res.data ?? []);
         setError(null);
-        // Remembered so the desktop rail shows the teacher tab next time.
-        onTeacherRef.current?.((res.data ?? []).length > 0);
       } else setError(res.error);
     });
     return () => { live = false; };
@@ -124,7 +120,6 @@ export function TeacherScreen({ lang, onBack, onTeacher }: { lang: string; onBac
     if (!res.ok) { setCreateError(res.error); return; }
     setName("");
     setClasses((prev) => [...(prev ?? []), res.data]);
-    onTeacher?.(true);
     setOpenId(res.data.id);
   };
 
