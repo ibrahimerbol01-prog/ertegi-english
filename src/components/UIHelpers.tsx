@@ -5,6 +5,7 @@ import { QoshqarMuyiz, Shanyraq, SteppeBackground, KilimStrip } from "./Ornament
 import { useLang } from "../lang";
 import { Badge } from "./Icons";
 import { useEscape } from "../utils/useEscape";
+import { useDialogFocus } from "../utils/useDialogFocus";
 
 /* Brand mark used across screens: the qoşqar müiız horn pair. */
 export const KazakhOrnament = ({ className = "w-6 h-6 text-sun-deep" }: { className?: string }) => (
@@ -103,11 +104,12 @@ export const LevelUpModal = ({ show, rank, onClose }: { show: boolean; rank: num
   }, [show]);
 
   useEscape(show, onClose);
+  const boxRef = useDialogFocus<HTMLDivElement>(show);
   if (!show) return null;
 
   return (
     <div className="fixed inset-0 z-[60] bg-ink/40 backdrop-blur-sm flex items-center justify-center p-6 animate-pop-in" role="dialog" aria-modal="true" onClick={onClose}>
-      <div className="relative w-full max-w-[320px]" onClick={(e) => e.stopPropagation()}>
+      <div ref={boxRef} className="relative w-full max-w-[320px] outline-none" onClick={(e) => e.stopPropagation()}>
         {confetti.map((c) => (
           <span
             key={c.id}
@@ -219,14 +221,14 @@ export const ScreenHeader = ({ eyebrow, title, trailing, onBack, backLabel }: {
 }) => (
   <div className="pt-2 pb-4">
     {onBack && (
-      <button onClick={onBack} className="-ml-1 mb-2 flex items-center gap-0.5 text-sky font-semibold text-[15px] min-h-[36px]">
+      <button onClick={onBack} className="-ml-1 mb-2 flex items-center gap-0.5 text-[#075F75] font-semibold text-[15px] min-h-[36px]">
         <span className="text-2xl leading-none -mt-0.5">‹</span> {backLabel}
       </button>
     )}
     <div className="flex items-end justify-between gap-3">
       <div className="min-w-0">
         {eyebrow && <p className="eyebrow mb-1">{eyebrow}</p>}
-        <h1 className="large-title">{title}</h1>
+        <h1 tabIndex={-1} className="large-title outline-none">{title}</h1>
       </div>
       {trailing}
     </div>
@@ -235,14 +237,15 @@ export const ScreenHeader = ({ eyebrow, title, trailing, onBack, backLabel }: {
 
 /* Bottom sheet used for word details, choices and the booklet. */
 export const Sheet = ({ open, onClose, children, label }: { open: boolean; onClose: () => void; children: React.ReactNode; label: string }) => {
-  const kk = useLang() === "kk";
   useEscape(open, onClose);
+  const boxRef = useDialogFocus<HTMLDivElement>(open);
   if (!open) return null;
   // Portal to body: animated ancestors would otherwise trap position:fixed.
   return createPortal(
     <div className="fixed inset-0 z-[68] flex items-end sm:items-center justify-center" role="dialog" aria-modal="true" aria-label={label}>
-      <button aria-label={kk ? "Жабу" : "Close"} onClick={onClose} className="absolute inset-0 bg-ink/35 backdrop-blur-[2px] animate-pop-in" />
-      <div className="relative w-full sm:max-w-[420px] max-h-[85dvh] overflow-y-auto bg-card rounded-t-[28px] sm:rounded-[28px] shadow-2xl animate-sheet-up sm:animate-pop-in pb-[max(env(safe-area-inset-bottom),16px)]">
+      {/* The backdrop closes on tap; keyboard users have the close button and Esc. */}
+      <button aria-hidden="true" tabIndex={-1} onClick={onClose} className="absolute inset-0 bg-ink/35 backdrop-blur-[2px] animate-pop-in" />
+      <div ref={boxRef} className="relative outline-none w-full sm:max-w-[420px] max-h-[85dvh] overflow-y-auto bg-card rounded-t-[28px] sm:rounded-[28px] shadow-2xl animate-sheet-up sm:animate-pop-in pb-[max(env(safe-area-inset-bottom),16px)]">
         <div className="sticky top-0 z-10 flex justify-end px-3 pt-3 -mb-2">
           <div className="sm:hidden absolute left-1/2 -translate-x-1/2 top-2.5 w-10 h-1.5 rounded-full bg-sand-3" />
           <CloseButton onClick={onClose} />

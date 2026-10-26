@@ -5,6 +5,7 @@ import { IconScroll } from "./Icons";
 import { QoshqarMuyiz, Shanyraq, Tumar, KilimStrip } from "./Ornaments";
 import { safePlayVoice } from "../utils/voice";
 import { CloseButton } from "./UIHelpers";
+import { useDialogFocus } from "../utils/useDialogFocus";
 import { useEscape } from "../utils/useEscape";
 import { STORIES } from "../constants";
 import { displayTitle } from "../utils/text";
@@ -130,6 +131,7 @@ export function MaqalCard({ lang, userId, onReward }: { lang: string; userId?: s
 /* Bata: an elder's blessing when a whole tale is finished, plus its ornament. */
 export function BataModal({ storyId, lang, onClose }: { storyId: string | null; lang: string; onClose: () => void }) {
   useEscape(!!storyId, onClose);
+  const boxRef = useDialogFocus<HTMLDivElement>(!!storyId);
   if (!storyId) return null;
   const storyIndex = Math.max(0, STORIES.findIndex((s) => s.id === storyId));
   const story = STORIES[storyIndex];
@@ -139,7 +141,7 @@ export function BataModal({ storyId, lang, onClose }: { storyId: string | null; 
 
   return createPortal(
     <div className="fixed inset-0 z-[72] bg-ink/45 backdrop-blur-sm flex items-center justify-center p-5 animate-pop-in" role="dialog" aria-modal="true" aria-label={l === "kk" ? "Бата" : "Blessing"} onClick={onClose}>
-      <div className="relative w-full max-w-[380px] card overflow-hidden text-center animate-rank-pop" onClick={(e) => e.stopPropagation()}>
+      <div ref={boxRef} className="relative w-full max-w-[380px] card overflow-hidden text-center animate-rank-pop outline-none" onClick={(e) => e.stopPropagation()}>
         <KilimStrip className="h-2.5 w-full" />
         <CloseButton onClick={onClose} className="absolute top-5 right-4" />
         <div className="p-7">

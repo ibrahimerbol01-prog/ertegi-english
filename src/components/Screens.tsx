@@ -323,7 +323,7 @@ export function HomeScreen({ onStartRead, onStartQuiz, t, lang, userName = "", s
 }
 
 /* --- 3. READER SCREEN --- */
-export function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, setSelectedLevel, onQuizGate, onLevelDone, t, lang = "kk", onReward, savedWords, onSaveWord, userId }: any) {
+export function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, setSelectedLevel, onQuizGate, t, lang = "kk", onReward, savedWords, onSaveWord, userId }: any) {
   const tr = useTr();
   const [isPlaying, setIsPlaying] = useState(true);
   const [activeWord, setActiveWord] = useState<string | null>(null);
@@ -481,7 +481,6 @@ export function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, s
     setIsReadAlongPlaying(false);
     setReadAlongTokenIndex(null);
     setReadAlongSentence(null);
-    onLevelDone?.(currentStory.id, selectedLevel);
   };
 
   const showToken = (ti: number) => {
@@ -726,10 +725,8 @@ export function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, s
 
       <div className="flex flex-col sm:flex-row-reverse gap-3 pt-1">
         <button
-          onClick={() => {
-            onLevelDone?.(currentStory.id, selectedLevel);
-            onQuizGate();
-          }}
+          // The level counts as done only once its quiz is passed.
+          onClick={onQuizGate}
           className="btn flex-1"
         >
           {t.takeQuiz} <ChevronRight size={18} strokeWidth={3} />

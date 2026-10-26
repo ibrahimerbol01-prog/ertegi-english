@@ -4,12 +4,14 @@ import { supabase } from "../lib/supabase";
 import { useLang } from "../lang";
 import { CloseButton } from "./UIHelpers";
 import { useEscape } from "../utils/useEscape";
+import { useDialogFocus } from "../utils/useDialogFocus";
 
 export const ShoqanChat = ({ hidden = false }: { hidden?: boolean }) => {
   const kk = useLang() === "kk";
   const tr = (kkText: string, enText: string) => (kk ? kkText : enText);
   const [open, setOpen] = useState(false);
   useEscape(open, () => setOpen(false));
+  const chatRef = useDialogFocus<HTMLDivElement>(open);
   const [messages, setMessages] = useState<{ role: "user" | "assistant"; content: string }[]>(() => [
     { role: "assistant", content: kk
       ? "Сәлем! Мен Шоқанмын 👋 Ағылшын тілі, қазақ тілі немесе Ertegi English туралы сұра."
@@ -141,7 +143,7 @@ export const ShoqanChat = ({ hidden = false }: { hidden?: boolean }) => {
 
       {open && (
         <div className="fixed inset-0 z-[75] bg-ink/35 backdrop-blur-[2px] flex items-end sm:items-center justify-center" role="dialog" aria-modal="true" aria-label={tr("Шоқанмен сөйлесу", "Chat with Shoqan")} onClick={() => setOpen(false)}>
-          <div onClick={(e) => e.stopPropagation()} className="w-full max-w-[480px] mb-0 max-h-[85dvh] h-[75dvh] bg-sand flex flex-col rounded-t-[28px] sm:rounded-[28px] overflow-hidden shadow-2xl animate-sheet-up sm:animate-pop-in">
+          <div ref={chatRef} onClick={(e) => e.stopPropagation()} className="outline-none w-full max-w-[480px] mb-0 max-h-[85dvh] h-[75dvh] bg-sand flex flex-col rounded-t-[28px] sm:rounded-[28px] overflow-hidden shadow-2xl animate-sheet-up sm:animate-pop-in">
             <div className="flex items-center justify-between px-4 py-3 bg-card border-b border-line">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-full overflow-hidden ring-2 ring-sun shrink-0">
