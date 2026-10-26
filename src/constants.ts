@@ -2075,6 +2075,7 @@ export const ACHIEVEMENTS = [
   {
     id: "quiz_first",
     icon: "🎯",
+    badge: { glyph: "target", color: "sky" },
     title: "First Steps",
     desc: "Complete your first quiz",
     kk: { title: "Алғашқы қадам", desc: "Алғашқы сынақтан өт" },
@@ -2083,6 +2084,7 @@ export const ACHIEVEMENTS = [
   {
     id: "words_25",
     icon: "📚",
+    badge: { glyph: "book", color: "jade" },
     title: "Word Collector",
     desc: "Save 25 words to your vocabulary bank",
     kk: { title: "Сөз жинаушы", desc: "Сөздікке 25 сөз сақта" },
@@ -2091,6 +2093,7 @@ export const ACHIEVEMENTS = [
   {
     id: "quiz_perfect",
     icon: "🏆",
+    badge: { glyph: "crown", color: "sun" },
     title: "Flawless",
     desc: "Score 100% on a quiz",
     kk: { title: "Мінсіз", desc: "Сынақты 100% тапсыр" },
@@ -2099,6 +2102,7 @@ export const ACHIEVEMENTS = [
   {
     id: "words_100",
     icon: "🏺",
+    badge: { glyph: "chest", color: "night" },
     title: "Vocabulary Keeper",
     desc: "Save 100 words to your vocabulary bank",
     kk: { title: "Сөз қазынасы", desc: "Сөздікке 100 сөз сақта" },
@@ -2107,6 +2111,7 @@ export const ACHIEVEMENTS = [
   {
     id: "level_5",
     icon: "⭐",
+    badge: { glyph: "sunrise", color: "felt" },
     title: "Rising Nomad",
     desc: "Reach Level 5 (500 XP)",
     kk: { title: "Өрлеген көшпенді", desc: "5-деңгейге жет (500 XP)" },

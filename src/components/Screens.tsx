@@ -1,8 +1,8 @@
 import { useState, useRef, useEffect } from "react";
 import { useLang } from "../lang";
 import {
-  ArrowRight, Play, Pause, Volume2, ChevronRight, RotateCcw, Compass, Layers, Trophy,
-  Check, X, Flame, Mic, MicOff, LogOut, Share2, BookOpen, Lock, Zap, Plus, MessageCircle
+  ArrowRight, Play, Pause, Volume2, ChevronRight, RotateCcw, Compass, Trophy,
+  Check, X, Mic, MicOff, LogOut, Share2, BookOpen, Lock, Plus, MessageCircle
 } from "lucide-react";
 import { DailyGoalRing, ScreenHeader, Sheet, BrandMark } from "./UIHelpers";
 import { displayTitle, foldAccents } from "../utils/text";
@@ -17,6 +17,11 @@ import { supabase } from "../lib/supabase";
 import { isDue, MAX_MASTERY } from "../utils/progress";
 import { MaqalCard, StoryHistory } from "./Culture";
 import { LegendDeckEntry } from "./LegendCards";
+import { IconFlame, IconBolt, IconCards, IconTrophy, Badge } from "./Icons";
+import { TrailButton } from "./ThinkingTrail";
+import { CouncilCard } from "./Council";
+import { WeekWordsCard } from "./WeekWords";
+import { currentWeek, weekWordOf } from "../data/weekWords";
 import { StoryCover } from "./StoryCover";
 import { buildLevelQuiz } from "../utils/levelQuiz";
 import { findEvidence } from "../utils/evidence";
@@ -230,8 +235,10 @@ export function HomeScreen({ onStartRead, onStartQuiz, t, lang, userName = "", s
         </div>
       </div>
 
+      <WeekWordsCard lang={lang} userId={userId} progress={progress} onReward={onReward} />
       <MaqalCard lang={lang} userId={userId} onReward={onReward} />
       <LegendDeckEntry lang={lang} userId={userId} onOpen={onOpenCards} />
+      <CouncilCard lang={lang} userId={userId} progress={progress} onReward={onReward} />
 
       {/* Caravan path: one unit per story, islands are CEFR levels */}
       {STORIES.map((story: any, si: number) => {
@@ -312,7 +319,7 @@ export function HomeScreen({ onStartRead, onStartQuiz, t, lang, userName = "", s
 }
 
 /* --- 3. READER SCREEN --- */
-export function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, setSelectedLevel, onQuizGate, onLevelDone, t, lang = "kk", onReward, savedWords, onSaveWord }: any) {
+export function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, setSelectedLevel, onQuizGate, onLevelDone, t, lang = "kk", onReward, savedWords, onSaveWord, userId }: any) {
   const tr = useTr();
   const [isPlaying, setIsPlaying] = useState(true);
   const [activeWord, setActiveWord] = useState<string | null>(null);
@@ -580,6 +587,9 @@ export function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, s
   const savedMastery = new Map<string, number>((savedWords || []).map((w: any) => [w.word, w.mastery ?? 0]));
   const cleanTok = (tok: string) => foldAccents(tok).replace(/[^a-zA-Z]/g, "").toLowerCase();
   const savedInText = new Set(tokens.map(cleanTok).filter((w: string) => savedMastery.has(w))).size;
+  const { week } = currentWeek();
+  const activeWeekWord = activeWord ? weekWordOf(week, activeWord) : null;
+  const weekInText = tokens.some((tok: string) => !savedMastery.has(cleanTok(tok)) && !!weekWordOf(week, tok));
 
   return (
     <div className="space-y-4 animate-pop-in relative">
@@ -626,7 +636,7 @@ export function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, s
             aria-label={isReadAlongPlaying ? tr("Бірге оқуды тоқтату", "Pause read-along") : tr("Бірге оқуды бастау", "Start read-along")}
             className={`w-12 h-12 rounded-full flex items-center justify-center shrink-0 transition-transform active:translate-y-[3px] ${
               isReadAlongPlaying
-                ? "bg-felt text-white shadow-[0_3px_0_var(--color-felt-deep)] active:shadow-none"
+                ? "bg-[#C4441E] text-white shadow-[0_3px_0_var(--color-felt-deep)] active:shadow-none"
                 : "bg-sun text-ink shadow-[0_3px_0_var(--color-sun-deep)] active:shadow-none"
             }`}
           >
@@ -663,11 +673,14 @@ export function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, s
 
       {/* Story text */}
       <div tabIndex={0} role="region" aria-label={lang === "kk" ? "Ертегі мәтіні" : "Story text"} className="card p-5 sm:p-7 max-h-[440px] overflow-y-auto">
-        {savedInText > 0 && (
+        {(savedInText > 0 || weekInText) && (
           <p className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs font-semibold text-ink-2 mb-3">
-            <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded bg-sun-soft border-b-2 border-sun-deep/60" />{lang === "kk" ? "Үйреніп жатырсың" : "Learning"}</span>
-            <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded border-b-2 border-jade" />{lang === "kk" ? "Меңгерілді" : "Mastered"}</span>
-            <span className="text-ink-3">{savedInText} {lang === "kk" ? "сақталған сөз осы мәтінде" : "saved words in this text"}</span>
+            {weekInText && <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded border-b-2 border-dashed border-sky" />{lang === "kk" ? "Апта сөзі" : "Word of the week"}</span>}
+            {savedInText > 0 && <>
+              <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded bg-sun-soft border-b-2 border-sun-deep/60" />{lang === "kk" ? "Үйреніп жатырсың" : "Learning"}</span>
+              <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded border-b-2 border-jade" />{lang === "kk" ? "Меңгерілді" : "Mastered"}</span>
+              <span className="text-ink-3">{savedInText} {lang === "kk" ? "сақталған сөз осы мәтінде" : "saved words in this text"}</span>
+            </>}
           </p>
         )}
         <p lang="en" className="text-[18px] text-ink leading-[1.9]">
@@ -678,7 +691,9 @@ export function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, s
             const isCurrentlyRead = i === readAlongTokenIndex;
             const isActive = activeWord === tok;
             const mastery = savedMastery.get(cleanTok(tok));
-            const savedCls = mastery === undefined
+            const savedCls = mastery === undefined && weekWordOf(week, tok)
+              ? "font-bold text-sky-deep hover:bg-sky-soft decoration-sky decoration-dashed decoration-2 underline underline-offset-[6px]"
+              : mastery === undefined
               ? "hover:bg-sky-soft decoration-ink-3/40 decoration-dotted underline underline-offset-[6px]"
               : mastery >= MAX_MASTERY
               ? "hover:bg-jade-soft decoration-jade decoration-2 underline underline-offset-[6px]"
@@ -719,6 +734,7 @@ export function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, s
           <Compass size={18} strokeWidth={2.6} /> {t.interactiveChoiceTitle}
         </button>
       </div>
+      <TrailButton storyId={currentStory.id} level={selectedLevel} text={text} lang={lang} userId={userId} onReward={onReward} />
 
       {/* Word sheet */}
       <Sheet open={!!activeWord} onClose={() => setActiveWord(null)} label={tr("Сөз", "Word")}>
@@ -729,6 +745,12 @@ export function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, s
                 <p className="eyebrow">{tr("Ағылшынша", "English")}</p>
                 <h3 className="font-display font-black text-[32px] text-ink leading-tight">{cleanActive}</h3>
                 <p className="text-lg text-sky-deep font-semibold mt-1">{translation}</p>
+                {activeWeekWord && (
+                  <p className="mt-2 inline-flex flex-wrap items-center gap-x-2 rounded-xl bg-sky-soft px-2.5 py-1 text-[13px] font-semibold text-sky-deep">
+                    <span className="font-black">{tr("Апта сөзі", "Word of the week")}</span>
+                    <span>{activeWeekWord.family}</span>
+                  </p>
+                )}
               </div>
               <button onClick={() => safePlayVoice(activeWord)} aria-label={tr("Тыңдау", "Listen")} className="w-12 h-12 rounded-full bg-sky-soft text-sky flex items-center justify-center shrink-0">
                 <Volume2 size={22} />
@@ -799,8 +821,8 @@ function WordsHeader({ mode, setMode, trailing }: { mode?: string; setMode?: (m:
 function EmptyState({ text }: { text: string }) {
   return (
     <div className="card p-8 text-center">
-      <span className="mx-auto w-16 h-16 rounded-full bg-sky-soft flex items-center justify-center">
-        <Layers className="text-sky" size={28} />
+      <span className="mx-auto w-20 h-20 rounded-full bg-sky-soft flex items-center justify-center">
+        <IconCards size={48} />
       </span>
       <p className="text-[15px] text-ink-2 leading-relaxed mt-4 max-w-[280px] mx-auto">{text}</p>
     </div>
@@ -917,8 +939,8 @@ export function FlashcardsScreen({ savedWords, onReview, lang = "kk", mode, setM
               ))}
             </span>
           </div>
-          <div className="flip-face flip-back rounded-[24px] bg-sky shadow-[0_6px_0_var(--color-sky-deep)] flex flex-col items-center justify-center p-6 text-white">
-            <span className="text-xs font-bold uppercase tracking-[0.08em] text-white/75">Қазақша</span>
+          <div className="flip-face flip-back rounded-[24px] bg-sky-deep shadow-[0_6px_0_#075F75] flex flex-col items-center justify-center p-6 text-white">
+            <span className="text-xs font-bold uppercase tracking-[0.08em] text-white">Қазақша</span>
             <span className="font-display font-black text-[32px] mt-2 text-center">{currentWord.translation}</span>
           </div>
         </div>
@@ -1004,9 +1026,7 @@ export function MatchingGame({ savedWords, onReward, mode, setMode }: any) {
       <div className="animate-pop-in">
         <WordsHeader mode={mode} setMode={setMode} />
         <div className="card p-8 text-center">
-          <span className="mx-auto w-20 h-20 rounded-full bg-sun flex items-center justify-center shadow-[0_5px_0_var(--color-sun-deep)]">
-            <Trophy className="text-ink" size={36} />
-          </span>
+          <IconTrophy size={88} className="mx-auto animate-pop-in" />
           <p className="font-display font-black text-2xl text-ink mt-5">{tr("Бәрі сәйкес келді!", "All matched!")}</p>
           <p className="text-[15px] text-ink-2 mt-1">{tr("Сөздерді тез таныдың.", "Great recognition speed.")}</p>
           <button onClick={() => setRound((r) => r + 1)} className="btn w-full mt-6">{tr("Келесі раунд", "Next round")}</button>
@@ -1769,10 +1789,10 @@ export function ProfileScreen({ xp, t, lang = "kk", setLang, savedWordsCount = 0
   const initial = (userName || "?").trim().charAt(0).toUpperCase();
 
   const stats = [
-    { label: t.streakLabel, value: streakDays, Icon: Flame, cls: "text-felt fill-felt" },
-    { label: t.totalXpLabel, value: xp, Icon: Zap, cls: "text-sun-deep fill-sun" },
-    { label: lang === "kk" ? "Сөздер" : "Words", value: savedWordsCount, Icon: Layers, cls: "text-sky" },
-    { label: lang === "kk" ? "Сынақтар" : "Quizzes", value: quizzesCompleted, Icon: Trophy, cls: "text-jade" },
+    { label: t.streakLabel, value: streakDays, Icon: IconFlame },
+    { label: t.totalXpLabel, value: xp, Icon: IconBolt },
+    { label: lang === "kk" ? "Сөздер" : "Words", value: savedWordsCount, Icon: IconCards },
+    { label: lang === "kk" ? "Сынақтар" : "Quizzes", value: quizzesCompleted, Icon: IconTrophy },
   ];
 
   const share = async () => {
@@ -1815,12 +1835,12 @@ export function ProfileScreen({ xp, t, lang = "kk", setLang, savedWordsCount = 0
       <div>
         <h2 className="font-display font-black text-xl text-ink mb-3">{lang === "kk" ? "Статистика" : "Statistics"}</h2>
         <div className="grid grid-cols-2 gap-3">
-          {stats.map(({ label, value, Icon, cls }) => (
+          {stats.map(({ label, value, Icon }) => (
             <div key={label} className="tile p-4 flex items-center gap-3">
-              <Icon size={26} className={cls} />
+              <Icon size={32} className="shrink-0" />
               <div className="min-w-0">
                 <p className="font-display font-black text-xl text-ink leading-none">{value}</p>
-                <p className="text-[13px] text-ink-2 mt-1 truncate">{label}</p>
+                <p className="text-[13px] text-ink-2 mt-1 leading-tight">{label}</p>
               </div>
             </div>
           ))}
@@ -1840,10 +1860,9 @@ export function ProfileScreen({ xp, t, lang = "kk", setLang, savedWordsCount = 0
             const unlocked = unlockedAchievements.includes(a.id);
             return (
               <div key={a.id} title={lang === "kk" ? a.kk.desc : a.desc} className="text-center">
-                <span className={`mx-auto w-16 h-16 rounded-full flex items-center justify-center text-3xl ${unlocked ? "bg-sun-soft ring-[3px] ring-sun" : "bg-sand-2 grayscale opacity-50"}`}>
-                  {a.icon}
-                </span>
-                <span className={`block text-xs font-semibold mt-2 leading-tight ${unlocked ? "text-ink" : "text-ink-3"}`}>{lang === "kk" ? a.kk.title : a.title}</span>
+                <Badge glyph={a.badge.glyph} color={a.badge.color} locked={!unlocked} size={72} className={`mx-auto ${unlocked ? "animate-pop-in" : ""}`} />
+                <span className={`block text-xs font-semibold mt-1.5 leading-tight ${unlocked ? "text-ink" : "text-ink-2"}`}>{lang === "kk" ? a.kk.title : a.title}</span>
+                <span className="sr-only">{unlocked ? (lang === "kk" ? "ашылды" : "unlocked") : (lang === "kk" ? "жабық" : "locked")}. {lang === "kk" ? a.kk.desc : a.desc}</span>
               </div>
             );
           })}

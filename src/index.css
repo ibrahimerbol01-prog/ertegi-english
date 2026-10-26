@@ -15,7 +15,7 @@
 
   --color-ink: #1C2333;          /* primary text */
   --color-ink-2: #5E6573;        /* secondary text */
-  --color-ink-3: #9A9FA8;        /* tertiary text, inactive icons */
+  --color-ink-3: #6A707B;        /* tertiary text; 4.6:1 on sand (WCAG AA) */
 
   --color-sky: #12A3C6;          /* primary action (Kazakh flag blue) */
   --color-sky-deep: #0B7E9A;     /* 3D edge, pressed */
@@ -95,14 +95,15 @@
     transition: transform 0.08s ease, border-color 0.15s ease, background-color 0.15s ease;
   }
   .tile:active:not(:disabled) { transform: translateY(2px); border-bottom-width: 2px; margin-bottom: 2px; }
-  .tile-selected { background: var(--color-sky-soft); border-color: var(--color-sky); color: var(--color-sky-deep); }
-  .tile-correct { background: var(--color-jade-soft); border-color: var(--color-jade); color: var(--color-jade-deep); }
+  .tile-selected { background: var(--color-sky-soft); border-color: var(--color-sky); color: #075F75; }
+  .tile-correct { background: var(--color-jade-soft); border-color: var(--color-jade); color: #0F6E4B; }
   .tile-wrong { background: var(--color-felt-soft); border-color: var(--color-felt); color: var(--color-felt-deep); }
 
   /* Duolingo 3D button. Colour comes from a modifier. */
+  /* Fills are one step deeper than the brand tokens so white labels keep 4.5:1 (WCAG AA). */
   .btn {
-    --b: var(--color-sky);
-    --e: var(--color-sky-deep);
+    --b: var(--color-sky-deep);
+    --e: #075F75;
     --f: #fff;
     display: inline-flex;
     align-items: center;
@@ -126,8 +127,8 @@
   .btn:active:not(:disabled) { transform: translateY(4px); box-shadow: 0 0 0 var(--e); }
   .btn:disabled { --b: var(--color-sand-3); --e: var(--color-line-2); --f: var(--color-ink-3); cursor: not-allowed; }
   .btn-sun { --b: var(--color-sun); --e: var(--color-sun-deep); --f: var(--color-ink); }
-  .btn-jade { --b: var(--color-jade); --e: var(--color-jade-deep); }
-  .btn-felt { --b: var(--color-felt); --e: var(--color-felt-deep); }
+  .btn-jade { --b: #15805A; --e: #0F6446; }
+  .btn-felt { --b: #C4441E; --e: #973213; }
   .btn-night { --b: var(--color-night); --e: #121a31; }
   .btn-ghost {
     --b: var(--color-card); --e: var(--color-line-2); --f: var(--color-sky-deep);
@@ -274,3 +275,17 @@
 .flip-inner.is-flipped { transform: rotateY(180deg); }
 .flip-face { position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden; }
 .flip-back { transform: rotateY(180deg); }
+
+/* Brand colours as text. The bright tones stay for fills, buttons and big
+   shapes, but small text and icons in them fall under WCAG AA contrast
+   (sun 2.7:1, sky 3:1, felt 3.7:1, jade 2.8:1 on white). These rules sit
+   outside Tailwind's layers, so they win over the generated utilities and
+   every `text-*` use gets the darker, readable shade at once. */
+.text-sun-deep { color: #9A6200; }
+.text-sky { color: var(--color-sky-deep); }
+/* The -deep tones are also used as text on their pale tints (selected, correct). */
+.text-sky-deep { color: #09718B; }
+.text-jade-deep { color: #0F6E4B; }
+.text-felt { color: #C4441E; }
+.text-jade { color: #147A55; }
+

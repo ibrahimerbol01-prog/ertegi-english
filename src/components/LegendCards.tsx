@@ -55,13 +55,13 @@ function CardBack({ card, lang }: { card: LegendCard; lang: Lang }) {
   return (
     <div className="w-full aspect-[3/4] rounded-[22px] overflow-hidden border-[3px] border-line bg-sand-2 flex flex-col shadow-[0_4px_0_var(--color-line-2)]">
       <div className={`h-2 ${r.tone}`} />
-      <div className="flex-1 flex flex-col items-center justify-center gap-2 text-ink-3">
+      <div className="flex-1 flex flex-col items-center justify-center gap-2 text-ink-2">
         <span className="opacity-40">{ORNAMENT[card.ornament]("w-12 h-12")}</span>
         <span className="flex items-center gap-1 text-[11px] font-bold uppercase tracking-[0.08em]">
           <Lock size={12} /> {r[lang]}
         </span>
       </div>
-      <div className="py-2 text-center text-[11px] font-bold text-sky-deep flex items-center justify-center gap-1">
+      <div className="py-2 text-center text-[11px] font-bold text-[#075F75] flex items-center justify-center gap-1">
         <Headphones size={13} /> {lang === "kk" ? "Тыңда да аш" : "Listen to unlock"}
       </div>
     </div>
@@ -145,7 +145,7 @@ function Challenge({ card, lang, onWin, onClose }: { card: LegendCard; lang: Lan
     <div className="p-5">
       <div className="flex items-center justify-between">
         <p className="eyebrow text-sky-deep">{lang === "kk" ? "Тыңда да жең" : "Listen and win"}</p>
-        <span className={`chip h-7 text-[12px] text-white border-0 ${r.tone}`}>{r[lang]} · +{r.xp} XP</span>
+        <span className={`chip h-7 text-[12px] text-white border-0 ${CHIP_FILL[card.rarity]}`}>{r[lang]} · +{r.xp} XP</span>
       </div>
       <h3 className="font-display font-black text-xl text-ink mt-2">{lang === "kk" ? card.kk : card.name}</h3>
 
@@ -230,6 +230,9 @@ function CardDetail({ card, lang }: { card: LegendCard; lang: Lang }) {
 }
 
 /* The whole deck: its own tab in the menu. */
+// Rarity tones one step deeper so the white chip label passes AA.
+const CHIP_FILL: Record<string, string> = { ertegi: "bg-sky-deep", epos: "bg-[#15805A]", anyz: "bg-[#C4441E]", tarih: "bg-night" };
+
 export function LegendScreen({ lang, userId, onReward }: { lang: string; userId?: string; onReward: (xp: number) => void }) {
   const l = pick(lang);
   const [owned, setOwned] = useState<string[]>(() => loadCards(userId));
