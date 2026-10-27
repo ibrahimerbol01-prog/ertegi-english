@@ -8,7 +8,7 @@ import { DICT } from "./constants";
 import { loadLang } from "./lang";
 import { capturePendingClass, peekPendingClass } from "./utils/classes";
 import { RoleScreen } from "./components/RolePicker";
-import { guessRole, peekPendingRole, roleOf, saveRole, switchRole, takePendingRole, type Role } from "./utils/role";
+import { clearPendingRole, guessRole, peekPendingRole, roleOf, saveRole, switchRole, takePendingRole, type Role } from "./utils/role";
 
 // A class link (?class=CODE) is remembered before the intro and sign-in, then offered after.
 capturePendingClass();
@@ -70,7 +70,9 @@ export default function App() {
     if (!session) return;
     const meta = session.user.user_metadata?.role;
     if (meta === "student" || meta === "teacher") { takePendingRole(); return; }
-    const role = takePendingRole() ?? roleOf(session);
+    // A role kept on this device was picked here on purpose: it wins over a pending one.
+    const pending = takePendingRole();
+    const role = roleOf(session) ?? pending;
     if (role) saveRole(session, role).then(() => setRoleTick((n) => n + 1));
   }, [session]);
 
@@ -104,13 +106,11 @@ export default function App() {
 
   const role = roleOf(session) ?? peekPendingRole();
   if (!role) {
-    const kk = loadLang() === "kk";
     return (
       <RoleScreen
-        kk={kk}
         initial={peekPendingClass() ? "student" : guessRole(session.user.id)}
         onPick={pickRole}
-        onSignOut={() => { supabase.auth.signOut(); }}
+        onSignOut={() => { clearPendingRole(); supabase.auth.signOut(); }}
       />
     );
   }

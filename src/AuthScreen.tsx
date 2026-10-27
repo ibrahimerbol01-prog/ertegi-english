@@ -4,7 +4,7 @@ import { Shanyraq, SteppeBackground, KilimStrip } from "./components/Ornaments";
 import { Sheet } from "./components/UIHelpers";
 import { loadLang, saveLang, type Lang } from "./lang";
 import { RolePicker } from "./components/RolePicker";
-import { setPendingRole, type Role } from "./utils/role";
+import { clearPendingRole, setPendingRole, type Role } from "./utils/role";
 import { peekPendingClass } from "./utils/classes";
 
 const PRIVACY_POLICY_TEXT = `
@@ -185,7 +185,8 @@ export default function AuthScreen() {
     } catch {
       // localStorage can be unavailable (private browsing etc.) — non-fatal
     }
-    if (mode === "signup" && role) setPendingRole(role);
+    // Signing in to an existing account never carries a role from an earlier, abandoned sign-up.
+    if (mode === "signup" && role) setPendingRole(role); else clearPendingRole();
     const { error: oauthError } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: { redirectTo: window.location.origin },

@@ -41,7 +41,7 @@ export function TeacherProfile({ lang, setLang, userName, email, onOpenClasses, 
             </div>
           </div>
           <div className="min-w-0 pt-3">
-            <h1 tabIndex={-1} className="font-display font-black text-2xl text-ink truncate outline-none">{userName}</h1>
+            <h1 tabIndex={-1} className="font-display font-black text-2xl text-ink outline-none [overflow-wrap:anywhere]">{userName}</h1>
             <p className="text-sm text-ink-2">{kk ? "Мұғалім" : "Teacher"}{email ? <> · <span className="break-all">{email}</span></> : null}</p>
           </div>
         </div>

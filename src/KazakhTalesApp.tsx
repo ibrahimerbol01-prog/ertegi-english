@@ -23,7 +23,7 @@ import { LegendScreen } from "./components/LegendCards";
 import { TeacherScreen } from "./components/Teacher";
 import { TeacherProfile } from "./components/TeacherProfile";
 import { RoleSwitchRow } from "./components/RolePicker";
-import type { Role } from "./utils/role";
+import { clearPendingRole, type Role } from "./utils/role";
 import { AssignmentsCard, JoinClassSheet, MyClassesSection } from "./components/StudentClasses";
 import { clearPendingClass, flushQuizResults, peekPendingClass, saveQuizResult } from "./utils/classes";
 import {
@@ -212,6 +212,7 @@ export default function KazakhTalesApp({ session, role, onRoleChange }: { sessio
   }, [userId]);
 
   const handleSignOut = async () => {
+    clearPendingRole();
     const { error } = await supabase.auth.signOut();
     if (error) onSaveError();
   };
@@ -232,7 +233,8 @@ export default function KazakhTalesApp({ session, role, onRoleChange }: { sessio
   };
 
   const addXp = (amount: number) => {
-    if (!amount) return;
+    // A teacher previewing a tale earns nothing: XP, streak and badges are the learner's.
+    if (!amount || teacher) return;
     // Update ref immediately so retry thunks read the freshest value.
     latestXpRef.current += amount;
     setXp(latestXpRef.current);
@@ -275,6 +277,8 @@ export default function KazakhTalesApp({ session, role, onRoleChange }: { sessio
     : Object.values(quizStory.levels);
 
   const handleQuizFinish = (correctCount: number, total: number, firstTry: number) => {
+    // A teacher's try-out is not a score: it stays out of reports and progress.
+    if (teacher) return;
     const storyId = selectedStory || STORIES[0].id;
     const step = quizLevel ?? "quiz";
     // The score goes to the teacher's report; it waits on the device while offline.
@@ -474,6 +478,17 @@ export default function KazakhTalesApp({ session, role, onRoleChange }: { sessio
         <div ref={scrollRef} className="flex-1 overflow-y-auto">
           <div className="mx-auto w-full max-w-[1040px] flex gap-8 px-4 md:px-8 pt-4 xl:pt-10 pb-44 md:pb-36">
             <main className="flex-1 min-w-0 max-w-[620px] mx-auto">
+              {/* A class link opened while signed in as a teacher: it is meant for learners. */}
+              {teacher && pendingCode && (
+                <div role="status" className="card p-4 mb-5 flex items-start gap-3">
+                  <p className="flex-1 text-[15px] text-ink-2">
+                    {lang === "kk"
+                      ? `Бұл сілтеме оқушыларға арналған (код ${pendingCode}). Сыныпқа оқушы ретінде қосылу үшін профильде «Оқушы режиміне ауысу» таңда.`
+                      : `This link is for learners (code ${pendingCode}). To join as a learner, choose "Switch to learner" in your profile.`}
+                  </p>
+                  <button onClick={() => { clearPendingClass(); setPendingCode(null); }} className="btn btn-ghost btn-sm shrink-0">{lang === "kk" ? "Жабу" : "Close"}</button>
+                </div>
+              )}
               {tab === "home" && (
                 <HomeScreen
                   progress={progress}

@@ -24,15 +24,23 @@ export function useDialogFocus<T extends HTMLElement>(open: boolean) {
       if (!items.length) { e.preventDefault(); return; }
       const first = items[0];
       const last = items[items.length - 1];
-      const inside = box.contains(document.activeElement);
-      if (e.shiftKey && (document.activeElement === first || !inside)) { e.preventDefault(); last.focus(); }
-      else if (!e.shiftKey && (document.activeElement === last || !inside)) { e.preventDefault(); first.focus(); }
+      // From the title (not itself in the Tab order) or from outside, start at an end.
+      const onItem = items.includes(document.activeElement as HTMLElement);
+      if (e.shiftKey && (document.activeElement === first || !onItem)) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && (document.activeElement === last || !onItem)) { e.preventDefault(); first.focus(); }
     };
     document.addEventListener("keydown", onKey);
     return () => {
       document.removeEventListener("keydown", onKey);
-      // Back to the opener; if it is gone (a removed row), the window's caller decides.
-      if (opener && opener.isConnected && opener !== document.body) setTimeout(() => opener.focus({ preventScroll: true }), 0);
+      // Back to the opener; if it is gone (a quiz moved on), to the screen's title.
+      setTimeout(() => {
+        if (opener && opener.isConnected && opener !== document.body) { opener.focus({ preventScroll: true }); return; }
+        if (document.activeElement && document.activeElement !== document.body) return;
+        const title = document.querySelector<HTMLElement>("main h1, main h2");
+        if (!title) return;
+        if (!title.hasAttribute("tabindex")) title.setAttribute("tabindex", "-1");
+        title.focus({ preventScroll: true });
+      }, 0);
     };
   }, [open]);
   return ref;

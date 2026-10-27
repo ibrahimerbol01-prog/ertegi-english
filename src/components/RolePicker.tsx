@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Check } from "lucide-react";
 import { IconBoard, IconLearner } from "./Icons";
 import { Shanyraq, SteppeBackground, KilimStrip } from "./Ornaments";
 import type { Role } from "../utils/role";
+import { loadLang, saveLang } from "../lang";
 
 /* Two big choices: learner or teacher. Used on the sign-up form and on the
    one-time screen for accounts that have no role yet (Google, older accounts). */
@@ -51,18 +52,25 @@ export function RolePicker({ value, onChange, kk, describedBy }: {
 }
 
 /* Shown once after sign-in when the account has no role yet. */
-export function RoleScreen({ kk, initial, onPick, onSignOut }: {
-  kk: boolean; initial: Role | null; onPick: (r: Role) => Promise<void>; onSignOut: () => void;
+export function RoleScreen({ initial, onPick, onSignOut }: {
+  initial: Role | null; onPick: (r: Role) => Promise<void>; onSignOut: () => void;
 }) {
   const [role, setRole] = useState<Role | null>(initial);
   const [busy, setBusy] = useState(false);
+  // A ref, not state: two fast taps both see the first one in flight.
+  const inFlight = useRef(false);
   const [missing, setMissing] = useState(false);
+  const [lang, setLangState] = useState(loadLang);
+  const kk = lang === "kk";
+  const setLang = (l: "kk" | "en") => { setLangState(l); saveLang(l); };
 
   const go = async () => {
     if (!role) { setMissing(true); return; }
-    if (busy) return;
+    if (inFlight.current) return;
+    inFlight.current = true;
     setBusy(true);
     await onPick(role);
+    inFlight.current = false;
     setBusy(false);
   };
 
@@ -71,6 +79,10 @@ export function RoleScreen({ kk, initial, onPick, onSignOut }: {
       <SteppeBackground />
       <main className="relative z-10 w-full max-w-[420px] card overflow-hidden px-6 pt-10 pb-7 space-y-5">
         <KilimStrip className="absolute top-0 inset-x-0 h-2 w-full" />
+        <div className="absolute top-4 right-4 segmented w-[104px]" role="group" aria-label={kk ? "Тіл" : "Language"}>
+          <button aria-pressed={kk} onClick={() => setLang("kk")}>ҚАЗ</button>
+          <button aria-pressed={!kk} onClick={() => setLang("en")}>ENG</button>
+        </div>
         <div className="text-center">
           <span className="mx-auto w-16 h-16 rounded-[20px] bg-sky flex items-center justify-center shadow-[0_5px_0_var(--color-sky-deep)]">
             <Shanyraq className="w-11 h-11 text-white" strokeWidth={4} />
@@ -96,14 +108,16 @@ export function RoleScreen({ kk, initial, onPick, onSignOut }: {
 /* Profile row that moves the account to the other side of the app. */
 export function RoleSwitchRow({ kk, to, onSwitch }: { kk: boolean; to: Role; onSwitch: (r: Role) => Promise<boolean> }) {
   const [busy, setBusy] = useState(false);
+  const inFlight = useRef(false);
   const [failed, setFailed] = useState(false);
   const run = async () => {
-    if (busy) return;
+    if (inFlight.current) return;
+    inFlight.current = true;
     setBusy(true);
     setFailed(false);
     const ok = await onSwitch(to);
     // On success the app reopens on the other side, so only failure needs a word here.
-    if (!ok) { setBusy(false); setFailed(true); }
+    if (!ok) { inFlight.current = false; setBusy(false); setFailed(true); }
   };
   const Icon = to === "teacher" ? IconBoard : IconLearner;
   return (

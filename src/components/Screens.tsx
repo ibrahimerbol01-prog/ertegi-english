@@ -1082,7 +1082,7 @@ export function QuizSetup({ storyId, level, onChange, onStart, progress, lang, t
   t: Record<string, string>;
 }) {
   const kk = lang === "kk";
-  // A level check counts as reading that level, so only levels already read
+  // A level check is taken after reading it, so only levels already passed
   // (or the one the learner just came from in the reader) can be picked here.
   const [entry] = useState(() => ({ storyId, level }));
   const canPick = (sid: string, lvl: string | null) =>
@@ -1132,7 +1132,7 @@ export function QuizSetup({ storyId, level, onChange, onStart, progress, lang, t
               onClick={() => open && onChange(storyId, m.id)}
               disabled={!open}
               aria-pressed={active}
-              title={open ? undefined : (kk ? "Алдымен осы деңгейді оқы" : "Read this level first")}
+              title={open ? undefined : (kk ? "Алдымен осы деңгейді оқы: сынағы мәтіннің соңында" : "Read this level first: its check is at the end of the text")}
               className={`tile h-11 px-4 text-sm font-bold flex items-center gap-1.5 ${active ? "tile-selected" : open ? "text-ink" : "text-ink-3 opacity-60"}`}
             >
               {!open && <Lock size={13} />}

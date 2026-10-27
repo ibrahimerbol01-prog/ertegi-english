@@ -31,26 +31,29 @@ export function guessRole(userId: string): Role | null {
   }
 }
 
-// Google sign-up leaves the page, so the chosen role waits here until the redirect back.
+// Google sign-up leaves the page, so the chosen role waits here until the
+// redirect back. It is stamped and short-lived: an abandoned sign-up must not
+// hand its role to whoever signs in on this device later.
+const PENDING_TTL = 15 * 60 * 1000;
 export function setPendingRole(role: Role) {
-  try { localStorage.setItem(PENDING, role); } catch { /* storage blocked: the role screen asks again */ }
+  try { localStorage.setItem(PENDING, JSON.stringify({ role, at: Date.now() })); } catch { /* storage blocked: the role screen asks again */ }
+}
+export function clearPendingRole() {
+  try { localStorage.removeItem(PENDING); } catch { /* storage blocked */ }
 }
 export function peekPendingRole(): Role | null {
   try {
-    const v = localStorage.getItem(PENDING);
-    return isRole(v) ? v : null;
+    const v = JSON.parse(localStorage.getItem(PENDING) || "null") as { role?: unknown; at?: unknown } | null;
+    if (!v || !isRole(v.role) || typeof v.at !== "number" || Date.now() - v.at > PENDING_TTL) return null;
+    return v.role;
   } catch {
     return null;
   }
 }
 export function takePendingRole(): Role | null {
-  try {
-    const v = localStorage.getItem(PENDING);
-    localStorage.removeItem(PENDING);
-    return isRole(v) ? v : null;
-  } catch {
-    return null;
-  }
+  const v = peekPendingRole();
+  clearPendingRole();
+  return v;
 }
 
 // True when the server has it; false means it is kept on this device only for now.
