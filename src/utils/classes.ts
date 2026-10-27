@@ -127,7 +127,7 @@ export const classLink = (code: string) => `${window.location.origin}/?class=${c
 export const myClasses = () => call<MyClass[]>(() => supabase.rpc("my_classes"));
 // Invisible characters and odd spaces would let two learners look like one name.
 export const cleanNick = (nickname: string) =>
-  nickname.replace(/[\u00a0\u2000-\u200a\u202f\u205f\u3000]/g, " ").replace(/[\u00ad\u034f\u061c\u115f\u1160\u17b4\u17b5\u180e\u200b-\u200f\u2028-\u202e\u2060-\u206f\u3164\ufeff]/g, "").replace(/\s+/g, " ").trim();
+  nickname.replace(/[\u00a0\u2000-\u200a\u202f\u205f\u3000]/g, " ").replace(/\u034f/g, "").replace(/[\u00ad\u061c\u115f\u1160\u17b4\u17b5\u180e\u200b-\u200f\u2028-\u202e\u2060-\u206f\u3164\ufeff]/g, "").replace(/\s+/g, " ").trim();
 export const joinClass = (code: string, nickname: string) =>
   call<{ class_id: string; name: string }>(() => supabase.rpc("join_class", { p_code: cleanCode(code), p_nickname: cleanNick(nickname) }));
 export const leaveClass = (classId: string) => call<null>(() => supabase.rpc("leave_class", { p_class: classId }));
