@@ -125,8 +125,11 @@ export const classLink = (code: string) => `${window.location.origin}/?class=${c
 
 /* --- learner --- */
 export const myClasses = () => call<MyClass[]>(() => supabase.rpc("my_classes"));
+// Invisible characters and odd spaces would let two learners look like one name.
+export const cleanNick = (nickname: string) =>
+  nickname.replace(/[\u00a0\u2000-\u200a\u202f\u205f\u3000]/g, " ").replace(/\u034f/g, "").replace(/[\u00ad\u061c\u115f\u1160\u17b4\u17b5\u180e\u200b-\u200f\u2028-\u202e\u2060-\u206f\u3164\ufeff]/g, "").replace(/\s+/g, " ").trim();
 export const joinClass = (code: string, nickname: string) =>
-  call<{ class_id: string; name: string }>(() => supabase.rpc("join_class", { p_code: cleanCode(code), p_nickname: nickname.trim() }));
+  call<{ class_id: string; name: string }>(() => supabase.rpc("join_class", { p_code: cleanCode(code), p_nickname: cleanNick(nickname) }));
 export const leaveClass = (classId: string) => call<null>(() => supabase.rpc("leave_class", { p_class: classId }));
 
 /* --- teacher --- */
@@ -230,16 +233,23 @@ let again = false;
 export async function flushQuizResults(userId: string) {
   // A score saved while a send is running goes out right after it.
   if (flushing) { again = true; return; }
-  const rows = readOutbox(userId);
+  let rows = readOutbox(userId);
   if (!rows.length) return;
   flushing = true;
   try {
+    // Older rows had no id: give them one and keep it, so a resend after a
+    // lost answer is recognised as the same score.
+    if (rows.some((r) => !r.client_id)) {
+      rows = rows.map((r) => (r.client_id ? r : { ...r, client_id: newId() }));
+      writeOutbox(userId, rows);
+    }
     const send = (batch: QuizRow[]) => supabase.from("quiz_results").upsert(
-      batch.map((r) => ({ ...r, client_id: r.client_id ?? newId(), user_id: userId })),
+      batch.map((r) => ({ ...r, user_id: userId })),
       { onConflict: "user_id,client_id", ignoreDuplicates: true },
     );
+    const handled = new Set<string>();
     const { error } = await send(rows);
-    let done = error ? 0 : rows.length;
+    if (!error) rows.forEach((r) => handled.add(r.client_id!));
     // One row the table can't take must not hold back or sink the rest: send
     // them one by one and drop only the refused ones. Any other error stops,
     // keeping the unsent rows for later.
@@ -247,12 +257,12 @@ export async function flushQuizResults(userId: string) {
       for (const r of rows) {
         const res = await send([r]);
         if (res.error && !res.error.code?.startsWith("23")) break;
-        done += 1;
+        handled.add(r.client_id!);
       }
     }
-    // Drop exactly the rows handled; anything queued meanwhile stays. A table
-    // that doesn't exist yet keeps the queue for after the migration.
-    if (done) writeOutbox(userId, readOutbox(userId).slice(done));
+    // Drop exactly the rows handled, by id: another tab may have changed the
+    // queue meanwhile. A missing table keeps the queue for after the migration.
+    if (handled.size) writeOutbox(userId, readOutbox(userId).filter((r) => !r.client_id || !handled.has(r.client_id)));
   } catch { /* offline: try again later */ } finally {
     flushing = false;
     if (again) { again = false; void flushQuizResults(userId); }

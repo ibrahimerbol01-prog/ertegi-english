@@ -2077,8 +2077,8 @@ export const ACHIEVEMENTS = [
     icon: "🎯",
     badge: { glyph: "target", color: "sky" },
     title: "First Steps",
-    desc: "Complete your first quiz",
-    kk: { title: "Алғашқы қадам", desc: "Алғашқы сынақтан өт" },
+    desc: "Take your first quiz",
+    kk: { title: "Алғашқы қадам", desc: "Алғашқы сынақты тапсыр" },
     check: (s: any) => s.quizzesCompleted >= 1,
   },
   {

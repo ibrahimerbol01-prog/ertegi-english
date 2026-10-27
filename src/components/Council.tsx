@@ -103,7 +103,7 @@ export function CouncilCard({ lang, userId, progress = new Set<string>(), onRewa
           <span className="eyebrow text-sun-deep block">{kk ? "Дала кеңесі" : "Steppe council"} · {doneCount}/{COUNCIL.length}</span>
           <span className="font-display font-extrabold text-ink text-[16px] leading-snug block mt-0.5">
             {!shown
-              ? (kk ? "Ертегінің бір деңгейін оқысаң, кеңес ашылады" : "Read one level of a tale to open the council")
+              ? (kk ? "Ертегінің бір деңгейін оқып, сынағынан өтсең, кеңес ашылады" : "Read one level of a tale and pass its check to open the council")
               : next
                 ? (kk ? next.promptKk : next.prompt)
                 : (kk ? "Барлық ашық сұраққа жауап бердің" : "You've answered every open question")}

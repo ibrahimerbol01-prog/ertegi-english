@@ -255,3 +255,17 @@ export const Badge = ({ glyph, color, locked, size = 64, className = "" }: {
     </Svg>
   );
 };
+
+/* Classes (teacher): a dark chalkboard on a stand, with written lines and a sun-gold star. */
+export const IconBoard = ({ size, muted, className }: P) => (
+  <Svg size={size} className={className}>
+    <ellipse cx="16" cy="29.2" rx="11" ry="1.3" fill={pick(muted, C.skyDeep, "deep")} opacity=".18" />
+    <path d="M9.4 24l-2.6 5M22.6 24l2.6 5" stroke={pick(muted, C.felt, "deep")} strokeWidth="2" strokeLinecap="round" />
+    <rect x="3" y="5" width="26" height="19.6" rx="2.6" fill={pick(muted, C.felt, "deep")} />
+    <rect x="5.2" y="7.2" width="21.6" height="15.2" rx="1.6" fill={pick(muted, C.night, "deep")} />
+    <path d="M16 7.2h10.8v13.6a1.6 1.6 0 0 1-1.6 1.6H16z" fill="#000" opacity=".18" />
+    <path d="M8.4 11.4h8.4M8.4 14.8h6.2M8.4 18.2h7.4" stroke={pick(muted, C.card, "light")} strokeWidth="1.4" strokeLinecap="round" opacity=".9" />
+    <path d="M22.4 11.2l1.1 2.2 2.4.35-1.75 1.7.4 2.4-2.15-1.13-2.15 1.13.4-2.4-1.75-1.7 2.4-.35z" fill={pick(muted, C.sun, "light")} />
+    <rect x="12.4" y="3.2" width="7.2" height="2.6" rx="1.3" fill={pick(muted, C.sun, "base")} />
+  </Svg>
+);

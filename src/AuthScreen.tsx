@@ -3,6 +3,9 @@ import { supabase } from "./lib/supabase";
 import { Shanyraq, SteppeBackground, KilimStrip } from "./components/Ornaments";
 import { Sheet } from "./components/UIHelpers";
 import { loadLang, saveLang, type Lang } from "./lang";
+import { RolePicker } from "./components/RolePicker";
+import { clearPendingRole, setPendingRole, type Role } from "./utils/role";
+import { peekPendingClass } from "./utils/classes";
 
 const PRIVACY_POLICY_TEXT = `
 Last updated: 2026
@@ -106,6 +109,8 @@ export default function AuthScreen() {
   const [error, setError] = useState<string | null>(null);
   const [confirmSent, setConfirmSent] = useState(false);
   const [agreed, setAgreed] = useState(false);
+  // A class link means a learner; otherwise the person picks.
+  const [role, setRole] = useState<Role | null>(() => (peekPendingClass() ? "student" : null));
   const [showPolicy, setShowPolicy] = useState(false);
   const [lang, setLangState] = useState<Lang>(loadLang);
   const kk = lang === "kk";
@@ -120,8 +125,14 @@ export default function AuthScreen() {
   const consentRequired = mode === "signup";
   const canSubmit = !consentRequired || agreed;
 
+  const roleMissing = tr("Алдымен таңда: оқушысың ба, мұғалімсің бе?", "First pick: are you a learner or a teacher?");
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (mode === "signup" && !role) {
+      setError(roleMissing);
+      return;
+    }
     if (!canSubmit) {
       setError(tr("Аккаунт ашу үшін құпиялық саясатына келісу керек.", "Please agree to the Privacy Policy to create an account."));
       return;
@@ -137,6 +148,7 @@ export default function AuthScreen() {
             data: {
               display_name: displayName || email.split("@")[0],
               agreed_to_privacy_policy: true,
+              role,
             },
           },
         });
@@ -155,6 +167,10 @@ export default function AuthScreen() {
 
   const handleGoogleSignIn = async () => {
     // In sign-in mode there is no checkbox: the note under the button says that continuing means agreeing.
+    if (mode === "signup" && !role) {
+      setError(roleMissing);
+      return;
+    }
     if (mode === "signup" && !agreed) {
       setError(tr("Алдымен құпиялық саясатына келіс: төмендегі белгіні қой.", "Please agree to the Privacy Policy first — check the box below."));
       return;
@@ -169,6 +185,8 @@ export default function AuthScreen() {
     } catch {
       // localStorage can be unavailable (private browsing etc.) — non-fatal
     }
+    // Signing in to an existing account never carries a role from an earlier, abandoned sign-up.
+    if (mode === "signup" && role) setPendingRole(role); else clearPendingRole();
     const { error: oauthError } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: { redirectTo: window.location.origin },
@@ -193,6 +211,10 @@ export default function AuthScreen() {
           <h1 className="large-title mt-5">{mode === "signin" ? tr("Қайта қош келдің", "Welcome back") : tr("Аккаунт аш", "Create your account")}</h1>
           <p className="text-[15px] text-ink-2 mt-1.5">{tr("Ertegi English · қазақ ертегілері арқылы ағылшын тілі", "Ertegi English · Kazakh tales, English fluency")}</p>
         </div>
+
+        {!confirmSent && mode === "signup" && (
+          <RolePicker value={role} onChange={(r) => { setRole(r); if (error === roleMissing) setError(null); }} kk={kk} />
+        )}
 
         {!confirmSent && (
           <>
