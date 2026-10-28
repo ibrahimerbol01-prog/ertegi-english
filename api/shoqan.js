@@ -48,7 +48,7 @@ const FALLBACK_REPLY = "Sorry, I couldn't come up with a reply just now.";
 // Google retires model names from time to time, so try the configured one,
 // then the "latest" alias, then older and lighter names. A 404 (retired name)
 // or a busy model (429/500/503, common on the free tier) moves on to the next.
-const GEMINI_MODELS = [process.env.GEMINI_MODEL, "gemini-flash-latest", "gemini-2.5-flash", "gemini-2.5-flash-lite", "gemini-2.0-flash", "gemini-2.0-flash-lite"]
+const GEMINI_MODELS = [process.env.GEMINI_MODEL, "gemini-3.5-flash-lite", "gemini-flash-lite-latest", "gemini-3.5-flash", "gemini-flash-latest", "gemini-2.5-flash-lite", "gemini-2.5-flash"]
   .filter((m, i, all) => m && all.indexOf(m) === i);
 
 async function geminiOnce(apiKey, model, contents, withThinkingOff) {
