@@ -100,6 +100,7 @@ export const ShoqanChat = ({ hidden = false }: { hidden?: boolean }) => {
     setChatError(null);
     setSending(true);
 
+    let status = 0;
     try {
       const { data: { session: s } } = await supabase.auth.getSession();
       const res = await fetch("/api/shoqan", {
@@ -110,11 +111,19 @@ export const ShoqanChat = ({ hidden = false }: { hidden?: boolean }) => {
         },
         body: JSON.stringify({ messages: nextMessages }),
       });
-      const data = await res.json();
+      status = res.status;
+      const data = await res.json().catch(() => null);
       if (!res.ok) throw new Error(data?.error || "Request failed");
       setMessages((prev) => [...prev, { role: "assistant", content: data.reply }]);
-    } catch {
-      setChatError(tr("Шоқан қазір жауап бере алмады. Біраздан соң қайта байқап көр.", "Shoqan couldn't respond just now — try again in a moment."));
+    } catch (err) {
+      console.warn("[shoqan]", status, err);
+      // Say what went wrong where the learner can act on it; the code in
+      // brackets lets a screenshot show the exact server answer.
+      setChatError(
+        status === 429 ? tr("Бүгінгі 30 сұрақ бітті. Ертең қайта сұра.", "That's today's 30 questions. Ask again tomorrow.")
+        : status === 401 ? tr("Кіру уақыты бітті. Профильден шығып, қайта кір.", "Your sign-in has expired. Sign out and sign in again.")
+        : tr(`Шоқан қазір жауап бере алмады. Біраздан соң қайта байқап көр.${status ? ` (${status})` : ""}`, `Shoqan couldn't respond just now — try again in a moment.${status ? ` (${status})` : ""}`),
+      );
     } finally {
       setSending(false);
     }

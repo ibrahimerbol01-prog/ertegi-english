@@ -11,12 +11,18 @@ export async function requireAuth(req, res) {
     res.status(401).json({ error: "Missing Authorization header." });
     return null;
   }
-  const admin = createClient(
-    process.env.SUPABASE_URL,
-    process.env.SUPABASE_SERVICE_KEY
-  );
+  // Trimmed: a key pasted into Vercel with a trailing space or newline fails.
+  const url = (process.env.SUPABASE_URL || "").trim();
+  const key = (process.env.SUPABASE_SERVICE_KEY || "").trim();
+  if (!url || !key) {
+    console.error("[auth] SUPABASE_URL or SUPABASE_SERVICE_KEY is not set");
+    res.status(500).json({ error: "Server is missing its Supabase settings." });
+    return null;
+  }
+  const admin = createClient(url, key);
   const { data: { user }, error } = await admin.auth.getUser(token);
   if (error || !user) {
+    console.error("[auth] token rejected:", error?.message);
     res.status(401).json({ error: "Unauthorized." });
     return null;
   }
