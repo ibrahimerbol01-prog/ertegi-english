@@ -110,12 +110,15 @@ export const ShoqanChat = ({ hidden = false }: { hidden?: boolean }) => {
           Authorization: `Bearer ${s?.access_token ?? ""}`,
         },
         body: JSON.stringify({ messages: nextMessages }),
+        // The server gives up on the AI after 20 s per try; past this the chat stops waiting.
+        signal: AbortSignal.timeout(45000),
       });
       status = res.status;
       const data = await res.json().catch(() => null);
       if (!res.ok) throw new Error(data?.error || "Request failed");
       setMessages((prev) => [...prev, { role: "assistant", content: data.reply }]);
     } catch (err) {
+      if (err instanceof DOMException && err.name === "TimeoutError") status = 504;
       console.warn("[shoqan]", status, err);
       // Say what went wrong where the learner can act on it; the code in
       // brackets lets a screenshot show the exact server answer.
