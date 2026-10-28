@@ -42,8 +42,9 @@ const FALLBACK_REPLY = "Sorry, I couldn't come up with a reply just now.";
 
 // Gemini wants roles "user" / "model" and the chat must open with the user.
 // Google retires model names from time to time, so try the configured one,
-// then the "latest" alias, then older names; a 404 moves on to the next.
-const GEMINI_MODELS = [process.env.GEMINI_MODEL, "gemini-flash-latest", "gemini-2.5-flash", "gemini-2.0-flash"]
+// then the "latest" alias, then older and lighter names. A 404 (retired name)
+// or a busy model (429/500/503, common on the free tier) moves on to the next.
+const GEMINI_MODELS = [process.env.GEMINI_MODEL, "gemini-flash-latest", "gemini-2.5-flash", "gemini-2.5-flash-lite", "gemini-2.0-flash", "gemini-2.0-flash-lite"]
   .filter((m, i, all) => m && all.indexOf(m) === i);
 
 async function geminiOnce(apiKey, model, contents, withThinkingOff) {
@@ -89,7 +90,7 @@ async function askGemini(apiKey, messages) {
     const body = await upstream.text();
     console.error(`[shoqan] Gemini ${model} ${upstream.status}:`, body.slice(0, 500));
     last = { status: upstream.status, error: body };
-    if (upstream.status !== 404) break;
+    if (![404, 429, 500, 503].includes(upstream.status)) break;
   }
   return last;
 }
