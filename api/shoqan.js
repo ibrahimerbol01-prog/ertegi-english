@@ -87,12 +87,18 @@ async function askGemini(apiKey, messages) {
       last = { status: 504, error: `Gemini ${model} took too long.` };
       continue;
     }
-    // A model that doesn't take the thinking setting answers 400: ask again without it.
+    // A model that doesn't take the thinking setting answers 400, not always
+    // naming it ("Request contains an invalid argument."): ask again without it.
     if (upstream.status === 400) {
       const body = await upstream.text();
       console.error(`[shoqan] Gemini ${model} 400:`, body.slice(0, 500));
-      if (/thinking/i.test(body)) upstream = await geminiOnce(apiKey, model, contents, false);
-      else return { status: 400, error: body };
+      try {
+        upstream = await geminiOnce(apiKey, model, contents, false);
+      } catch (err) {
+        if (err?.name !== "TimeoutError") throw err;
+        last = { status: 504, error: `Gemini ${model} took too long.` };
+        continue;
+      }
     }
     if (upstream.ok) {
       const data = await upstream.json();
@@ -105,7 +111,7 @@ async function askGemini(apiKey, messages) {
     const body = await upstream.text();
     console.error(`[shoqan] Gemini ${model} ${upstream.status}:`, body.slice(0, 500));
     last = { status: upstream.status, error: body };
-    if (![404, 429, 500, 503].includes(upstream.status)) break;
+    if (![400, 404, 429, 500, 503].includes(upstream.status)) break;
   }
   return last;
 }
