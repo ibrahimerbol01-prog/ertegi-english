@@ -23,7 +23,6 @@ export function JoinClassSheet({ open, onClose, lang, defaultName, initialCode =
 }) {
   const kk = lang === "kk";
   const [code, setCode] = useState(initialCode);
-  const [name, setName] = useState(defaultName);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<ClassError | null>(null);
   const [joined, setJoined] = useState<string | null>(null);
@@ -33,21 +32,20 @@ export function JoinClassSheet({ open, onClose, lang, defaultName, initialCode =
   if (open && openedWith !== initialCode) {
     setOpenedWith(initialCode);
     setCode(cleanCode(initialCode));
-    setName(defaultName.slice(0, 30));
     setError(null);
     setJoined(null);
   }
   if (!open && openedWith !== null) setOpenedWith(null);
 
   const badLetters = codeHasBadLetters(code);
-  const ready = !badLetters && cleanCode(code).length === 6 && name.trim().length > 0 && name.trim().length <= 30;
+  const ready = !badLetters && cleanCode(code).length === 6;
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!ready || busy) return;
     setBusy(true);
     setError(null);
-    const res = await joinClass(code, name);
+    const res = await joinClass(code, defaultName);
     setBusy(false);
     if (!res.ok) { setError(res.error); return; }
     setJoined(res.data.name);
@@ -92,20 +90,6 @@ export function JoinClassSheet({ open, onClose, lang, defaultName, initialCode =
                 {kk ? "Кодта I, O, 0, 1 болмайды: мұғалімнен кодты тексер." : "Codes never have I, O, 0 or 1: check the code with your teacher."}
               </p>
             )}
-            <label htmlFor="join-name" className="block mt-4 text-sm font-bold text-ink">{kk ? "Сыныптағы атың" : "Your name in class"}</label>
-            <input
-              id="join-name"
-              value={name}
-              onChange={(e) => { setName(e.target.value.slice(0, 30)); setError(null); }}
-              className="field mt-1.5"
-              autoComplete="given-name"
-              maxLength={30}
-              aria-describedby="join-name-hint"
-              aria-invalid={error === "nickname_taken" || error === "bad_nickname"}
-            />
-            <p id="join-name-hint" className="text-[13px] text-ink-2 mt-1.5">
-              {kk ? "Тек атыңды немесе лақап атыңды жаз. Тегіңді, телефоныңды жазба." : "Just a first name or a nickname. No surname or phone number."}
-            </p>
             {error && <p id="join-error" role="alert" className="mt-4 text-[14px] font-semibold text-felt-deep">{errorText(error, kk)}</p>}
             <div className="grid grid-cols-2 gap-3 mt-6">
               <button type="button" onClick={onClose} className="btn btn-ghost">{kk ? "Артқа" : "Back"}</button>

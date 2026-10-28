@@ -41,33 +41,55 @@ STRICT BOUNDARIES:
 const FALLBACK_REPLY = "Sorry, I couldn't come up with a reply just now.";
 
 // Gemini wants roles "user" / "model" and the chat must open with the user.
+// Google retires model names from time to time, so try the configured one,
+// then the "latest" alias, then older names; a 404 moves on to the next.
+const GEMINI_MODELS = [process.env.GEMINI_MODEL, "gemini-flash-latest", "gemini-2.5-flash", "gemini-2.0-flash"]
+  .filter((m, i, all) => m && all.indexOf(m) === i);
+
+async function geminiOnce(apiKey, model, contents, withThinkingOff) {
+  const generationConfig = { maxOutputTokens: 800, temperature: 0.7 };
+  // Thinking off: a chat bubble needs a quick short answer, and thinking
+  // tokens would otherwise eat into the output limit.
+  if (withThinkingOff) generationConfig.thinkingConfig = { thinkingBudget: 0 };
+  return fetch(
+    `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "x-goog-api-key": apiKey.trim() },
+      body: JSON.stringify({ systemInstruction: { parts: [{ text: SYSTEM_PROMPT }] }, contents, generationConfig }),
+    },
+  );
+}
+
 async function askGemini(apiKey, messages) {
-  const model = process.env.GEMINI_MODEL || "gemini-2.5-flash";
   const contents = messages
     .map((m) => ({ role: m.role === "assistant" ? "model" : "user", parts: [{ text: m.content }] }))
     .filter((m, i, all) => all.findIndex((x) => x.role === "user") <= i);
   if (contents.length === 0) return { status: 400, error: "The chat has no learner message yet." };
-  const upstream = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`,
-    {
-      method: "POST",
-      headers: { "Content-Type": "application/json", "x-goog-api-key": apiKey },
-      body: JSON.stringify({
-        systemInstruction: { parts: [{ text: SYSTEM_PROMPT }] },
-        contents,
-        // Thinking off: a chat bubble needs a quick short answer, and thinking
-        // tokens would otherwise eat into the output limit.
-        generationConfig: { maxOutputTokens: 800, temperature: 0.7, thinkingConfig: { thinkingBudget: 0 } },
-      }),
-    },
-  );
-  if (!upstream.ok) return { status: upstream.status, error: await upstream.text() };
-  const data = await upstream.json();
-  const reply = (data?.candidates?.[0]?.content?.parts || [])
-    .map((p) => p.text || "")
-    .join("")
-    .trim();
-  return { reply };
+  let last = { status: 502, error: "No Gemini model answered." };
+  for (const model of GEMINI_MODELS) {
+    let upstream = await geminiOnce(apiKey, model, contents, true);
+    // A model that doesn't take the thinking setting answers 400: ask again without it.
+    if (upstream.status === 400) {
+      const body = await upstream.text();
+      console.error(`[shoqan] Gemini ${model} 400:`, body.slice(0, 500));
+      if (/thinking/i.test(body)) upstream = await geminiOnce(apiKey, model, contents, false);
+      else return { status: 400, error: body };
+    }
+    if (upstream.ok) {
+      const data = await upstream.json();
+      const reply = (data?.candidates?.[0]?.content?.parts || [])
+        .map((p) => p.text || "")
+        .join("")
+        .trim();
+      return { reply };
+    }
+    const body = await upstream.text();
+    console.error(`[shoqan] Gemini ${model} ${upstream.status}:`, body.slice(0, 500));
+    last = { status: upstream.status, error: body };
+    if (upstream.status !== 404) break;
+  }
+  return last;
 }
 
 async function askClaude(apiKey, messages) {
@@ -121,8 +143,8 @@ export default async function handler(req, res) {
     .from("api_usage_daily")
     .upsert({ user_id: user.id, date: today, shoqan_count: count + 1 }, { onConflict: "user_id,date" });
 
-  const geminiKey = process.env.GEMINI_API_KEY;
-  const anthropicKey = process.env.ANTHROPIC_API_KEY;
+  const geminiKey = (process.env.GEMINI_API_KEY || "").trim();
+  const anthropicKey = (process.env.ANTHROPIC_API_KEY || "").trim();
   if (!geminiKey && !anthropicKey) {
     res.status(500).json({ error: "Server is missing its AI API key." });
     return;
@@ -150,7 +172,8 @@ export default async function handler(req, res) {
       return;
     }
     res.status(200).json({ reply: result.reply || FALLBACK_REPLY });
-  } catch {
+  } catch (err) {
+    console.error("[shoqan] request failed:", err);
     res.status(500).json({ error: "Something went wrong reaching the AI service." });
   }
 };

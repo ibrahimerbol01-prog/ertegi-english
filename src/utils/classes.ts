@@ -57,7 +57,7 @@ export interface StudentReport {
 
 export type ClassError =
   | "missing" | "offline" | "not_found" | "removed" | "own_class" | "class_full"
-  | "bad_name" | "bad_nickname" | "nickname_taken" | "too_many" | "denied" | "unknown";
+  | "bad_name" | "bad_nickname" | "nickname_taken" | "too_many" | "denied" | "signed_out" | "unknown";
 export type Result<T> = { ok: true; data: T } | { ok: false; error: ClassError };
 
 function toError(error: { code?: string; message?: string } | null | undefined): ClassError {
@@ -75,7 +75,10 @@ function toError(error: { code?: string; message?: string } | null | undefined):
   if (msg.includes("nickname_taken") || msg.includes("class_members_nickname_unique")) return "nickname_taken";
   if (msg.includes("too_many_classes")) return "too_many";
   if (msg.includes("not_teacher") || msg.includes("not_member") || code === "42501") return "denied";
+  if (msg.includes("not_signed_in") || msg.includes("JWT") || code === "PGRST301" || code === "PGRST303") return "signed_out";
   if (msg.toLowerCase().includes("fetch")) return "offline";
+  // Keep the real reason in the console, so a screenshot of it explains the problem.
+  console.warn("[classes] unexpected error", error);
   return "unknown";
 }
 
@@ -101,6 +104,7 @@ export const errorText = (e: ClassError, kk: boolean): string => ({
   nickname_taken: kk ? "Сыныпта бұл ат бар. Басқа ат немесе тегіңнің бірінші әрпін қос (мысалы, Аружан С.)." : "Someone in the class already has this name. Add an initial, e.g. Aru S.",
   too_many: kk ? "Белсенді сынып көп (30). Ескісін мұрағатқа жібер." : "Too many active classes (30). Archive an old one first.",
   denied: kk ? "Бұл сыныпқа рұқсатың жоқ." : "You don't have access to this class.",
+  signed_out: kk ? "Кіру уақыты бітті. Профильден шығып, қайта кір." : "Your sign-in has expired. Sign out and sign in again.",
   unknown: kk ? "Бірдеңе дұрыс болмады. Қайталап көр." : "Something went wrong. Please try again.",
 })[e];
 
@@ -128,8 +132,15 @@ export const myClasses = () => call<MyClass[]>(() => supabase.rpc("my_classes"))
 // Invisible characters and odd spaces would let two learners look like one name.
 export const cleanNick = (nickname: string) =>
   nickname.replace(/[\u00a0\u2000-\u200a\u202f\u205f\u3000]/g, " ").replace(/\u034f/g, "").replace(/[\u00ad\u061c\u115f\u1160\u17b4\u17b5\u180e\u200b-\u200f\u2028-\u202e\u2060-\u206f\u3164\ufeff]/g, "").replace(/\s+/g, " ").trim();
-export const joinClass = (code: string, nickname: string) =>
-  call<{ class_id: string; name: string }>(() => supabase.rpc("join_class", { p_code: cleanCode(code), p_nickname: cleanNick(nickname) }));
+/* Joining needs only the code: the server takes the name for the teacher's
+   grid from the profile (migration 20261028000000_join_by_code). Until that
+   migration is applied, fall back to the old two-argument call. */
+export async function joinClass(code: string, fallbackName: string): Promise<Result<{ class_id: string; name: string }>> {
+  const res = await call<{ class_id: string; name: string }>(() => supabase.rpc("join_class", { p_code: cleanCode(code) }));
+  if (res.ok || res.error !== "missing") return res;
+  const nick = cleanNick(fallbackName).slice(0, 30) || "Оқушы";
+  return call<{ class_id: string; name: string }>(() => supabase.rpc("join_class", { p_code: cleanCode(code), p_nickname: nick }));
+}
 export const leaveClass = (classId: string) => call<null>(() => supabase.rpc("leave_class", { p_class: classId }));
 
 /* --- teacher --- */
