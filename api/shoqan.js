@@ -8,6 +8,10 @@ import { requireAuth } from "./_auth.js";
 
 const DAILY_LIMIT = 30;
 
+// Trying several Gemini models can take longer than Vercel's default limit,
+// which cuts the function off with a 504.
+export const config = { maxDuration: 60 };
+
 const SYSTEM_PROMPT = `You are Shoqan, the in-app assistant for Ertegi English — a mobile web app that teaches English to Kazakhstani students through Kazakh folklore (tales such as Aldar Köse and Zhirenshe Sheshen), each told across five CEFR levels (A1-C1).
 
 YOUR ONLY JOB is to help with:
@@ -59,7 +63,7 @@ async function geminiOnce(apiKey, model, contents, withThinkingOff) {
       headers: { "Content-Type": "application/json", "x-goog-api-key": apiKey.trim() },
       body: JSON.stringify({ systemInstruction: { parts: [{ text: SYSTEM_PROMPT }] }, contents, generationConfig }),
       // Without a limit a stalled Google answer keeps the chat spinning forever.
-      signal: AbortSignal.timeout(20000),
+      signal: AbortSignal.timeout(12000),
     },
   );
 }
@@ -70,8 +74,19 @@ async function askGemini(apiKey, messages) {
     .filter((m, i, all) => all.findIndex((x) => x.role === "user") <= i);
   if (contents.length === 0) return { status: 400, error: "The chat has no learner message yet." };
   let last = { status: 502, error: "No Gemini model answered." };
+  const started = Date.now();
   for (const model of GEMINI_MODELS) {
-    let upstream = await geminiOnce(apiKey, model, contents, true);
+    // Leave time to answer before Vercel's 60 s limit.
+    if (Date.now() - started > 40000) break;
+    let upstream;
+    try {
+      upstream = await geminiOnce(apiKey, model, contents, true);
+    } catch (err) {
+      if (err?.name !== "TimeoutError") throw err;
+      console.error(`[shoqan] Gemini ${model} timed out`);
+      last = { status: 504, error: `Gemini ${model} took too long.` };
+      continue;
+    }
     // A model that doesn't take the thinking setting answers 400: ask again without it.
     if (upstream.status === 400) {
       const body = await upstream.text();

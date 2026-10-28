@@ -110,8 +110,8 @@ export const ShoqanChat = ({ hidden = false }: { hidden?: boolean }) => {
           Authorization: `Bearer ${s?.access_token ?? ""}`,
         },
         body: JSON.stringify({ messages: nextMessages }),
-        // The server gives up on the AI after 20 s per try; past this the chat stops waiting.
-        signal: AbortSignal.timeout(45000),
+        // The server gives up within 60 s; past this the chat stops waiting.
+        signal: AbortSignal.timeout(65000),
       });
       status = res.status;
       const data = await res.json().catch(() => null);
