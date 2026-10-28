@@ -57,6 +57,8 @@ async function geminiOnce(apiKey, model, contents, withThinkingOff) {
       method: "POST",
       headers: { "Content-Type": "application/json", "x-goog-api-key": apiKey.trim() },
       body: JSON.stringify({ systemInstruction: { parts: [{ text: SYSTEM_PROMPT }] }, contents, generationConfig }),
+      // Without a limit a stalled Google answer keeps the chat spinning forever.
+      signal: AbortSignal.timeout(20000),
     },
   );
 }
@@ -106,6 +108,7 @@ async function askClaude(apiKey, messages) {
       system: SYSTEM_PROMPT,
       messages,
     }),
+    signal: AbortSignal.timeout(20000),
   });
   if (!upstream.ok) return { status: upstream.status, error: await upstream.text() };
   const data = await upstream.json();
@@ -118,8 +121,10 @@ export default async function handler(req, res) {
     return;
   }
 
+  console.log("[shoqan] request received");
   const auth = await requireAuth(req, res);
   if (!auth) return; // requireAuth already wrote the 401
+  console.log("[shoqan] signed in, asking", process.env.GEMINI_API_KEY ? "Gemini" : "Claude");
 
   const { user, admin } = auth;
 
@@ -174,6 +179,10 @@ export default async function handler(req, res) {
     res.status(200).json({ reply: result.reply || FALLBACK_REPLY });
   } catch (err) {
     console.error("[shoqan] request failed:", err);
+    if (err?.name === "TimeoutError") {
+      res.status(504).json({ error: "The AI service took too long to answer." });
+      return;
+    }
     res.status(500).json({ error: "Something went wrong reaching the AI service." });
   }
 };
