@@ -84,7 +84,7 @@ export function CouncilCard({ lang, userId, progress = new Set<string>(), onRewa
   const next = unlocked.find((q) => !votes[q.id]?.done) ?? null;
   const shown = next ?? unlocked[unlocked.length - 1] ?? null;
   const doneCount = COUNCIL.filter((q) => votes[q.id]?.done).length;
-  const story = shown ? STORIES.find((s: any) => s.id === shown.storyId) : null;
+  const story = shown ? STORIES.find((s) => s.id === shown.storyId) : null;
   const active = COUNCIL.find((q) => q.id === openId) ?? null;
 
   return (
@@ -235,7 +235,7 @@ function CouncilRound({ q, kk, vote, onChange, onPush, onReward }: {
 
   return (
     <div className="p-6 pt-2">
-      <p className="eyebrow text-sun-deep pr-12">{tr("Дала кеңесі", "Steppe council")} · {displayTitle((STORIES.find((s: any) => s.id === q.storyId) as any)?.title ?? "")}</p>
+      <p className="eyebrow text-sun-deep pr-12">{tr("Дала кеңесі", "Steppe council")} · {displayTitle(STORIES.find((s) => s.id === q.storyId)?.title ?? "")}</p>
       <h3 className="font-display font-black text-[20px] text-ink leading-snug mt-1 pr-12">{q.prompt}</h3>
       {kk && <p className="text-[14px] text-ink-2 mt-1">{q.promptKk}</p>}
 

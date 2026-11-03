@@ -56,7 +56,7 @@ function syncEntry(userId: string | undefined, week: Week, day: string, entry: E
 function encounters(week: Week, progress: Set<string>) {
   const counts = new Map<string, number>();
   for (const ww of week.words) {
-    const tales = STORIES.filter((s: any) =>
+    const tales = STORIES.filter((s) =>
       Object.entries(s.levels).some(([lvl, text]) => progress.has(`${s.id}:${lvl}`) && wordsUsed({ ...week, words: [ww] }, text as string).length)
     );
     counts.set(ww.word, tales.length);
@@ -72,7 +72,7 @@ const hasWords = (s: string) => /[\p{L}]{2,}/u.test(s);
 // Eight words in a row from a tale: copied, not argued.
 const TALE_RUNS = (() => {
   const runs = new Set<string>();
-  for (const s of STORIES as any[]) for (const text of Object.values(s.levels) as string[]) {
+  for (const s of STORIES) for (const text of Object.values(s.levels) as string[]) {
     const words = text.toLowerCase().match(/[a-z']+/g) ?? [];
     for (let i = 0; i + 8 <= words.length; i++) runs.add(words.slice(i, i + 8).join(" "));
   }

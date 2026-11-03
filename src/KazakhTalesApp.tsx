@@ -7,10 +7,21 @@ import {
 } from "./components/UIHelpers";
 import { KilimStrip } from "./components/Ornaments";
 import { ShoqanChat } from "./components/ShoqanChat";
-import {
-  HomeScreen, ReaderScreen, FlashcardsScreen, MatchingGame,
-  QuizScreen, QuizSetup, SpeakScreen, ProfileScreen
-} from "./components/Screens";
+import { HomeScreen } from "./components/screens/HomeScreen";
+import { ReaderScreen } from "./components/screens/ReaderScreen";
+// Tabs other than Home and Read load on first use; all of them are fetched in
+// the background once the app is idle, so switching tabs stays instant.
+const loadWords = () => import("./components/screens/WordsScreens");
+const loadQuiz = () => import("./components/screens/QuizScreens");
+const loadSpeak = () => import("./components/screens/SpeakScreen");
+const loadProfile = () => import("./components/screens/ProfileScreen");
+const FlashcardsScreen = lazy(() => loadWords().then((m) => ({ default: m.FlashcardsScreen })));
+const MatchingGame = lazy(() => loadWords().then((m) => ({ default: m.MatchingGame })));
+const QuizSetup = lazy(() => loadQuiz().then((m) => ({ default: m.QuizSetup })));
+const QuizScreen = lazy(() => loadQuiz().then((m) => ({ default: m.QuizScreen })));
+const SpeakScreen = lazy(() => loadSpeak().then((m) => ({ default: m.SpeakScreen })));
+const ProfileScreen = lazy(() => loadProfile().then((m) => ({ default: m.ProfileScreen })));
+const prefetchTabs = () => { void loadWords(); void loadQuiz(); void loadSpeak(); void loadProfile(); };
 import { DICT, ACHIEVEMENTS, STORIES } from "./constants";
 import { LangContext, loadLang, saveLang, type Lang } from "./lang";
 import type { SavedWord } from "./types";
@@ -106,6 +117,10 @@ export default function KazakhTalesApp({ session, role, onRoleChange }: { sessio
     saveToSupabase(async () => supabase.from("profiles").update(patch()).eq("id", userId), onSaveError);
   };
 
+  useEffect(() => {
+    const idle = window.requestIdleCallback ?? ((cb: () => void) => window.setTimeout(cb, 1500));
+    idle(prefetchTabs);
+  }, []);
   useEffect(() => { latestXpRef.current = xp; }, [xp]);
   useEffect(() => { latestQuizzesRef.current = quizzesCompleted; }, [quizzesCompleted]);
   useEffect(() => { latestPerfectRef.current = perfectQuizzes; }, [perfectQuizzes]);
@@ -504,6 +519,7 @@ export default function KazakhTalesApp({ session, role, onRoleChange }: { sessio
         <div ref={scrollRef} className="flex-1 overflow-y-auto">
           <div className="mx-auto w-full max-w-[1040px] flex gap-8 px-4 md:px-8 pt-4 xl:pt-10 pb-44 md:pb-36">
             <main className="flex-1 min-w-0 max-w-[620px] mx-auto">
+              <Suspense fallback={<div className="min-h-[50dvh]" />}>
               {/* A class link opened while signed in as a teacher: it is meant for learners. */}
               {teacher && pendingCode && (
                 <div role="status" className="card p-4 mb-5 flex items-start gap-3">
@@ -602,7 +618,6 @@ export default function KazakhTalesApp({ session, role, onRoleChange }: { sessio
               {tab === "cards" && <LegendScreen lang={lang} userId={userId} onReward={addXp} />}
               {tab === "speak" && <SpeakScreen onReward={addXp} t={t} />}
               {tab === "profile" && teacher && (
-                <Suspense fallback={null}>
                 <TeacherProfile
                   lang={lang}
                   setLang={setLang}
@@ -612,7 +627,6 @@ export default function KazakhTalesApp({ session, role, onRoleChange }: { sessio
                   roleSwitch={<RoleSwitchRow kk={lang === "kk"} to="student" onSwitch={onRoleChange} />}
                   onSignOut={handleSignOut}
                 />
-                </Suspense>
               )}
               {tab === "profile" && !teacher && (
                 <ProfileScreen
@@ -631,7 +645,8 @@ export default function KazakhTalesApp({ session, role, onRoleChange }: { sessio
                   roleSwitch={<RoleSwitchRow kk={lang === "kk"} to="teacher" onSwitch={onRoleChange} />}
                 />
               )}
-              {tab === "teacher" && teacher && <Suspense fallback={null}><TeacherScreen lang={lang} /></Suspense>}
+              {tab === "teacher" && teacher && <TeacherScreen lang={lang} />}
+              </Suspense>
             </main>
 
             {/* Right rail — wide desktop only, Duolingo-style widgets */}

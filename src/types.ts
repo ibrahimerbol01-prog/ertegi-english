@@ -29,11 +29,3 @@ export interface SavedWord {
   mastery?: number;
   nextReviewAt?: string | null;
 }
-
-export interface Achievement {
-  id: string;
-  icon: string;
-  title: string;
-  desc: string;
-  check: (state: any) => boolean;
-}

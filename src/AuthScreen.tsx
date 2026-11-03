@@ -158,8 +158,8 @@ export default function AuthScreen() {
         const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
         if (signInError) throw signInError;
       }
-    } catch (err: any) {
-      setError(err?.message || tr("Бірдеңе дұрыс болмады. Қайта байқап көр.", "Something went wrong. Please try again."));
+    } catch (err) {
+      setError((err instanceof Error && err.message) || tr("Бірдеңе дұрыс болмады. Қайта байқап көр.", "Something went wrong. Please try again."));
     } finally {
       setLoading(false);
     }

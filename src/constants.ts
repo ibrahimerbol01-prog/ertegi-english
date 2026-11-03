@@ -1975,6 +1975,14 @@ export const STORIES = [
   },
 ];
 
+/** Progress numbers the achievement checks read. */
+export interface AchievementStats {
+  quizzesCompleted: number;
+  savedWordsCount: number;
+  perfectQuizzes: number;
+  xp: number;
+}
+
 export const ACHIEVEMENTS = [
   {
     id: "quiz_first",
@@ -1983,7 +1991,7 @@ export const ACHIEVEMENTS = [
     title: "First Steps",
     desc: "Take your first quiz",
     kk: { title: "Алғашқы қадам", desc: "Алғашқы сынақты тапсыр" },
-    check: (s: any) => s.quizzesCompleted >= 1,
+    check: (s: AchievementStats) => s.quizzesCompleted >= 1,
   },
   {
     id: "words_25",
@@ -1992,7 +2000,7 @@ export const ACHIEVEMENTS = [
     title: "Word Collector",
     desc: "Save 25 words to your vocabulary bank",
     kk: { title: "Сөз жинаушы", desc: "Сөздікке 25 сөз сақта" },
-    check: (s: any) => s.savedWordsCount >= 25,
+    check: (s: AchievementStats) => s.savedWordsCount >= 25,
   },
   {
     id: "quiz_perfect",
@@ -2001,7 +2009,7 @@ export const ACHIEVEMENTS = [
     title: "Flawless",
     desc: "Score 100% on a quiz",
     kk: { title: "Мінсіз", desc: "Сынақты 100% тапсыр" },
-    check: (s: any) => s.perfectQuizzes >= 1,
+    check: (s: AchievementStats) => s.perfectQuizzes >= 1,
   },
   {
     id: "words_100",
@@ -2010,7 +2018,7 @@ export const ACHIEVEMENTS = [
     title: "Vocabulary Keeper",
     desc: "Save 100 words to your vocabulary bank",
     kk: { title: "Сөз қазынасы", desc: "Сөздікке 100 сөз сақта" },
-    check: (s: any) => s.savedWordsCount >= 100,
+    check: (s: AchievementStats) => s.savedWordsCount >= 100,
   },
   {
     id: "level_5",
@@ -2019,6 +2027,6 @@ export const ACHIEVEMENTS = [
     title: "Rising Nomad",
     desc: "Reach Level 5 (500 XP)",
     kk: { title: "Өрлеген көшпенді", desc: "5-деңгейге жет (500 XP)" },
-    check: (s: any) => s.xp >= 500,
+    check: (s: AchievementStats) => s.xp >= 500,
   },
 ];
