@@ -1,14 +1,20 @@
-import { useEffect, useState } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
 import type { Session } from "@supabase/supabase-js";
 import { supabase } from "./lib/supabase";
 import AuthScreen from "./AuthScreen";
-import KazakhTalesApp from "./KazakhTalesApp";
-import { IntroScreen } from "./components/Screens";
-import { DICT } from "./constants";
+import { IntroScreen } from "./components/IntroScreen";
+import { DICT } from "./dict";
 import { loadLang } from "./lang";
 import { capturePendingClass, peekPendingClass } from "./utils/classes";
 import { RoleScreen } from "./components/RolePicker";
 import { clearPendingRole, guessRole, peekPendingRole, roleOf, saveRole, switchRole, takePendingRole, type Role } from "./utils/role";
+
+// The app itself (tales, dictionary, all screens) is a separate file: the
+// intro and sign-in show without it, and it starts loading in the background
+// while the learner is still on them.
+const loadApp = () => import("./KazakhTalesApp");
+const KazakhTalesApp = lazy(loadApp);
+const blank = <div className="min-h-dvh w-full bg-sand" />;
 
 // A class link (?class=CODE) is remembered before the intro and sign-in, then offered after.
 capturePendingClass();
@@ -22,6 +28,11 @@ export default function App() {
   const [introSeen, setIntroSeen] = useState(false);
   // Bumped after a role is saved on this device only, so the app re-reads it.
   const [, setRoleTick] = useState(0);
+
+  useEffect(() => {
+    const idle = window.requestIdleCallback ?? ((cb: () => void) => window.setTimeout(cb, 1200));
+    idle(() => { void loadApp(); });
+  }, []);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
@@ -98,9 +109,7 @@ export default function App() {
     );
   }
 
-  if (loading) {
-    return <div className="min-h-dvh w-full bg-sand" />;
-  }
+  if (loading) return blank;
 
   if (!session) {
     return (
@@ -119,5 +128,9 @@ export default function App() {
     );
   }
 
-  return <KazakhTalesApp key={role} session={session} role={role} onRoleChange={changeRole} />;
+  return (
+    <Suspense fallback={blank}>
+      <KazakhTalesApp key={role} session={session} role={role} onRoleChange={changeRole} />
+    </Suspense>
+  );
 }

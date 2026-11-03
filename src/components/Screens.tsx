@@ -4,9 +4,9 @@ import {
   ArrowRight, Play, Pause, Volume2, ChevronRight, RotateCcw, Compass, Trophy,
   Check, X, Mic, MicOff, LogOut, Share2, BookOpen, Lock, Plus, MessageCircle,
 } from "lucide-react";
-import { DailyGoalRing, ScreenHeader, Sheet, BrandMark } from "./UIHelpers";
+import { DailyGoalRing, ScreenHeader, Sheet } from "./UIHelpers";
 import { displayTitle, foldAccents } from "../utils/text";
-import { Shanyraq, OrnamentBand, Tumar, SteppeBackground, KilimStrip, QoshqarMuyiz } from "./Ornaments";
+import { Shanyraq, OrnamentBand, Tumar, KilimStrip } from "./Ornaments";
 import { safePlayVoice, stopVoice } from "../utils/voice";
 import { narrate, alignWords, bestBrowserVoice, primeAudio } from "../utils/narration";
 import {
@@ -27,7 +27,7 @@ import { buildLevelQuiz } from "../utils/levelQuiz";
 import { findEvidence } from "../utils/evidence";
 
 /* Small video tile with a night-sky fallback. */
-function StoryVideo({ src, className = "", videoRef, paused }: { src: string; className?: string; videoRef?: React.Ref<HTMLVideoElement>; paused?: boolean }) {
+function StoryVideo({ src, poster, className = "", videoRef, paused }: { src: string; poster?: string; className?: string; videoRef?: React.Ref<HTMLVideoElement>; paused?: boolean }) {
   const [error, setError] = useState(false);
   return (
     <div className={`overflow-hidden bg-night ${className}`}>
@@ -35,7 +35,9 @@ function StoryVideo({ src, className = "", videoRef, paused }: { src: string; cl
         <video
           ref={videoRef}
           autoPlay={!paused} loop muted playsInline
+          preload="metadata"
           src={src}
+          poster={poster}
           onError={() => setError(true)}
           className="absolute inset-0 w-full h-full object-cover"
         />
@@ -61,49 +63,6 @@ const LEVEL_COLORS: Record<string, { bg: string; edge: string; island: string; s
   B2: { bg: "bg-felt", edge: "shadow-[0_4px_0_var(--color-felt-deep)]", island: "shadow-[0_7px_0_var(--color-felt-deep)]", soft: "text-felt-deep" },
   C1: { bg: "bg-night", edge: "shadow-[0_4px_0_#121a31]", island: "shadow-[0_7px_0_#121a31]", soft: "text-night" },
 };
-
-/* --- 1. INTRO SCREEN --- */
-export function IntroScreen({ onFinish, t }: any) {
-  return (
-    <div className="relative min-h-dvh w-full bg-sand flex flex-col overflow-hidden">
-      <SteppeBackground />
-      <KilimStrip className="absolute top-0 inset-x-0 h-2 w-full z-[1]" />
-
-      <div className="relative z-10 flex flex-col flex-1 px-6 pt-[max(env(safe-area-inset-top),28px)] pb-[max(env(safe-area-inset-bottom),24px)] mx-auto w-full max-w-[440px]">
-        <div className="flex justify-between items-center">
-          <BrandMark />
-          <button onClick={onFinish} className="text-sm font-semibold text-ink-2 hover:text-ink px-2 min-h-[44px]">
-            {t.skip}
-          </button>
-        </div>
-
-        <div className="my-auto py-10 text-center animate-pop-in">
-          <div className="relative mx-auto w-[220px] h-[220px] mb-9">
-            <div className="absolute inset-0 rounded-full bg-sun-soft" />
-            <div className="absolute inset-5 rounded-full bg-sky shadow-[0_8px_0_var(--color-sky-deep)] flex items-center justify-center animate-float">
-              <Shanyraq className="w-28 h-28 text-white" strokeWidth={3.2} />
-            </div>
-            <QoshqarMuyiz className="absolute -left-3 top-6 w-14 h-8 text-felt -rotate-[18deg]" strokeWidth={4.5} />
-            <QoshqarMuyiz className="absolute -right-3 bottom-8 w-14 h-8 text-jade rotate-[160deg]" strokeWidth={4.5} />
-            <Tumar className="absolute right-3 top-2 w-7 h-7 text-sun-deep" strokeWidth={3} />
-          </div>
-
-          <h1 className="font-display font-black text-[40px] leading-[1.05] tracking-tight text-ink">
-            Дала аңыздары<br />
-            <span className="text-sky">ағылшын тілінде</span>
-          </h1>
-          <p className="text-[17px] text-ink-2 max-w-[320px] mx-auto leading-relaxed mt-4">
-            {t.homeSubtitle}
-          </p>
-        </div>
-
-        <button onClick={onFinish} className="btn w-full">
-          {t.enter} <ArrowRight size={18} strokeWidth={3} />
-        </button>
-      </div>
-    </div>
-  );
-}
 
 /* Shoqan's tip of the day on the home path: one per day, same for everyone. */
 const SHOQAN_TIPS = [
@@ -225,7 +184,7 @@ export function HomeScreen({ onStartRead, onStartQuiz, t, lang, userName = "", s
 
       {/* Shoqan by the path, like Duolingo's owl: tip of the day + a ready question */}
       <div className="flex items-end gap-3">
-        <img src="/shoqan-avatar.jpg" alt="Shoqan" className="w-16 h-16 rounded-full object-cover border-[3px] border-sun shadow-[0_4px_0_var(--color-sun-deep)] shrink-0" />
+        <img src="/shoqan-avatar.webp" width={128} height={128} decoding="async" alt="Shoqan" className="w-16 h-16 rounded-full object-cover border-[3px] border-sun shadow-[0_4px_0_var(--color-sun-deep)] shrink-0" />
         <div className="relative flex-1 card p-4 rounded-bl-md">
           <p className="eyebrow text-sun-deep">{lang === "kk" ? "Шоқанның кеңесі" : "Shoqan's tip"}</p>
           <p className="text-[15px] text-ink mt-1 leading-snug">{tip[lang === "kk" ? "kk" : "en"]}</p>
@@ -611,7 +570,7 @@ export function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, s
       <div className="relative rounded-[24px] overflow-hidden h-48 sm:h-56">
         {currentStory.id === "aldar_kose" ? (
           <>
-            <StoryVideo src={BG_VIDEO_ASSETS.read} videoRef={videoRef} className="absolute inset-0" />
+            <StoryVideo src={BG_VIDEO_ASSETS.read} poster={BG_VIDEO_ASSETS.readPoster} videoRef={videoRef} className="absolute inset-0" />
             <span className="absolute top-3 left-3 flex items-center gap-1.5 h-7 px-3 rounded-full glass text-ink text-xs font-bold">
               <span className="w-1.5 h-1.5 rounded-full bg-felt animate-pulse" /> {t.sceneAnimation}
             </span>
