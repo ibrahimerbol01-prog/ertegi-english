@@ -5,6 +5,7 @@ import { currentWeek, wordsUsed, type Dilemma, type Week } from "../data/weekWor
 import { supabase } from "../lib/supabase";
 import { safePlayVoice } from "../utils/voice";
 import { Sheet } from "./UIHelpers";
+import { apiUrl } from "../lib/api";
 
 /* Words of the week and a daily debate (Word Generation): use the week's
    words in an argument, hear Shoqan disagree, answer him, then decide again. */
@@ -217,7 +218,7 @@ function Debate({ kk, week, dilemma, entry, onChange, onSubmit, onReward, seen }
     try {
       if (!navigator.onLine) throw new Error("offline");
       const { data: { session } } = await supabase.auth.getSession();
-      const res = await fetch("/api/shoqan", {
+      const res = await fetch(apiUrl("/api/shoqan"), {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${session?.access_token ?? ""}` },
         body: JSON.stringify({

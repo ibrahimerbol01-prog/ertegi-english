@@ -5,6 +5,7 @@ import { useLang } from "../lang";
 import { CloseButton } from "./UIHelpers";
 import { useEscape } from "../utils/useEscape";
 import { useDialogFocus } from "../utils/useDialogFocus";
+import { apiUrl } from "../lib/api";
 
 export const ShoqanChat = ({ hidden = false }: { hidden?: boolean }) => {
   const kk = useLang() === "kk";
@@ -103,7 +104,7 @@ export const ShoqanChat = ({ hidden = false }: { hidden?: boolean }) => {
     let status = 0;
     try {
       const { data: { session: s } } = await supabase.auth.getSession();
-      const res = await fetch("/api/shoqan", {
+      const res = await fetch(apiUrl("/api/shoqan"), {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
