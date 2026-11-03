@@ -55,7 +55,11 @@ export default function App() {
       .from("profiles")
       .update({ agreed_to_privacy_policy: true, privacy_agreed_at: new Date().toISOString() })
       .eq("id", session.user.id)
-      .then(() => {
+      .select("id")
+      .then(({ data, error }) => {
+        // Keep the marker until the consent is really on the profile, so the
+        // next visit tries again instead of losing it.
+        if (error || !data?.length) return;
         try {
           localStorage.removeItem("ertegi_privacy_consent_pending");
         } catch {

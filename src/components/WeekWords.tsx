@@ -221,6 +221,7 @@ function Debate({ kk, week, dilemma, entry, onChange, onSubmit, onReward, seen }
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${session?.access_token ?? ""}` },
         body: JSON.stringify({
+          kind: "tool",
           messages: [{
             role: "user",
             content: `Debate practice for an English learner (A2–B1). The question: "${dilemma.en}" The learner answered "${side === "yes" ? "Yes" : "No"}" and wrote: "${text}". Take the other side and disagree politely in two short, simple English sentences, using one of these words: ${week.words.map((x) => x.word).join(", ")}. End with a question. Then on a new line write the Kazakh translation in Cyrillic, starting with "KK:". Don't correct grammar.`,

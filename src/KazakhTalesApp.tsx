@@ -98,6 +98,7 @@ export default function KazakhTalesApp({ session, role, onRoleChange }: { sessio
   // Profile writes send absolute values, so they wait until the server profile
   // has loaded. Until then, gains collect here and are added on top of it.
   const profileReadyRef = useRef(false);
+  const wordsReadyRef = useRef(false);
   const pendingRef = useRef({ xp: 0, quizzes: 0, perfect: 0, active: false });
   const saveProfile = (patch: () => Record<string, unknown>) => {
     if (!profileReadyRef.current) return;
@@ -172,6 +173,31 @@ export default function KazakhTalesApp({ session, role, onRoleChange }: { sessio
       }, delay);
     };
 
+    type WordRow = { word: string; translation: string; mastery: number; next_review_at?: string | null };
+    const applyWords = (rows: WordRow[]) => {
+      const localReviews = loadLocalReviews(userId);
+      const fromServer: SavedWord[] = rows.map((row) => ({
+        word: row.word,
+        translation: row.translation,
+        mastery: row.mastery,
+        nextReviewAt: row.next_review_at ?? localReviews[row.word] ?? null,
+      }));
+      // Words saved while the list was still loading stay in it.
+      setSavedWords((prev) => [...fromServer, ...prev.filter((w) => !fromServer.some((x) => x.word === w.word))]);
+      wordsReadyRef.current = true;
+    };
+    // A failed load must not look like "no words yet": try again a few times.
+    const retryWords = (attempt: number) => {
+      if (attempt >= 4) return;
+      setTimeout(async () => {
+        if (cancelled) return;
+        const res = await supabase.from("saved_words").select("*").eq("user_id", userId).order("created_at", { ascending: true });
+        if (cancelled) return;
+        if (res.error || !res.data) retryWords(attempt + 1);
+        else applyWords(res.data as WordRow[]);
+      }, 1500 * 2 ** attempt);
+    };
+
     const loadUserData = async () => {
       const [profileRes, wordsRes, achievementsRes, progressSet] = await Promise.all([
         supabase.from("profiles").select("*").eq("id", userId).maybeSingle(),
@@ -185,17 +211,8 @@ export default function KazakhTalesApp({ session, role, onRoleChange }: { sessio
       if (profileRes.error) retryProfile(0);
       else applyProfile(profileRes.data as ProfileRow | null);
       setProgress(progressSet);
-      if (wordsRes.data) {
-        const localReviews = loadLocalReviews(userId);
-        setSavedWords(
-          wordsRes.data.map((row: { word: string; translation: string; mastery: number; next_review_at?: string | null }) => ({
-            word: row.word,
-            translation: row.translation,
-            mastery: row.mastery,
-            nextReviewAt: row.next_review_at ?? localReviews[row.word] ?? null,
-          }))
-        );
-      }
+      if (wordsRes.error || !wordsRes.data) retryWords(0);
+      else applyWords(wordsRes.data);
       if (achievementsRes.data) {
         setUnlockedAchievements(achievementsRes.data.map((row: { achievement_id: string }) => row.achievement_id));
       }
@@ -337,12 +354,20 @@ export default function KazakhTalesApp({ session, role, onRoleChange }: { sessio
 
   const handleSaveWord = (word: string, translation: string) => {
     if (savedWords.some((w) => w.word === word)) return;
-    addXp(5);
+    // Until the saved list has loaded, the word may already be on the server:
+    // XP then waits for the server to confirm it is new.
+    const known = wordsReadyRef.current;
+    if (known) addXp(5);
     setSavedWords((prev: SavedWord[]) => [...prev, { word, translation, mastery: 0, nextReviewAt: null }]);
-    saveToSupabase(
-      async () => supabase.from("saved_words").upsert({ user_id: userId, word, translation, mastery: 0 }, { onConflict: "user_id,word" }),
-      onSaveError
-    );
+    saveToSupabase(async () => {
+      // ignoreDuplicates: a word already saved keeps its mastery and review date.
+      const res = await supabase
+        .from("saved_words")
+        .upsert({ user_id: userId, word, translation, mastery: 0 }, { onConflict: "user_id,word", ignoreDuplicates: true })
+        .select("word");
+      if (!res.error && !known && res.data?.length) addXp(5);
+      return res;
+    }, onSaveError);
   };
 
   // The name offered in a class: the first name only, never a surname or the

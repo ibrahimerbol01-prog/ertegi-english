@@ -195,6 +195,7 @@ function TrailFlow({ kk, claimQ, level, text, past, draft, onDraft, onSave, onFe
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${session?.access_token ?? ""}` },
         body: JSON.stringify({
+          kind: "tool",
           messages: [{
             role: "user",
             content: `Claim–Support–Question practice on a tale. Question: "${claimQ.en}" My answer: ${label(entry.choice)}. ${entry.claim ? `My claim: "${entry.claim}". ` : ""}My evidence from the tale: ${entry.evidenceText.map((x) => `"${x}"`).join(" ")}. I still wonder: "${entry.wonder}". In 2–3 short sentences: say whether my evidence really supports my answer and why, then one thought about my question. Focus on the reasoning, not grammar.${kk ? " Answer in Kazakh, in Cyrillic script." : ""}`,
