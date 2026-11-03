@@ -354,7 +354,7 @@ export default function KazakhTalesApp({ session, role, onRoleChange }: { sessio
       setAchievementQueue((prev) => [...prev, ...newlyUnlocked]);
       newlyUnlocked.forEach((a) => {
         saveToSupabase(
-          async () => supabase.from("user_achievements").upsert({ user_id: userId, achievement_id: a.id }, { onConflict: "user_id,achievement_id" }),
+          async () => supabase.from("user_achievements").upsert({ user_id: userId, achievement_id: a.id }, { onConflict: "user_id,achievement_id", ignoreDuplicates: true }),
           onSaveError
         );
       });
