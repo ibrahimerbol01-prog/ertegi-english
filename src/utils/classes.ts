@@ -1,5 +1,6 @@
 import { supabase } from "../lib/supabase";
 import { daysBetween, localDay } from "./progress";
+import { PUBLIC_URL } from "../lib/api";
 
 /* Classes, assignments and quiz scores for the teacher cabinet
    (migration 20261026000000_teacher_classes). Every call returns a result
@@ -125,7 +126,7 @@ export function cleanCode(s: string): string {
 }
 // Letters a code never has: I, O, 0 and 1 are left out so they can't be confused.
 export const codeHasBadLetters = (code: string) => /[IO01]/.test(code);
-export const classLink = (code: string) => `${window.location.origin}/?class=${code}`;
+export const classLink = (code: string) => `${PUBLIC_URL}/?class=${code}`;
 
 /* --- learner --- */
 export const myClasses = () => call<MyClass[]>(() => supabase.rpc("my_classes"));

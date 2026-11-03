@@ -4,6 +4,7 @@ import { supabase } from "../lib/supabase";
 import { safePlayVoice } from "../utils/voice";
 import { useEscape } from "../utils/useEscape";
 import { Sheet } from "./UIHelpers";
+import { apiUrl } from "../lib/api";
 
 /* Thinking Trail (Project Zero's Claim–Support–Question): say what you think,
    prove it by tapping sentences of the tale, then ask what you still wonder.
@@ -191,7 +192,7 @@ function TrailFlow({ kk, claimQ, level, text, past, draft, onDraft, onSave, onFe
     try {
       if (!navigator.onLine) throw new Error("offline");
       const { data: { session } } = await supabase.auth.getSession();
-      const res = await fetch("/api/shoqan", {
+      const res = await fetch(apiUrl("/api/shoqan"), {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${session?.access_token ?? ""}` },
         body: JSON.stringify({
