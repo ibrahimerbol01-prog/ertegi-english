@@ -337,6 +337,7 @@ export function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, s
   const [readAlongSentence, setReadAlongSentence] = useState<number | null>(null);
   const isPlayingRef = useRef(false);
   const wordRefs = useRef<Record<number, HTMLElement | null>>({});
+  const [rovingWord, setRovingWord] = useState<number | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const frameRef = useRef<number | null>(null);
 
@@ -442,6 +443,15 @@ export function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, s
 
   const text = currentStory.levels[selectedLevel as keyof typeof currentStory.levels];
   const tokens = text.split(/(\s+)/);
+  // Keyboard: one word of the tale is in the Tab order at a time; arrows move
+  // between words, Enter or Space opens the translation.
+  const isWordTok = (t: string | undefined) => !!t && /[a-zA-Z]/.test(t);
+  const tabWord = rovingWord !== null && isWordTok(tokens[rovingWord]) ? rovingWord : tokens.findIndex(isWordTok);
+  const moveWord = (from: number, dir: 1 | -1) => {
+    for (let j = from + dir; j >= 0 && j < tokens.length; j += dir) {
+      if (isWordTok(tokens[j])) { setRovingWord(j); wordRefs.current[j]?.focus(); return; }
+    }
+  };
   // Character start of each token, and the sentence each token belongs to.
   const tokenStarts: number[] = [];
   const sentenceOf: number[] = [];
@@ -704,6 +714,14 @@ export function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, s
               <span
                 key={i}
                 ref={(el) => { wordRefs.current[i] = el; }}
+                role="button"
+                tabIndex={i === tabWord ? 0 : -1}
+                onFocus={() => setRovingWord(i)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") { e.preventDefault(); handleWordClick(tok); }
+                  else if (e.key === "ArrowRight" || e.key === "ArrowDown") { e.preventDefault(); moveWord(i, 1); }
+                  else if (e.key === "ArrowLeft" || e.key === "ArrowUp") { e.preventDefault(); moveWord(i, -1); }
+                }}
                 onClick={() => handleWordClick(tok)}
                 className={`rounded-md px-0.5 -mx-0.5 cursor-pointer transition-colors duration-200 ${
                   isCurrentlyRead
@@ -924,22 +942,22 @@ export function FlashcardsScreen({ savedWords, onReview, lang = "kk", mode, setM
           setFlipped(!flipped);
           safePlayVoice(currentWord.word);
         }}
-        aria-label={kk ? "Карточканы аудару" : "Flip card"}
+        aria-pressed={flipped}
         className="flip block w-full h-[280px]"
       >
         <div className={`flip-inner w-full h-full ${flipped ? "is-flipped" : ""}`}>
-          <div className="flip-face card overflow-hidden flex flex-col items-center justify-center p-6">
+          <div aria-hidden={flipped} className="flip-face card overflow-hidden flex flex-col items-center justify-center p-6">
             <KilimStrip className="absolute top-0 inset-x-0 h-2 w-full" />
             <span className="eyebrow">{kk ? "Ағылшынша" : "English"}</span>
-            <span className="font-display font-black text-[40px] text-ink mt-2">{currentWord.word}</span>
+            <span lang="en" className="font-display font-black text-[40px] text-ink mt-2">{currentWord.word}</span>
             <span className="mt-6 text-sm text-ink-3 flex items-center gap-1.5"><Volume2 size={15} /> {kk ? "Аудару үшін бас" : "Tap to flip"}</span>
-            <span className="absolute bottom-4 flex gap-1.5" aria-label={kk ? `${MAX_MASTERY} қораптың ${box}-сі` : `Box ${box} of ${MAX_MASTERY}`}>
+            <span role="img" className="absolute bottom-4 flex gap-1.5" aria-label={kk ? `${MAX_MASTERY} қораптың ${box}-сі` : `Box ${box} of ${MAX_MASTERY}`}>
               {Array.from({ length: MAX_MASTERY }, (_, i) => (
                 <span key={i} className={`w-2 h-2 rounded-full ${i < box ? "bg-jade" : "bg-sand-3"}`} />
               ))}
             </span>
           </div>
-          <div className="flip-face flip-back rounded-[24px] bg-sky-deep shadow-[0_6px_0_#075F75] flex flex-col items-center justify-center p-6 text-white">
+          <div aria-hidden={!flipped} className="flip-face flip-back rounded-[24px] bg-sky-deep shadow-[0_6px_0_#075F75] flex flex-col items-center justify-center p-6 text-white">
             <span className="text-xs font-bold uppercase tracking-[0.08em] text-white">Қазақша</span>
             <span className="font-display font-black text-[32px] mt-2 text-center">{currentWord.translation}</span>
           </div>

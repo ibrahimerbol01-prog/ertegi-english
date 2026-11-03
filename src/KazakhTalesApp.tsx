@@ -424,7 +424,7 @@ export default function KazakhTalesApp({ session, role, onRoleChange }: { sessio
       {/* The quiz is a focus mode: Shoqan steps aside so he never covers the answer buttons. */}
       {/* Teachers meet Shoqan only while previewing a tale, as their learners do. */}
       <ShoqanChat hidden={(tab === "quiz" && quizStarted) || (teacher && tab !== "read")} />
-      <SaveErrorToast show={showSaveError} message={t.saveError} />
+      <SaveErrorToast show={showSaveError} message={t.saveError} onClose={() => setShowSaveError(false)} />
       <JoinClassSheet
         open={!!pendingCode && !teacher}
         onClose={() => { clearPendingClass(); setPendingCode(null); }}

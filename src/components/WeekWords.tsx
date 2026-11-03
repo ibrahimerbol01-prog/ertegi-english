@@ -153,7 +153,7 @@ function DailyCard({ lang, userId, progress = new Set<string>(), onReward = () =
             <span
               key={i}
               aria-hidden="true"
-              className={`h-7 min-w-7 px-1 rounded-full grid place-items-center text-[11px] font-bold ${done[i] ? "bg-jade text-white" : i === weekday ? "border-2 border-sky text-sky-deep" : "bg-sand-2 text-ink-3"}`}
+              className={`h-7 min-w-7 px-1 rounded-full grid place-items-center text-[11px] font-bold ${done[i] ? "bg-[#15805A] text-white" : i === weekday ? "border-2 border-sky text-sky-deep" : "bg-sand-2 text-ink-2"}`}
             >
               {done[i] ? <Check size={13} strokeWidth={3.5} /> : d}
             </span>
@@ -324,7 +324,7 @@ function Debate({ kk, week, dilemma, entry, onChange, onSubmit, onReward, seen }
             maxLength={400}
             placeholder="I think … because …"
             aria-label={tr("Сенің дәлелің", "Your argument")}
-            className="mt-3 w-full rounded-2xl border-2 border-line bg-card p-3 text-[16px] text-ink focus:border-sky outline-none resize-none"
+            className="mt-3 w-full rounded-2xl border-2 border-line bg-card p-3 text-[16px] text-ink focus:border-sky-deep resize-none"
           />
           <p className="text-[13px] mt-1.5 min-h-[20px]" aria-live="polite">
             {copied ? (
@@ -372,7 +372,7 @@ function Debate({ kk, week, dilemma, entry, onChange, onSubmit, onReward, seen }
             maxLength={240}
             placeholder="But …"
             aria-label={tr("Шоқанға жауап", "Your reply to Shoqan")}
-            className="mt-2 w-full rounded-2xl border-2 border-line bg-card p-3 text-[16px] text-ink focus:border-sky outline-none resize-none"
+            className="mt-2 w-full rounded-2xl border-2 border-line bg-card p-3 text-[16px] text-ink focus:border-sky-deep resize-none"
           />
           {replyNotEnglish && <p className="text-[13px] text-sun-deep font-semibold mt-1">{tr("Ағылшынша жазып көр.", "Try it in English.")}</p>}
           <p className="text-[15px] text-ink-2 mt-4">{tr("Енді ойың қандай?", "So, what do you think now?")}</p>

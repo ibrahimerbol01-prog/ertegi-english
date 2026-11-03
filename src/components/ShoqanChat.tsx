@@ -23,24 +23,52 @@ export const ShoqanChat = ({ hidden = false }: { hidden?: boolean }) => {
   const scrollRef = useRef<HTMLDivElement | null>(null);
 
   const BUBBLE_SIZE = 64;
-  const [pos, setPos] = useState(() => {
-    try {
-      const saved = localStorage.getItem("shoqan_bubble_pos");
-      if (saved) return JSON.parse(saved);
-    } catch {}
-    return {
-      x: (typeof window !== "undefined" ? window.innerWidth : 400) - BUBBLE_SIZE - 16,
-      y: (typeof window !== "undefined" ? window.innerHeight : 800) - BUBBLE_SIZE - 110,
-    };
-  });
-  const dragRef = useRef({ dragging: false, moved: false, startX: 0, startY: 0, origX: 0, origY: 0 });
-
   const clampPos = (x: number, y: number) => {
     const margin = 8;
     const maxX = window.innerWidth - BUBBLE_SIZE - margin;
     const maxY = window.innerHeight - BUBBLE_SIZE - margin;
     return { x: Math.min(Math.max(margin, x), maxX), y: Math.min(Math.max(margin, y), maxY) };
   };
+  // Desktop only: the bubble can be dragged, and where it was left is kept.
+  // A position saved on a wider window is pulled back inside this one.
+  const [pos, setPos] = useState(() => {
+    const fallback = { x: window.innerWidth - BUBBLE_SIZE - 24, y: window.innerHeight - BUBBLE_SIZE - 24 };
+    try {
+      const saved: unknown = JSON.parse(localStorage.getItem("shoqan_bubble_pos") || "null");
+      if (saved && typeof saved === "object" && Number.isFinite((saved as { x: number }).x) && Number.isFinite((saved as { y: number }).y)) {
+        return clampPos((saved as { x: number }).x, (saved as { y: number }).y);
+      }
+    } catch { /* storage blocked */ }
+    return clampPos(fallback.x, fallback.y);
+  });
+  const dragRef = useRef({ dragging: false, moved: false, startX: 0, startY: 0, origX: 0, origY: 0 });
+
+  // On a phone the bubble sits in a fixed spot above the tab bar and steps
+  // aside while the page scrolls down, so it never covers what is being read;
+  // scrolling up brings it back.
+  const [phone, setPhone] = useState(() => window.matchMedia("(max-width: 767px)").matches);
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 767px)");
+    const onChange = () => setPhone(mq.matches);
+    mq.addEventListener("change", onChange);
+    return () => mq.removeEventListener("change", onChange);
+  }, []);
+  const [tucked, setTucked] = useState(false);
+  useEffect(() => {
+    if (!phone) return;
+    const last = new WeakMap<Element, number>();
+    const onScroll = (e: Event) => {
+      const el = e.target instanceof Element ? e.target : document.scrollingElement;
+      if (!el) return;
+      const y = el.scrollTop;
+      const prev = last.get(el) ?? y;
+      last.set(el, y);
+      if (y > prev + 6 && y > 80) setTucked(true);
+      else if (y < prev - 6 || y <= 80) setTucked(false);
+    };
+    document.addEventListener("scroll", onScroll, { capture: true, passive: true });
+    return () => document.removeEventListener("scroll", onScroll, { capture: true });
+  }, [phone]);
 
   // Other screens open the chat with a "shoqan:open" event, optionally with a draft question.
   useEffect(() => {
@@ -135,20 +163,28 @@ export const ShoqanChat = ({ hidden = false }: { hidden?: boolean }) => {
   return (
     <>
       <button
-        onPointerDown={handlePointerDown}
-        onPointerMove={handlePointerMove}
-        onPointerUp={handlePointerUp}
-        onPointerCancel={handlePointerUp}
-        // Keyboard (Enter/Space) clicks have detail 0; pointer taps are handled on pointer-up.
-        onClick={(e) => { if (e.detail === 0) setOpen(true); }}
+        {...(phone
+          ? { onClick: () => setOpen(true) }
+          : {
+              onPointerDown: handlePointerDown,
+              onPointerMove: handlePointerMove,
+              onPointerUp: handlePointerUp,
+              onPointerCancel: handlePointerUp,
+              // Keyboard (Enter/Space) clicks have detail 0; pointer taps are handled on pointer-up.
+              onClick: (e: React.MouseEvent) => { if (e.detail === 0) setOpen(true); },
+            })}
+        onFocus={() => setTucked(false)}
         aria-label={tr("Шоқаннан сұра", "Ask Shoqan")}
         aria-hidden={hidden || undefined}
         tabIndex={hidden ? -1 : undefined}
-        style={{ left: pos.x, top: pos.y }}
-        className={`fixed z-[65] w-16 h-16 rounded-full overflow-hidden border-[3px] border-card ring-2 ring-sun shadow-[0_4px_0_var(--color-sun-deep),0_10px_24px_-8px_rgba(28,35,51,0.35)] transition-transform touch-none cursor-grab active:cursor-grabbing ${
-          open || hidden ? "scale-0 pointer-events-none" : "scale-100"
-        }`}
-        title={tr("Шоқаннан сұра: жылжыту үшін сүйре, ашу үшін бас", "Ask Shoqan — drag to move, tap to open")}
+        style={phone
+          ? { right: "calc(env(safe-area-inset-right) + 12px)", bottom: "calc(max(env(safe-area-inset-bottom), 8px) + 74px)" }
+          : { left: pos.x, top: pos.y }}
+        // Below the dialogs (z-60 and up), above the tab bar (z-30).
+        className={`fixed z-[55] rounded-full overflow-hidden border-[3px] border-card ring-2 ring-sun shadow-[0_4px_0_var(--color-sun-deep),0_10px_24px_-8px_rgba(28,35,51,0.35)] transition-transform duration-200 ${
+          phone ? "w-14 h-14" : "w-16 h-16 touch-none cursor-grab active:cursor-grabbing"
+        } ${open || hidden || (phone && tucked) ? "scale-0 pointer-events-none" : "scale-100"}`}
+        title={phone ? undefined : tr("Шоқаннан сұра: жылжыту үшін сүйре, ашу үшін бас", "Ask Shoqan — drag to move, tap to open")}
       >
         <img src="/shoqan-avatar.jpg" alt="" className="w-full h-full object-cover pointer-events-none" draggable={false} />
       </button>
@@ -169,7 +205,7 @@ export const ShoqanChat = ({ hidden = false }: { hidden?: boolean }) => {
               <CloseButton onClick={() => setOpen(false)} />
             </div>
 
-            <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 space-y-3">
+            <div ref={scrollRef} role="log" aria-live="polite" aria-relevant="additions" className="flex-1 overflow-y-auto p-4 space-y-3">
               {messages.map((m, i) => (
                 <div key={i} className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}>
                   <div
@@ -190,7 +226,7 @@ export const ShoqanChat = ({ hidden = false }: { hidden?: boolean }) => {
                   </div>
                 </div>
               )}
-              {chatError && <p className="text-sm text-felt-deep text-center">{chatError}</p>}
+              {chatError && <p role="alert" className="text-sm text-felt-deep text-center">{chatError}</p>}
             </div>
 
             <div className="p-3 bg-card border-t border-line flex items-center gap-2 pb-[max(env(safe-area-inset-bottom),12px)]">
@@ -201,6 +237,7 @@ export const ShoqanChat = ({ hidden = false }: { hidden?: boolean }) => {
                 onKeyDown={(e) => {
                   if (e.key === "Enter") handleSend();
                 }}
+                aria-label={tr("Шоқанға сұрақ", "Message Shoqan")}
                 placeholder={tr("Ағылшын, қазақ тілі немесе қосымша туралы сұра...", "Ask about English, Kazakh, or the app...")}
                 className="field !min-h-[44px] !rounded-full"
               />
@@ -208,7 +245,7 @@ export const ShoqanChat = ({ hidden = false }: { hidden?: boolean }) => {
                 onClick={handleSend}
                 disabled={sending || !input.trim()}
                 aria-label={tr("Жіберу", "Send")}
-                className="w-11 h-11 shrink-0 rounded-full bg-sky disabled:bg-sand-3 disabled:text-ink-3 text-white flex items-center justify-center"
+                className="w-11 h-11 shrink-0 rounded-full bg-sky-deep disabled:bg-sand-3 disabled:text-ink-3 text-white flex items-center justify-center"
               >
                 <Send size={15} />
               </button>

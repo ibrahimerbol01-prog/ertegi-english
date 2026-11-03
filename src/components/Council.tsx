@@ -260,7 +260,7 @@ function CouncilRound({ q, kk, vote, onChange, onPush, onReward }: {
             onFocus={(e) => setTimeout(() => e.target.scrollIntoView({ block: "center", behavior: "smooth" }), 300)}
             maxLength={140}
             placeholder="because …"
-            className="mt-2 w-full h-12 rounded-2xl border-2 border-line bg-card px-3 text-[16px] text-ink focus:border-sky outline-none"
+            className="mt-2 w-full h-12 rounded-2xl border-2 border-line bg-card px-3 text-[16px] text-ink focus:border-sky-deep"
           />
           <p className="text-[12px] text-ink-3 mt-1">{tr("Себеп жазсаң, +3 XP. Сыныптастарың оны мұғалім тексергеннен кейін ғана көреді.", "A reason earns +3 XP. Classmates only see it after a teacher checks it.")}</p>
           <button onClick={submitFirst} disabled={pick === null || confidence === null || loading} className="btn w-full mt-5">
