@@ -25,6 +25,7 @@ import { currentWeek, weekWordOf } from "../data/weekWords";
 import { StoryCover } from "./StoryCover";
 import { buildLevelQuiz } from "../utils/levelQuiz";
 import { findEvidence } from "../utils/evidence";
+import { apiUrl, PUBLIC_URL } from "../lib/api";
 
 /* Small video tile with a night-sky fallback. */
 function StoryVideo({ src, poster, className = "", videoRef, paused }: { src: string; poster?: string; className?: string; videoRef?: React.Ref<HTMLVideoElement>; paused?: boolean }) {
@@ -1539,7 +1540,7 @@ export function SpeakScreen({ onReward, t }: {
 
     try {
       const { data: { session: s } } = await supabase.auth.getSession();
-      const tokenRes = await fetch("/api/azure-token", {
+      const tokenRes = await fetch(apiUrl("/api/azure-token"), {
         headers: { Authorization: `Bearer ${s?.access_token ?? ""}` },
       });
       const tokenData = await tokenRes.json();
@@ -1776,7 +1777,7 @@ export function ProfileScreen({ xp, t, lang = "kk", setLang, savedWordsCount = 0
 
   const share = async () => {
     const shareText = `🏆 ${userName} is learning English through Kazakh folklore on Ertegi English!\n${xp} XP • ${streakDays}-day streak • ${unlockedAchievements.length}/${ACHIEVEMENTS.length} badges unlocked`;
-    const shareUrl = window.location.href;
+    const shareUrl = `${PUBLIC_URL}/`;
     try {
       if (navigator.share) {
         await navigator.share({ title: "Ertegi English — My Progress", text: shareText, url: shareUrl });

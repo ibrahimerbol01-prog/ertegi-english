@@ -6,6 +6,7 @@
 // recommended pattern (avoids proxying raw audio through our server).
 import { requireAuth } from "./_auth.js";
 import { takeQuota } from "./_usage.js";
+import { cors } from "./_cors.js";
 
 // Tokens per learner per UTC day. The app keeps a token for 8 minutes, so a
 // whole day of reading aloud and pronunciation practice stays far below this;
@@ -14,6 +15,7 @@ const DAILY_LIMIT = 300;
 
 export default async function handler(req, res) {
     try {
+      if (cors(req, res, "GET")) return;
       if (req.method !== "GET") {
         res.status(405).json({ error: "Method not allowed" });
         return;
