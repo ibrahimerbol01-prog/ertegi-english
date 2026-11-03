@@ -10,14 +10,21 @@ export const progressKey = (storyId: string, step: string) => `${storyId}:${step
 
 const lsKey = (userId: string, name: string) => `ertegi_${name}_${userId}`;
 
-function readLocal<T>(key: string, fallback: T): T {
+// A value from another version or a hand-edited one must not break loading:
+// anything that is not the expected shape counts as empty.
+function readLocal<T>(key: string, fallback: T, valid: (v: unknown) => boolean): T {
   try {
     const raw = localStorage.getItem(key);
-    return raw ? (JSON.parse(raw) as T) : fallback;
+    if (!raw) return fallback;
+    const v: unknown = JSON.parse(raw);
+    return valid(v) ? (v as T) : fallback;
   } catch {
     return fallback;
   }
 }
+const isStringArray = (v: unknown) => Array.isArray(v) && v.every((x) => typeof x === "string");
+const isStringRecord = (v: unknown) =>
+  !!v && typeof v === "object" && !Array.isArray(v) && Object.values(v).every((x) => typeof x === "string");
 
 function writeLocal(key: string, value: unknown) {
   try {
@@ -28,7 +35,7 @@ function writeLocal(key: string, value: unknown) {
 }
 
 export async function loadProgress(userId: string): Promise<Set<string>> {
-  const local = readLocal<string[]>(lsKey(userId, "progress"), []);
+  const local = readLocal<string[]>(lsKey(userId, "progress"), [], isStringArray);
   const done = new Set(local);
   const { data, error } = await supabase.from("story_progress").select("story_id, step").eq("user_id", userId);
   if (!error && data) {
@@ -53,7 +60,8 @@ export const REVIEW_INTERVAL_DAYS = [0, 1, 3, 7, 16, 35, 90];
 export const MAX_MASTERY = REVIEW_INTERVAL_DAYS.length - 1;
 
 export function nextReview(mastery: number, from = new Date()): string {
-  const days = REVIEW_INTERVAL_DAYS[Math.min(Math.max(mastery, 0), MAX_MASTERY)];
+  const box = Number.isFinite(mastery) ? Math.round(mastery) : 0;
+  const days = REVIEW_INTERVAL_DAYS[Math.min(Math.max(box, 0), MAX_MASTERY)];
   return new Date(from.getTime() + days * 86400000).toISOString();
 }
 
@@ -74,7 +82,7 @@ export const isDue = (nextReviewAt: string | null | undefined, now = Date.now())
   !nextReviewAt || new Date(nextReviewAt).getTime() <= now;
 
 export function loadLocalReviews(userId: string): Record<string, string> {
-  return readLocal<Record<string, string>>(lsKey(userId, "reviews"), {});
+  return readLocal<Record<string, string>>(lsKey(userId, "reviews"), {}, isStringRecord);
 }
 
 export function saveReview(userId: string, word: string, mastery: number, nextReviewAt: string) {

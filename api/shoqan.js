@@ -5,8 +5,14 @@
 // in-app navigation; the system prompt below is the only thing enforcing
 // that, so it's deliberately explicit and repeats the boundary at the end.
 import { requireAuth } from "./_auth.js";
+import { takeQuota, refundQuota } from "./_usage.js";
 
-const DAILY_LIMIT = 30;
+// Requests per learner per UTC day. "chat" is the Shoqan chat window;
+// "tool" is feedback inside lessons (thinking trail, debate of the week),
+// counted separately so lesson feedback doesn't use up the chat.
+const DAILY_LIMIT = { chat: 10, tool: 10 };
+const MAX_MESSAGES = 200; // older clients send the whole chat; only the last 16 are used
+const MAX_CHARS = 4000;
 
 // Trying several Gemini models can take longer than Vercel's default limit,
 // which cuts the function off with a 504.
@@ -73,7 +79,7 @@ async function askGemini(apiKey, messages) {
     .map((m) => ({ role: m.role === "assistant" ? "model" : "user", parts: [{ text: m.content }] }))
     .filter((m, i, all) => all.findIndex((x) => x.role === "user") <= i);
   if (contents.length === 0) return { status: 400, error: "The chat has no learner message yet." };
-  let last = { status: 502, error: "No Gemini model answered." };
+  let last = { status: 502, error: "The AI service is busy. Try again in a minute." };
   const started = Date.now();
   for (const model of GEMINI_MODELS) {
     // Leave time to answer before Vercel's 60 s limit.
@@ -84,7 +90,7 @@ async function askGemini(apiKey, messages) {
     } catch (err) {
       if (err?.name !== "TimeoutError") throw err;
       console.error(`[shoqan] Gemini ${model} timed out`);
-      last = { status: 504, error: `Gemini ${model} took too long.` };
+      last = { status: 504, error: "The AI service took too long to answer." };
       continue;
     }
     // A model that doesn't take the thinking setting answers 400, not always
@@ -96,7 +102,7 @@ async function askGemini(apiKey, messages) {
         upstream = await geminiOnce(apiKey, model, contents, false);
       } catch (err) {
         if (err?.name !== "TimeoutError") throw err;
-        last = { status: 504, error: `Gemini ${model} took too long.` };
+        last = { status: 504, error: "The AI service took too long to answer." };
         continue;
       }
     }
@@ -110,7 +116,8 @@ async function askGemini(apiKey, messages) {
     }
     const body = await upstream.text();
     console.error(`[shoqan] Gemini ${model} ${upstream.status}:`, body.slice(0, 500));
-    last = { status: upstream.status, error: body };
+    // The raw upstream body stays in the logs, never in the learner's browser.
+    last = { status: upstream.status === 429 ? 503 : 502, error: "The AI service is busy. Try again in a minute." };
     if (![400, 404, 429, 500, 503].includes(upstream.status)) break;
   }
   return last;
@@ -132,7 +139,10 @@ async function askClaude(apiKey, messages) {
     }),
     signal: AbortSignal.timeout(20000),
   });
-  if (!upstream.ok) return { status: upstream.status, error: await upstream.text() };
+  if (!upstream.ok) {
+    console.error(`[shoqan] Claude ${upstream.status}:`, (await upstream.text()).slice(0, 500));
+    return { status: 502, error: "The AI service is busy. Try again in a minute." };
+  }
   const data = await upstream.json();
   return { reply: data?.content?.find((block) => block.type === "text")?.text };
 }
@@ -150,36 +160,25 @@ export default async function handler(req, res) {
 
   const { user, admin } = auth;
 
-  // Rate-limit: 30 Shoqan requests per user per UTC day.
-  // ponytail: SELECT then UPDATE has a small race window — acceptable at student scale
-  const today = new Date().toISOString().slice(0, 10);
-  const { data: row } = await admin
-    .from("api_usage_daily")
-    .select("shoqan_count")
-    .eq("user_id", user.id)
-    .eq("date", today)
-    .maybeSingle();
-
-  const count = row?.shoqan_count ?? 0;
-  if (count >= DAILY_LIMIT) {
-    res.status(429).json({ error: "Daily limit reached. Try again tomorrow." });
-    return;
-  }
-
-  await admin
-    .from("api_usage_daily")
-    .upsert({ user_id: user.id, date: today, shoqan_count: count + 1 }, { onConflict: "user_id,date" });
-
+  // Check the request before counting it, so a broken one costs nothing.
   const geminiKey = (process.env.GEMINI_API_KEY || "").trim();
   const anthropicKey = (process.env.ANTHROPIC_API_KEY || "").trim();
   if (!geminiKey && !anthropicKey) {
-    res.status(500).json({ error: "Server is missing its AI API key." });
+    console.error("[shoqan] neither GEMINI_API_KEY nor ANTHROPIC_API_KEY is set");
+    res.status(500).json({ error: "The assistant is not set up on the server." });
     return;
   }
 
-  const { messages } = req.body || {};
-  if (!Array.isArray(messages) || messages.length === 0) {
-    res.status(400).json({ error: "Request must include a non-empty messages array." });
+  const { messages, kind: rawKind } = req.body || {};
+  const kind = rawKind === "tool" ? "tool" : "chat";
+  const valid =
+    Array.isArray(messages) &&
+    messages.length > 0 &&
+    messages.length <= MAX_MESSAGES &&
+    messages.every((m) => m && typeof m === "object" && typeof m.content === "string") &&
+    messages[messages.length - 1].role === "user";
+  if (!valid) {
+    res.status(400).json({ error: "Request must include a messages array that ends with the learner's message." });
     return;
   }
 
@@ -187,20 +186,30 @@ export default async function handler(req, res) {
   // a lightweight helper widget, not a full chat history archive.
   const trimmedMessages = messages.slice(-16).map((m) => ({
     role: m.role === "assistant" ? "assistant" : "user",
-    content: String(m.content || "").slice(0, 4000),
+    content: m.content.slice(0, MAX_CHARS),
   }));
+
+  const quota = await takeQuota(admin, user.id, kind, DAILY_LIMIT[kind]);
+  if (!quota.ok) {
+    res.status(quota.status).json({
+      error: quota.status === 429 ? "Daily limit reached. Try again tomorrow." : "The assistant is unavailable right now. Try again later.",
+    });
+    return;
+  }
 
   try {
     const result = geminiKey
       ? await askGemini(geminiKey, trimmedMessages)
       : await askClaude(anthropicKey, trimmedMessages);
     if (result.error) {
+      if (result.status >= 500) await refundQuota(admin, user.id, kind);
       res.status(result.status).json({ error: result.error });
       return;
     }
     res.status(200).json({ reply: result.reply || FALLBACK_REPLY });
   } catch (err) {
     console.error("[shoqan] request failed:", err);
+    await refundQuota(admin, user.id, kind);
     if (err?.name === "TimeoutError") {
       res.status(504).json({ error: "The AI service took too long to answer." });
       return;

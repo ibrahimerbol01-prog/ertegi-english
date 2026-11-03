@@ -21,7 +21,8 @@ const maqalKey = (userId?: string) => `ertegi_maqals_${userId || "guest"}`;
 export function loadMaqals(userId?: string): number[] {
   try {
     const raw = localStorage.getItem(maqalKey(userId));
-    return raw ? JSON.parse(raw) : [];
+    const v: unknown = raw ? JSON.parse(raw) : [];
+    return Array.isArray(v) ? v.filter((x): x is number => typeof x === "number") : [];
   } catch {
     return [];
   }

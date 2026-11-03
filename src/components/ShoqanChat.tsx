@@ -109,7 +109,8 @@ export const ShoqanChat = ({ hidden = false }: { hidden?: boolean }) => {
           "Content-Type": "application/json",
           Authorization: `Bearer ${s?.access_token ?? ""}`,
         },
-        body: JSON.stringify({ messages: nextMessages }),
+        // The server reads only the last 16 messages.
+        body: JSON.stringify({ messages: nextMessages.slice(-16), kind: "chat" }),
         // The server gives up within 60 s; past this the chat stops waiting.
         signal: AbortSignal.timeout(65000),
       });
@@ -123,7 +124,7 @@ export const ShoqanChat = ({ hidden = false }: { hidden?: boolean }) => {
       // Say what went wrong where the learner can act on it; the code in
       // brackets lets a screenshot show the exact server answer.
       setChatError(
-        status === 429 ? tr("Бүгінгі 30 сұрақ бітті. Ертең қайта сұра.", "That's today's 30 questions. Ask again tomorrow.")
+        status === 429 ? tr("Бүгінгі 10 сұрақ бітті. Ертең қайта сұра.", "That's today's 10 questions. Ask again tomorrow.")
         : status === 401 ? tr("Кіру уақыты бітті. Профильден шығып, қайта кір.", "Your sign-in has expired. Sign out and sign in again.")
         : tr(`Шоқан қазір жауап бере алмады. Біраздан соң қайта байқап көр.${status ? ` (${status})` : ""}`, `Shoqan couldn't respond just now — try again in a moment.${status ? ` (${status})` : ""}`),
       );
