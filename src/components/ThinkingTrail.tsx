@@ -343,7 +343,7 @@ function TrailFlow({ kk, claimQ, level, text, past, draft, onDraft, onSave, onFe
             <p className="text-[15px] text-ink mt-1">{last.wonder}</p>
           </div>
           <div className="flex gap-3 mt-4">
-            <img src="/shoqan-avatar.jpg" alt="" className="w-10 h-10 rounded-full object-cover shrink-0" />
+            <img src="/shoqan-avatar.webp" width={128} height={128} decoding="async" alt="" className="w-10 h-10 rounded-full object-cover shrink-0" />
             <div className="rounded-2xl rounded-tl-md bg-sky-soft p-4 flex-1 min-w-0">
               <p className="text-xs font-bold uppercase tracking-[0.06em] text-sky-deep flex items-center gap-1.5"><MessageCircle size={12} /> {tr("Шоқан", "Shoqan")}</p>
               {last.feedback ? (

@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useMemo } from "react";
+import { useEffect, useRef, useMemo } from "react";
 import { createPortal } from "react-dom";
 import { Check, X } from "lucide-react";
 import { QoshqarMuyiz, Shanyraq, SteppeBackground, KilimStrip } from "./Ornaments";
@@ -28,30 +28,6 @@ export const BrandMark = ({ compact = false }: { compact?: boolean }) => (
     )}
   </div>
 );
-
-export const BackgroundVideo = ({ src, opacity = 50, videoKey }: { src: string; opacity?: number; videoKey?: string }) => {
-  const [error, setError] = useState(false);
-  return (
-    <div className="absolute inset-0 w-full h-full overflow-hidden pointer-events-none" style={{ zIndex: 0 }}>
-      {!error ? (
-        <video
-          key={videoKey || src}
-          autoPlay
-          loop
-          muted
-          playsInline
-          preload="auto"
-          src={src}
-          onError={() => setError(true)}
-          className="absolute inset-0 w-full h-full object-cover"
-          style={{ opacity: opacity / 100 }}
-        />
-      ) : (
-        <div className="absolute inset-0 w-full h-full bg-gradient-to-br from-night-2 to-night" />
-      )}
-    </div>
-  );
-};
 
 export const XpToast = ({ toast }: { toast: { amount: number; key: number } | null }) => {
   if (!toast) return null;

@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { lazy, Suspense, useState, useRef, useEffect } from "react";
 import type { Session } from "@supabase/supabase-js";
 import { IconYurt, IconBook, IconTrophy, IconCards, IconShield, IconMic, IconLearner, IconFlame, IconBolt, IconBoard } from "./components/Icons";
 import {
@@ -20,8 +20,9 @@ import { buildLevelQuiz } from "./utils/levelQuiz";
 import { BataModal, OyuKilim, TurkicWords, loadMaqals } from "./components/Culture";
 import { WordCoach } from "./components/WordCoach";
 import { LegendScreen } from "./components/LegendCards";
-import { TeacherScreen } from "./components/Teacher";
-import { TeacherProfile } from "./components/TeacherProfile";
+// Teacher screens load only for teachers.
+const TeacherScreen = lazy(() => import("./components/Teacher").then((m) => ({ default: m.TeacherScreen })));
+const TeacherProfile = lazy(() => import("./components/TeacherProfile").then((m) => ({ default: m.TeacherProfile })));
 import { RoleSwitchRow } from "./components/RolePicker";
 import { clearPendingRole, type Role } from "./utils/role";
 import { AssignmentsCard, JoinClassSheet, MyClassesSection } from "./components/StudentClasses";
@@ -576,6 +577,7 @@ export default function KazakhTalesApp({ session, role, onRoleChange }: { sessio
               {tab === "cards" && <LegendScreen lang={lang} userId={userId} onReward={addXp} />}
               {tab === "speak" && <SpeakScreen onReward={addXp} t={t} />}
               {tab === "profile" && teacher && (
+                <Suspense fallback={null}>
                 <TeacherProfile
                   lang={lang}
                   setLang={setLang}
@@ -585,6 +587,7 @@ export default function KazakhTalesApp({ session, role, onRoleChange }: { sessio
                   roleSwitch={<RoleSwitchRow kk={lang === "kk"} to="student" onSwitch={onRoleChange} />}
                   onSignOut={handleSignOut}
                 />
+                </Suspense>
               )}
               {tab === "profile" && !teacher && (
                 <ProfileScreen
@@ -603,7 +606,7 @@ export default function KazakhTalesApp({ session, role, onRoleChange }: { sessio
                   roleSwitch={<RoleSwitchRow kk={lang === "kk"} to="teacher" onSwitch={onRoleChange} />}
                 />
               )}
-              {tab === "teacher" && teacher && <TeacherScreen lang={lang} />}
+              {tab === "teacher" && teacher && <Suspense fallback={null}><TeacherScreen lang={lang} /></Suspense>}
             </main>
 
             {/* Right rail — wide desktop only, Duolingo-style widgets */}

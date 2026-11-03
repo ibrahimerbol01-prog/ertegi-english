@@ -150,7 +150,7 @@ export const ShoqanChat = ({ hidden = false }: { hidden?: boolean }) => {
         }`}
         title={tr("Шоқаннан сұра: жылжыту үшін сүйре, ашу үшін бас", "Ask Shoqan — drag to move, tap to open")}
       >
-        <img src="/shoqan-avatar.jpg" alt="" className="w-full h-full object-cover pointer-events-none" draggable={false} />
+        <img src="/shoqan-avatar.webp" width={128} height={128} decoding="async" alt="" className="w-full h-full object-cover pointer-events-none" draggable={false} />
       </button>
 
       {open && (
@@ -159,7 +159,7 @@ export const ShoqanChat = ({ hidden = false }: { hidden?: boolean }) => {
             <div className="flex items-center justify-between px-4 py-3 bg-card border-b border-line">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-full overflow-hidden ring-2 ring-sun shrink-0">
-                  <img src="/shoqan-avatar.jpg" alt={tr("Шоқан", "Shoqan")} className="w-full h-full object-cover" />
+                  <img src="/shoqan-avatar.webp" width={128} height={128} decoding="async" alt={tr("Шоқан", "Shoqan")} className="w-full h-full object-cover" />
                 </div>
                 <div>
                   <p className="font-display text-[17px] font-black text-ink leading-tight">{tr("Шоқан", "Shoqan")}</p>
