@@ -1,5 +1,6 @@
 import { supabase } from "../lib/supabase";
 import { foldAccents } from "./text";
+import { apiUrl } from "../lib/api";
 
 /* Story narration for read-along: a neural Azure voice reads the whole text in
    one go, so sentences join the way a person reads them. Word timings come
@@ -32,7 +33,7 @@ function speechToken() {
   if (tokenJob && Date.now() - tokenJob.at < 8 * 60_000) return tokenJob.job;
   const job = (async () => {
     const { data: { session } } = await supabase.auth.getSession();
-    const res = await fetch("/api/azure-token", { headers: { Authorization: `Bearer ${session?.access_token ?? ""}` } });
+    const res = await fetch(apiUrl("/api/azure-token"), { headers: { Authorization: `Bearer ${session?.access_token ?? ""}` } });
     const body = await res.json();
     if (!res.ok) throw new Error(body?.error || "No speech token");
     return body as { token: string; region: string };

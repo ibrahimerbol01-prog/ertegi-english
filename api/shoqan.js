@@ -6,6 +6,7 @@
 // that, so it's deliberately explicit and repeats the boundary at the end.
 import { requireAuth } from "./_auth.js";
 import { takeQuota, refundQuota } from "./_usage.js";
+import { cors } from "./_cors.js";
 
 // Requests per learner per UTC day. "chat" is the Shoqan chat window;
 // "tool" is feedback inside lessons (thinking trail, debate of the week),
@@ -148,6 +149,7 @@ async function askClaude(apiKey, messages) {
 }
 
 export default async function handler(req, res) {
+  if (cors(req, res, "POST")) return;
   if (req.method !== "POST") {
     res.status(405).json({ error: "Method not allowed" });
     return;
