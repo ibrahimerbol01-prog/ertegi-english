@@ -230,7 +230,7 @@ export default function AuthScreen() {
             {mode === "signin" && (
               <p className="-mt-1 text-xs text-ink-2 text-center leading-relaxed">
                 {tr("Google арқылы кірсең,", "By continuing with Google you agree to the")}{" "}
-                <button type="button" onClick={() => setShowPolicy(true)} className="text-sky font-semibold">
+                <button type="button" onClick={() => setShowPolicy(true)} className="text-sky-deep font-semibold underline underline-offset-2 py-2 -my-2">
                   {tr("құпиялық саясатымен", "Privacy Policy")}
                 </button>
                 {kk && " келісесің"}
@@ -266,34 +266,46 @@ export default function AuthScreen() {
         ) : (
           <form onSubmit={handleSubmit} className="space-y-3">
             {mode === "signup" && (
+              <label className="block">
+                <span className="text-xs font-semibold text-ink-2 mb-1 block">{tr("Атың", "Your name")}</span>
+                <input
+                  type="text"
+                  autoComplete="given-name"
+                  value={displayName}
+                  onChange={(e) => setDisplayName(e.target.value)}
+                  className="field"
+                />
+              </label>
+            )}
+            <label className="block">
+              <span className="text-xs font-semibold text-ink-2 mb-1 block">{tr("Электрондық пошта", "Email")}</span>
               <input
-                type="text"
-                placeholder={tr("Атың", "Your name")}
-                autoComplete="name"
-                value={displayName}
-                onChange={(e) => setDisplayName(e.target.value)}
+                type="email"
+                required
+                autoComplete="email"
+                inputMode="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                aria-invalid={!!error || undefined}
+                aria-describedby={error ? "auth-error" : undefined}
                 className="field"
               />
-            )}
-            <input
-              type="email"
-              required
-              placeholder={tr("Электрондық пошта", "Email")}
-              autoComplete="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="field"
-            />
-            <input
-              type="password"
-              required
-              minLength={6}
-              placeholder={tr("Құпиясөз (кемінде 6 таңба)", "Password (min 6 characters)")}
-              autoComplete={mode === "signin" ? "current-password" : "new-password"}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="field"
-            />
+            </label>
+            <label className="block">
+              <span className="text-xs font-semibold text-ink-2 mb-1 block">{tr("Құпиясөз", "Password")}</span>
+              <input
+                type="password"
+                required
+                minLength={6}
+                autoComplete={mode === "signin" ? "current-password" : "new-password"}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                aria-invalid={!!error || undefined}
+                aria-describedby={`auth-pass-hint${error ? " auth-error" : ""}`}
+                className="field"
+              />
+              <span id="auth-pass-hint" className="text-xs text-ink-2 mt-1 block">{tr("Кемінде 6 таңба", "At least 6 characters")}</span>
+            </label>
 
             {mode === "signup" && (
               <label className="flex items-start gap-3 cursor-pointer select-none pt-1">
@@ -305,7 +317,7 @@ export default function AuthScreen() {
                 />
                 <span className="text-sm text-ink-2 leading-relaxed">
                   {tr("Мен", "I agree to the")}{" "}
-                  <button type="button" onClick={() => setShowPolicy(true)} className="text-sky font-semibold">
+                  <button type="button" onClick={() => setShowPolicy(true)} className="text-sky-deep font-semibold underline underline-offset-2 py-2 -my-2">
                     {tr("құпиялық саясатымен", "Privacy Policy")}
                   </button>
                   {kk && " келісемін"}
@@ -313,9 +325,10 @@ export default function AuthScreen() {
               </label>
             )}
 
-            {error && <p className="text-sm text-felt-deep bg-felt-soft rounded-xl px-3 py-2.5 leading-relaxed">{error}</p>}
+            {error && <p id="auth-error" role="alert" className="text-sm text-felt-deep bg-felt-soft rounded-xl px-3 py-2.5 leading-relaxed">{error}</p>}
 
-            <button type="submit" disabled={loading || !canSubmit} className="btn w-full !mt-5">
+            {/* Not disabled without consent: pressing it says what is missing. */}
+            <button type="submit" disabled={loading} className="btn w-full !mt-5">
               {loading ? tr("Күте тұр...", "Please wait...") : mode === "signin" ? tr("Кіру", "Sign in") : tr("Аккаунт ашу", "Create account")}
             </button>
           </form>
@@ -329,7 +342,7 @@ export default function AuthScreen() {
                 setError(null);
                 setMode(mode === "signin" ? "signup" : "signin");
               }}
-              className="text-sky font-bold"
+              className="text-sky-deep font-bold inline-flex items-center min-h-[44px] px-1"
             >
               {mode === "signin" ? tr("Тіркелу", "Sign up") : tr("Кіру", "Sign in")}
             </button>

@@ -50,7 +50,7 @@ export const CloseButton = ({ onClick, className = "" }: { onClick: () => void; 
     <button
       onClick={onClick}
       aria-label={kk ? "Жабу" : "Close"}
-      className={`w-10 h-10 rounded-full bg-sand-2 text-ink-2 hover:bg-sand-3 flex items-center justify-center shrink-0 ${className}`}
+      className={`w-11 h-11 rounded-full bg-sand-2 text-ink-2 hover:bg-sand-3 flex items-center justify-center shrink-0 ${className}`}
     >
       <X size={20} strokeWidth={2.6} />
     </button>
@@ -125,8 +125,8 @@ export const AchievementBanner = ({ achievement, onDone }: { achievement: { icon
   if (!achievement) return null;
 
   return (
-    <div className="fixed top-[max(env(safe-area-inset-top),12px)] left-1/2 -translate-x-1/2 z-[70] w-[calc(100%-32px)] max-w-[380px] pointer-events-none">
-      <div className="animate-achievement card glass p-3 flex items-center gap-3 pointer-events-auto cursor-pointer" onClick={() => onDoneRef.current()}>
+    <div role="status" className="fixed top-[max(env(safe-area-inset-top),12px)] left-1/2 -translate-x-1/2 z-[70] w-[calc(100%-32px)] max-w-[380px] pointer-events-none">
+      <div className="animate-achievement card glass p-3 flex items-center gap-3 pointer-events-auto">
         {achievement.badge
           ? <Badge glyph={achievement.badge.glyph} color={achievement.badge.color} size={48} className="shrink-0" />
           : <span className="w-11 h-11 rounded-full bg-sun-soft flex items-center justify-center text-2xl shrink-0" aria-hidden="true">{achievement.icon}</span>}
@@ -135,21 +135,29 @@ export const AchievementBanner = ({ achievement, onDone }: { achievement: { icon
           <p className="font-display text-[15px] font-extrabold text-ink truncate">{kk && achievement.kk ? achievement.kk.title : achievement.title}</p>
           <p className="text-xs text-ink-2 truncate">{kk && achievement.kk ? achievement.kk.desc : achievement.desc}</p>
         </div>
+        <CloseButton onClick={() => onDoneRef.current()} className="ml-auto" />
       </div>
     </div>
   );
 };
 
-export const SaveErrorToast = ({ show, message }: { show: boolean; message: string }) => {
+export const SaveErrorToast = ({ show, message, onClose }: { show: boolean; message: string; onClose?: () => void }) => {
+  const kk = useLang() === "kk";
   if (!show) return null;
   return (
-    <div className="fixed bottom-28 left-1/2 -translate-x-1/2 z-[80] max-w-[340px] w-[calc(100%-32px)] pointer-events-none">
-      <div className="animate-pop-in bg-ink text-white rounded-2xl px-4 py-3 text-sm text-center shadow-2xl">
-        {message}
+    <div role="alert" className="fixed bottom-28 left-1/2 -translate-x-1/2 z-[80] max-w-[340px] w-[calc(100%-32px)] pointer-events-none">
+      <div className="animate-pop-in bg-ink text-white rounded-2xl pl-4 pr-1.5 py-1.5 text-sm shadow-2xl flex items-center gap-2 pointer-events-auto">
+        <span className="flex-1 py-1.5">{message}</span>
+        {onClose && (
+          <button type="button" onClick={onClose} aria-label={kk ? "Жабу" : "Close"} className="w-11 h-11 rounded-full text-white/80 hover:text-white flex items-center justify-center shrink-0">
+            <X size={18} strokeWidth={2.5} />
+          </button>
+        )}
       </div>
     </div>
   );
 };
+
 
 /* Apple Activity-style ring. Sun while in progress, jade when the goal is met. */
 export const DailyGoalRing = ({ current, goal, size = 72 }: { current: number; goal: number; size?: number }) => {
@@ -197,7 +205,7 @@ export const ScreenHeader = ({ eyebrow, title, trailing, onBack, backLabel }: {
 }) => (
   <div className="pt-2 pb-4">
     {onBack && (
-      <button onClick={onBack} className="-ml-1 mb-2 flex items-center gap-0.5 text-[#075F75] font-semibold text-[15px] min-h-[36px]">
+      <button onClick={onBack} className="-ml-1 mb-2 flex items-center gap-0.5 text-[#075F75] font-semibold text-[15px] min-h-[44px]">
         <span className="text-2xl leading-none -mt-0.5">‹</span> {backLabel}
       </button>
     )}

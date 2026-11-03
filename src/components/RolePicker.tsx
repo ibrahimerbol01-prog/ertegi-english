@@ -37,7 +37,7 @@ export function RolePicker({ value, onChange, kk, describedBy }: {
             className={`tile relative text-left p-3.5 flex flex-col gap-2 ${on ? "tile-selected" : ""}`}
           >
             {on && (
-              <span className="absolute top-2.5 right-2.5 w-6 h-6 rounded-full bg-sky text-white flex items-center justify-center" aria-hidden>
+              <span className="absolute top-2.5 right-2.5 w-6 h-6 rounded-full bg-sky-deep text-white flex items-center justify-center" aria-hidden>
                 <Check size={14} strokeWidth={3.2} />
               </span>
             )}

@@ -265,7 +265,7 @@ function TrailFlow({ kk, claimQ, level, text, past, draft, onDraft, onSave, onFe
             rows={2}
             maxLength={280}
             placeholder={early ? "I think … because …" : "I think …"}
-            className="mt-2 w-full rounded-2xl border-2 border-line bg-card p-3 text-[16px] text-ink focus:border-sky outline-none resize-none"
+            className="mt-2 w-full rounded-2xl border-2 border-line bg-card p-3 text-[16px] text-ink focus:border-sky-deep resize-none"
           />
           <p className="text-[13px] mt-1 min-h-[18px]" aria-live="polite">
             {claimCopied ? <span className="text-felt-deep font-semibold">{tr("Бұл ертегіден көшірілген сияқты. Өз сөзіңмен жаз.", "This looks copied from the tale. Use your own words.")}</span>
@@ -317,7 +317,7 @@ function TrailFlow({ kk, claimQ, level, text, past, draft, onDraft, onSave, onFe
             onFocus={(e) => setTimeout(() => e.target.scrollIntoView({ block: "center", behavior: "smooth" }), 300)}
             maxLength={160}
             placeholder="I still wonder why …"
-            className="mt-2 w-full h-12 rounded-2xl border-2 border-line bg-card px-3 text-[16px] text-ink focus:border-sky outline-none"
+            className="mt-2 w-full h-12 rounded-2xl border-2 border-line bg-card px-3 text-[16px] text-ink focus:border-sky-deep"
           />
           {wonder && mostlyNotEnglish(wonder) && <p className="text-[13px] text-sun-deep font-semibold mt-1">{tr("Ағылшынша байқап көр.", "Try it in English.")}</p>}
           <div className="grid grid-cols-2 gap-3 mt-5">

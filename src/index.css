@@ -15,7 +15,7 @@
 
   --color-ink: #1C2333;          /* primary text */
   --color-ink-2: #5E6573;        /* secondary text */
-  --color-ink-3: #6A707B;        /* tertiary text; 4.6:1 on sand (WCAG AA) */
+  --color-ink-3: #5F6570;        /* tertiary text; 4.5:1+ on sand and sand-2 (WCAG AA) */
 
   --color-sky: #12A3C6;          /* primary action (Kazakh flag blue) */
   --color-sky-deep: #0B7E9A;     /* 3D edge, pressed */
@@ -50,8 +50,9 @@
   * { -webkit-tap-highlight-color: transparent; }
   ::selection { background: color-mix(in srgb, var(--color-sun) 45%, transparent); }
   input, textarea { caret-color: var(--color-sky); }
-  :where(button, a, input, textarea, [role="button"]):focus-visible {
-    outline: 3px solid color-mix(in srgb, var(--color-sky) 55%, transparent);
+  /* Solid sky-deep: 3:1 or more against sand, card and sky-soft (WCAG 2.4.7, 1.4.11). */
+  :where(button, a, input, textarea, select, summary, [role="button"], [tabindex]:not([tabindex="-1"])):focus-visible {
+    outline: 3px solid var(--color-sky-deep);
     outline-offset: 2px;
   }
 }
@@ -134,7 +135,7 @@
     --b: var(--color-card); --e: var(--color-line-2); --f: var(--color-sky-deep);
     border: 2px solid var(--color-line);
   }
-  .btn-sm { min-height: 40px; padding: 0 14px; font-size: 13px; }
+  .btn-sm { min-height: 44px; padding: 0 14px; font-size: 13px; }
 
   /* Pill chip for stats and labels */
   .chip {
@@ -160,7 +161,7 @@
 
   /* Apple segmented control */
   .segmented { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 2px; padding: 3px; border-radius: 12px; background: var(--color-sand-2); }
-  .segmented > button { min-height: 36px; border-radius: 9px; font-weight: 600; font-size: 13px; color: var(--color-ink-2); transition: background-color 0.2s ease, color 0.2s ease; }
+  .segmented > button { min-height: 44px; border-radius: 9px; font-weight: 600; font-size: 13px; color: var(--color-ink-2); transition: background-color 0.2s ease, color 0.2s ease; }
   .segmented > button[aria-pressed="true"] { background: var(--color-card); color: var(--color-ink); box-shadow: 0 1px 3px rgba(28, 35, 51, 0.12); }
 
   /* Audio slider: filled part in sky, set --fill (0-100%) inline */
@@ -172,7 +173,8 @@
   .seek::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; margin-top: -6px; border-radius: 50%; background: var(--color-card); border: 3px solid var(--color-sky-deep); box-shadow: 0 1px 3px rgba(28, 35, 51, 0.25); }
   .seek::-moz-range-thumb { width: 14px; height: 14px; border-radius: 50%; background: var(--color-card); border: 3px solid var(--color-sky-deep); }
   .seek:focus-visible { outline: none; }
-  .seek:focus-visible::-webkit-slider-thumb { box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-sky) 35%, transparent); }
+  .seek:focus-visible::-webkit-slider-thumb { box-shadow: 0 0 0 3px var(--color-card), 0 0 0 6px var(--color-sky-deep); }
+  .seek:focus-visible::-moz-range-thumb { box-shadow: 0 0 0 3px var(--color-card), 0 0 0 6px var(--color-sky-deep); }
 
   /* Apple text field */
   .field {
@@ -188,7 +190,8 @@
     transition: border-color 0.15s ease, background-color 0.15s ease;
   }
   .field::placeholder { color: var(--color-ink-3); }
-  .field:focus { border-color: var(--color-sky); background: var(--color-card); }
+  .field:focus { border-color: var(--color-sky-deep); background: var(--color-card); }
+  .field:focus-visible { outline: 3px solid var(--color-sky-deep); outline-offset: 2px; }
 
   /* Progress track */
   .track { height: 14px; border-radius: 999px; background: var(--color-sand-2); overflow: hidden; }

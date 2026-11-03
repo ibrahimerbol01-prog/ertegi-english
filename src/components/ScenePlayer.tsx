@@ -162,7 +162,7 @@ function Player({ text, lang, onPlay }: Props) {
           onClick={playing ? pause : start}
           disabled={status === "loading"}
           aria-label={playing ? (kk ? "Кідірту" : "Pause") : status === "ended" ? (kk ? "Қайта тыңдау" : "Play again") : (kk ? "Тыңдау" : "Play")}
-          className="w-14 h-14 rounded-full bg-sky text-white flex items-center justify-center shrink-0 shadow-[0_4px_0_var(--color-sky-deep)] active:translate-y-[2px] active:shadow-[0_2px_0_var(--color-sky-deep)] transition-transform disabled:opacity-80"
+          className="w-14 h-14 rounded-full bg-sky-deep text-white flex items-center justify-center shrink-0 shadow-[0_4px_0_#075F75] active:translate-y-[2px] active:shadow-[0_2px_0_#075F75] transition-transform disabled:opacity-80"
         >
           {status === "loading" ? <Loader2 size={24} className="animate-spin" />
             : playing ? <Pause size={24} fill="currentColor" />

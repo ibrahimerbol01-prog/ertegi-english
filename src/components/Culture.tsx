@@ -98,7 +98,7 @@ export function MaqalCard({ lang, userId, onReward }: { lang: string; userId?: s
                 disabled={solved}
                 className={`tile text-left px-4 py-3 text-[15px] font-semibold text-ink flex items-center justify-between gap-3 ${state}`}
               >
-                {opt}
+                <span lang="en">{opt}</span>
                 {solved && i === correct && <Check size={18} strokeWidth={3} className="shrink-0" />}
               </button>
             );
@@ -155,7 +155,7 @@ export function BataModal({ storyId, lang, onClose }: { storyId: string | null; 
           <div className="mt-5 rounded-2xl bg-sand-2 p-4 text-left">
             <p className="eyebrow">{l === "kk" ? "Шоқанның батасы" : "Shoqan's blessing"}</p>
             <p className="font-display font-extrabold text-[17px] text-ink leading-snug mt-1.5">{bata.kk}</p>
-            <p className="text-sm text-ink-2 mt-1.5">{bata.en}</p>
+            <p lang="en" className="text-sm text-ink-2 mt-1.5">{bata.en}</p>
           </div>
 
           <p className="text-sm text-ink-2 mt-4">
