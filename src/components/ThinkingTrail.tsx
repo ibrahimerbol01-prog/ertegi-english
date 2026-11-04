@@ -7,6 +7,7 @@ import { Sheet } from "./UIHelpers";
 import { apiUrl } from "../lib/api";
 import { track } from "../utils/events";
 import { noteChange, useLearnerState } from "../utils/learnerSync";
+import { CLAIMS, splitSentences } from "../data/trailClaims";
 import {
   COPY_RUN_WORDS, TRAIL_CLAIM_MIN_WORDS, TRAIL_MAX_EVIDENCE, TRAIL_WONDER_MIN_WORDS, TRAIL_XP_FIRST, TRAIL_XP_REVISION,
 } from "../research/params";
@@ -53,15 +54,6 @@ interface Trail {
   at: string;
 }
 
-const CLAIMS: Record<string, { en: string; kk: string }> = {
-  aldar_kose: { en: "Was Aldar Köse right to take the coat?", kk: "Алдар Көсе шапанды алып дұрыс істеді ме?" },
-  zhirenshe: { en: "Is a wise word stronger than a khan's power?", kk: "Дана сөз ханның билігінен күшті ме?" },
-  er_tostik: { en: "Was Er Tostik right to fight when it was \"not his fight\"?", kk: "«Бұл менің соғысым емес» болса да, Ер Төстік соғысып дұрыс істеді ме?" },
-  tazsha_bala: { en: "Was it right for Tazsha to trick the giant?", kk: "Тазша дәуді алдап дұрыс істеді ме?" },
-  ayaz_bi: { en: "Was Ayaz Bi right not to shout at the bad men?", kk: "Аяз би жаман адамдарға айғайламай дұрыс істеді ме?" },
-  asan_kaigy: { en: "Was Asan Kaigy's long journey worth it?", kk: "Асан Қайғының ұзақ сапары керек пе еді?" },
-  alpamys: { en: "Is hope stronger than a prison?", kk: "Үміт зынданнан күшті ме?" },
-};
 
 const key = (userId?: string) => `ertegi_trail_${userId || "guest"}`;
 function loadTrails(userId?: string): Record<string, Trail[]> {
@@ -76,7 +68,6 @@ function saveTrails(userId: string | undefined, all: Record<string, Trail[]>) {
   try { localStorage.setItem(key(userId), JSON.stringify(all)); } catch { /* storage full or blocked */ }
 }
 
-const splitSentences = (text: string) => (text.match(/[^.!?]+[.!?]+["”]?/g) ?? [text]).map((s) => s.trim());
 const words = (s: string) => (s.match(/[\p{L}']+/gu) ?? []).length;
 const mostlyNotEnglish = (s: string) => (s.match(/[а-яәіңғүұқөһё]/gi) ?? []).length > (s.match(/[a-z]/gi) ?? []).length;
 // Eight words in a row from the tale: copied, not the learner's own claim.

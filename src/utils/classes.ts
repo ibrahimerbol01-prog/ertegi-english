@@ -84,7 +84,7 @@ function toError(error: { code?: string; message?: string } | null | undefined):
   return "unknown";
 }
 
-async function call<T>(run: () => PromiseLike<{ data: unknown; error: { code?: string; message?: string } | null }>): Promise<Result<T>> {
+export async function call<T>(run: () => PromiseLike<{ data: unknown; error: { code?: string; message?: string } | null }>): Promise<Result<T>> {
   try {
     const { data, error } = await run();
     if (error) return { ok: false, error: toError(error) };

@@ -82,7 +82,7 @@ export const RESEARCH_PARAMS: Meta = {
   },
   COUNCIL_MIN_VOTES: {
     value: 10, source: `${DESIGN} (UI-спецификация отчёта: «меньше 10 голосов»)`, evidence: "design", doc: "3.2",
-    usedIn: "src/components/Council.tsx",
+    usedIn: "src/components/Council.tsx; council_stats() в supabase/migrations/20261107000000_teacher_panel.sql (min_votes, сверяет params.test.ts)",
   },
   COUNCIL_REASON_MAX_CHARS: { value: 140, source: DESIGN, evidence: "design", doc: "3.2", usedIn: "src/components/Council.tsx" },
   COUNCIL_REASON_MIN_WORDS: { value: 3, source: DESIGN, evidence: "design", doc: "3.2", usedIn: "src/components/Council.tsx (finish)" },

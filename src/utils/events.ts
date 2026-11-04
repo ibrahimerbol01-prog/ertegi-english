@@ -293,8 +293,9 @@ export function createEventLog(deps: EventLogDeps) {
 const APP_VERSION = import.meta.env.VITE_APP_VERSION || "dev";
 
 let classCache: { uid: string; at: number; id: string | null } | null = null;
-// The class id, when the learner is in exactly one class (the cached list from useMyClasses).
-function classIdOf(userId: string): string | null {
+/** The class id, when the learner is in exactly one class (the cached list
+ *  from useMyClasses). Also used by the Steppe council for class numbers. */
+export function classIdOf(userId: string): string | null {
   const t = Date.now();
   if (classCache && classCache.uid === userId && t - classCache.at < 60_000) return classCache.id;
   let id: string | null = null;
