@@ -5,6 +5,7 @@ import { Shanyraq, OrnamentBand } from "../Ornaments";
 import { ACHIEVEMENTS } from "../../constants";
 import { IconFlame, IconBolt, IconCards, IconTrophy, Badge } from "../Icons";
 import { PUBLIC_URL } from "../../lib/api";
+import { XP_PER_LEVEL } from "../../research/params";
 
 /* --- 8. PROFILE SCREEN --- */
 export function ProfileScreen({ xp, t, lang = "kk", setLang, savedWordsCount = 0, unlockedAchievements = [], userName = "Learner", onSignOut, streakDays = 0, quizzesCompleted = 0, kilim, classes, roleSwitch }: {
@@ -24,7 +25,7 @@ export function ProfileScreen({ xp, t, lang = "kk", setLang, savedWordsCount = 0
 }) {
   const [showBuklet, setShowBuklet] = useState(false);
   // Levels count from 1: 0–99 XP is level 1.
-  const rank = Math.floor(xp / 100) + 1;
+  const rank = Math.floor(xp / XP_PER_LEVEL) + 1;
   const initial = (userName || "?").trim().charAt(0).toUpperCase();
 
   const stats = [

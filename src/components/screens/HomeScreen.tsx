@@ -12,6 +12,7 @@ import { StoryCover } from "../StoryCover";
 import type { ReactNode } from "react";
 import type { Lang } from "../../lang";
 import { LEVEL_COLORS, type UiText } from "./shared";
+import { DAILY_GOAL_XP } from "../../research/params";
 
 /* Shoqan's tip of the day on the home path: one per day, same for everyone. */
 const SHOQAN_TIPS = [
@@ -90,7 +91,7 @@ export interface HomeScreenProps {
   assignments?: ReactNode;
 }
 
-export function HomeScreen({ onStartRead, onStartQuiz, t, lang, userName = "", sessionXp = 0, dailyGoal = 50, progress = new Set<string>(), userId, onReward = () => {}, onOpenCards = () => {}, assignments = null }: HomeScreenProps) {
+export function HomeScreen({ onStartRead, onStartQuiz, t, lang, userName = "", sessionXp = 0, dailyGoal = DAILY_GOAL_XP, progress = new Set<string>(), userId, onReward = () => {}, onOpenCards = () => {}, assignments = null }: HomeScreenProps) {
   // Next step on the path: first level or quiz not yet finished, in order.
   const steps = STORIES.flatMap((s) => [...LEVEL_DETAILS.map((l) => ({ story: s, step: l.id })), { story: s, step: "quiz" }]);
   const current = steps.find((x) => !progress.has(`${x.story.id}:${x.step}`)) || null;

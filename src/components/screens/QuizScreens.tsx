@@ -7,6 +7,7 @@ import { STORIES, LEVEL_DETAILS } from "../../constants";
 import { StoryCover } from "../StoryCover";
 import { buildLevelQuiz } from "../../utils/levelQuiz";
 import { findEvidence } from "../../utils/evidence";
+import { QUIZ_MAX_TRIES, QUIZ_PASS_SHARE, QUIZ_XP_FIRST_TRY, QUIZ_XP_SECOND_TRY } from "../../research/params";
 import { useTr } from "./shared";
 
 /* --- 6a. QUIZ SETUP --- */
@@ -85,7 +86,7 @@ export function QuizSetup({ storyId, level, onChange, onStart, progress, lang, t
       <div className="card p-4 mt-6 grid grid-cols-3 text-center">
         <div><p className="font-display font-black text-xl text-ink">{count}</p><p className="text-xs text-ink-2">{kk ? "сұрақ" : "questions"}</p></div>
         <div className="border-x-2 border-line"><p className="font-display font-black text-xl text-ink">2</p><p className="text-xs text-ink-2">{kk ? "мүмкіндік" : "tries each"}</p></div>
-        <div><p className="font-display font-black text-xl text-ink">{Math.ceil(count * 0.6)}/{count}</p><p className="text-xs text-ink-2">{kk ? "өту үшін" : "to pass"}</p></div>
+        <div><p className="font-display font-black text-xl text-ink">{Math.ceil(count * QUIZ_PASS_SHARE)}/{count}</p><p className="text-xs text-ink-2">{kk ? "өту үшін" : "to pass"}</p></div>
       </div>
       <p className="text-[13px] text-ink-2 mt-3 leading-relaxed">
         {kk ? "Уақыт шектеулі емес. Қателессең, ертегідегі сөйлемді көрсетіп, тағы бір мүмкіндік береміз." : "No time limit. If you get one wrong, we show you the line in the tale and give you another try."}
@@ -129,7 +130,7 @@ export function QuizScreen({ onReward, t, onQuizFinish, questions, storyTitle, o
   const answer = question?.options[question.correct] ?? "";
   const isGap = !!question?.sentence?.includes("___");
   // With two options, one wrong pick leaves nothing to choose, so reveal at once.
-  const maxTries = Math.min(2, (question?.options.length ?? 2) - 1);
+  const maxTries = Math.min(QUIZ_MAX_TRIES, (question?.options.length ?? 2) - 1);
   const evidence = question ? findEvidence(question, sourceTexts) : null;
   // A gap sentence read aloud carries the missing word, so it is the hint for gaps.
   const fullSentence = isGap ? (question.sentence || "").replace("___", answer) : null;
@@ -142,7 +143,7 @@ export function QuizScreen({ onReward, t, onQuizFinish, questions, storyTitle, o
     stopVoice();
     if (selected === question.correct) {
       const firstTry = wrongPicks.length === 0;
-      if (!practice) onReward(firstTry ? 10 : 5);
+      if (!practice) onReward(firstTry ? QUIZ_XP_FIRST_TRY : QUIZ_XP_SECOND_TRY);
       setResults((r) => [...r, firstTry ? "first" : "second"]);
       setStatus("correct");
       return;
@@ -229,7 +230,7 @@ export function QuizScreen({ onReward, t, onQuizFinish, questions, storyTitle, o
 
   if (finished) {
     const total = round.length;
-    const passed = correct >= Math.ceil(total * 0.6);
+    const passed = correct >= Math.ceil(total * QUIZ_PASS_SHARE);
     const toPractice = round.filter((_, i) => results[i] !== "first");
     return (
       <div className="animate-pop-in">
@@ -245,14 +246,14 @@ export function QuizScreen({ onReward, t, onQuizFinish, questions, storyTitle, o
               ? tr("Қате кеткен сұрақтарды тағы бір рет өттің.", "You went over the questions you missed once more.")
               : passed
                 ? tr("Керемет! Ертегіні жақсы түсіндің.", "Great comprehension! You understood the story well.")
-                : tr(`Өту үшін ${Math.ceil(total * 0.6)} дұрыс жауап керек. Ертегіні қайта оқып, тағы байқап көр.`, `You need ${Math.ceil(total * 0.6)} right answers to pass. Re-read the story and try again.`)}
+                : tr(`Өту үшін ${Math.ceil(total * QUIZ_PASS_SHARE)} дұрыс жауап керек. Ертегіні қайта оқып, тағы байқап көр.`, `You need ${Math.ceil(total * QUIZ_PASS_SHARE)} right answers to pass. Re-read the story and try again.`)}
           </p>
         </div>
         <div className="grid grid-cols-3 gap-3 mt-7">
           {[
             { label: tr("Дұрыс", "Correct"), value: `${correct}/${total}`, color: "border-sky text-sky-deep", head: "bg-sky-deep text-white" },
             { label: tr("Бірден", "First try"), value: `${firstTry}/${total}`, color: "border-jade text-jade-deep", head: "bg-[#15805A] text-white" },
-            { label: "XP", value: practice ? "—" : `+${firstTry * 10 + (correct - firstTry) * 5}`, color: "border-sun-deep text-ink", head: "bg-sun-deep text-ink" },
+            { label: "XP", value: practice ? "—" : `+${firstTry * QUIZ_XP_FIRST_TRY + (correct - firstTry) * QUIZ_XP_SECOND_TRY}`, color: "border-sun-deep text-ink", head: "bg-sun-deep text-ink" },
           ].map((s) => (
             <div key={s.label} className={`rounded-2xl border-2 overflow-hidden ${s.color}`}>
               <p className={`${s.head} text-xs font-bold uppercase tracking-[0.06em] py-1 text-center truncate px-1`}>{s.label}</p>
@@ -383,7 +384,7 @@ export function QuizScreen({ onReward, t, onQuizFinish, questions, storyTitle, o
               {status === "revealed" && <p className="text-[15px] text-felt-deep font-semibold">{answer}</p>}
               {!practice && (
                 <p className="text-sm font-bold text-ink-2 mt-0.5">
-                  {status === "correct" ? `+${wrongPicks.length ? 5 : 10} XP` : tr("Бұл сұрақ жаттығуда қайта шығады", "This one comes back in practice")}
+                  {status === "correct" ? `+${wrongPicks.length ? QUIZ_XP_SECOND_TRY : QUIZ_XP_FIRST_TRY} XP` : tr("Бұл сұрақ жаттығуда қайта шығады", "This one comes back in practice")}
                 </p>
               )}
             </div>

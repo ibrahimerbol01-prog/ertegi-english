@@ -2,6 +2,8 @@
 // Every scene is our own short retelling in English, read aloud by the neural
 // voice. No film or cartoon clips: those are copyrighted.
 
+import { LEGEND_CARD_PASS } from "../research/params";
+
 export type Rarity = "ertegi" | "epos" | "anyz" | "tarih";
 export type Ornament = "qoshqar" | "shanyraq" | "tumar";
 
@@ -22,8 +24,8 @@ export type Question =
   | { kind: "gap"; s: string; options: string[]; answer: number }
   | { kind: "mc"; s: string; options: string[]; answer: number };
 
-// Right answers needed to win a card.
-export const PASS = 4;
+// Right answers needed to win a card (src/research/params.ts).
+export const PASS = LEGEND_CARD_PASS;
 
 export const RARITY: Record<Rarity, { kk: string; en: string; xp: number; tone: string; frame: string }> = {
   ertegi: { kk: "Ертегі", en: "Tale", xp: 10, tone: "bg-sky", frame: "border-sky" },

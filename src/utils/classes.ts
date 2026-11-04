@@ -1,6 +1,7 @@
 import { supabase } from "../lib/supabase";
 import { daysBetween, localDay } from "./progress";
 import { PUBLIC_URL } from "../lib/api";
+import { QUIZ_PASS_PERCENT, QUIZ_PASS_SHARE, TEACHER_AWAY_DAYS } from "../research/params";
 
 /* Classes, assignments and quiz scores for the teacher cabinet
    (migration 20261026000000_teacher_classes). Every call returns a result
@@ -178,7 +179,7 @@ export function dueAtEndOf(day: string): string {
 }
 export const dayOf = (iso: string) => localDay(new Date(iso));
 
-export const PASS = 0.6;
+export const PASS = QUIZ_PASS_SHARE;
 
 export function cellFor(m: Pick<Member, "steps" | "quizzes">, a: Assignment, now = new Date()): Cell {
   const step = m.steps.find((s) => s.story_id === a.story_id && s.step === a.step);
@@ -204,7 +205,7 @@ export interface HelpFlag { kind: "away" | "low" | "overdue"; detail: number }
 export function helpFlags(m: Member, assignments: Assignment[]): HelpFlag[] {
   const flags: HelpFlag[] = [];
   const away = daysAway(m.last_active_date);
-  if (away === null || away >= 7) flags.push({ kind: "away", detail: away ?? -1 });
+  if (away === null || away >= TEACHER_AWAY_DAYS) flags.push({ kind: "away", detail: away ?? -1 });
   // The same level given twice is still one problem, not two.
   const seen = new Set<string>();
   const unique = assignments.filter((a) => {
@@ -214,7 +215,7 @@ export function helpFlags(m: Member, assignments: Assignment[]): HelpFlag[] {
     return true;
   });
   const cells = unique.map((a) => cellFor(m, a));
-  const low = cells.filter((c) => c.score !== null && c.score < 60).length;
+  const low = cells.filter((c) => c.score !== null && c.score < QUIZ_PASS_PERCENT).length;
   if (low) flags.push({ kind: "low", detail: low });
   const overdue = cells.filter((c) => c.status === "overdue").length;
   if (overdue) flags.push({ kind: "overdue", detail: overdue });

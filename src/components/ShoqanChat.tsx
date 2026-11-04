@@ -6,6 +6,7 @@ import { CloseButton } from "./UIHelpers";
 import { useEscape } from "../utils/useEscape";
 import { useDialogFocus } from "../utils/useDialogFocus";
 import { apiUrl } from "../lib/api";
+import { SHOQAN_DAILY_CHAT_LIMIT } from "../research/params";
 
 export const ShoqanChat = ({ hidden = false }: { hidden?: boolean }) => {
   const kk = useLang() === "kk";
@@ -153,7 +154,7 @@ export const ShoqanChat = ({ hidden = false }: { hidden?: boolean }) => {
       // Say what went wrong where the learner can act on it; the code in
       // brackets lets a screenshot show the exact server answer.
       setChatError(
-        status === 429 ? tr("Бүгінгі 10 сұрақ бітті. Ертең қайта сұра.", "That's today's 10 questions. Ask again tomorrow.")
+        status === 429 ? tr(`Бүгінгі ${SHOQAN_DAILY_CHAT_LIMIT} сұрақ бітті. Ертең қайта сұра.`, `That's today's ${SHOQAN_DAILY_CHAT_LIMIT} questions. Ask again tomorrow.`)
         : status === 401 ? tr("Кіру уақыты бітті. Профильден шығып, қайта кір.", "Your sign-in has expired. Sign out and sign in again.")
         : tr(`Шоқан қазір жауап бере алмады. Біраздан соң қайта байқап көр.${status ? ` (${status})` : ""}`, `Shoqan couldn't respond just now — try again in a moment.${status ? ` (${status})` : ""}`),
       );

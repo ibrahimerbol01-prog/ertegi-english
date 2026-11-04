@@ -2,6 +2,9 @@ import { useEffect, useRef, useState } from "react";
 import { ChevronRight, MessageCircle, Volume2, Check, WifiOff, Pencil } from "lucide-react";
 import { STORIES } from "../constants";
 import { currentWeek, wordsUsed, type Dilemma, type Week } from "../data/weekWords";
+import {
+  COPY_RUN_WORDS, DEBATE_MAX_CHARS, DEBATE_MIN_WEEK_WORDS, DEBATE_XP_NOT_ENGLISH, DEBATE_XP_PER_WORD, DEBATE_XP_REPLY, WEEK_WORDS_PER_WEEK,
+} from "../research/params";
 import { supabase } from "../lib/supabase";
 import { safePlayVoice } from "../utils/voice";
 import { Sheet } from "./UIHelpers";
@@ -74,13 +77,13 @@ const TALE_RUNS = (() => {
   const runs = new Set<string>();
   for (const s of STORIES) for (const text of Object.values(s.levels) as string[]) {
     const words = text.toLowerCase().match(/[a-z']+/g) ?? [];
-    for (let i = 0; i + 8 <= words.length; i++) runs.add(words.slice(i, i + 8).join(" "));
+    for (let i = 0; i + COPY_RUN_WORDS <= words.length; i++) runs.add(words.slice(i, i + COPY_RUN_WORDS).join(" "));
   }
   return runs;
 })();
 function copiedFromTale(s: string) {
   const words = s.toLowerCase().match(/[a-z']+/g) ?? [];
-  for (let i = 0; i + 8 <= words.length; i++) if (TALE_RUNS.has(words.slice(i, i + 8).join(" "))) return true;
+  for (let i = 0; i + COPY_RUN_WORDS <= words.length; i++) if (TALE_RUNS.has(words.slice(i, i + COPY_RUN_WORDS).join(" "))) return true;
   return false;
 }
 
@@ -200,7 +203,7 @@ function Debate({ kk, week, dilemma, entry, onChange, onSubmit, onReward, seen }
   const used = wordsUsed(week, entry.text);
   const notEnglish = hasWords(entry.text) && mostlyNotEnglish(entry.text);
   const copied = copiedFromTale(entry.text);
-  const missing = Math.max(0, 2 - used.length);
+  const missing = Math.max(0, DEBATE_MIN_WEEK_WORDS - used.length);
   const canSend = hasWords(entry.text) && !copied && (missing === 0 || notEnglish) && !loading;
   const replyNotEnglish = hasWords(entry.reply) && mostlyNotEnglish(entry.reply);
   const allUsed = wordsUsed(week, `${entry.text} ${entry.reply}`);
@@ -248,7 +251,7 @@ function Debate({ kk, week, dilemma, entry, onChange, onSubmit, onReward, seen }
   const finish = (finalSide: Side) => {
     const words = wordsUsed(week, `${entry.text} ${entry.reply}`).length;
     // XP for the words used and for answering Shoqan, never for speed; partial for an answer not in English.
-    const earned = notEnglish ? 5 : words * 3 + (entry.reply.trim() ? 5 : 0);
+    const earned = notEnglish ? DEBATE_XP_NOT_ENGLISH : words * DEBATE_XP_PER_WORD + (entry.reply.trim() ? DEBATE_XP_REPLY : 0);
     const extra = Math.max(0, earned - entry.xpGiven);
     const next = { ...entry, finalSide, submitted: true, xpGiven: Math.max(entry.xpGiven, earned) };
     onChange(next);
@@ -320,10 +323,10 @@ function Debate({ kk, week, dilemma, entry, onChange, onSubmit, onReward, seen }
           <textarea
             ref={textRef}
             value={entry.text}
-            onChange={(e) => set({ text: e.target.value.slice(0, 400) })}
+            onChange={(e) => set({ text: e.target.value.slice(0, DEBATE_MAX_CHARS) })}
             onFocus={(e) => setTimeout(() => e.target.scrollIntoView({ block: "center", behavior: "smooth" }), 300)}
             rows={4}
-            maxLength={400}
+            maxLength={DEBATE_MAX_CHARS}
             placeholder="I think … because …"
             aria-label={tr("Сенің дәлелің", "Your argument")}
             className="mt-3 w-full rounded-2xl border-2 border-line bg-card p-3 text-[16px] text-ink focus:border-sky-deep resize-none"
@@ -335,8 +338,8 @@ function Debate({ kk, week, dilemma, entry, onChange, onSubmit, onReward, seen }
               <span className="text-sun-deep font-semibold">{tr("Ағылшынша жазып көр. Қазір жіберсең де болады, бірақ XP аз болады.", "Try it in English. You can still send it, for fewer XP.")}</span>
             ) : missing > 0 && hasWords(entry.text) ? (
               <span className="text-ink-2">{tr(`Тағы ${missing} апта сөзін қолдан.`, `Use ${missing} more word${missing > 1 ? "s" : ""} of the week.`)}</span>
-            ) : used.length >= 2 ? (
-              <span className="text-jade-deep font-semibold">{tr(`${used.length}/5 сөз қолданылды`, `${used.length}/5 words used`)}</span>
+            ) : used.length >= DEBATE_MIN_WEEK_WORDS ? (
+              <span className="text-jade-deep font-semibold">{tr(`${used.length}/${WEEK_WORDS_PER_WEEK} сөз қолданылды`, `${used.length}/${WEEK_WORDS_PER_WEEK} words used`)}</span>
             ) : null}
           </p>
           <button onClick={() => entry.side && askShoqan(entry.side, entry.text.trim())} disabled={!canSend} className="btn w-full mt-3">

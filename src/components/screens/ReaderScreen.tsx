@@ -14,6 +14,7 @@ import { StoryCover } from "../StoryCover";
 import type { Lang } from "../../lang";
 import type { SavedWord } from "../../types";
 import { LEVEL_COLORS, useTr, type UiText } from "./shared";
+import { READ_SPEEDS } from "../../research/params";
 
 /* Small video tile with a night-sky fallback. */
 function StoryVideo({ src, poster, className = "", videoRef, paused }: { src: string; poster?: string; className?: string; videoRef?: React.Ref<HTMLVideoElement>; paused?: boolean }) {
@@ -75,7 +76,6 @@ export function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, s
   const frameRef = useRef<number | null>(null);
 
   // Real playback rates: 1× is a person reading at normal pace.
-  const READ_SPEEDS = [0.75, 1, 1.25, 1.5, 2];
   const [readSpeed, setReadSpeed] = useState(1);
   const readSpeedRef = useRef(1);
   useEffect(() => {

@@ -49,3 +49,5 @@ npm test           # vitest
 - `api/` — серверные функции Vercel: `shoqan.js` (ИИ-помощник), `azure-token.js` (токен речи), лимиты в `_usage.js`.
 - `supabase/migrations/` — SQL-миграции, применяются вручную в Supabase SQL Editor.
 - `docs/` — дизайн-система и план мобильных приложений.
+- `docs/research-evidence.md` — научная база: какие исследования внедрены, где в коде и как измерять (обновляется в каждом PR с методикой).
+- `docs/performance-baseline.md` — базовые замеры скорости и бюджет для каждого PR; повторный замер: `npm run build && npm run preview -- --port 4173`, затем `npm run perf`.

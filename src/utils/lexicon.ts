@@ -4,6 +4,9 @@
 // plus a couple from the next one (i+1), so an A2 learner drifts toward B1.
 import { STORIES, WORD_TRANSLATIONS } from "../constants";
 import type { SavedWord } from "../types";
+import {
+  DAILY_WORDS_AT_LEVEL, DAILY_WORDS_STRETCH, LEVEL_TARGET_MAX_WORDS, LEVEL_TARGET_SHARE, WORD_MASTERED_BOX,
+} from "../research/params";
 
 export const LEVELS = ["A1", "A2", "B1", "B2", "C1"] as const;
 export type Level = (typeof LEVELS)[number];
@@ -90,7 +93,7 @@ export interface LearnerProfile {
 
 // A word counts as mastered once the learner says they know it or has
 // reviewed it successfully at least twice.
-const MASTERED_AT = 2;
+const MASTERED_AT = WORD_MASTERED_BOX;
 
 export function analyseLearner(savedWords: SavedWord[], known: string[], progress: Set<string>): LearnerProfile {
   const bank = wordBank();
@@ -99,7 +102,7 @@ export function analyseLearner(savedWords: SavedWord[], known: string[], progres
   const stats: LevelStat[] = LEVELS.map((level) => {
     const pool = bank.filter((w) => w.level === level);
     const m = pool.filter((w) => mastered.has(w.word)).length;
-    const goal = Math.max(1, Math.min(25, Math.ceil(pool.length * 0.6)));
+    const goal = Math.max(1, Math.min(LEVEL_TARGET_MAX_WORDS, Math.ceil(pool.length * LEVEL_TARGET_SHARE)));
     return { level, pool: pool.length, mastered: m, goal, done: m >= goal };
   });
 
@@ -141,10 +144,10 @@ export function dailyWords(profile: LearnerProfile, seen: Set<string>, userId: s
   };
   const here = fresh(profile.level);
   const stretch = fresh(profile.next);
-  const picks = [...here.slice(0, 3), ...stretch.slice(0, 2)];
+  const picks = [...here.slice(0, DAILY_WORDS_AT_LEVEL), ...stretch.slice(0, DAILY_WORDS_STRETCH)];
   // Top up from whichever pool still has words.
-  for (const w of [...here.slice(3), ...stretch.slice(2), ...LEVELS.flatMap((l) => fresh(l))]) {
-    if (picks.length >= 5) break;
+  for (const w of [...here.slice(DAILY_WORDS_AT_LEVEL), ...stretch.slice(DAILY_WORDS_STRETCH), ...LEVELS.flatMap((l) => fresh(l))]) {
+    if (picks.length >= DAILY_WORDS_AT_LEVEL + DAILY_WORDS_STRETCH) break;
     if (!picks.some((p) => p.word === w.word)) picks.push(w);
   }
   return picks;

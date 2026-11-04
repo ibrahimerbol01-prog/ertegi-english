@@ -7,6 +7,7 @@ import { STORIES, LEVEL_DETAILS } from "../../constants";
 import { supabase } from "../../lib/supabase";
 import { apiUrl } from "../../lib/api";
 import { useTr } from "./shared";
+import { SPEAK_XP_BASE, SPEAK_XP_MIN_SCORE, SPEAK_XP_RANGE } from "../../research/params";
 
 /* Score ring for pronunciation results. */
 function ScoreRing({ value, size = 120 }: { value: number; size?: number }) {
@@ -151,7 +152,7 @@ export function SpeakScreen({ onReward, t }: {
               pronunciation: Math.round(assessment.pronunciationScore),
             };
             setScores(next);
-            if (next.pronunciation >= 50) onReward(Math.round(5 + (next.pronunciation / 100) * 15));
+            if (next.pronunciation >= SPEAK_XP_MIN_SCORE) onReward(Math.round(SPEAK_XP_BASE + (next.pronunciation / 100) * SPEAK_XP_RANGE));
           } else if (result.reason === SpeechSDK.ResultReason.NoMatch) {
             setSpeechError(tr("Естілмеді. Микрофонға жақынырақ, қаттырақ сөйлеп көр.", "Didn't catch that — try speaking a bit louder and closer to the mic."));
           } else {

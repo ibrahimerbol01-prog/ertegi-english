@@ -28,6 +28,7 @@ import type { SavedWord } from "./types";
 import { supabase } from "./lib/supabase";
 import { saveToSupabase } from "./utils/supabase-save";
 import { buildLevelQuiz } from "./utils/levelQuiz";
+import { DAILY_GOAL_XP, QUIZ_PASS_SHARE, REVIEW_KNOWN_XP, SAVE_WORD_XP, XP_PER_LEVEL } from "./research/params";
 import { BataModal, OyuKilim, TurkicWords, loadMaqals } from "./components/Culture";
 import { WordCoach } from "./components/WordCoach";
 import { LegendScreen } from "./components/LegendCards";
@@ -79,7 +80,7 @@ export default function KazakhTalesApp({ session, role, onRoleChange }: { sessio
   const [wordsMode, setWordsMode] = useState("cards");
 
   const [sessionXp, setSessionXp] = useState(0);
-  const DAILY_GOAL = 50;
+  const DAILY_GOAL = DAILY_GOAL_XP;
 
   const [xpToast, setXpToast] = useState<{ amount: number; key: number } | null>(null);
   const xpToastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -296,7 +297,7 @@ export default function KazakhTalesApp({ session, role, onRoleChange }: { sessio
     const { mastery, nextReviewAt } = known ? { mastery: up, nextReviewAt: nextReview(up) } : lapse(current.mastery ?? 0);
     setSavedWords((prev) => prev.map((w) => (w.word === word ? { ...w, mastery, nextReviewAt } : w)));
     saveReview(userId, word, mastery, nextReviewAt);
-    if (known) addXp(2);
+    if (known) addXp(REVIEW_KNOWN_XP);
     else checkAndUpdateStreak();
   };
 
@@ -316,7 +317,7 @@ export default function KazakhTalesApp({ session, role, onRoleChange }: { sessio
     const step = quizLevel ?? "quiz";
     // The score goes to the teacher's report; it waits on the device while offline.
     saveQuizResult(userId, storyId, step, correctCount, total, firstTry);
-    if (correctCount >= Math.ceil(total * 0.6)) {
+    if (correctCount >= Math.ceil(total * QUIZ_PASS_SHARE)) {
       // First time a whole tale is finished: the elder's blessing and its ornament.
       if (step === "quiz" && !progress.has(progressKey(storyId, "quiz"))) setBataStory(storyId);
       markStep(storyId, step);
@@ -335,8 +336,8 @@ export default function KazakhTalesApp({ session, role, onRoleChange }: { sessio
   };
 
   useEffect(() => {
-    const prevRank = Math.floor(prevXpRef.current / 100);
-    const newRank = Math.floor(xp / 100);
+    const prevRank = Math.floor(prevXpRef.current / XP_PER_LEVEL);
+    const newRank = Math.floor(xp / XP_PER_LEVEL);
     if (newRank > prevRank) {
       setLevelUpRank(newRank);
       setShowLevelUp(true);
@@ -373,7 +374,7 @@ export default function KazakhTalesApp({ session, role, onRoleChange }: { sessio
     // Until the saved list has loaded, the word may already be on the server:
     // XP then waits for the server to confirm it is new.
     const known = wordsReadyRef.current;
-    if (known) addXp(5);
+    if (known) addXp(SAVE_WORD_XP);
     setSavedWords((prev: SavedWord[]) => [...prev, { word, translation, mastery: 0, nextReviewAt: null }]);
     saveToSupabase(async () => {
       // ignoreDuplicates: a word already saved keeps its mastery and review date.
@@ -381,7 +382,7 @@ export default function KazakhTalesApp({ session, role, onRoleChange }: { sessio
         .from("saved_words")
         .upsert({ user_id: userId, word, translation, mastery: 0 }, { onConflict: "user_id,word", ignoreDuplicates: true })
         .select("word");
-      if (!res.error && !known && res.data?.length) addXp(5);
+      if (!res.error && !known && res.data?.length) addXp(SAVE_WORD_XP);
       return res;
     }, onSaveError);
   };

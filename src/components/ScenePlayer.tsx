@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Loader2, Pause, Play, RotateCcw, Volume1, Volume2, VolumeX } from "lucide-react";
 import { bestBrowserVoice, narrate, primeAudio, stopClip } from "../utils/narration";
+import { SCENE_SPEEDS } from "../research/params";
 
 /* A small audio player for a listening scene: play and pause, a slider to jump
    anywhere, speed and volume. The neural Azure voice plays through our own
@@ -8,7 +9,7 @@ import { bestBrowserVoice, narrate, primeAudio, stopClip } from "../utils/narrat
    (pause works, jumping does not). */
 
 type Status = "idle" | "loading" | "playing" | "paused" | "ended";
-const SPEEDS = [0.75, 1, 1.25];
+const SPEEDS = SCENE_SPEEDS;
 
 // iPhones ignore audio.volume (only the hardware buttons change it), so the
 // volume slider is shown only where it works; mute works everywhere.

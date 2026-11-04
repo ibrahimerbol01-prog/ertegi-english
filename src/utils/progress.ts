@@ -1,4 +1,5 @@
 import { supabase } from "../lib/supabase";
+import { LAPSE_BOX_DROP, LAPSE_RETRY_DAYS, REVIEW_INTERVAL_DAYS } from "../research/params";
 
 /* Path progress and word review schedule.
    Supabase is the source of truth once the 20261022 migration is applied;
@@ -56,7 +57,8 @@ export function saveProgress(userId: string, storyId: string, step: ProgressStep
 /* Leitner boxes: mastery 0..5, days until the next review per box. */
 // Gaps that keep growing across a school year (Cepeda et al.: the best gap is a
 // share of how long the word must be remembered). Box 0 is a new word.
-export const REVIEW_INTERVAL_DAYS = [0, 1, 3, 7, 16, 35, 90];
+// The values live in src/research/params.ts with their sources.
+export { REVIEW_INTERVAL_DAYS };
 export const MAX_MASTERY = REVIEW_INTERVAL_DAYS.length - 1;
 
 export function nextReview(mastery: number, from = new Date()): string {
@@ -67,7 +69,7 @@ export function nextReview(mastery: number, from = new Date()): string {
 
 // A forgotten word drops one box, not to the start, and comes back tomorrow.
 export function lapse(mastery: number, from = new Date()): { mastery: number; nextReviewAt: string } {
-  return { mastery: Math.max(mastery - 1, 0), nextReviewAt: new Date(from.getTime() + 86400000).toISOString() };
+  return { mastery: Math.max(mastery - LAPSE_BOX_DROP, 0), nextReviewAt: new Date(from.getTime() + LAPSE_RETRY_DAYS * 86400000).toISOString() };
 }
 
 // The learner's own calendar day (Kazakhstan is UTC+5, so UTC would roll over at 5 am).
