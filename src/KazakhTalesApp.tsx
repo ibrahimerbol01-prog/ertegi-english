@@ -712,7 +712,7 @@ export default function KazakhTalesApp({ session, role, onRoleChange }: { sessio
                   key={id}
                   onClick={() => { if (id === "quiz") { setQuizLevel(null); setQuizStarted(false); } setTab(id); }}
                   aria-current={active ? "page" : undefined}
-                  className={`flex flex-col items-center justify-center gap-0.5 min-h-[50px] ${active ? "text-sky-deep" : "text-ink-2"}`}
+                  className={`flex flex-col items-center justify-center gap-0.5 min-h-[50px] ${active ? "text-sky-ink" : "text-ink-2"}`}
                 >
                   {/* The active tab is in colour on a soft pill; the rest stay grey, so the state reads at a glance. */}
                   <span className={`relative px-2 py-0.5 rounded-full transition-colors ${active ? "bg-sky-soft" : ""}`}>
