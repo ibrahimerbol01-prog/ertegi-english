@@ -5,7 +5,7 @@ import profileJson from "../../docs/corpus-profile.json?raw";
 import corpusDoc from "../../docs/corpus.md?raw";
 import metaSourceFile from "../data/corpusMeta.ts?raw";
 import { STORIES } from "../constants";
-import { CONTENT_HASH } from "../data/contentVersion";
+import { CONTENT_VERSION } from "../data/contentVersion";
 import { CORPUS_META } from "../data/corpusMeta";
 import { buildCorpus } from "./corpusBuild";
 import {
@@ -22,7 +22,18 @@ describe("corpus outputs are up to date", () => {
   it("docs/corpus-profile.json", () => expect(profileJson, RUN).toBe(built.json));
   it("the generated table in docs/corpus.md", () => expect(spliceMarkdown(corpusDoc, built.table), RUN).toBe(corpusDoc));
   it("src/data/corpusMeta.ts", () => expect(metaSourceFile, RUN).toBe(built.meta));
-  it("was built from the current content version", () => expect(built.report.contentHash).toBe(CONTENT_HASH));
+  it("the hand-written findings in docs/corpus.md quote the current numbers", () => {
+    // "Что показал профиль" is prose, so check the figures it quotes.
+    const findings = corpusDoc.slice(corpusDoc.indexOf("## Что показал профиль"), corpusDoc.indexOf("## Результаты"));
+    const pct = (x: number) => `${(x * 100).toFixed(1).replace(".", ",")} %`;
+    const at = (l: string) => built.report.summary.find((s) => s.label === l)!;
+    expect(findings, RUN).toContain(pct(at("A1").coverageAtLabel));
+    expect(findings, RUN).toContain(pct(at("A2").coverageAtLabel));
+    expect(findings).toContain(`${at("A1").adequateAt} текст A1 из 7`);
+    expect(findings).toContain(`${at("B1").adequateAt} из 7 достигают 95 % покрытия на B1`);
+    expect(findings).toContain(`${at("B2").adequateBelow} из 7 текстов B2 и ${at("C1").adequateBelow} из 7 текстов C1`);
+    expect(findings).toContain(`версия контента ${CONTENT_VERSION}`);
+  });
   it("covers every tale at every level", () => {
     expect(built.report.texts).toHaveLength(STORIES.length * LABELS.length);
     for (const s of STORIES) for (const l of LABELS) expect(CORPUS_META[s.id]?.[l]?.words, `${s.id} ${l}`).toBeGreaterThan(0);

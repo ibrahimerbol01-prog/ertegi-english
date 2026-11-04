@@ -164,8 +164,8 @@ export function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, s
             const c = LEVEL_COLORS[lvl.id];
             const meta = CORPUS_META[currentStory.id]?.[lvl.id];
             const metaText = meta && [
-              lang === "kk" ? `${meta.words} сөз` : `${meta.words} words`,
-              meta.newWords ? (lang === "kk" ? `${meta.newWords} жаңа сөз` : `${meta.newWords} new words`) : null,
+              lang === "kk" ? `${meta.words} сөз` : `${meta.words} word${meta.words === 1 ? "" : "s"}`,
+              meta.newWords ? (lang === "kk" ? `${meta.newWords} жаңа сөз` : `${meta.newWords} new word${meta.newWords === 1 ? "" : "s"}`) : null,
             ].filter(Boolean).join(" · ");
             return (
               <button
