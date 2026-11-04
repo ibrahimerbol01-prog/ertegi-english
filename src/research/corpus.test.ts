@@ -73,6 +73,15 @@ describe("words", () => {
     expect(lookup("wolves", LEX, lemmatize).lemma).toBe("wolf");
     expect(lookup("others", LEX, lemmatize).lemma).toBe("other");
     expect(lookup("steppe", LEX, lemmatize).entry).toBeUndefined();
+    // wink alone gives hat, hop, rid, star; the e-rule in lemmatize.ts fixes them.
+    expect(lookup("hated", LEX, lemmatize).lemma).toBe("hate");
+    expect(lookup("hoped", LEX, lemmatize).lemma).toBe("hope");
+    expect(lookup("riding", LEX, lemmatize)).toMatchObject({ lemma: "ride", entry: { level: "A1" } });
+    expect(lookup("stared", LEX, lemmatize).lemma).toBe("stare");
+    expect(lookup("hopped", LEX, lemmatize).lemma).toBe("hop");
+    expect(lookup("visited", LEX, lemmatize).lemma).toBe("visit");
+    expect(lookup("hissing", LEX, lemmatize).lemma).not.toBe("his");
+    expect(lookup("cannot", LEX, lemmatize).lemma).toBe("can");
   });
   it("MATTR: plain TTR for short texts, moving average for long ones", () => {
     expect(mattr(["a", "b", "a"], 50)).toBeCloseTo(2 / 3);
@@ -107,6 +116,12 @@ describe("one text", () => {
     // "the" has an empty translation and "on", "mat" none: 6 of 11 words.
     expect(p.glossCoverage).toBe(0.545);
     expect(p.glossMissing).toEqual(["mat", "on", "the"]);
+  });
+  it("translation coverage counts a hyphenated word as one tap, as the reader does", () => {
+    const q = profileText("t", "A1", "The cat sat on a worn-out mat.", null, ctx);
+    expect(q.words).toBe(8);
+    expect(q.glossCoverage).toBe(0.286); // cat, sat of 7 taps
+    expect(q.glossMissing).toContain("worn-out");
   });
   it("draft targets: content words at the level, repeated enough", () => {
     expect(p.targetCandidates.map((c) => c.lemma)).toEqual(["sit"]);

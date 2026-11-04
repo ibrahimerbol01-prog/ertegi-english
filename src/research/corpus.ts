@@ -127,7 +127,7 @@ export function tokens(text: string): Token[] {
 
 /** The base of a contraction or possessive: "didn't" -> "did", "man's" -> "man". */
 export function baseForm(lower: string): string {
-  if (lower === "can't") return "can";
+  if (lower === "can't" || lower === "cannot") return "can";
   if (lower === "won't") return "will";
   if (lower === "shan't") return "shall";
   return lower.replace(/n't$/, "").replace(/'(s|re|ll|ve|d|m)$/, "").replace(/'$/, "");
@@ -166,7 +166,8 @@ function suffixForms(w: string): string[] {
   if (w.endsWith("ied")) add(`${w.slice(0, -3)}y`);
   if (w.endsWith("ed")) { add(w.slice(0, -2)); add(w.slice(0, -1)); }
   if (w.endsWith("ing")) { add(w.slice(0, -3)); add(`${w.slice(0, -3)}e`); }
-  if (/([b-df-hj-np-tv-z])\1(ed|ing)$/.test(w)) add(w.replace(/([b-df-hj-np-tv-z])\1(ed|ing)$/, "$1"));
+  // Not after a double s: "hissing" is hiss, not "his".
+  if (/([b-df-hj-np-rtv-z])\1(ed|ing)$/.test(w)) add(w.replace(/([b-df-hj-np-rtv-z])\1(ed|ing)$/, "$1"));
   if (w.endsWith("ily")) add(`${w.slice(0, -3)}y`);
   if (w.endsWith("ly")) add(w.slice(0, -2));
   return out;
@@ -230,7 +231,8 @@ export interface TextProfile {
   estimatedOptimal: Estimate;
   /** 95 % estimate if words off the lists (khan, steppe, yurt…) count as known: an upper bound. */
   estimatedAdequateOffListKnown: Estimate;
-  /** Share of running words the reader translates on tap (names included). */
+  /** Share of tappable words the reader translates (names included). The
+   *  reader splits the text at spaces, so "worn-out" is one tap, not two. */
   glossCoverage: number;
   glossMissing: string[];
   /** Lemmas not in the lower levels of the same tale; null at A1. */
@@ -266,11 +268,14 @@ export function profileText(story: string, label: Label, text: string, lower: Se
   const levelTokens = Object.fromEntries([...CEFR, "offList"].map((k) => [k, 0])) as Record<Cefr | "offList", number>;
   const lemmas: string[] = [];
   const counts = new Map<string, { count: number; entry?: LexEntry }>();
+  // Translation coverage over the words the reader makes tappable (ReaderScreen splits at spaces).
+  const taps = text.split(/\s+/).filter((w) => /[A-Za-z]/.test(foldAccents(w)));
   const glossMissing = new Set<string>();
-  let nameTokens = 0, glossed = 0;
+  let glossed = 0;
+  for (const w of taps) if (glossKey(w, ctx.glossary)) glossed++; else glossMissing.add(foldAccents(w).toLowerCase().replace(/^[^a-z]+|[^a-z]+$/g, ""));
+  let nameTokens = 0;
 
   for (const t of toks) {
-    if (glossKey(t.raw, ctx.glossary)) glossed++; else glossMissing.add(t.lower);
     if (ctx.names.has(baseForm(t.lower))) { nameTokens++; continue; }
     const info = lookup(t.lower, ctx.lex, ctx.lemmatize);
     lemmas.push(info.lemma);
@@ -318,7 +323,7 @@ export function profileText(story: string, label: Label, text: string, lower: Se
     estimatedAdequate: estimate(CORPUS_COVERAGE_ADEQUATE),
     estimatedOptimal: estimate(CORPUS_COVERAGE_OPTIMAL),
     estimatedAdequateOffListKnown: lenient,
-    glossCoverage: toks.length ? round(glossed / toks.length) : 0,
+    glossCoverage: taps.length ? round(glossed / taps.length) : 0,
     glossMissing: [...glossMissing].sort(),
     newLemmas: lower ? [...counts.keys()].filter((l) => !lower.has(l)).length : null,
     aboveLabel, offList, targetCandidates,
