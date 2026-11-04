@@ -40,7 +40,7 @@
 | Глагол | Когда пишется | Поля (`object_type`/`object_id`, `story_id`, `level`, `result`) | Файл | Для какого вопроса |
 |---|---|---|---|---|
 | `session_start` | ученик вошёл и приложение открылось (один раз за загрузку страницы) | без объекта и результата | `src/utils/events.ts` (`setUser`) | удержание D7/D30, серия дней (§3.10, I6) |
-| `story_open` | открыт текст сказки на уровне | `story`/id сказки, `story_id`, `level` | `src/components/screens/ReaderScreen.tsx` | сколько и какие уровни читают; связь чтения с тестом R5; фольклор против нейтральных текстов (R7) |
+| `story_open` | открыт текст сказки на уровне (также при каждом возврате на вкладку чтения и смене уровня: это повторное открытие, а не дубль) | `story`/id сказки, `story_id`, `level` | `src/components/screens/ReaderScreen.tsx` | сколько и какие уровни читают; связь чтения с тестом R5; фольклор против нейтральных текстов (R7) |
 | `level_complete` | уровень или вся сказка засчитаны (квиз пройден) впервые | `level`/`<story>:<step>`, `story_id`, `level` | `src/KazakhTalesApp.tsx` (`markStep`) | путь по уровням; «готово» в заданиях учителя (R8) |
 | `word_tap` | нажато слово в тексте | `word`/слово, `story_id`, `level`; `result.has_translation`, `during_audio` | `ReaderScreen.tsx` | трудные слова класса (R8); «попробуй уровень ниже» при многих нажатиях (N7, Yanagisawa et al. 2020); пользу глосс (I3) |
 | `audio_play` | старт «Бірге оқу» или сцены легенды | `reading`/`<story>:<level>` или `scene`/id карточки; `result.speed`, `from_sentence`, `sentences` (чтение), `resume` (сцена) | `ReaderScreen.tsx`, `src/components/ScenePlayer.tsx`, `LegendCards.tsx` | чтение под озвучку и выбранная скорость (§3.9, Webb, Uchihara & Yanagisawa 2023); порядок «слушай и читай» (N3) |

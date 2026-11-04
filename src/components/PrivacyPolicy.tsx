@@ -23,7 +23,7 @@ const KK = `
 - XP, күн қатары, соңғы белсенді күнің, ертегі деңгейлері мен сынақ нәтижелері (ұпай, уақыты), белгілер;
 - сақтаған сөздерің және оларды қайталау кестесі;
 - өзің жазған мәтіндер: «Ой ізі» жауаптары, апта дебатының мәтіні, «Дала кеңесі» дауысы мен себебі;
-- оқу әрекеттерінің журналы: ертегіні ашу, сөзді басу, тыңдау, сынақ сұрағына жауап (дұрыс па, нешінші әрекет, қанша уақыт), сөзді қайталау, дауыс беру, айтылым бағасы, әрекеттің уақыты, қосымшаның нұсқасы мен тілі. Өзің жазған мәтіндер мен Шоқанға жазғандарың журналға түспейді, тек олардың ұзындығы (сөз саны). Журнал сабақты жақсарту үшін керек (қай сөз, қай сұрақ қиын). Мұғалім одан тек жиынтық сандарды ала алады: 30 күндегі әрекеттер саны және сыныптың қиын сөздері мен сұрақтары.
+- оқу әрекеттерінің журналы: қосымшаны ашу, ертегіні ашу, сөзді басу, тыңдау, сынақ сұрағына жауап (дұрыс па, нешінші әрекет, қанша уақыт), сөзді қайталау, дауыс беру, айтылым бағасы, әрекеттің уақыты, қосымшаның нұсқасы мен тілі, бір ғана сыныпта болсаң сол сыныптың ішкі нөмірі. Өзің жазған мәтіндер мен Шоқанға жазғандарың журналға түспейді, тек олардың ұзындығы (сөз саны). Журнал сабақты жақсарту үшін керек (қай сөз, қай сұрақ қиын). Мұғалім одан тек жиынтық сандарды ала алады: 30 күндегі әрекеттер саны және сыныптың қиын сөздері мен сұрақтары.
 Сынып (егер қосылсаң):
 - сыныптағы лақап атың (әдепкіде профильдегі атың немесе поштаңның @ белгісіне дейінгі бөлігі), қосылған және шыққан күнің.
 Сыныпта тұрғанда сол сыныптың мұғалімі көреді: лақап атыңды, XP мен күн қатарыңды, соңғы белсенді күніңді, сақтаған сөздеріңді (аудармасымен және қаншалықты меңгергеніңмен), өткен ертегі деңгейлерің мен соңғы сынақ нәтижелеріңді. Сыныптан шықсаң, мұғалім тек лақап атың мен күндерді көреді.
@@ -74,7 +74,7 @@ const RU = `
 - XP, серия дней, последний активный день, пройденные уровни сказок и результаты тестов (баллы, время), значки;
 - сохранённые слова и расписание их повторения;
 - твои тексты: ответы «Ой ізі», текст дебата недели, голос и причина в «Дала кеңесі»;
-- журнал учебных действий: открытие сказки, нажатие на слово, прослушивание, ответ на вопрос теста (верно ли, с какой попытки, сколько времени), повторение слова, голосование, оценка произношения, время действия, версия приложения и язык. Твои тексты и сообщения Шоқану в журнал не попадают, только их длина (число слов). Журнал нужен, чтобы улучшать уроки (какие слова и вопросы трудные). Учитель может получить из него только общие числа: сколько действий за 30 дней и трудные слова и вопросы класса.
+- журнал учебных действий: открытие приложения, открытие сказки, нажатие на слово, прослушивание, ответ на вопрос теста (верно ли, с какой попытки, сколько времени), повторение слова, голосование, оценка произношения, время действия, версия приложения и язык, а если ты состоишь ровно в одном классе, внутренний номер этого класса. Твои тексты и сообщения Шоқану в журнал не попадают, только их длина (число слов). Журнал нужен, чтобы улучшать уроки (какие слова и вопросы трудные). Учитель может получить из него только общие числа: сколько действий за 30 дней и трудные слова и вопросы класса.
 Класс (если ты вступил):
 - твой ник в классе (по умолчанию имя из профиля или часть почты до знака @), даты вступления и выхода.
 Пока ты в классе, учитель этого класса видит: ник, XP и серию дней, последний активный день, сохранённые слова (с переводом и тем, насколько ты их выучил), пройденные уровни сказок и последние результаты тестов. Если ты вышел из класса, учитель видит только ник и даты.
@@ -125,7 +125,7 @@ Learning:
 - XP, streak, last active day, tale levels and quiz results (score, time), badges;
 - your saved words and their review schedule;
 - texts you write: Thinking trail answers, the debate-of-the-week text, your Steppe council vote and reason;
-- a log of learning actions: opening a tale, tapping a word, listening, answering a quiz question (right or not, which try, how long it took), reviewing a word, voting, pronunciation scores, when each happened, the app version and language. Your own texts and messages to Shoqan are not in the log, only their length (word count). The log is there to improve the lessons (which words and questions are hard). A teacher can get only totals from it: how many actions in 30 days, and the class's hard words and questions.
+- a log of learning actions: opening the app, opening a tale, tapping a word, listening, answering a quiz question (right or not, which try, how long it took), reviewing a word, voting, pronunciation scores, when each happened, the app version and language, and, if you are in exactly one class, that class's internal id. Your own texts and messages to Shoqan are not in the log, only their length (word count). The log is there to improve the lessons (which words and questions are hard). A teacher can get only totals from it: how many actions in 30 days, and the class's hard words and questions.
 Class (if you join one):
 - your nickname in the class (by default your profile name or the part of your email before @), the dates you joined and left.
 While you are in the class, its teacher sees: your nickname, XP and streak, last active day, saved words (with translation and how well you know them), the tale levels you finished and your recent quiz results. After you leave, the teacher sees only your nickname and the dates.
@@ -135,7 +135,7 @@ Counters: how many times a day you used Shoqan and the voice service (just a num
 We do not keep: your chat with Shoqan, voice recordings, your location, your phone number. No ads, and we never sell your data.
 
 2. WHY
-Only to run the site: sign-in, saving progress, planning word reviews, showing class results to your teacher, keeping the daily limits of free services.
+Only to run the site: sign-in, saving progress, planning word reviews, showing class results to your teacher, keeping the daily limits of free services. From the learning log we see which tasks help and which are hard, and improve the site.
 
 3. WHERE IT IS STORED
 All account and learning data is stored in a Supabase database. Each learner can read and change only their own records, and the database itself enforces this. A teacher sees the progress of learners in their own class only (as listed in part 1). The reason you write in the Steppe council may be shown to other learners without your name, after it is checked.
@@ -155,7 +155,7 @@ Apart from what is listed above, we do not share your learning data with Google,
 Ertegi English is built for school students. Use it with a parent's or teacher's awareness, like any other school software.
 
 6. YOUR RIGHTS
-- You can delete your whole account yourself: Profile → "Delete account". Your account, progress, words, entries, votes, debates, classes and class memberships are removed from the database at once, and the app's data on this device is cleared. This cannot be undone. Database backups may keep the data for a while longer before it is removed there too.
+- You can delete your whole account yourself: Profile → "Delete account". Your account, progress, words, entries, votes, debates, learning log, classes and class memberships are removed from the database at once, and the app's data on this device is cleared. This cannot be undone. Database backups may keep the data for a while longer before it is removed there too.
 - Signing out ends your session immediately.
 
 7. CONTACT
