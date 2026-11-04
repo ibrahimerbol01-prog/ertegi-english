@@ -27,11 +27,18 @@ function loadDraft(userId: string | undefined, storyId: string, level: string): 
     return null;
   }
 }
+const emptyDraft = (d: Draft) => !d.choice && !d.claim && !d.evidence.length && !d.wonder;
 function storeDraft(userId: string | undefined, storyId: string, level: string, d: Draft | null) {
   try {
-    if (d) localStorage.setItem(draftKey(userId, storyId, level), JSON.stringify(d));
+    // Opening the window writes the draft it shows. Nothing changed (or an empty draft where
+    // there was none): no write and no sync, or this device's stale or empty copy would get a
+    // fresh time and replace a newer draft from another device (learnerSync: newer wins).
+    const prev = localStorage.getItem(draftKey(userId, storyId, level));
+    const next = d ? JSON.stringify(d) : null;
+    if (prev === next || (!prev && (!d || emptyDraft(d)))) return;
+    if (next) localStorage.setItem(draftKey(userId, storyId, level), next);
     else localStorage.removeItem(draftKey(userId, storyId, level));
-  } catch { /* storage full or blocked */ }
+  } catch { return; /* storage full or blocked */ }
   noteChange(userId, "trail_draft", `${storyId}|${level}`);
 }
 

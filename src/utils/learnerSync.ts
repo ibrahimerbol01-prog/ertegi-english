@@ -424,14 +424,16 @@ export function createLearnerSync(deps: LearnerSyncDeps) {
     return changed;
   }
 
-  /** First sign-in after the update and the server could not be read: send all the device has. */
+  /** First sign-in after the update and the server could not be read: send all the device has.
+      A record from before R3 has no time; it goes up with time 0, so (as in merge()) it never
+      overwrites a newer copy another device already sent: the server trigger keeps the newer row. */
   function enqueueAll(s: Store, user: string) {
     const meta = readMeta(s, user);
     const queue = new Set(readQueue(s, user));
     for (const kind of KINDS) {
       for (const k of ADAPTERS[kind].read(s, user).keys()) {
         const qid = id(kind, k);
-        if (!SETS.has(kind) && meta[qid] === undefined) meta[qid] = now();
+        if (!SETS.has(kind) && meta[qid] === undefined) meta[qid] = 0;
         queue.add(qid);
       }
     }

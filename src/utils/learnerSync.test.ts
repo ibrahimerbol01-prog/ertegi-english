@@ -180,6 +180,25 @@ describe("one-time migration", () => {
     expect(t.store.json(`ertegi_known_${A}`)).toEqual(["brave"]); // nothing lost, nothing shown
   });
 
+  it("offline first sign-in: a vote from before the update does not overwrite a newer one from another device", async () => {
+    let offline = true;
+    const t = setup({
+      pull: (uid) => (offline ? { rows: null, error: { message: "Failed to fetch" }, status: 0 } : { rows: t.server.of(uid), error: null }),
+    });
+    // The phone already sent q1 after R3; this laptop still has an old vote from before R3 (no time).
+    t.server.put(A, { kind: "council_vote", key: "q1", value: { first: 2, done: true }, updated_at: iso(T0 - 3600_000) });
+    t.store.setItem(`ertegi_council_${A}`, JSON.stringify({ q1: { first: 0, done: false }, q2: { first: 1, done: false } }));
+    await t.sync.setUser(A);
+    offline = false;
+    await t.runTimers();
+    expect(t.server.get(A, "council_vote", "q1")?.value).toEqual({ first: 2, done: true });
+    expect(t.server.get(A, "council_vote", "q2")?.value).toEqual({ first: 1, done: false });
+    // Next visit: the server's newer vote comes down to the laptop.
+    await t.sync.setUser(null);
+    await t.sync.setUser(A);
+    expect(t.store.json(`ertegi_council_${A}`).q1).toEqual({ first: 2, done: true });
+  });
+
   it("is not repeated: the next sign-in only sends what changed", async () => {
     const t = setup();
     t.store.setItem(`ertegi_cards_${A}`, JSON.stringify(["aldar_kose"]));

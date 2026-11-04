@@ -23,7 +23,7 @@ const KK = `
 - XP, күн қатары, соңғы белсенді күнің, ертегі деңгейлері мен сынақ нәтижелері (ұпай, уақыты), белгілер;
 - сақтаған сөздерің және оларды қайталау кестесі;
 - жинаған аңыз карталарың мен мақалдарың, «білемін» деп белгілеген сөздерің;
-- өзің жазған мәтіндер: «Ой ізі» жауаптары мен аяқталмаған жобалары, апта дебатының мәтіні, «Дала кеңесі» дауысы мен себебі, Шоқанның оларға берген жауабы;
+- өзің жазған мәтіндер: «Ой ізі» жауаптары мен аяқталмаған жобалары, апта дебатының мәтіні, «Дала кеңесі» дауысы мен себебі, Шоқанның «Ой ізі» мен дебатқа берген жауабы;
 - оқу әрекеттерінің журналы: қосымшаны ашу, ертегіні ашу, сөзді басу, тыңдау, сынақ сұрағына жауап (дұрыс па, нешінші әрекет, қанша уақыт), сөзді қайталау, дауыс беру, айтылым бағасы, әрекеттің уақыты, қосымшаның нұсқасы мен тілі, бір ғана сыныпта болсаң сол сыныптың ішкі нөмірі. Өзің жазған мәтіндер мен Шоқанға жазғандарың журналға түспейді, тек олардың ұзындығы (сөз саны). Журнал сабақты жақсарту үшін керек (қай сөз, қай сұрақ қиын). Мұғалім одан тек жиынтық сандарды ала алады: 30 күндегі әрекеттер саны және сыныптың қиын сөздері мен сұрақтары.
 Сынып (егер қосылсаң):
 - сыныптағы лақап атың (әдепкіде профильдегі атың немесе поштаңның @ белгісіне дейінгі бөлігі), қосылған және шыққан күнің.
@@ -31,7 +31,7 @@ const KK = `
 Мұғалім үшін: ашқан сыныптарың, кодтары мен тапсырмалары.
 Есептегіштер: Шоқанға және дыбыс қызметіне күніне неше рет жүгінгенің (тек сан, күнделікті шекті сақтау үшін).
 
-Сақтамаймыз: Шоқанмен чатыңды, дауыс жазбаларыңды, орныңды (геолокация), телефон нөміріңді. Жарнама жоқ, деректеріңді ешкімге сатпаймыз.
+Сақтамаймыз: Шоқанмен чатыңды (оның «Ой ізі» мен дебатқа берген жауабы ғана сақталады, жоғарыда жазылғандай), дауыс жазбаларыңды, орныңды (геолокация), телефон нөміріңді. Жарнама жоқ, деректеріңді ешкімге сатпаймыз.
 
 2. НЕ ҮШІН
 Тек сайт жұмыс істеуі үшін: кіру, прогресіңді сақтау, сөздерді қайталауды жоспарлау, мұғаліміңе сынып нәтижесін көрсету, тегін қызметтердің күнделікті шегін ұстау. Оқу журналы бойынша қай тапсырмалар көмектесетінін, қайсысы қиын екенін көріп, сайтты жақсартамыз.
@@ -75,7 +75,7 @@ const RU = `
 - XP, серия дней, последний активный день, пройденные уровни сказок и результаты тестов (баллы, время), значки;
 - сохранённые слова и расписание их повторения;
 - собранные карточки легенд и пословицы, слова, отмеченные «знаю»;
-- твои тексты: ответы «Ой ізі» и их черновики, текст дебата недели, голос и причина в «Дала кеңесі», ответы Шоқана на них;
+- твои тексты: ответы «Ой ізі» и их черновики, текст дебата недели, голос и причина в «Дала кеңесі», ответы Шоқана на «Ой ізі» и дебат;
 - журнал учебных действий: открытие приложения, открытие сказки, нажатие на слово, прослушивание, ответ на вопрос теста (верно ли, с какой попытки, сколько времени), повторение слова, голосование, оценка произношения, время действия, версия приложения и язык, а если ты состоишь ровно в одном классе, внутренний номер этого класса. Твои тексты и сообщения Шоқану в журнал не попадают, только их длина (число слов). Журнал нужен, чтобы улучшать уроки (какие слова и вопросы трудные). Учитель может получить из него только общие числа: сколько действий за 30 дней и трудные слова и вопросы класса.
 Класс (если ты вступил):
 - твой ник в классе (по умолчанию имя из профиля или часть почты до знака @), даты вступления и выхода.
@@ -83,7 +83,7 @@ const RU = `
 Для учителя: созданные классы, их коды и задания.
 Счётчики: сколько раз за день ты обращался к Шоқану и к голосовому сервису (только число, чтобы соблюдать дневной лимит).
 
-Мы не храним: переписку с Шоқаном, записи голоса, геолокацию, номер телефона. Рекламы нет, данные никому не продаём.
+Мы не храним: переписку с Шоқаном в чате (хранятся только его ответы на «Ой ізі» и дебат, как написано выше), записи голоса, геолокацию, номер телефона. Рекламы нет, данные никому не продаём.
 
 2. ЗАЧЕМ
 Только для работы сайта: вход, сохранение прогресса, расписание повторения слов, показ результатов класса учителю, соблюдение дневных лимитов бесплатных сервисов. По журналу учебных действий мы видим, какие задания помогают и какие трудные, и улучшаем сайт.
@@ -127,7 +127,7 @@ Learning:
 - XP, streak, last active day, tale levels and quiz results (score, time), badges;
 - your saved words and their review schedule;
 - the legend cards and proverbs you collected, the words you marked "I know it";
-- texts you write: Thinking trail answers and their drafts, the debate-of-the-week text, your Steppe council vote and reason, and Shoqan's replies to them;
+- texts you write: Thinking trail answers and their drafts, the debate-of-the-week text, your Steppe council vote and reason, and Shoqan's replies to your Thinking trail and debate;
 - a log of learning actions: opening the app, opening a tale, tapping a word, listening, answering a quiz question (right or not, which try, how long it took), reviewing a word, voting, pronunciation scores, when each happened, the app version and language, and, if you are in exactly one class, that class's internal id. Your own texts and messages to Shoqan are not in the log, only their length (word count). The log is there to improve the lessons (which words and questions are hard). A teacher can get only totals from it: how many actions in 30 days, and the class's hard words and questions.
 Class (if you join one):
 - your nickname in the class (by default your profile name or the part of your email before @), the dates you joined and left.
@@ -135,7 +135,7 @@ While you are in the class, its teacher sees: your nickname, XP and streak, last
 For teachers: the classes you create, their codes and assignments.
 Counters: how many times a day you used Shoqan and the voice service (just a number, to keep the daily limit).
 
-We do not keep: your chat with Shoqan, voice recordings, your location, your phone number. No ads, and we never sell your data.
+We do not keep: your chat with Shoqan (only his replies to your Thinking trail and debate are kept, as listed above), voice recordings, your location, your phone number. No ads, and we never sell your data.
 
 2. WHY
 Only to run the site: sign-in, saving progress, planning word reviews, showing class results to your teacher, keeping the daily limits of free services. From the learning log we see which tasks help and which are hard, and improve the site.
