@@ -1,7 +1,7 @@
 import { supabase } from "../lib/supabase";
 import { daysBetween, localDay } from "./progress";
 import { PUBLIC_URL } from "../lib/api";
-import { QUIZ_PASS_PERCENT, QUIZ_PASS_SHARE, TEACHER_AWAY_DAYS } from "../research/params";
+import { QUIZ_LEVEL_UNLOCK_SHARE, QUIZ_PASS_PERCENT, TEACHER_AWAY_DAYS } from "../research/params";
 
 /* Classes, assignments and quiz scores for the teacher cabinet
    (migration 20261026000000_teacher_classes). Every call returns a result
@@ -179,14 +179,17 @@ export function dueAtEndOf(day: string): string {
 }
 export const dayOf = (iso: string) => localDay(new Date(iso));
 
-export const PASS = QUIZ_PASS_SHARE;
+/** Score a finished quiz needs for its level to count as done (I1: 0, so
+ *  finishing counts). The score itself stays in the cell, and a score under
+ *  QUIZ_PASS_PERCENT is still marked low for the teacher. */
+export const PASS = QUIZ_LEVEL_UNLOCK_SHARE;
 
 export function cellFor(m: Pick<Member, "steps" | "quizzes">, a: Assignment, now = new Date()): Cell {
   const step = m.steps.find((s) => s.story_id === a.story_id && s.step === a.step);
   const quiz = m.quizzes.find((q) => q.story_id === a.story_id && q.step === a.step);
   const score = quiz ? Math.round(quiz.best * 100) : null;
   const due = a.due_at ? new Date(a.due_at) : null;
-  // Done means the level's quiz was passed; an older mark with a failed quiz still counts as open.
+  // Done means the level's quiz was finished (and scored at least PASS).
   if (step && (!quiz || quiz.best >= PASS)) {
     const late = !!due && new Date(step.completed_at) > due;
     return { status: late ? "late" : "done", score, at: step.completed_at };

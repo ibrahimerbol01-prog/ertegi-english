@@ -30,19 +30,41 @@ export const REVIEW_KNOWN_XP = 2;
  *  not move the review date. Design decision. docs §3.4. */
 export const MATCH_XP = 4;
 
+/** Leitner box from which a flashcard asks for the English word from the
+ *  Kazakh one (recall) instead of the Kazakh meaning of the English word
+ *  (recognition). New and weak words start with recognition. Productive
+ *  formats: Yanagisawa, Webb & Uchihara 2020 (verify in the original); the
+ *  box number is a design decision. docs §3.4. */
+export const SRS_PRODUCE_FROM_BOX = 2;
+
 /** XP for saving a new word from the reader. Design decision. */
 export const SAVE_WORD_XP = 5;
 
 /* ---------- 3.5 Quiz: no timer, second try with the line from the tale ---------- */
 
-/** Share of right answers that passes a quiz: Math.ceil(total × 0.6), i.e.
- *  5 of 7 and 3 of 4. Kept from before the report; no study behind 60 %
- *  (task I1 plans to drop it). Design decision. docs §3.5. */
+/** Share of right answers marked as a good score: Math.ceil(total × 0.6),
+ *  i.e. 5 of 7 and 3 of 4. Since I1 it no longer locks the level (see
+ *  QUIZ_LEVEL_UNLOCK_SHARE); it only marks low scores for the teacher and
+ *  the learner. No study behind 60 %. Design decision. docs §3.5. */
 export const QUIZ_PASS_SHARE = 0.6;
 
 /** The same pass mark in percent, for teacher reports (score < 60 % is "low").
  *  Must equal QUIZ_PASS_SHARE × 100. Design decision. docs §3.5. */
 export const QUIZ_PASS_PERCENT = 60;
+
+/** Share of right answers a finished quiz needs for its level (or tale) to
+ *  count as done. 0: finishing the whole quiz counts, and the questions with
+ *  a mistake come back at once in a retry round. Greving & Richter 2018
+ *  (testing with corrective feedback), report recommendation; the score
+ *  itself still goes to the teacher. docs §3.5. */
+export const QUIZ_LEVEL_UNLOCK_SHARE = 0;
+
+/** Every n-th question of a quiz (index 0, n, 2n…) asks how sure the learner
+ *  is before checking. "Sure but wrong" goes first in the retry round
+ *  (hypercorrection: Butterfield & Metcalfe 2001, verify in the original;
+ *  confidence votes in Peer Instruction, SERC). n = 2 is a design decision:
+ *  half the questions, so the extra tap does not slow every answer. docs §3.5. */
+export const QUIZ_CONFIDENCE_EVERY = 2;
 
 /** Tries per quiz question before the answer, the line from the tale and the
  *  "Неге? Шоқаннан сұра" button are shown. Source: Wisniewski, Zierer &
