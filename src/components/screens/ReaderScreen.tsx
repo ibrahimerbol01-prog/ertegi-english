@@ -15,6 +15,7 @@ import type { Lang } from "../../lang";
 import type { SavedWord } from "../../types";
 import { LEVEL_COLORS, useTr, type UiText } from "./shared";
 import { READ_SPEEDS } from "../../research/params";
+import { track } from "../../utils/events";
 
 /* Small video tile with a night-sky fallback. */
 function StoryVideo({ src, poster, className = "", videoRef, paused }: { src: string; poster?: string; className?: string; videoRef?: React.Ref<HTMLVideoElement>; paused?: boolean }) {
@@ -107,6 +108,13 @@ export function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, s
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedLevel, selectedStory]);
+
+  // A tale opened at a level: the text is on screen.
+  useEffect(() => {
+    if (selectedStory && selectedLevel) {
+      track("story_open", { object_type: "story", object_id: selectedStory, story_id: selectedStory, level: selectedLevel });
+    }
+  }, [selectedStory, selectedLevel]);
 
   if (!selectedStory) {
     return (
@@ -212,6 +220,11 @@ export function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, s
     const withApostrophe = foldAccents(word).toLowerCase().replace(/[’]/g, "'").replace(/[^a-z']/g, "").replace(/^'+|'+$/g, "");
     const candidates = [withApostrophe, withApostrophe.replace(/'s$/, ""), withApostrophe.replace(/[^a-z]/g, "")];
     const found = candidates.map((c) => WORD_TRANSLATIONS[c]).find(Boolean);
+    track("word_tap", {
+      object_type: "word", object_id: candidates.find((c) => WORD_TRANSLATIONS[c]) ?? candidates[2],
+      story_id: currentStory.id, level: selectedLevel,
+      result: { has_translation: !!found, during_audio: isReadAlongPlaying },
+    });
     if (isReadAlongPlaying) { stopNarration(); setIsReadAlongPlaying(false); }
     setActiveWord(word);
     setTranslation(found || "Аудармасы әзірге жоқ");
@@ -299,6 +312,10 @@ export function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, s
     setIsReadAlongPlaying(true);
     // Resume from the start of the sentence that was playing.
     const from = readAlongSentence ?? 0;
+    track("audio_play", {
+      object_type: "reading", object_id: `${currentStory.id}:${selectedLevel}`, story_id: currentStory.id, level: selectedLevel,
+      result: { speed: readSpeedRef.current, from_sentence: from, sentences: sentences.length },
+    });
     setReadAlongLoading(true);
     try {
       await playNarration(from);

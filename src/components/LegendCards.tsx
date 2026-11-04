@@ -218,7 +218,7 @@ function Challenge({ card, lang, onWin, onClose }: { card: LegendCard; lang: Lan
       <h3 className="font-display font-black text-xl text-ink mt-2">{lang === "kk" ? card.kk : card.name}</h3>
 
       <div className="mt-4">
-        <ScenePlayer text={card.scene} lang={lang} onPlay={() => setListened(true)} />
+        <ScenePlayer id={card.id} text={card.scene} lang={lang} onPlay={() => setListened(true)} />
       </div>
       <p className="text-xs text-ink-3 mt-2 text-center">
         {!listened
@@ -277,7 +277,7 @@ function CardDetail({ card, lang }: { card: LegendCard; lang: Lang }) {
   return (
     <div className="p-6">
       <div className="w-40 mx-auto"><CardFace card={card} lang={lang} big /></div>
-      <div className="mt-5"><ScenePlayer text={card.scene} lang={lang} /></div>
+      <div className="mt-5"><ScenePlayer id={card.id} text={card.scene} lang={lang} /></div>
       <p lang="en" className="text-[15px] text-ink leading-relaxed mt-4">{card.scene}</p>
       <div className="mt-4 rounded-2xl bg-sand-2 p-4">
         <p className="eyebrow">{lang === "kk" ? "Білесің бе?" : "Did you know?"}</p>

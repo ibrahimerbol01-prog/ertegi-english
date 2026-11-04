@@ -39,6 +39,7 @@ import { RoleSwitchRow } from "./components/RolePicker";
 import { clearPendingRole, type Role } from "./utils/role";
 import { AssignmentsCard, JoinClassSheet, MyClassesSection } from "./components/StudentClasses";
 import { clearPendingClass, flushQuizResults, peekPendingClass, saveQuizResult } from "./utils/classes";
+import { setEventsUser, track } from "./utils/events";
 import {
   loadProgress, saveProgress, progressKey, loadLocalReviews, saveReview,
   nextReview, lapse, localDay, daysBetween, isDue, MAX_MASTERY, type ProgressStep
@@ -122,6 +123,11 @@ export default function KazakhTalesApp({ session, role, onRoleChange }: { sessio
     const idle = window.requestIdleCallback ?? ((cb: () => void) => window.setTimeout(cb, 1500));
     idle(prefetchTabs);
   }, []);
+  // Learning events (docs/events.md): the learner's own; a teacher's preview is not learning.
+  useEffect(() => {
+    setEventsUser(teacher ? null : userId);
+    return () => setEventsUser(null);
+  }, [userId, teacher]);
   useEffect(() => { latestXpRef.current = xp; }, [xp]);
   useEffect(() => { latestQuizzesRef.current = quizzesCompleted; }, [quizzesCompleted]);
   useEffect(() => { latestPerfectRef.current = perfectQuizzes; }, [perfectQuizzes]);
@@ -287,6 +293,7 @@ export default function KazakhTalesApp({ session, role, onRoleChange }: { sessio
     const next = new Set(progress).add(key);
     setProgress(next);
     saveProgress(userId, storyId, step, next);
+    track("level_complete", { object_type: "level", object_id: `${storyId}:${step}`, story_id: storyId, level: step });
   };
 
   // Leitner review: "knew it" moves the word up a box, "not yet" one box back.
@@ -297,6 +304,15 @@ export default function KazakhTalesApp({ session, role, onRoleChange }: { sessio
     const { mastery, nextReviewAt } = known ? { mastery: up, nextReviewAt: nextReview(up) } : lapse(current.mastery ?? 0);
     setSavedWords((prev) => prev.map((w) => (w.word === word ? { ...w, mastery, nextReviewAt } : w)));
     saveReview(userId, word, mastery, nextReviewAt);
+    // Days past (or before) the due date: the gap the forgetting curve needs.
+    const due = current.nextReviewAt ? Date.parse(current.nextReviewAt) : NaN;
+    track("srs_review", {
+      object_type: "word", object_id: word,
+      result: {
+        correct: known, box_before: current.mastery ?? 0, box_after: mastery,
+        days_overdue: Number.isFinite(due) ? Math.round((Date.now() - due) / 86_400_000 * 10) / 10 : null,
+      },
+    });
     if (known) addXp(REVIEW_KNOWN_XP);
     else checkAndUpdateStreak();
   };
@@ -369,8 +385,13 @@ export default function KazakhTalesApp({ session, role, onRoleChange }: { sessio
     };
   }, []);
 
-  const handleSaveWord = (word: string, translation: string) => {
+  const handleSaveWord = (word: string, translation: string, source: "reader" | "daily" = "reader") => {
     if (savedWords.some((w) => w.word === word)) return;
+    track("word_save", {
+      object_type: "word", object_id: word,
+      story_id: source === "reader" ? selectedStory : null, level: source === "reader" ? selectedLevel : null,
+      result: { source },
+    });
     // Until the saved list has loaded, the word may already be on the server:
     // XP then waits for the server to confirm it is new.
     const known = wordsReadyRef.current;
@@ -601,12 +622,13 @@ export default function KazakhTalesApp({ session, role, onRoleChange }: { sessio
                   storyTitle={`${(STORIES.find((s) => s.id === selectedStory) || STORIES[0]).title}${quizLevel ? ` · ${quizLevel}` : ""}`}
                   questions={quizQuestions}
                   sourceTexts={quizTexts}
+                  eventInfo={{ story_id: selectedStory || STORIES[0].id, level: quizLevel ?? "quiz" }}
                 />
               )}
               {tab === "words" && (
                 <div className="animate-pop-in">
                   <div className="mb-8">
-                    <WordCoach savedWords={savedWords} progress={progress} userId={userId} lang={lang} onLearn={handleSaveWord} onReward={addXp} />
+                    <WordCoach savedWords={savedWords} progress={progress} userId={userId} lang={lang} onLearn={(w, tr) => handleSaveWord(w, tr, "daily")} onReward={addXp} />
                   </div>
                   {wordsMode === "cards" ? (
                     <FlashcardsScreen savedWords={savedWords} onReview={handleReview} lang={lang} mode={wordsMode} setMode={setWordsMode} />

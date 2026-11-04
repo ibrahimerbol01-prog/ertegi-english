@@ -7,7 +7,9 @@ import { describe, expect, it } from "vitest";
 const root = join(__dirname, "..", "..");
 const migDir = join(root, "supabase", "migrations");
 const migrations = readdirSync(migDir).filter((f) => f.endsWith(".sql")).sort();
-const deleteSql = readFileSync(join(migDir, migrations.find((f) => f.endsWith("_delete_account.sql"))!), "utf8");
+// The live delete_my_account() is the one in the last migration that (re)defines it.
+const deleteFile = migrations.filter((f) => readFileSync(join(migDir, f), "utf8").includes("create or replace function public.delete_my_account()")).pop()!;
+const deleteSql = readFileSync(join(migDir, deleteFile), "utf8");
 
 // Tables the code reads and writes, including the hand-made ones.
 const codeTables = ["profiles", "saved_words", "user_achievements"];
@@ -22,7 +24,7 @@ describe("delete_my_account covers every user table", () => {
   }
 
   it("finds the migrated user tables", () => {
-    expect([...userTables].sort()).toEqual(expect.arrayContaining(["api_usage_daily", "class_members", "classes", "council_votes", "debate_entries", "quiz_results", "story_progress", "trail_entries"]));
+    expect([...userTables].sort()).toEqual(expect.arrayContaining(["api_usage_daily", "class_members", "classes", "council_votes", "debate_entries", "learning_events", "quiz_results", "story_progress", "trail_entries"]));
   });
 
   it.each([...userTables, ...codeTables].map((t) => [t]))("%s is deleted", (t) => {

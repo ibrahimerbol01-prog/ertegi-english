@@ -2,9 +2,19 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 import { VitePWA } from 'vite-plugin-pwa'
+import { readFileSync } from 'node:fs'
+
+// Version stamped on every learning event (src/utils/events.ts): package.json
+// version plus the commit Vercel builds from, e.g. "0.0.0+94f5543".
+const pkgVersion: string = JSON.parse(readFileSync(new URL('./package.json', import.meta.url), 'utf8')).version
+const commit = (process.env.VERCEL_GIT_COMMIT_SHA || '').slice(0, 7)
+const appVersion = commit ? `${pkgVersion}+${commit}` : pkgVersion
 
 // https://vite.dev/config/
 export default defineConfig({
+  define: {
+    'import.meta.env.VITE_APP_VERSION': JSON.stringify(appVersion),
+  },
   plugins: [
     react(),
     tailwindcss(),

@@ -5,6 +5,7 @@ import { safePlayVoice } from "../utils/voice";
 import { useEscape } from "../utils/useEscape";
 import { Sheet } from "./UIHelpers";
 import { apiUrl } from "../lib/api";
+import { track } from "../utils/events";
 import {
   COPY_RUN_WORDS, TRAIL_CLAIM_MIN_WORDS, TRAIL_MAX_EVIDENCE, TRAIL_WONDER_MIN_WORDS, TRAIL_XP_FIRST, TRAIL_XP_REVISION,
 } from "../research/params";
@@ -113,6 +114,15 @@ export function TrailButton({ storyId, level, text, lang, userId, onReward = () 
               const next = { ...all, [storyId]: [...past, entry] };
               setAll(next);
               saveTrails(userId, next);
+              // Counts only: the claim and the question stay in trail_entries, not in the event log.
+              const prev = past[past.length - 1];
+              track("trail_entry", {
+                object_type: "trail", object_id: storyId, story_id: storyId, level: entry.level,
+                result: {
+                  revision: past.length + 1, choice: entry.choice, changed_choice: prev ? prev.choice !== entry.choice : null,
+                  evidence_count: entry.evidence.length, claim_words: words(entry.claim), wonder_words: words(entry.wonder),
+                },
+              });
               // Every revision is kept, so a teacher can see a mind change.
               if (userId) {
                 supabase.from("trail_entries").insert({

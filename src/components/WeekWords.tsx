@@ -9,6 +9,7 @@ import { supabase } from "../lib/supabase";
 import { safePlayVoice } from "../utils/voice";
 import { Sheet } from "./UIHelpers";
 import { apiUrl } from "../lib/api";
+import { track } from "../utils/events";
 
 /* Words of the week and a daily debate (Word Generation): use the week's
    words in an argument, hear Shoqan disagree, answer him, then decide again. */
@@ -45,6 +46,16 @@ function saveEntry(userId: string | undefined, week: string, entry: Entry) {
 // Synced to Supabase when the debate_entries table exists; local storage keeps working without it.
 // The week_start column holds the day of the answer now that there is a question a day.
 function syncEntry(userId: string | undefined, week: Week, day: string, entry: Entry) {
+  // Counts only: the argument and the reply stay in debate_entries, not in the event log.
+  const side = entry.finalSide ?? entry.side;
+  track("debate_entry", {
+    object_type: "debate", object_id: day,
+    result: {
+      words_used: wordsUsed(week, `${entry.text} ${entry.reply}`).length, side: entry.side, final_side: side,
+      changed: !!entry.side && side !== entry.side, text_words: countWords(entry.text), reply_words: countWords(entry.reply),
+      prepared_objection: entry.offline,
+    },
+  });
   if (!userId) return;
   supabase
     .from("debate_entries")
@@ -71,6 +82,7 @@ const latin = (s: string) => (s.match(/[a-z]/gi) ?? []).length;
 const cyrillic = (s: string) => (s.match(/[а-яәіңғүұқөһё]/gi) ?? []).length;
 const mostlyNotEnglish = (s: string) => cyrillic(s) > latin(s);
 const hasWords = (s: string) => /[\p{L}]{2,}/u.test(s);
+const countWords = (s: string) => (s.match(/[\p{L}']+/gu) ?? []).length;
 
 // Eight words in a row from a tale: copied, not argued.
 const TALE_RUNS = (() => {

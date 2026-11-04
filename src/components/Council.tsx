@@ -5,6 +5,7 @@ import { COUNCIL, type CouncilQuestion } from "../data/council";
 import { supabase } from "../lib/supabase";
 import { safePlayVoice } from "../utils/voice";
 import { displayTitle } from "../utils/text";
+import { track } from "../utils/events";
 import { Sheet } from "./UIHelpers";
 import {
   COUNCIL_HIGH_SHARE, COUNCIL_LOW_SHARE, COUNCIL_MIN_VOTES, COUNCIL_REASON_MAX_CHARS, COUNCIL_REASON_MIN_WORDS,
@@ -168,6 +169,11 @@ function CouncilRound({ q, kk, vote, onChange, onPush, onReward }: {
     const r = cleanReason(reason);
     onChange({ ...vote, first: pick, confidence, reason: r });
     onPush(1, pick, confidence, r);
+    // The reason's length only, never its text (that stays in council_votes).
+    track("council_vote", {
+      object_type: "council_question", object_id: q.id, story_id: q.storyId,
+      result: { round: 1, choice: pick, correct: pick === q.correct, confidence, reason_words: (r.match(/[\p{L}']+/gu) ?? []).length, repeat: vote.done },
+    });
     // Branch on how the class did (SERC): most right means explain, few right means re-read first.
     const s = await fetchStats(q);
     setStats(s);
@@ -189,7 +195,13 @@ function CouncilRound({ q, kk, vote, onChange, onPush, onReward }: {
     const xp = (finalRight ? COUNCIL_XP_RIGHT : COUNCIL_XP_TAKING_PART) + (!firstRight && finalRight ? COUNCIL_XP_CHANGED_TO_RIGHT : 0) + (wroteReason ? COUNCIL_XP_REASON : 0);
     const next = { ...base, second: final, done: true, xp: Math.max(base.xp, xp) };
     onChange(next);
-    if (secondRound) onPush(2, final, null, "");
+    if (secondRound) {
+      onPush(2, final, null, "");
+      track("council_vote", {
+        object_type: "council_question", object_id: q.id, story_id: q.storyId,
+        result: { round: 2, choice: final, correct: finalRight, first_correct: firstRight, changed: base.first !== final, repeat: base.done },
+      });
+    }
     if (!base.done) onReward(xp);
     setStage("result");
   };

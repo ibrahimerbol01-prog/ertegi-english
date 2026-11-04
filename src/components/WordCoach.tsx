@@ -1,9 +1,10 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Check, Plus, Sparkles, TrendingUp, Volume2 } from "lucide-react";
 import { safePlayVoice } from "../utils/voice";
 import { analyseLearner, dailyWords, dayIndex, loadKnown, markKnown, wordBank, type LexWord } from "../utils/lexicon";
 import type { SavedWord } from "../types";
 import { WORD_OF_DAY_XP } from "../research/params";
+import { track } from "../utils/events";
 
 /* Today's picks are frozen per user and day, so acting on a word never reshuffles the list. */
 const todayKey = (userId?: string) => `ertegi_daily_words_${userId || "guest"}`;
@@ -43,15 +44,25 @@ export function WordCoach({ savedWords, progress, userId, lang, onLearn, onRewar
   const profile = useMemo(() => analyseLearner(savedWords, known, progress), [savedWords, known, progress]);
 
   const [day] = useState(dayIndex);
-  const [today] = useState<LexWord[]>(() => {
+  // fresh: today's words were picked just now, i.e. the first time they are shown today.
+  const [{ today, fresh }] = useState<{ today: LexWord[]; fresh: boolean }>(() => {
     const bank = new Map(wordBank().map((w) => [w.word, w]));
     const frozen = loadToday(userId, day);
-    if (frozen) return frozen.map((w) => bank.get(w)).filter(Boolean) as LexWord[];
+    if (frozen) return { today: frozen.map((w) => bank.get(w)).filter(Boolean) as LexWord[], fresh: false };
     const seen = new Set([...savedWords.map((w) => w.word), ...loadKnown(userId)]);
     const picks = dailyWords(profile, seen, userId, day);
     saveToday(userId, day, picks.map((w) => w.word));
-    return picks;
+    return { today: picks, fresh: true };
   });
+  useEffect(() => {
+    if (!fresh || !today.length) return;
+    track("daily_words_seen", {
+      object_type: "daily_words", object_id: String(day), level: profile.level,
+      result: { words: today.map((w) => w.word), stretch: today.filter((w) => w.level !== profile.level).length, known_total: profile.totalKnown },
+    });
+    // Once, for the list picked on this mount.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const saved = new Set(savedWords.map((w) => w.word));
   const doneCount = today.filter((w) => saved.has(w.word) || known.includes(w.word)).length;
@@ -60,6 +71,7 @@ export function WordCoach({ savedWords, progress, userId, lang, onLearn, onRewar
   const know = (w: LexWord) => {
     markKnown(userId, w.word);
     setKnown(loadKnown(userId));
+    track("daily_word_known", { object_type: "word", object_id: w.word, level: w.level, result: { stretch: w.level !== profile.level } });
     onReward(WORD_OF_DAY_XP);
   };
 

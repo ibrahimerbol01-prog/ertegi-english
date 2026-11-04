@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Loader2, Pause, Play, RotateCcw, Volume1, Volume2, VolumeX } from "lucide-react";
 import { bestBrowserVoice, narrate, primeAudio, stopClip } from "../utils/narration";
 import { SCENE_SPEEDS } from "../research/params";
+import { track } from "../utils/events";
 
 /* A small audio player for a listening scene: play and pause, a slider to jump
    anywhere, speed and volume. The neural Azure voice plays through our own
@@ -28,14 +29,15 @@ const clock = (s: number) => {
   return `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, "0")}`;
 };
 
-type Props = { text: string; lang: "kk" | "en"; onPlay?: () => void };
+/** id: what is playing (a legend card's id), for the learning events. */
+type Props = { text: string; lang: "kk" | "en"; onPlay?: () => void; id?: string };
 
 // A new scene starts from a fresh player.
 export function ScenePlayer(props: Props) {
   return <Player key={props.text} {...props} />;
 }
 
-function Player({ text, lang, onPlay }: Props) {
+function Player({ text, lang, onPlay, id: sceneId }: Props) {
   const kk = lang === "kk";
   const audioRef = useRef<HTMLAudioElement>(null);
   const [status, setStatus] = useState<Status>("idle");
@@ -94,6 +96,7 @@ function Player({ text, lang, onPlay }: Props) {
     const el = audioRef.current;
     if (!el) return;
     onPlay?.();
+    track("audio_play", { object_type: "scene", object_id: sceneId, result: { speed: rate, resume: status === "paused" || status === "ended" } });
     stopClip(); // any other "listen" button that is still talking
     if (browser) { speakInBrowser(status === "paused" ? "resume" : "start"); return; }
     if (ready.current) {
