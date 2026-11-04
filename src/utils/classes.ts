@@ -59,7 +59,7 @@ export interface StudentReport {
 
 export type ClassError =
   | "missing" | "offline" | "not_found" | "removed" | "own_class" | "class_full"
-  | "bad_name" | "bad_nickname" | "nickname_taken" | "too_many" | "denied" | "signed_out" | "unknown";
+  | "bad_name" | "bad_nickname" | "nickname_taken" | "too_many" | "not_approved" | "denied" | "signed_out" | "unknown";
 export type Result<T> = { ok: true; data: T } | { ok: false; error: ClassError };
 
 function toError(error: { code?: string; message?: string } | null | undefined): ClassError {
@@ -76,6 +76,7 @@ function toError(error: { code?: string; message?: string } | null | undefined):
   if (msg.includes("bad_nickname")) return "bad_nickname";
   if (msg.includes("nickname_taken") || msg.includes("class_members_nickname_unique")) return "nickname_taken";
   if (msg.includes("too_many_classes")) return "too_many";
+  if (msg.includes("not_approved")) return "not_approved";
   if (msg.includes("not_teacher") || msg.includes("not_member") || code === "42501") return "denied";
   if (msg.includes("not_signed_in") || msg.includes("JWT") || code === "PGRST301" || code === "PGRST303") return "signed_out";
   if (msg.toLowerCase().includes("fetch")) return "offline";
@@ -105,6 +106,9 @@ export const errorText = (e: ClassError, kk: boolean): string => ({
   bad_nickname: kk ? "Атыңды жаз (30 әріпке дейін)." : "Type your name (up to 30 letters).",
   nickname_taken: kk ? "Сыныпта бұл ат бар. Басқа ат немесе тегіңнің бірінші әрпін қос (мысалы, Аружан С.)." : "Someone in the class already has this name. Add an initial, e.g. Aru S.",
   too_many: kk ? "Белсенді сынып көп (30). Ескісін мұрағатқа жібер." : "Too many active classes (30). Archive an old one first.",
+  not_approved: kk
+    ? "Мұғалім рөлің әлі расталмаған, сондықтан сынып ашу әзірге жабық. Жоба әкімшісіне жаз (байланыс: құпиялылық саясатының 7-бөлімі)."
+    : "Your teacher access isn't confirmed yet, so you can't create a class for now. Write to the project admin (contact: part 7 of the privacy policy).",
   denied: kk ? "Бұл сыныпқа рұқсатың жоқ." : "You don't have access to this class.",
   signed_out: kk ? "Кіру уақыты бітті. Профильден шығып, қайта кір." : "Your sign-in has expired. Sign out and sign in again.",
   unknown: kk ? "Бірдеңе дұрыс болмады. Қайталап көр." : "Something went wrong. Please try again.",
@@ -148,6 +152,16 @@ export const leaveClass = (classId: string) => call<null>(() => supabase.rpc("le
 /* --- teacher --- */
 export const teacherClasses = () =>
   call<ClassRow[]>(() => supabase.from("classes").select("id, name, code, archived_at, created_at").order("created_at", { ascending: true }));
+/* Teacher access (migration 20261108000000_teacher_role): asking files a
+   request once and returns its status; asking again changes nothing.
+   "missing" (migration not applied) keeps the cabinet as it was. */
+export type TeacherStatus = "pending" | "approved" | "revoked";
+export const isTeacherStatus = (v: unknown): v is TeacherStatus => v === "pending" || v === "approved" || v === "revoked";
+export async function requestTeacherRole(): Promise<Result<TeacherStatus>> {
+  const res = await call<unknown>(() => supabase.rpc("request_teacher_role"));
+  if (!res.ok) return res;
+  return isTeacherStatus(res.data) ? { ok: true, data: res.data } : { ok: false, error: "unknown" };
+}
 export const createClass = (name: string) => call<ClassRow>(() => supabase.rpc("create_class", { p_name: name.trim() }));
 // An update the server filtered out still answers 204: ask for the row back to be sure.
 async function updateClass(id: string, patch: { name?: string; archived_at?: string | null }): Promise<Result<null>> {
