@@ -9,6 +9,7 @@ import { useDialogFocus } from "../utils/useDialogFocus";
 import { useEscape } from "../utils/useEscape";
 import { STORIES } from "../constants";
 import { displayTitle } from "../utils/text";
+import { MAQAL_XP } from "../research/params";
 import {
   MAQALS, maqalOfDay, dayNumber, BATAS, DEFAULT_BATA, oyuForStory, STORY_HISTORY, TURKIC_WORDS,
 } from "../data/culture";
@@ -69,7 +70,7 @@ export function MaqalCard({ lang, userId, onReward }: { lang: string; userId?: s
     setPicked(i);
     if (i === correct) {
       saveMaqal(userId, index);
-      onReward(5);
+      onReward(MAQAL_XP);
       safePlayVoice(maqal.english);
     }
   };
@@ -106,7 +107,7 @@ export function MaqalCard({ lang, userId, onReward }: { lang: string; userId?: s
         </div>
         {solved && (
           <p className="text-sm text-jade-deep font-semibold mt-3 animate-pop-in">
-            {l === "kk" ? "Дұрыс! Мақал жинаққа қосылды · +5 XP" : "Right! Added to your proverb collection · +5 XP"}
+            {l === "kk" ? `Дұрыс! Мақал жинаққа қосылды · +${MAQAL_XP} XP` : `Right! Added to your proverb collection · +${MAQAL_XP} XP`}
           </p>
         )}
         {solved && nextDay !== null && (

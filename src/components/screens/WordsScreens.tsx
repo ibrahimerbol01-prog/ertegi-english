@@ -7,6 +7,7 @@ import { isDue, MAX_MASTERY } from "../../utils/progress";
 import { IconCards, IconTrophy } from "../Icons";
 import { useTr } from "./shared";
 import { ScreenHeader } from "../UIHelpers";
+import { MATCH_XP } from "../../research/params";
 
 /* Words tab switcher shared by flashcards and matching. */
 function WordsHeader({ mode, setMode, trailing }: { mode?: string; setMode?: (m: string) => void; trailing?: React.ReactNode }) {
@@ -217,7 +218,7 @@ export function MatchingGame({ savedWords, onReward, mode, setMode }: {
       const newMatched = [...matchedIds, tile.pairId];
       setMatchedIds(newMatched);
       setSelectedTile(null);
-      onReward(4);
+      onReward(MATCH_XP);
       if (newMatched.length === tiles.length / 2) {
         setTimeout(() => setRoundComplete(true), 400);
       }

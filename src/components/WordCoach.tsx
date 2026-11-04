@@ -3,6 +3,7 @@ import { Check, Plus, Sparkles, TrendingUp, Volume2 } from "lucide-react";
 import { safePlayVoice } from "../utils/voice";
 import { analyseLearner, dailyWords, dayIndex, loadKnown, markKnown, wordBank, type LexWord } from "../utils/lexicon";
 import type { SavedWord } from "../types";
+import { WORD_OF_DAY_XP } from "../research/params";
 
 /* Today's picks are frozen per user and day, so acting on a word never reshuffles the list. */
 const todayKey = (userId?: string) => `ertegi_daily_words_${userId || "guest"}`;
@@ -59,7 +60,7 @@ export function WordCoach({ savedWords, progress, userId, lang, onLearn, onRewar
   const know = (w: LexWord) => {
     markKnown(userId, w.word);
     setKnown(loadKnown(userId));
-    onReward(2);
+    onReward(WORD_OF_DAY_XP);
   };
 
   return (

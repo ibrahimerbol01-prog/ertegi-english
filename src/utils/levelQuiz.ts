@@ -1,6 +1,8 @@
 /* Builds a short fill-in-the-blank quiz from one level's text, so every
    CEFR level gets its own check without hand-written questions. */
 
+import { LEVEL_QUIZ_QUESTIONS } from "../research/params";
+
 type Question = { type: "fillblank"; sentence: string; options: string[]; correct: number };
 
 const STOP = new Set([
@@ -16,7 +18,7 @@ function rng(seed: number) {
   };
 }
 
-export function buildLevelQuiz(text: string, count = 4): Question[] {
+export function buildLevelQuiz(text: string, count: number = LEVEL_QUIZ_QUESTIONS): Question[] {
   const sentences = text.match(/[^.!?]+[.!?]+["”]?/g)?.map((s) => s.trim()) ?? [];
   // Skip names and sentence starters: any word the text ever capitalises.
   const capitalised = new Set((text.match(/\b[A-Z][a-z]+/g) ?? []).map((w) => w.toLowerCase()));

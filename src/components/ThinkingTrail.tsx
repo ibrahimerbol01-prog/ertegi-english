@@ -5,6 +5,9 @@ import { safePlayVoice } from "../utils/voice";
 import { useEscape } from "../utils/useEscape";
 import { Sheet } from "./UIHelpers";
 import { apiUrl } from "../lib/api";
+import {
+  COPY_RUN_WORDS, TRAIL_CLAIM_MIN_WORDS, TRAIL_MAX_EVIDENCE, TRAIL_WONDER_MIN_WORDS, TRAIL_XP_FIRST, TRAIL_XP_REVISION,
+} from "../research/params";
 
 /* Thinking Trail (Project Zero's Claim–Support–Question): say what you think,
    prove it by tapping sentences of the tale, then ask what you still wonder.
@@ -70,7 +73,7 @@ const mostlyNotEnglish = (s: string) => (s.match(/[а-яәіңғүұқөһё]/gi
 function copied(s: string, text: string) {
   const tale = (text.toLowerCase().match(/[a-z']+/g) ?? []).join(" ");
   const mine = s.toLowerCase().match(/[a-z']+/g) ?? [];
-  for (let i = 0; i + 8 <= mine.length; i++) if (tale.includes(mine.slice(i, i + 8).join(" "))) return true;
+  for (let i = 0; i + COPY_RUN_WORDS <= mine.length; i++) if (tale.includes(mine.slice(i, i + COPY_RUN_WORDS).join(" "))) return true;
   return false;
 }
 
@@ -117,7 +120,7 @@ export function TrailButton({ storyId, level, text, lang, userId, onReward = () 
                   evidence_ids: entry.evidence, wonder_text: entry.wonder, revision: past.length + 1,
                 }).then(() => {}, () => {});
               }
-              onReward(past.length ? 5 : 11);
+              onReward(past.length ? TRAIL_XP_REVISION : TRAIL_XP_FIRST);
             }}
             onFeedback={(feedback) => {
               // Shoqan answers after the save; read the latest trails, not the ones from before it.
@@ -173,17 +176,17 @@ function TrailFlow({ kk, claimQ, level, text, past, draft, onDraft, onSave, onFe
 
   const label = (c: Choice | null) => (c === "yes" ? tr("Иә", "Yes") : c === "no" ? tr("Жоқ", "No") : c === "partly" ? tr("Ішінара", "Partly") : "");
   const claimCopied = copied(claim, text);
-  const claimOk = !!choice && !claimCopied && (early ? true : words(claim) >= 3);
-  const wonderOk = words(wonder) >= 2;
+  const claimOk = !!choice && !claimCopied && (early ? true : words(claim) >= TRAIL_CLAIM_MIN_WORDS);
+  const wonderOk = words(wonder) >= TRAIL_WONDER_MIN_WORDS;
 
   const toggle = (i: number) => {
     setDropped(null);
     if (evidence.includes(i)) return setEvidence(evidence.filter((x) => x !== i));
-    if (evidence.length < 2) return setEvidence([...evidence, i]);
+    if (evidence.length < TRAIL_MAX_EVIDENCE) return setEvidence([...evidence, i]);
     // Only two: the oldest pick gives way, with a short flash so it's noticed.
     setDropped(evidence[0]);
     setTimeout(() => setDropped(null), 600);
-    setEvidence([evidence[1], i]);
+    setEvidence([...evidence.slice(1), i]);
   };
 
   const askShoqan = async (entry: Trail) => {
@@ -256,7 +259,7 @@ function TrailFlow({ kk, claimQ, level, text, past, draft, onDraft, onSave, onFe
             ))}
           </div>
           <label htmlFor="trail-claim" className="block text-[14px] font-semibold text-ink mt-5">
-            {early ? tr("Бір сөйлеммен түсіндір (міндетті емес)", "Say why in one sentence (optional)") : tr("Пікіріңді ағылшынша жаз (кемінде 3 сөз)", "Write your claim in English (at least 3 words)")}
+            {early ? tr("Бір сөйлеммен түсіндір (міндетті емес)", "Say why in one sentence (optional)") : tr(`Пікіріңді ағылшынша жаз (кемінде ${TRAIL_CLAIM_MIN_WORDS} сөз)`, `Write your claim in English (at least ${TRAIL_CLAIM_MIN_WORDS} words)`)}
           </label>
           <textarea
             id="trail-claim"
@@ -271,7 +274,7 @@ function TrailFlow({ kk, claimQ, level, text, past, draft, onDraft, onSave, onFe
           <p className="text-[13px] mt-1 min-h-[18px]" aria-live="polite">
             {claimCopied ? <span className="text-felt-deep font-semibold">{tr("Бұл ертегіден көшірілген сияқты. Өз сөзіңмен жаз.", "This looks copied from the tale. Use your own words.")}</span>
               : claim && mostlyNotEnglish(claim) ? <span className="text-sun-deep font-semibold">{tr("Ағылшынша байқап көр. Қазақша да қабылданады.", "Try it in English. Kazakh is accepted too.")}</span>
-              : !early && choice && words(claim) < 3 ? <span className="text-ink-3">{tr("Тағы бірнеше сөз жаз.", "Add a few more words.")}</span>
+              : !early && choice && words(claim) < TRAIL_CLAIM_MIN_WORDS ? <span className="text-ink-3">{tr("Тағы бірнеше сөз жаз.", "Add a few more words.")}</span>
               : null}
           </p>
           <button onClick={() => setStep(2)} disabled={!claimOk} className="btn w-full mt-3">{tr("Келесі", "Next")} <ArrowRight size={18} /></button>
@@ -281,7 +284,7 @@ function TrailFlow({ kk, claimQ, level, text, past, draft, onDraft, onSave, onFe
 
       {step === 2 && (
         <div className="mt-4">
-          <p className="text-[15px] text-ink font-semibold">{tr("Дәлел болатын 1–2 сөйлемді түрт.", "Tap 1–2 sentences that prove it.")}</p>
+          <p className="text-[15px] text-ink font-semibold">{tr(`Дәлел болатын 1–${TRAIL_MAX_EVIDENCE} сөйлемді түрт.`, `Tap 1–${TRAIL_MAX_EVIDENCE} sentences that prove it.`)}</p>
           <p className="text-[13px] text-ink-2">{tr(`Сенің жауабың: ${label(choice)}`, `Your answer: ${label(choice)}`)}</p>
           <div className="mt-3 rounded-2xl border-2 border-line p-2 max-h-[46dvh] overflow-y-auto">
             {sentences.map((s, i) => {

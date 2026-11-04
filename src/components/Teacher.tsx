@@ -15,6 +15,7 @@ import {
 } from "../utils/classes";
 import { ScreenHeader, Sheet } from "./UIHelpers";
 import { dueText, stepLabel, storyTitle } from "../utils/useMyClasses";
+import { QUIZ_PASS_PERCENT } from "../research/params";
 
 /* Teacher cabinet: classes joined by code, assignments with a due date, a
    learner × assignment grid with "who needs help" on top, and a card per
@@ -317,7 +318,7 @@ const awayText = (days: number | null, kk: boolean) =>
 function CellBadge({ cell, kk }: { cell: Cell } & Kk) {
   const score = cell.score !== null ? `${cell.score}%` : "";
   const map = {
-    done: { cls: cell.score !== null && cell.score < 60 ? "bg-sun-soft text-[#8A5A00]" : "bg-jade-soft text-[#0F6E4B]", text: score || "✓", sr: kk ? "орындады" : "done" },
+    done: { cls: cell.score !== null && cell.score < QUIZ_PASS_PERCENT ? "bg-sun-soft text-[#8A5A00]" : "bg-jade-soft text-[#0F6E4B]", text: score || "✓", sr: kk ? "орындады" : "done" },
     late: { cls: "bg-sun-soft text-[#8A5A00]", text: score || "✓", sr: kk ? "кеш орындады" : "done late" },
     overdue: { cls: "bg-felt-soft text-felt-deep", text: "!", sr: kk ? "мерзімі өтті" : "overdue" },
     // Tried but not passed yet: the score shows, in red.
@@ -841,7 +842,7 @@ function StudentSheet({ kk, classId, member, assignments, onClose, onRemoved }: 
                           <li key={i} className="flex items-center gap-3 text-[14px]">
                             <span className="flex-1 min-w-0 flex items-center gap-1.5"><span className="shrink-0 px-1.5 rounded-md bg-sand-2 text-[12px] font-bold text-ink-2">{q.step === "quiz" ? (kk ? "Сынақ" : "Quiz") : q.step}</span><span className="truncate text-ink">{storyTitle(q.story_id)}</span></span>
                             <span className="text-ink-2 text-[12px]">{shortDate(q.created_at)}</span>
-                            <span className={`font-bold ${pct >= 60 ? "text-[#0F6E4B]" : "text-felt-deep"}`}>{q.score}/{q.total}</span>
+                            <span className={`font-bold ${pct >= QUIZ_PASS_PERCENT ? "text-[#0F6E4B]" : "text-felt-deep"}`}>{q.score}/{q.total}</span>
                           </li>
                         );
                       })}

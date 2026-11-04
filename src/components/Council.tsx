@@ -6,6 +6,10 @@ import { supabase } from "../lib/supabase";
 import { safePlayVoice } from "../utils/voice";
 import { displayTitle } from "../utils/text";
 import { Sheet } from "./UIHelpers";
+import {
+  COUNCIL_HIGH_SHARE, COUNCIL_LOW_SHARE, COUNCIL_MIN_VOTES, COUNCIL_REASON_MAX_CHARS, COUNCIL_REASON_MIN_WORDS,
+  COUNCIL_XP_CHANGED_TO_RIGHT, COUNCIL_XP_REASON, COUNCIL_XP_RIGHT, COUNCIL_XP_TAKING_PART,
+} from "../research/params";
 
 /* Steppe Council: vote, say how sure you are, read what others chose and why,
    then vote again (Peer Instruction). Classmates' votes come from Supabase
@@ -41,7 +45,7 @@ function saveVote(userId: string | undefined, id: string, vote: Vote) {
 // Reasons others see go through a teacher first; this only keeps obvious junk out of the queue.
 // \b ignores Cyrillic letters, so word edges are checked with Unicode letter classes.
 const BLOCKED = /(?<!\p{L})(fuck|shit|bitch|idiot|stupid|дурак|тупой|сука|ахмақ|есек)(?!\p{L})/iu;
-const cleanReason = (s: string) => s.replace(/\s+/g, " ").trim().slice(0, 140);
+const cleanReason = (s: string) => s.replace(/\s+/g, " ").trim().slice(0, COUNCIL_REASON_MAX_CHARS);
 
 function pushVote(userId: string | undefined, q: CouncilQuestion, round: 1 | 2, choice: number, confidence: Confidence | null, reason: string) {
   if (!userId) return;
@@ -155,7 +159,7 @@ function CouncilRound({ q, kk, vote, onChange, onPush, onReward }: {
     if (stage === "council" && !stats) fetchStats(q).then(setStats);
   }, [stage, stats, q]);
 
-  const enough = !!stats && stats.total >= 10;
+  const enough = !!stats && stats.total >= COUNCIL_MIN_VOTES;
   const share = (i: number) => (enough ? Math.round((stats!.counts[i] / stats!.total) * 100) : 0);
 
   const submitFirst = async () => {
@@ -168,11 +172,11 @@ function CouncilRound({ q, kk, vote, onChange, onPush, onReward }: {
     const s = await fetchStats(q);
     setStats(s);
     setLoading(false);
-    if (s && s.total >= 10) {
+    if (s && s.total >= COUNCIL_MIN_VOTES) {
       const right = s.counts[q.correct] / s.total;
       // Only a learner who was right skips the second round; no round-2 vote is recorded for them.
-      if (right > 0.7 && pick === q.correct) return finish(pick, { ...vote, first: pick, confidence, reason: r }, false);
-      if (right < 0.3) return setStage("reread");
+      if (right > COUNCIL_HIGH_SHARE && pick === q.correct) return finish(pick, { ...vote, first: pick, confidence, reason: r }, false);
+      if (right < COUNCIL_LOW_SHARE) return setStage("reread");
     }
     setStage("council");
   };
@@ -180,9 +184,9 @@ function CouncilRound({ q, kk, vote, onChange, onPush, onReward }: {
   const finish = (final: number, base: Vote = vote, secondRound = true) => {
     const firstRight = base.first === q.correct;
     const finalRight = final === q.correct;
-    const wroteReason = (base.reason.match(/[a-z]+/gi) ?? []).length >= 3;
+    const wroteReason = (base.reason.match(/[a-z]+/gi) ?? []).length >= COUNCIL_REASON_MIN_WORDS;
     // Most for changing to the right answer with a reason; something for taking part.
-    const xp = (finalRight ? 10 : 3) + (!firstRight && finalRight ? 5 : 0) + (wroteReason ? 3 : 0);
+    const xp = (finalRight ? COUNCIL_XP_RIGHT : COUNCIL_XP_TAKING_PART) + (!firstRight && finalRight ? COUNCIL_XP_CHANGED_TO_RIGHT : 0) + (wroteReason ? COUNCIL_XP_REASON : 0);
     const next = { ...base, second: final, done: true, xp: Math.max(base.xp, xp) };
     onChange(next);
     if (secondRound) onPush(2, final, null, "");
@@ -256,13 +260,13 @@ function CouncilRound({ q, kk, vote, onChange, onPush, onReward }: {
           <input
             id={`why-${q.id}`}
             value={reason}
-            onChange={(e) => setReason(e.target.value.slice(0, 140))}
+            onChange={(e) => setReason(e.target.value.slice(0, COUNCIL_REASON_MAX_CHARS))}
             onFocus={(e) => setTimeout(() => e.target.scrollIntoView({ block: "center", behavior: "smooth" }), 300)}
-            maxLength={140}
+            maxLength={COUNCIL_REASON_MAX_CHARS}
             placeholder="because …"
             className="mt-2 w-full h-12 rounded-2xl border-2 border-line bg-card px-3 text-[16px] text-ink focus:border-sky-deep"
           />
-          <p className="text-[12px] text-ink-3 mt-1">{tr("Себеп жазсаң, +3 XP. Сыныптастарың оны мұғалім тексергеннен кейін ғана көреді.", "A reason earns +3 XP. Classmates only see it after a teacher checks it.")}</p>
+          <p className="text-[12px] text-ink-3 mt-1">{tr(`Себеп жазсаң, +${COUNCIL_XP_REASON} XP. Сыныптастарың оны мұғалім тексергеннен кейін ғана көреді.`, `A reason earns +${COUNCIL_XP_REASON} XP. Classmates only see it after a teacher checks it.`)}</p>
           <button onClick={submitFirst} disabled={pick === null || confidence === null || loading} className="btn w-full mt-5">
             {loading ? tr("Сақталып жатыр…", "Saving…") : tr("Дауыс беру", "Vote")}
           </button>
