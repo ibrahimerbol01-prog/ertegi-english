@@ -1,104 +1,14 @@
-import { useState } from "react";
+import { lazy, Suspense, useState } from "react";
 import { supabase } from "./lib/supabase";
 import { Shanyraq, SteppeBackground, KilimStrip } from "./components/Ornaments";
-import { Sheet } from "./components/UIHelpers";
 import { loadLang, saveLang, type Lang } from "./lang";
 import { RolePicker } from "./components/RolePicker";
 import { clearPendingRole, setPendingRole, type Role } from "./utils/role";
 import { peekPendingClass } from "./utils/classes";
+import { orChunkError } from "./utils/lazyChunk";
 
-const PRIVACY_POLICY_TEXT = `
-Last updated: 2026
-
-WHAT WE COLLECT
-- Account info: your email address and, if you sign in with Google, your
-  Google account name and email.
-- Learning data: words you save, quiz results, XP, streak, and unlocked
-  achievements — all tied to your account so your progress is yours alone.
-
-WHY WE COLLECT IT
-Solely to run Ertegi English: to let you sign in, keep your vocabulary and
-progress saved between visits, and show your own stats back to you. We do
-not use your data for advertising, and we do not sell it to anyone.
-
-WHERE IT'S STORED
-Your data is stored with Supabase (a managed database provider) under
-industry-standard access controls. Only you can read or change your own
-saved words, XP, and achievements — enforced at the database level, not
-just in the app's interface.
-
-THIRD PARTIES
-If you choose "Continue with Google," Google handles the sign-in itself;
-we only receive your name and email to create your account. We don't share
-your learning data with Google, Meta, or any advertiser.
-
-IF YOU'RE UNDER 18
-Ertegi English is built for students. If you're a minor, please use this
-app with a parent or teacher's awareness, the same as any other school
-software you use.
-
-YOUR RIGHTS
-You can delete your saved words at any time inside the app, and you can
-request full account deletion by contacting the developer. Signing out
-ends your session immediately; your data stays only until you ask for it
-to be removed.
-
-CONTACT
-Questions about this policy or your data — reach out to the Ertegi English
-team through the contact listed on the project's submission page.
-`.trim();
-
-const PRIVACY_POLICY_TEXT_KK = `
-Соңғы жаңарту: 2026
-
-НЕ ЖИНАЙМЫЗ
-- Аккаунт деректері: электрондық поштаң, ал Google арқылы кірсең, Google
-  аккаунтыңдағы атың мен поштаң.
-- Оқу деректері: сақтаған сөздерің, сынақ нәтижелері, XP, күн қатары және
-  ашылған белгілер. Бәрі тек сенің аккаунтыңа байланған.
-
-НЕ ҮШІН ЖИНАЙМЫЗ
-Тек Ertegi English жұмыс істеуі үшін: кіруге, сөздігің мен прогресіңді
-сақтауға және өз нәтижеңді көрсетуге. Деректеріңді жарнамаға
-пайдаланбаймыз және ешкімге сатпаймыз.
-
-ҚАЙДА САҚТАЛАДЫ
-Деректер Supabase дерекқорында сақталады. Сөздерің, XP мен белгілеріңді
-тек өзің оқи және өзгерте аласың, бұл дерекқор деңгейінде қорғалған.
-
-ҮШІНШІ ТАРАП
-«Google арқылы кіру» таңдасаң, кіруді Google өзі жүргізеді, біз тек атың
-мен поштаңды аламыз. Оқу деректеріңді Google-ға, Meta-ға немесе
-жарнамашыларға бермейміз.
-
-18 ЖАСҚА ТОЛМАСАҢ
-Ertegi English оқушыларға арналған. Кәмелетке толмасаң, қосымшаны басқа
-мектеп бағдарламалары сияқты ата-анаң немесе мұғалімің біліп отырсын.
-
-ҚҰҚЫҚТАРЫҢ
-Сақтаған сөздеріңді қосымшада кез келген уақытта өшіре аласың, ал
-аккаунтты толық өшіруді әзірлеушіден сұрай аласың. Шыққан сәтте сессия
-бірден аяқталады.
-
-БАЙЛАНЫС
-Саясат немесе деректер туралы сұрақтарыңды жобаның өтінім бетіндегі
-байланыс арқылы Ertegi English командасына жаз.
-`.trim();
-
-function PrivacyPolicyModal({ onClose, kk }: { onClose: () => void; kk: boolean }) {
-  const title = kk ? "Құпиялық саясаты" : "Privacy Policy";
-  return (
-    <Sheet open onClose={onClose} label={title}>
-      <div className="p-6 pt-4 flex flex-col">
-        <h3 className="font-display text-xl font-black text-ink mb-3">{title}</h3>
-        <div className="max-h-[55dvh] overflow-y-auto text-sm text-ink-2 leading-relaxed whitespace-pre-wrap pr-1">
-          {kk ? PRIVACY_POLICY_TEXT_KK : PRIVACY_POLICY_TEXT}
-        </div>
-        <button onClick={onClose} className="btn w-full mt-5">{kk ? "Жабу" : "Close"}</button>
-      </div>
-    </Sheet>
-  );
-}
+// The policy text is its own chunk: it loads when someone opens it.
+const PrivacyPolicySheet = lazy(() => orChunkError(import("./components/PrivacyPolicy").then((m) => m.PrivacyPolicySheet)));
 
 export default function AuthScreen() {
   const [mode, setMode] = useState<"signin" | "signup">("signup");
@@ -134,7 +44,7 @@ export default function AuthScreen() {
       return;
     }
     if (!canSubmit) {
-      setError(tr("Аккаунт ашу үшін құпиялық саясатына келісу керек.", "Please agree to the Privacy Policy to create an account."));
+      setError(tr("Аккаунт ашу үшін құпиялылық саясатына келісу керек.", "Please agree to the Privacy Policy to create an account."));
       return;
     }
     setError(null);
@@ -172,7 +82,7 @@ export default function AuthScreen() {
       return;
     }
     if (mode === "signup" && !agreed) {
-      setError(tr("Алдымен құпиялық саясатына келіс: төмендегі белгіні қой.", "Please agree to the Privacy Policy first — check the box below."));
+      setError(tr("Алдымен құпиялылық саясатына келіс: төмендегі белгіні қой.", "Please agree to the Privacy Policy first — check the box below."));
       return;
     }
     setError(null);
@@ -197,7 +107,7 @@ export default function AuthScreen() {
   return (
     <div className="relative min-h-dvh w-full flex items-center justify-center bg-sand px-4 py-10 overflow-hidden">
       <SteppeBackground />
-      {showPolicy && <PrivacyPolicyModal kk={kk} onClose={() => setShowPolicy(false)} />}
+      {showPolicy && <Suspense fallback={null}><PrivacyPolicySheet lang={lang} onClose={() => setShowPolicy(false)} /></Suspense>}
       <div className="relative z-10 w-full max-w-[400px] card overflow-hidden px-6 pt-10 pb-7 space-y-5">
         <KilimStrip className="absolute top-0 inset-x-0 h-2 w-full" />
         <div className="absolute top-4 right-4 segmented w-[104px]" role="group" aria-label={tr("Тіл", "Language")}>
@@ -231,7 +141,7 @@ export default function AuthScreen() {
               <p className="-mt-1 text-xs text-ink-2 text-center leading-relaxed">
                 {tr("Google арқылы кірсең,", "By continuing with Google you agree to the")}{" "}
                 <button type="button" onClick={() => setShowPolicy(true)} className="text-sky-deep font-semibold underline underline-offset-2 py-2 -my-2">
-                  {tr("құпиялық саясатымен", "Privacy Policy")}
+                  {tr("құпиялылық саясатымен", "Privacy Policy")}
                 </button>
                 {kk && " келісесің"}
               </p>
@@ -318,7 +228,7 @@ export default function AuthScreen() {
                 <span className="text-sm text-ink-2 leading-relaxed">
                   {tr("Мен", "I agree to the")}{" "}
                   <button type="button" onClick={() => setShowPolicy(true)} className="text-sky-deep font-semibold underline underline-offset-2 py-2 -my-2">
-                    {tr("құпиялық саясатымен", "Privacy Policy")}
+                    {tr("құпиялылық саясатымен", "Privacy Policy")}
                   </button>
                   {kk && " келісемін"}
                 </span>
