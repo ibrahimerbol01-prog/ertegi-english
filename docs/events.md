@@ -41,7 +41,7 @@
 |---|---|---|---|---|
 | `session_start` | ученик вошёл и приложение открылось (один раз за загрузку страницы) | без объекта и результата | `src/utils/events.ts` (`setUser`) | удержание D7/D30, серия дней (§3.10, I6) |
 | `story_open` | открыт текст сказки на уровне (также при каждом возврате на вкладку чтения и смене уровня: это повторное открытие, а не дубль) | `story`/id сказки, `story_id`, `level` | `src/components/screens/ReaderScreen.tsx` | сколько и какие уровни читают; связь чтения с тестом R5; фольклор против нейтральных текстов (R7) |
-| `level_complete` | уровень или вся сказка засчитаны (квиз пройден) впервые | `level`/`<story>:<step>`, `story_id`, `level` | `src/KazakhTalesApp.tsx` (`markStep`) | путь по уровням; «готово» в заданиях учителя (R8) |
+| `level_complete` | уровень или вся сказка засчитаны (квиз пройден) впервые | `level`/`<story>:<step>`, `story_id`, `level` | `src/KazakhTalesApp.tsx` (`markStep`) | путь по уровням; «готово» в заданиях учителя |
 | `word_tap` | нажато слово в тексте | `word`/слово, `story_id`, `level`; `result.has_translation`, `during_audio` | `ReaderScreen.tsx` | трудные слова класса (R8); «попробуй уровень ниже» при многих нажатиях (N7, Yanagisawa et al. 2020); пользу глосс (I3) |
 | `audio_play` | старт «Бірге оқу» или сцены легенды | `reading`/`<story>:<level>` или `scene`/id карточки; `result.speed`, `from_sentence`, `sentences` (чтение), `resume` (сцена) | `ReaderScreen.tsx`, `src/components/ScenePlayer.tsx`, `LegendCards.tsx` | чтение под озвучку и выбранная скорость (§3.9, Webb, Uchihara & Yanagisawa 2023); порядок «слушай и читай» (N3) |
 | `quiz_answer` | ответ на вопрос квиза (каждая попытка) | `quiz_question`/номер вопроса, `story_id`, `level`; `result.correct`, `attempt`, `choice`, `duration_ms`, `practice`, `hint` (`none`/`evidence`/`sentence`/`reread`), `type` | `src/components/screens/QuizScreens.tsx` | корректирующая обратная связь и вторая попытка (§3.5, Wisniewski, Zierer & Hattie 2020; I1); польза предложения-доказательства (§3.7); трудные вопросы класса (R8) |
@@ -65,7 +65,7 @@
 - «трудные слова класса»: топ-10 слов по числу учеников, затем по сумме нажатий (`word_tap`) и ошибок в повторении (`srs_review` с `correct = false`);
 - «трудные вопросы»: топ-10 вопросов квизов по числу неверных ответов (без тренировок).
 
-Сырых событий и текстов функция не возвращает. Экран для неё будет в R8. Проверка на локальном Postgres: `supabase/tests/learning_events.sql` (порядок запуска в шапке файла).
+Сырых событий и текстов функция не возвращает. С R8 она используется во вкладке «Белсенділік» / «Activity» кабинета учителя (`src/components/Teacher.tsx`, клиент `classEvents` в `src/utils/classWork.ts`): активные дни и последнее действие по ученикам, «Қиын сөздер», «Қиын сұрақтар» (текст вопроса восстанавливается из `story_id`, `level` и номера вопроса `object_id`), и CSV класса с этими суммами и прогрессом по никам (`docs/research-evidence.md`, раздел 9.4). С миграции `20261107000000_teacher_panel.sql` повторное вступление в класс переносит `joined_at`, поэтому события, сделанные вне класса, в суммы не попадают. Проверка на локальном Postgres: `supabase/tests/learning_events.sql` (порядок запуска в шапке файла).
 
 ## Примеры запросов
 

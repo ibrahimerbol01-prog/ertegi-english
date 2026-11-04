@@ -24,10 +24,10 @@ const KK = `
 - сақтаған сөздерің және оларды қайталау кестесі;
 - жинаған аңыз карталарың мен мақалдарың, «білемін» деп белгілеген сөздерің;
 - өзің жазған мәтіндер: «Ой ізі» жауаптары мен аяқталмаған жобалары, апта дебатының мәтіні, «Дала кеңесі» дауысы мен себебі, Шоқанның «Ой ізі» мен дебатқа берген жауабы;
-- оқу әрекеттерінің журналы: қосымшаны ашу, ертегіні ашу, сөзді басу, тыңдау, сынақ сұрағына жауап (дұрыс па, нешінші әрекет, қанша уақыт), сөзді қайталау, дауыс беру, айтылым бағасы, әрекеттің уақыты, қосымшаның нұсқасы мен тілі, бір ғана сыныпта болсаң сол сыныптың ішкі нөмірі. Өзің жазған мәтіндер мен Шоқанға жазғандарың журналға түспейді, тек олардың ұзындығы (сөз саны). Журнал сабақты жақсарту үшін керек (қай сөз, қай сұрақ қиын). Мұғалім одан тек жиынтық сандарды ала алады: 30 күндегі әрекеттер саны және сыныптың қиын сөздері мен сұрақтары.
+- оқу әрекеттерінің журналы: қосымшаны ашу, ертегіні ашу, сөзді басу, тыңдау, сынақ сұрағына жауап (дұрыс па, нешінші әрекет, қанша уақыт), сөзді қайталау, дауыс беру, айтылым бағасы, әрекеттің уақыты, қосымшаның нұсқасы мен тілі, бір ғана сыныпта болсаң сол сыныптың ішкі нөмірі. Өзің жазған мәтіндер мен Шоқанға жазғандарың журналға түспейді, тек олардың ұзындығы (сөз саны). Журнал сабақты жақсарту үшін керек (қай сөз, қай сұрақ қиын). Мұғалім одан тек жиынтық сандарды ала алады: 30 күндегі әрекеттер саны және сыныптың қиын сөздері мен сұрақтары. Мұғалім осы сандарды және сыныптың прогресін (лақап аттар бойынша) CSV файлы ретінде жүктей алады.
 Сынып (егер қосылсаң):
 - сыныптағы лақап атың (әдепкіде профильдегі атың немесе поштаңның @ белгісіне дейінгі бөлігі), қосылған және шыққан күнің.
-Сыныпта тұрғанда сол сыныптың мұғалімі көреді: лақап атыңды, XP мен күн қатарыңды, соңғы белсенді күніңді, сақтаған сөздеріңді (аудармасымен және қаншалықты меңгергеніңмен), өткен ертегі деңгейлерің мен соңғы сынақ нәтижелеріңді. Сыныптан шықсаң, мұғалім тек лақап атың мен күндерді көреді.
+Сыныпта тұрғанда сол сыныптың мұғалімі көреді: лақап атыңды, XP мен күн қатарыңды, соңғы белсенді күніңді, сақтаған сөздеріңді (аудармасымен және қаншалықты меңгергеніңмен), өткен ертегі деңгейлерің мен соңғы сынақ нәтижелеріңді. Сонымен қатар өзің жазған жұмыстарды: апта дебатындағы дәлелдерің мен Шоқанға жауабыңды, «Ой ізі» жазбаларыңды барлық нұсқаларымен, «Дала кеңесіндегі» дауыстарың мен себептеріңді. Бұл жұмыстардың ішінен мұғалім тек сыныпқа қосылғаннан кейін жазғандарыңды көреді. Мұғалім «Дала кеңесіне» жазған себебіңді басқа оқушыларға атыңсыз көрсетуге рұқсат бере алады. Сыныптан шықсаң, мұғалім тек лақап атың мен күндерді көреді.
 Мұғалім үшін: ашқан сыныптарың, кодтары мен тапсырмалары.
 Есептегіштер: Шоқанға және дыбыс қызметіне күніне неше рет жүгінгенің (тек сан, күнделікті шекті сақтау үшін).
 
@@ -37,7 +37,7 @@ const KK = `
 Тек сайт жұмыс істеуі үшін: кіру, прогресіңді сақтау, сөздерді қайталауды жоспарлау, мұғаліміңе сынып нәтижесін көрсету, тегін қызметтердің күнделікті шегін ұстау. Оқу журналы бойынша қай тапсырмалар көмектесетінін, қайсысы қиын екенін көріп, сайтты жақсартамыз.
 
 3. ҚАЙДА САҚТАЛАДЫ
-Барлық аккаунт және оқу деректері Supabase дерекқорында. Әр оқушы тек өз жазбаларын оқи және өзгерте алады, бұл дерекқор деңгейінде тексеріледі. Мұғалім тек өз сыныбындағы оқушылардың прогресін көреді (1-бөлімде жазылғандай). «Дала кеңесіне» жазған себебің тексерілген соң басқа оқушыларға атыңсыз көрсетілуі мүмкін.
+Барлық аккаунт және оқу деректері Supabase дерекқорында. Әр оқушы тек өз жазбаларын оқи және өзгерте алады, бұл дерекқор деңгейінде тексеріледі. Мұғалім тек өз сыныбындағы оқушылардың прогресін көреді (1-бөлімде жазылғандай). «Дала кеңесіне» жазған себебің мұғалім тексеріп, рұқсат берсе ғана басқа оқушыларға атыңсыз көрсетіледі. Сыныпта дауыс жеткілікті болса, «Дала кеңесінде» сыныптастарың сынып бойынша жалпы сандарды көреді, кімнің не таңдағанын емес.
 Оқу деректерінің көшірмесі осы құрылғыда (браузерде) да сақталады, сондықтан қосымша желісіз де жұмыс істейді; желі пайда болғанда өзгерістер дерекқорға жіберіледі. Тек осы құрылғыда қалатындар: тіл таңдауы, бүгінгі сөздер тізімі, сынып тізімінің көшірмесі.
 
 4. БАСҚА ҚЫЗМЕТТЕР
@@ -76,10 +76,10 @@ const RU = `
 - сохранённые слова и расписание их повторения;
 - собранные карточки легенд и пословицы, слова, отмеченные «знаю»;
 - твои тексты: ответы «Ой ізі» и их черновики, текст дебата недели, голос и причина в «Дала кеңесі», ответы Шоқана на «Ой ізі» и дебат;
-- журнал учебных действий: открытие приложения, открытие сказки, нажатие на слово, прослушивание, ответ на вопрос теста (верно ли, с какой попытки, сколько времени), повторение слова, голосование, оценка произношения, время действия, версия приложения и язык, а если ты состоишь ровно в одном классе, внутренний номер этого класса. Твои тексты и сообщения Шоқану в журнал не попадают, только их длина (число слов). Журнал нужен, чтобы улучшать уроки (какие слова и вопросы трудные). Учитель может получить из него только общие числа: сколько действий за 30 дней и трудные слова и вопросы класса.
+- журнал учебных действий: открытие приложения, открытие сказки, нажатие на слово, прослушивание, ответ на вопрос теста (верно ли, с какой попытки, сколько времени), повторение слова, голосование, оценка произношения, время действия, версия приложения и язык, а если ты состоишь ровно в одном классе, внутренний номер этого класса. Твои тексты и сообщения Шоқану в журнал не попадают, только их длина (число слов). Журнал нужен, чтобы улучшать уроки (какие слова и вопросы трудные). Учитель может получить из него только общие числа: сколько действий за 30 дней и трудные слова и вопросы класса. Эти числа и прогресс класса (по никам) учитель может скачать файлом CSV.
 Класс (если ты вступил):
 - твой ник в классе (по умолчанию имя из профиля или часть почты до знака @), даты вступления и выхода.
-Пока ты в классе, учитель этого класса видит: ник, XP и серию дней, последний активный день, сохранённые слова (с переводом и тем, насколько ты их выучил), пройденные уровни сказок и последние результаты тестов. Если ты вышел из класса, учитель видит только ник и даты.
+Пока ты в классе, учитель этого класса видит: ник, XP и серию дней, последний активный день, сохранённые слова (с переводом и тем, насколько ты их выучил), пройденные уровни сказок и последние результаты тестов. А также твои работы: аргументы в дебатах недели и ответ Шоқану, записи «Ой ізі» со всеми версиями, голоса и причины в «Дала кеңесі». Из этих работ учитель видит только те, что ты сделал после вступления в класс. Учитель может разрешить показывать твою причину из «Дала кеңесі» другим ученикам без твоего имени. Если ты вышел из класса, учитель видит только ник и даты.
 Для учителя: созданные классы, их коды и задания.
 Счётчики: сколько раз за день ты обращался к Шоқану и к голосовому сервису (только число, чтобы соблюдать дневной лимит).
 
@@ -89,7 +89,7 @@ const RU = `
 Только для работы сайта: вход, сохранение прогресса, расписание повторения слов, показ результатов класса учителю, соблюдение дневных лимитов бесплатных сервисов. По журналу учебных действий мы видим, какие задания помогают и какие трудные, и улучшаем сайт.
 
 3. ГДЕ ХРАНИТСЯ
-Все данные аккаунта и учёбы хранятся в базе данных Supabase. Каждый ученик может читать и менять только свои записи, это проверяет сама база данных. Учитель видит прогресс только учеников своего класса (как описано в разделе 1). Причина, которую ты написал в «Дала кеңесі», после проверки может показываться другим ученикам без твоего имени.
+Все данные аккаунта и учёбы хранятся в базе данных Supabase. Каждый ученик может читать и менять только свои записи, это проверяет сама база данных. Учитель видит прогресс только учеников своего класса (как описано в разделе 1). Причина, которую ты написал в «Дала кеңесі», показывается другим ученикам без твоего имени, только если учитель проверил её и разрешил. Когда в классе достаточно голосов, одноклассники видят в «Дала кеңесі» общие числа по классу, а не кто что выбрал.
 Копия учебных данных хранится и на этом устройстве (в браузере), поэтому приложение работает без интернета; когда сеть появляется, изменения отправляются в базу данных. Только на этом устройстве остаются: выбор языка, список слов на сегодня, копия списка классов.
 
 4. ДРУГИЕ СЕРВИСЫ
@@ -128,10 +128,10 @@ Learning:
 - your saved words and their review schedule;
 - the legend cards and proverbs you collected, the words you marked "I know it";
 - texts you write: Thinking trail answers and their drafts, the debate-of-the-week text, your Steppe council vote and reason, and Shoqan's replies to your Thinking trail and debate;
-- a log of learning actions: opening the app, opening a tale, tapping a word, listening, answering a quiz question (right or not, which try, how long it took), reviewing a word, voting, pronunciation scores, when each happened, the app version and language, and, if you are in exactly one class, that class's internal id. Your own texts and messages to Shoqan are not in the log, only their length (word count). The log is there to improve the lessons (which words and questions are hard). A teacher can get only totals from it: how many actions in 30 days, and the class's hard words and questions.
+- a log of learning actions: opening the app, opening a tale, tapping a word, listening, answering a quiz question (right or not, which try, how long it took), reviewing a word, voting, pronunciation scores, when each happened, the app version and language, and, if you are in exactly one class, that class's internal id. Your own texts and messages to Shoqan are not in the log, only their length (word count). The log is there to improve the lessons (which words and questions are hard). A teacher can get only totals from it: how many actions in 30 days, and the class's hard words and questions. The teacher can download these totals and the class's progress (by nickname) as a CSV file.
 Class (if you join one):
 - your nickname in the class (by default your profile name or the part of your email before @), the dates you joined and left.
-While you are in the class, its teacher sees: your nickname, XP and streak, last active day, saved words (with translation and how well you know them), the tale levels you finished and your recent quiz results. After you leave, the teacher sees only your nickname and the dates.
+While you are in the class, its teacher sees: your nickname, XP and streak, last active day, saved words (with translation and how well you know them), the tale levels you finished and your recent quiz results. The teacher also sees your work: your arguments in the debate of the week and your reply to Shoqan, your Thinking trail entries with every version, and your Steppe council votes and reasons. Of this work, the teacher sees only what you did after joining the class. The teacher can allow your Steppe council reason to be shown to other learners without your name. After you leave, the teacher sees only your nickname and the dates.
 For teachers: the classes you create, their codes and assignments.
 Counters: how many times a day you used Shoqan and the voice service (just a number, to keep the daily limit).
 
@@ -141,7 +141,7 @@ We do not keep: your chat with Shoqan (only his replies to your Thinking trail a
 Only to run the site: sign-in, saving progress, planning word reviews, showing class results to your teacher, keeping the daily limits of free services. From the learning log we see which tasks help and which are hard, and improve the site.
 
 3. WHERE IT IS STORED
-All account and learning data is stored in a Supabase database. Each learner can read and change only their own records, and the database itself enforces this. A teacher sees the progress of learners in their own class only (as listed in part 1). The reason you write in the Steppe council may be shown to other learners without your name, after it is checked.
+All account and learning data is stored in a Supabase database. Each learner can read and change only their own records, and the database itself enforces this. A teacher sees the progress of learners in their own class only (as listed in part 1). The reason you write in the Steppe council is shown to other learners without your name, and only after your teacher has checked and allowed it. When your class has enough votes, classmates see the class's totals in the Steppe council, not who chose what.
 A copy of your learning data is also kept on this device (in the browser), so the app works offline; changes are sent to the database when the network is back. Only these stay on this device alone: language choice, today's word list, a copy of your class list.
 
 4. OTHER SERVICES
