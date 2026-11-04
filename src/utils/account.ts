@@ -5,6 +5,10 @@
 /** Kept after deletion: the interface language is a device setting, not
     personal data, and the "account deleted" screen should stay in it. */
 export const KEEP_KEYS = new Set(["ertegi_lang"]);
+/** Guest data ("ertegi_cards_guest", "ertegi_trail_draft_guest_<tale>_<level>", …)
+    is kept: on a shared school computer it is another child's progress, not
+    the deleted account's. */
+export const GUEST_KEY = /^ertegi_.+_guest(_|$)/;
 /** App keys that do not start with "ertegi_". */
 const EXTRA_KEYS = new Set(["shoqan_bubble_pos"]);
 /** Supabase keeps the session as sb-<project>-auth-token (plus -code-verifier for OAuth). */
@@ -14,12 +18,12 @@ type KeyStore = Pick<Storage, "length" | "key" | "removeItem">;
 
 /** Every key the app wrote on this device: progress caches, drafts, cards,
     class cache, quiz outbox, pending markers, the session token. Guest keys
-    ("…_guest…") go too: on this device they belong to the same person. */
+    stay (see GUEST_KEY). */
 export function appStorageKeys(store: KeyStore): string[] {
   const keys: string[] = [];
   for (let i = 0; i < store.length; i++) {
     const k = store.key(i);
-    if (!k || KEEP_KEYS.has(k)) continue;
+    if (!k || KEEP_KEYS.has(k) || GUEST_KEY.test(k)) continue;
     if (k.startsWith("ertegi_") || EXTRA_KEYS.has(k) || SUPABASE_KEY.test(k)) keys.push(k);
   }
   return keys;

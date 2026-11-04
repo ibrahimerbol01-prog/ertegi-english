@@ -92,7 +92,13 @@ export function DeleteAccountSheet({ lang, teacher = false, onClose }: { lang: s
     setBusy(true);
     setFailure(null);
     const res = await deleteAccount({
-      rpc: () => supabase.rpc("delete_my_account"),
+      // getSession refreshes an expired token first. Without a session the call
+      // would go as anon and fail with 42501, which reads as "not switched on".
+      rpc: async () => {
+        const { data } = await supabase.auth.getSession();
+        if (!data.session) return { error: { code: "PGRST301", message: "no session", status: 401 } };
+        return supabase.rpc("delete_my_account");
+      },
       // Local only: the server session ended with the user.
       signOut: () => supabase.auth.signOut({ scope: "local" }),
       // Tell App before sign-out, so it shows the goodbye screen instead of the sign-in form.

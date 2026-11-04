@@ -11,8 +11,10 @@ function seed() {
     `ertegi_my_classes_${U}`, `ertegi_trail_${U}`, `ertegi_trail_draft_${U}_aldar_kose_A1`,
     `ertegi_cards_${U}`, `ertegi_debate_${U}_2026-11-02`, `ertegi_daily_words_${U}`,
     `ertegi_council_${U}`, `ertegi_maqals_${U}`, `ertegi_known_${U}`,
-    "ertegi_cards_guest", "ertegi_pending_class", "ertegi_role_pending", "ertegi_privacy_consent_pending",
+    "ertegi_pending_class", "ertegi_role_pending", "ertegi_privacy_consent_pending",
     "shoqan_bubble_pos", "sb-tsialjlxlhwemrkyyvjv-auth-token", "sb-tsialjlxlhwemrkyyvjv-auth-token-code-verifier",
+    // Guest data: on a shared school computer it is another child's, must stay.
+    "ertegi_cards_guest", "ertegi_trail_draft_guest_aldar_kose_A1", "ertegi_debate_guest_2026-11-02",
     // Not ours: must stay.
     "other_site_key", "workbox-precache", "sb-something-else",
   ];
@@ -22,11 +24,14 @@ function seed() {
 describe("clearing the device after deletion", () => {
   beforeEach(seed);
 
-  it("removes every app key, keeps the language and other sites' keys", () => {
+  it("removes every app key, keeps the language, guest data and other sites' keys", () => {
     const n = clearAppStorage();
-    expect(n).toBe(20);
+    expect(n).toBe(19);
     const left = Array.from({ length: localStorage.length }, (_, i) => localStorage.key(i)).sort();
-    expect(left).toEqual(["ertegi_lang", "other_site_key", "sb-something-else", "workbox-precache"]);
+    expect(left).toEqual([
+      "ertegi_cards_guest", "ertegi_debate_guest_2026-11-02", "ertegi_lang", "ertegi_trail_draft_guest_aldar_kose_A1",
+      "other_site_key", "sb-something-else", "workbox-precache",
+    ]);
   });
 
   it("lists keys without removing them", () => {
@@ -66,7 +71,7 @@ describe("deleteAccount", () => {
   it("on success clears the device and signs out locally", async () => {
     const signOut = vi.fn(async () => ({}));
     const res = await deleteAccount({ rpc: async () => ({ error: null, status: 204 }), signOut, online: () => true });
-    expect(res).toEqual({ ok: true, removedKeys: 20 });
+    expect(res).toEqual({ ok: true, removedKeys: 19 });
     expect(signOut).toHaveBeenCalledOnce();
     expect(localStorage.getItem(`ertegi_progress_${U}`)).toBeNull();
     expect(localStorage.getItem("ertegi_lang")).toBe("1");
@@ -101,13 +106,13 @@ describe("deleteAccount", () => {
     expect(res).toEqual({ ok: false, reason: "offline" });
     expect(rpc).not.toHaveBeenCalled();
     expect(signOut).not.toHaveBeenCalled();
-    expect(localStorage.length).toBe(24);
+    expect(localStorage.length).toBe(26);
   });
 
   it("fetch throwing counts as offline and keeps local data", async () => {
     const res = await deleteAccount({ rpc: async () => { throw new TypeError("Failed to fetch"); }, signOut: async () => ({}), online: () => true });
     expect(res).toEqual({ ok: false, reason: "offline" });
-    expect(localStorage.length).toBe(24);
+    expect(localStorage.length).toBe(26);
   });
 
   it("migration not applied: unavailable, keeps local data and session", async () => {

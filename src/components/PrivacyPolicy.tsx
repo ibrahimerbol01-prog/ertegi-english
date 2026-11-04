@@ -24,7 +24,8 @@ const KK = `
 - сақтаған сөздерің және оларды қайталау кестесі;
 - өзің жазған мәтіндер: «Ой ізі» жауаптары, апта дебатының мәтіні, «Дала кеңесі» дауысы мен себебі.
 Сынып (егер қосылсаң):
-- сыныптағы лақап атың, қосылған және шыққан күнің. Сол сыныптың мұғалімі лақап атыңды және сол ертегілер бойынша прогресіңді көреді.
+- сыныптағы лақап атың (әдепкіде профильдегі атың немесе поштаңның @ белгісіне дейінгі бөлігі), қосылған және шыққан күнің.
+Сыныпта тұрғанда сол сыныптың мұғалімі көреді: лақап атыңды, XP мен күн қатарыңды, соңғы белсенді күніңді, сақтаған сөздеріңді (аудармасымен және қаншалықты меңгергеніңмен), өткен ертегі деңгейлерің мен соңғы сынақ нәтижелеріңді. Сыныптан шықсаң, мұғалім тек лақап атың мен күндерді көреді.
 Мұғалім үшін: ашқан сыныптарың, кодтары мен тапсырмалары.
 Есептегіштер: Шоқанға және дыбыс қызметіне күніне неше рет жүгінгенің (тек сан, күнделікті шекті сақтау үшін).
 
@@ -34,7 +35,7 @@ const KK = `
 Тек сайт жұмыс істеуі үшін: кіру, прогресіңді сақтау, сөздерді қайталауды жоспарлау, мұғаліміңе сынып нәтижесін көрсету, тегін қызметтердің күнделікті шегін ұстау.
 
 3. ҚАЙДА САҚТАЛАДЫ
-Барлық аккаунт және оқу деректері Supabase дерекқорында. Әр оқушы тек өз жазбаларын оқи және өзгерте алады, бұл дерекқор деңгейінде тексеріледі. Мұғалім тек өз сыныбындағы оқушылардың сол сыныпқа қатысты прогресін көреді. «Дала кеңесіне» жазған себебің тексерілген соң басқа оқушыларға атыңсыз көрсетілуі мүмкін.
+Барлық аккаунт және оқу деректері Supabase дерекқорында. Әр оқушы тек өз жазбаларын оқи және өзгерте алады, бұл дерекқор деңгейінде тексеріледі. Мұғалім тек өз сыныбындағы оқушылардың прогресін көреді (1-бөлімде жазылғандай). «Дала кеңесіне» жазған себебің тексерілген соң басқа оқушыларға атыңсыз көрсетілуі мүмкін.
 Кейбір нәрселер тек осы құрылғыда (браузерде) сақталады: тіл таңдауы, жазба жобалары, карталар, сынып тізімінің көшірмесі.
 
 4. БАСҚА ҚЫЗМЕТТЕР
@@ -45,13 +46,12 @@ const KK = `
 - Anthropic Claude: Шоқанның қосалқы нұсқасы. Әкімші қосқан кезде ғана іске қосылады, сонда жоғарыдағы мәтіндер Anthropic-қа жіберіледі.
 - Microsoft Azure Speech: ертегіні дауыстап оқу (ертегі мәтіні жіберіледі) және «Дыбыс» бөлімінде айтылымды бағалау. Бағалау кезінде микрофондағы дауысың тікелей Microsoft-қа жіберіледі, бағаланады; біз дауысты сақтамаймыз.
 - Google Fonts: сайттың қаріптері Google серверінен жүктеледі.
-Оқу деректеріңді Google-ға, Meta-ға немесе жарнамашыларға бермейміз.
+Жоғарыда жазылғаннан басқа, оқу деректеріңді Google-ға, Meta-ға немесе жарнамашыларға бермейміз.
 
 5. 18 ЖАСҚА ТОЛМАСАҢ
 Ertegi English мектеп оқушыларына арналған. Қосымшаны ата-анаң немесе мұғалімің біліп отырсын, басқа мектеп бағдарламалары сияқты.
 
 6. ҚҰҚЫҚТАРЫҢ
-- Сақтаған сөздеріңді қосымшада кез келген уақытта өшіре аласың.
 - Аккаунтты өзің толық өшіре аласың: Профиль → «Аккаунтты өшіру». Аккаунт, прогресс, сөздер, жазбалар, дауыстар, дебаттар, сыныптар мен сыныпқа мүшелік бірден дерекқордан өшеді, осы құрылғыдағы деректер де тазаланады. Мұны қайтару мүмкін емес. Дерекқордың резервтік көшірмелерінде деректер біраз уақыт қалуы мүмкін, кейін олар да жойылады.
 - Шыққан сәтте сессия бірден аяқталады.
 
@@ -74,7 +74,8 @@ const RU = `
 - сохранённые слова и расписание их повторения;
 - твои тексты: ответы «Ой ізі», текст дебата недели, голос и причина в «Дала кеңесі».
 Класс (если ты вступил):
-- твой ник в классе, даты вступления и выхода. Учитель этого класса видит ник и твой прогресс по этим сказкам.
+- твой ник в классе (по умолчанию имя из профиля или часть почты до знака @), даты вступления и выхода.
+Пока ты в классе, учитель этого класса видит: ник, XP и серию дней, последний активный день, сохранённые слова (с переводом и тем, насколько ты их выучил), пройденные уровни сказок и последние результаты тестов. Если ты вышел из класса, учитель видит только ник и даты.
 Для учителя: созданные классы, их коды и задания.
 Счётчики: сколько раз за день ты обращался к Шоқану и к голосовому сервису (только число, чтобы соблюдать дневной лимит).
 
@@ -84,7 +85,7 @@ const RU = `
 Только для работы сайта: вход, сохранение прогресса, расписание повторения слов, показ результатов класса учителю, соблюдение дневных лимитов бесплатных сервисов.
 
 3. ГДЕ ХРАНИТСЯ
-Все данные аккаунта и учёбы хранятся в базе данных Supabase. Каждый ученик может читать и менять только свои записи, это проверяет сама база данных. Учитель видит только прогресс учеников своего класса по этому классу. Причина, которую ты написал в «Дала кеңесі», после проверки может показываться другим ученикам без твоего имени.
+Все данные аккаунта и учёбы хранятся в базе данных Supabase. Каждый ученик может читать и менять только свои записи, это проверяет сама база данных. Учитель видит прогресс только учеников своего класса (как описано в разделе 1). Причина, которую ты написал в «Дала кеңесі», после проверки может показываться другим ученикам без твоего имени.
 Некоторые вещи хранятся только на этом устройстве (в браузере): выбор языка, черновики, карточки, копия списка классов.
 
 4. ДРУГИЕ СЕРВИСЫ
@@ -95,14 +96,13 @@ const RU = `
 - Anthropic Claude: запасной вариант Шоқана. Работает, только если его включил администратор; тогда эти тексты отправляются в Anthropic.
 - Microsoft Azure Speech: озвучка сказок (отправляется текст сказки) и оценка произношения в разделе «Дыбыс». Во время оценки звук с микрофона идёт напрямую в Microsoft и оценивается; мы запись не храним.
 - Google Fonts: шрифты сайта загружаются с серверов Google.
-Твои учебные данные мы не передаём Google, Meta или рекламодателям.
+Кроме того, что написано выше, твои учебные данные мы не передаём Google, Meta или рекламодателям.
 
 5. ЕСЛИ ТЕБЕ НЕТ 18 ЛЕТ
 Ertegi English создан для школьников. Пусть родители или учитель знают, что ты пользуешься приложением, как и любой другой школьной программой.
 
 6. ТВОИ ПРАВА
-- Сохранённые слова можно удалить в приложении в любой момент.
-- Аккаунт можно удалить самому: Профиль → «Удалить аккаунт» (в казахском интерфейсе «Аккаунтты өшіру»). Аккаунт, прогресс, слова, записи, голоса, дебаты, классы и членство в классах сразу удаляются из базы данных, данные на этом устройстве тоже очищаются. Отменить это нельзя. В резервных копиях базы данные могут оставаться ещё некоторое время, потом удаляются и там.
+- Аккаунт можно удалить самому: Профиль → «Аккаунтты өшіру» (в английском интерфейсе «Delete account»). Аккаунт, прогресс, слова, записи, голоса, дебаты, классы и членство в классах сразу удаляются из базы данных, данные на этом устройстве тоже очищаются. Отменить это нельзя. В резервных копиях базы данные могут оставаться ещё некоторое время, потом удаляются и там.
 - При выходе из аккаунта сессия сразу завершается.
 
 7. КОНТАКТ
@@ -124,7 +124,8 @@ Learning:
 - your saved words and their review schedule;
 - texts you write: Thinking trail answers, the debate-of-the-week text, your Steppe council vote and reason.
 Class (if you join one):
-- your nickname in the class, the dates you joined and left. That class's teacher sees your nickname and your progress on those tales.
+- your nickname in the class (by default your profile name or the part of your email before @), the dates you joined and left.
+While you are in the class, its teacher sees: your nickname, XP and streak, last active day, saved words (with translation and how well you know them), the tale levels you finished and your recent quiz results. After you leave, the teacher sees only your nickname and the dates.
 For teachers: the classes you create, their codes and assignments.
 Counters: how many times a day you used Shoqan and the voice service (just a number, to keep the daily limit).
 
@@ -134,7 +135,7 @@ We do not keep: your chat with Shoqan, voice recordings, your location, your pho
 Only to run the site: sign-in, saving progress, planning word reviews, showing class results to your teacher, keeping the daily limits of free services.
 
 3. WHERE IT IS STORED
-All account and learning data is stored in a Supabase database. Each learner can read and change only their own records, and the database itself enforces this. A teacher sees only the progress of learners in their own class, for that class. The reason you write in the Steppe council may be shown to other learners without your name, after it is checked.
+All account and learning data is stored in a Supabase database. Each learner can read and change only their own records, and the database itself enforces this. A teacher sees the progress of learners in their own class only (as listed in part 1). The reason you write in the Steppe council may be shown to other learners without your name, after it is checked.
 Some things stay only on this device (in the browser): language choice, drafts, cards, a copy of your class list.
 
 4. OTHER SERVICES
@@ -145,13 +146,12 @@ Some things stay only on this device (in the browser): language choice, drafts, 
 - Anthropic Claude: Shoqan's backup. Used only if the admin switches it on; then these texts go to Anthropic.
 - Microsoft Azure Speech: reading tales aloud (the tale text is sent) and scoring pronunciation in Speak. While scoring, the sound from your microphone goes straight to Microsoft to be scored; we do not keep the recording.
 - Google Fonts: the site's fonts load from Google's servers.
-We do not share your learning data with Google, Meta or any advertiser.
+Apart from what is listed above, we do not share your learning data with Google, Meta or any advertiser.
 
 5. IF YOU ARE UNDER 18
 Ertegi English is built for school students. Use it with a parent's or teacher's awareness, like any other school software.
 
 6. YOUR RIGHTS
-- You can delete saved words in the app at any time.
 - You can delete your whole account yourself: Profile → "Delete account". Your account, progress, words, entries, votes, debates, classes and class memberships are removed from the database at once, and the app's data on this device is cleared. This cannot be undone. Database backups may keep the data for a while longer before it is removed there too.
 - Signing out ends your session immediately.
 
