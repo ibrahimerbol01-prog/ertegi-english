@@ -1,0 +1,3485 @@
+{
+  "generator": "src/research/corpus.ts via scripts/corpus-report.mjs (npm run corpus)",
+  "contentVersion": "2026-11-04",
+  "contentHash": "e317c8c2",
+  "sources": [
+    "The CEFR-J Wordlist Version 1.5. Compiled by Yukio Tono, Tokyo University of Foreign Studies (via openlanguageprofiles/olp-en-cefrj). Free for research and commercial use with citation.",
+    "Octanove Vocabulary Profile C1/C2, version 1.0. Octanove Labs (via openlanguageprofiles/olp-en-cefrj). CC BY-SA 4.0.",
+    "wink-lemmatizer 3.0.4 (WordNet-based, MIT)."
+  ],
+  "thresholds": {
+    "adequate": 0.95,
+    "optimal": 0.98,
+    "mattrWindow": 50
+  },
+  "names": [
+    "aldar",
+    "alpamys",
+    "asan",
+    "ayaz",
+    "baibori",
+    "baishubar",
+    "english",
+    "er",
+    "ernazar",
+    "gulbarshyn",
+    "kaigy",
+    "kalmyk",
+    "karlyga",
+    "kazakh",
+    "kazakhs",
+    "kempir",
+    "kenzhekey",
+    "kose",
+    "samruk",
+    "shalkuiryk",
+    "taishyk",
+    "tazsha",
+    "tostik",
+    "ultan",
+    "zhalmauyz",
+    "zhanibek",
+    "zhelmaya",
+    "zheruiyk",
+    "zhirenshe"
+  ],
+  "texts": [
+    {
+      "story": "aldar_kose",
+      "label": "A1",
+      "words": 110,
+      "sentences": 22,
+      "meanSentence": 5,
+      "maxSentence": 10,
+      "lemmaTypes": 51,
+      "mattr": 0.593,
+      "levelTokens": {
+        "A1": 99,
+        "A2": 3,
+        "B1": 1,
+        "B2": 1,
+        "C1": 0,
+        "C2": 0,
+        "offList": 0
+      },
+      "nameTokens": 6,
+      "coverage": {
+        "A1": 0.952,
+        "A2": 0.981,
+        "B1": 0.99,
+        "B2": 1,
+        "C1": 1,
+        "C2": 1
+      },
+      "estimatedAdequate": "A1",
+      "estimatedOptimal": "A2",
+      "estimatedAdequateOffListKnown": "A1",
+      "glossCoverage": 1,
+      "glossMissing": [],
+      "newLemmas": null,
+      "aboveLabel": [
+        {
+          "lemma": "wolf",
+          "count": 1,
+          "level": "B2"
+        },
+        {
+          "lemma": "scared",
+          "count": 1,
+          "level": "B1"
+        },
+        {
+          "lemma": "road",
+          "count": 1,
+          "level": "A2"
+        },
+        {
+          "lemma": "shout",
+          "count": 1,
+          "level": "A2"
+        },
+        {
+          "lemma": "trick",
+          "count": 1,
+          "level": "A2"
+        }
+      ],
+      "offList": [],
+      "targetCandidates": [
+        {
+          "lemma": "coat",
+          "count": 5,
+          "level": "A1"
+        },
+        {
+          "lemma": "man",
+          "count": 5,
+          "level": "A1"
+        },
+        {
+          "lemma": "rich",
+          "count": 4,
+          "level": "A1"
+        },
+        {
+          "lemma": "warm",
+          "count": 3,
+          "level": "A1"
+        }
+      ]
+    },
+    {
+      "story": "aldar_kose",
+      "label": "A2",
+      "words": 137,
+      "sentences": 13,
+      "meanSentence": 10.5,
+      "maxSentence": 17,
+      "lemmaTypes": 74,
+      "mattr": 0.702,
+      "levelTokens": {
+        "A1": 118,
+        "A2": 6,
+        "B1": 3,
+        "B2": 2,
+        "C1": 0,
+        "C2": 0,
+        "offList": 0
+      },
+      "nameTokens": 8,
+      "coverage": {
+        "A1": 0.915,
+        "A2": 0.961,
+        "B1": 0.984,
+        "B2": 1,
+        "C1": 1,
+        "C2": 1
+      },
+      "estimatedAdequate": "A2",
+      "estimatedOptimal": "B1",
+      "estimatedAdequateOffListKnown": "A2",
+      "glossCoverage": 1,
+      "glossMissing": [],
+      "newLemmas": 37,
+      "aboveLabel": [
+        {
+          "lemma": "villager",
+          "count": 1,
+          "level": "B2"
+        },
+        {
+          "lemma": "wolf",
+          "count": 1,
+          "level": "B2"
+        },
+        {
+          "lemma": "dusty",
+          "count": 1,
+          "level": "B1"
+        },
+        {
+          "lemma": "praise",
+          "count": 1,
+          "level": "B1"
+        },
+        {
+          "lemma": "rid",
+          "count": 1,
+          "level": "B1"
+        }
+      ],
+      "offList": [],
+      "targetCandidates": [
+        {
+          "lemma": "coat",
+          "count": 5,
+          "level": "A1"
+        },
+        {
+          "lemma": "man",
+          "count": 5,
+          "level": "A1"
+        },
+        {
+          "lemma": "horse",
+          "count": 4,
+          "level": "A1"
+        },
+        {
+          "lemma": "rich",
+          "count": 4,
+          "level": "A1"
+        },
+        {
+          "lemma": "clever",
+          "count": 3,
+          "level": "A1"
+        }
+      ]
+    },
+    {
+      "story": "aldar_kose",
+      "label": "B1",
+      "words": 169,
+      "sentences": 10,
+      "meanSentence": 16.9,
+      "maxSentence": 26,
+      "lemmaTypes": 92,
+      "mattr": 0.769,
+      "levelTokens": {
+        "A1": 137,
+        "A2": 16,
+        "B1": 6,
+        "B2": 2,
+        "C1": 1,
+        "C2": 0,
+        "offList": 1
+      },
+      "nameTokens": 6,
+      "coverage": {
+        "A1": 0.84,
+        "A2": 0.939,
+        "B1": 0.975,
+        "B2": 0.988,
+        "C1": 0.994,
+        "C2": 0.994
+      },
+      "estimatedAdequate": "B1",
+      "estimatedOptimal": "B2",
+      "estimatedAdequateOffListKnown": "B1",
+      "glossCoverage": 1,
+      "glossMissing": [],
+      "newLemmas": 37,
+      "aboveLabel": [
+        {
+          "lemma": "cleverness",
+          "count": 1,
+          "level": "C1"
+        },
+        {
+          "lemma": "calmly",
+          "count": 1,
+          "level": "B2"
+        },
+        {
+          "lemma": "wolf",
+          "count": 1,
+          "level": "B2"
+        }
+      ],
+      "offList": [
+        {
+          "lemma": "outsmart",
+          "count": 1
+        }
+      ],
+      "targetCandidates": [
+        {
+          "lemma": "proud",
+          "count": 2,
+          "level": "B1"
+        },
+        {
+          "lemma": "road",
+          "count": 2,
+          "level": "A2"
+        }
+      ]
+    },
+    {
+      "story": "aldar_kose",
+      "label": "B2",
+      "words": 184,
+      "sentences": 8,
+      "meanSentence": 23,
+      "maxSentence": 31,
+      "lemmaTypes": 119,
+      "mattr": 0.829,
+      "levelTokens": {
+        "A1": 116,
+        "A2": 23,
+        "B1": 19,
+        "B2": 11,
+        "C1": 1,
+        "C2": 1,
+        "offList": 5
+      },
+      "nameTokens": 8,
+      "coverage": {
+        "A1": 0.659,
+        "A2": 0.79,
+        "B1": 0.898,
+        "B2": 0.96,
+        "C1": 0.966,
+        "C2": 0.972
+      },
+      "estimatedAdequate": "B2",
+      "estimatedOptimal": "above C2",
+      "estimatedAdequateOffListKnown": "B2",
+      "glossCoverage": 1,
+      "glossMissing": [],
+      "newLemmas": 58,
+      "aboveLabel": [
+        {
+          "lemma": "feign",
+          "count": 1,
+          "level": "C2"
+        },
+        {
+          "lemma": "renown",
+          "count": 1,
+          "level": "C1"
+        }
+      ],
+      "offList": [
+        {
+          "lemma": "steppe",
+          "count": 2
+        },
+        {
+          "lemma": "foolishness",
+          "count": 1
+        },
+        {
+          "lemma": "recount",
+          "count": 1
+        },
+        {
+          "lemma": "unhindered",
+          "count": 1
+        }
+      ],
+      "targetCandidates": [
+        {
+          "lemma": "wealthy",
+          "count": 2,
+          "level": "B2"
+        },
+        {
+          "lemma": "glance",
+          "count": 2,
+          "level": "B1"
+        }
+      ]
+    },
+    {
+      "story": "aldar_kose",
+      "label": "C1",
+      "words": 212,
+      "sentences": 7,
+      "meanSentence": 30.3,
+      "maxSentence": 35,
+      "lemmaTypes": 131,
+      "mattr": 0.846,
+      "levelTokens": {
+        "A1": 114,
+        "A2": 26,
+        "B1": 31,
+        "B2": 17,
+        "C1": 2,
+        "C2": 0,
+        "offList": 14
+      },
+      "nameTokens": 8,
+      "coverage": {
+        "A1": 0.559,
+        "A2": 0.686,
+        "B1": 0.838,
+        "B2": 0.922,
+        "C1": 0.931,
+        "C2": 0.931
+      },
+      "estimatedAdequate": "above C2",
+      "estimatedOptimal": "above C2",
+      "estimatedAdequateOffListKnown": "B2",
+      "glossCoverage": 1,
+      "glossMissing": [],
+      "newLemmas": 60,
+      "aboveLabel": [],
+      "offList": [
+        {
+          "lemma": "steppe",
+          "count": 3
+        },
+        {
+          "lemma": "cunning",
+          "count": 2
+        },
+        {
+          "lemma": "fling",
+          "count": 1
+        },
+        {
+          "lemma": "insufferably",
+          "count": 1
+        },
+        {
+          "lemma": "ravenous",
+          "count": 1
+        },
+        {
+          "lemma": "recount",
+          "count": 1
+        },
+        {
+          "lemma": "resplendent",
+          "count": 1
+        },
+        {
+          "lemma": "scorch",
+          "count": 1
+        },
+        {
+          "lemma": "trickster",
+          "count": 1
+        },
+        {
+          "lemma": "trudge",
+          "count": 1
+        },
+        {
+          "lemma": "unhurried",
+          "count": 1
+        }
+      ],
+      "targetCandidates": []
+    },
+    {
+      "story": "zhirenshe",
+      "label": "A1",
+      "words": 138,
+      "sentences": 20,
+      "meanSentence": 6.9,
+      "maxSentence": 10,
+      "lemmaTypes": 62,
+      "mattr": 0.608,
+      "levelTokens": {
+        "A1": 118,
+        "A2": 6,
+        "B1": 1,
+        "B2": 0,
+        "C1": 0,
+        "C2": 0,
+        "offList": 7
+      },
+      "nameTokens": 6,
+      "coverage": {
+        "A1": 0.894,
+        "A2": 0.939,
+        "B1": 0.947,
+        "B2": 0.947,
+        "C1": 0.947,
+        "C2": 0.947
+      },
+      "estimatedAdequate": "above C2",
+      "estimatedOptimal": "above C2",
+      "estimatedAdequateOffListKnown": "A2",
+      "glossCoverage": 1,
+      "glossMissing": [],
+      "newLemmas": null,
+      "aboveLabel": [
+        {
+          "lemma": "advisor",
+          "count": 1,
+          "level": "B1"
+        },
+        {
+          "lemma": "wise",
+          "count": 2,
+          "level": "A2"
+        },
+        {
+          "lemma": "anywhere",
+          "count": 1,
+          "level": "A2"
+        },
+        {
+          "lemma": "last",
+          "count": 1,
+          "level": "A2"
+        },
+        {
+          "lemma": "truly",
+          "count": 1,
+          "level": "A2"
+        },
+        {
+          "lemma": "trust",
+          "count": 1,
+          "level": "A2"
+        }
+      ],
+      "offList": [
+        {
+          "lemma": "khan",
+          "count": 7
+        }
+      ],
+      "targetCandidates": [
+        {
+          "lemma": "ask",
+          "count": 3,
+          "level": "A1"
+        },
+        {
+          "lemma": "question",
+          "count": 3,
+          "level": "A1"
+        },
+        {
+          "lemma": "world",
+          "count": 3,
+          "level": "A1"
+        }
+      ]
+    },
+    {
+      "story": "zhirenshe",
+      "label": "A2",
+      "words": 173,
+      "sentences": 12,
+      "meanSentence": 14.4,
+      "maxSentence": 23,
+      "lemmaTypes": 90,
+      "mattr": 0.729,
+      "levelTokens": {
+        "A1": 138,
+        "A2": 17,
+        "B1": 6,
+        "B2": 0,
+        "C1": 0,
+        "C2": 0,
+        "offList": 6
+      },
+      "nameTokens": 6,
+      "coverage": {
+        "A1": 0.826,
+        "A2": 0.928,
+        "B1": 0.964,
+        "B2": 0.964,
+        "C1": 0.964,
+        "C2": 0.964
+      },
+      "estimatedAdequate": "B1",
+      "estimatedOptimal": "above C2",
+      "estimatedAdequateOffListKnown": "A2",
+      "glossCoverage": 1,
+      "glossMissing": [],
+      "newLemmas": 37,
+      "aboveLabel": [
+        {
+          "lemma": "advisor",
+          "count": 2,
+          "level": "B1"
+        },
+        {
+          "lemma": "cruel",
+          "count": 1,
+          "level": "B1"
+        },
+        {
+          "lemma": "declare",
+          "count": 1,
+          "level": "B1"
+        },
+        {
+          "lemma": "respect",
+          "count": 1,
+          "level": "B1"
+        },
+        {
+          "lemma": "satisfaction",
+          "count": 1,
+          "level": "B1"
+        }
+      ],
+      "offList": [
+        {
+          "lemma": "khan",
+          "count": 6
+        }
+      ],
+      "targetCandidates": [
+        {
+          "lemma": "answer",
+          "count": 3,
+          "level": "A1"
+        },
+        {
+          "lemma": "ask",
+          "count": 3,
+          "level": "A1"
+        },
+        {
+          "lemma": "day",
+          "count": 3,
+          "level": "A1"
+        },
+        {
+          "lemma": "question",
+          "count": 3,
+          "level": "A1"
+        },
+        {
+          "lemma": "world",
+          "count": 3,
+          "level": "A1"
+        }
+      ]
+    },
+    {
+      "story": "zhirenshe",
+      "label": "B1",
+      "words": 216,
+      "sentences": 9,
+      "meanSentence": 24,
+      "maxSentence": 32,
+      "lemmaTypes": 110,
+      "mattr": 0.753,
+      "levelTokens": {
+        "A1": 155,
+        "A2": 24,
+        "B1": 14,
+        "B2": 6,
+        "C1": 1,
+        "C2": 0,
+        "offList": 9
+      },
+      "nameTokens": 7,
+      "coverage": {
+        "A1": 0.742,
+        "A2": 0.856,
+        "B1": 0.923,
+        "B2": 0.952,
+        "C1": 0.957,
+        "C2": 0.957
+      },
+      "estimatedAdequate": "B2",
+      "estimatedOptimal": "above C2",
+      "estimatedAdequateOffListKnown": "B1",
+      "glossCoverage": 1,
+      "glossMissing": [],
+      "newLemmas": 42,
+      "aboveLabel": [
+        {
+          "lemma": "profound",
+          "count": 1,
+          "level": "C1"
+        },
+        {
+          "lemma": "exhausting",
+          "count": 1,
+          "level": "B2"
+        },
+        {
+          "lemma": "hesitation",
+          "count": 1,
+          "level": "B2"
+        },
+        {
+          "lemma": "pose",
+          "count": 1,
+          "level": "B2"
+        },
+        {
+          "lemma": "thoroughly",
+          "count": 1,
+          "level": "B2"
+        },
+        {
+          "lemma": "thoughtful",
+          "count": 1,
+          "level": "B2"
+        },
+        {
+          "lemma": "visibly",
+          "count": 1,
+          "level": "B2"
+        }
+      ],
+      "offList": [
+        {
+          "lemma": "khan",
+          "count": 5
+        },
+        {
+          "lemma": "hurtful",
+          "count": 1
+        },
+        {
+          "lemma": "onward",
+          "count": 1
+        },
+        {
+          "lemma": "seemingly",
+          "count": 1
+        },
+        {
+          "lemma": "steppe",
+          "count": 1
+        }
+      ],
+      "targetCandidates": [
+        {
+          "lemma": "advisor",
+          "count": 2,
+          "level": "B1"
+        },
+        {
+          "lemma": "entire",
+          "count": 2,
+          "level": "B1"
+        },
+        {
+          "lemma": "reply",
+          "count": 2,
+          "level": "A2"
+        },
+        {
+          "lemma": "trust",
+          "count": 2,
+          "level": "A2"
+        },
+        {
+          "lemma": "wisdom",
+          "count": 2,
+          "level": "A2"
+        }
+      ]
+    },
+    {
+      "story": "zhirenshe",
+      "label": "B2",
+      "words": 235,
+      "sentences": 11,
+      "meanSentence": 21.4,
+      "maxSentence": 34,
+      "lemmaTypes": 132,
+      "mattr": 0.799,
+      "levelTokens": {
+        "A1": 149,
+        "A2": 27,
+        "B1": 25,
+        "B2": 12,
+        "C1": 2,
+        "C2": 1,
+        "offList": 13
+      },
+      "nameTokens": 6,
+      "coverage": {
+        "A1": 0.651,
+        "A2": 0.769,
+        "B1": 0.878,
+        "B2": 0.93,
+        "C1": 0.939,
+        "C2": 0.943
+      },
+      "estimatedAdequate": "above C2",
+      "estimatedOptimal": "above C2",
+      "estimatedAdequateOffListKnown": "B2",
+      "glossCoverage": 1,
+      "glossMissing": [],
+      "newLemmas": 61,
+      "aboveLabel": [
+        {
+          "lemma": "counsel",
+          "count": 1,
+          "level": "C2"
+        },
+        {
+          "lemma": "intellect",
+          "count": 1,
+          "level": "C1"
+        },
+        {
+          "lemma": "renown",
+          "count": 1,
+          "level": "C1"
+        }
+      ],
+      "offList": [
+        {
+          "lemma": "khan",
+          "count": 5
+        },
+        {
+          "lemma": "steppe",
+          "count": 2
+        },
+        {
+          "lemma": "imaginable",
+          "count": 1
+        },
+        {
+          "lemma": "seemingly",
+          "count": 1
+        },
+        {
+          "lemma": "summon",
+          "count": 1
+        },
+        {
+          "lemma": "surpass",
+          "count": 1
+        },
+        {
+          "lemma": "sweetness",
+          "count": 1
+        },
+        {
+          "lemma": "unanswerable",
+          "count": 1
+        }
+      ],
+      "targetCandidates": [
+        {
+          "lemma": "pose",
+          "count": 2,
+          "level": "B2"
+        },
+        {
+          "lemma": "entire",
+          "count": 3,
+          "level": "B1"
+        },
+        {
+          "lemma": "advisor",
+          "count": 2,
+          "level": "B1"
+        }
+      ]
+    },
+    {
+      "story": "zhirenshe",
+      "label": "C1",
+      "words": 268,
+      "sentences": 10,
+      "meanSentence": 26.8,
+      "maxSentence": 38,
+      "lemmaTypes": 158,
+      "mattr": 0.846,
+      "levelTokens": {
+        "A1": 160,
+        "A2": 29,
+        "B1": 29,
+        "B2": 22,
+        "C1": 1,
+        "C2": 2,
+        "offList": 19
+      },
+      "nameTokens": 6,
+      "coverage": {
+        "A1": 0.611,
+        "A2": 0.721,
+        "B1": 0.832,
+        "B2": 0.916,
+        "C1": 0.92,
+        "C2": 0.927
+      },
+      "estimatedAdequate": "above C2",
+      "estimatedOptimal": "above C2",
+      "estimatedAdequateOffListKnown": "B2",
+      "glossCoverage": 1,
+      "glossMissing": [],
+      "newLemmas": 58,
+      "aboveLabel": [
+        {
+          "lemma": "arduous",
+          "count": 1,
+          "level": "C2"
+        },
+        {
+          "lemma": "counsel",
+          "count": 1,
+          "level": "C2"
+        }
+      ],
+      "offList": [
+        {
+          "lemma": "khan",
+          "count": 5
+        },
+        {
+          "lemma": "steppe",
+          "count": 2
+        },
+        {
+          "lemma": "astound",
+          "count": 1
+        },
+        {
+          "lemma": "breadth",
+          "count": 1
+        },
+        {
+          "lemma": "counselor",
+          "count": 1
+        },
+        {
+          "lemma": "eclipse",
+          "count": 1
+        },
+        {
+          "lemma": "gauge",
+          "count": 1
+        },
+        {
+          "lemma": "humankind",
+          "count": 1
+        },
+        {
+          "lemma": "imaginable",
+          "count": 1
+        },
+        {
+          "lemma": "profundity",
+          "count": 1
+        },
+        {
+          "lemma": "realm",
+          "count": 1
+        },
+        {
+          "lemma": "summon",
+          "count": 1
+        },
+        {
+          "lemma": "unanswerable",
+          "count": 1
+        },
+        {
+          "lemma": "undiminished",
+          "count": 1
+        }
+      ],
+      "targetCandidates": [
+        {
+          "lemma": "pose",
+          "count": 2,
+          "level": "B2"
+        }
+      ]
+    },
+    {
+      "story": "er_tostik",
+      "label": "A1",
+      "words": 119,
+      "sentences": 21,
+      "meanSentence": 5.7,
+      "maxSentence": 10,
+      "lemmaTypes": 59,
+      "mattr": 0.674,
+      "levelTokens": {
+        "A1": 92,
+        "A2": 6,
+        "B1": 2,
+        "B2": 0,
+        "C1": 0,
+        "C2": 0,
+        "offList": 5
+      },
+      "nameTokens": 14,
+      "coverage": {
+        "A1": 0.876,
+        "A2": 0.933,
+        "B1": 0.952,
+        "B2": 0.952,
+        "C1": 0.952,
+        "C2": 0.952
+      },
+      "estimatedAdequate": "B1",
+      "estimatedOptimal": "above C2",
+      "estimatedAdequateOffListKnown": "A2",
+      "glossCoverage": 1,
+      "glossMissing": [],
+      "newLemmas": null,
+      "aboveLabel": [
+        {
+          "lemma": "giant",
+          "count": 1,
+          "level": "B1"
+        },
+        {
+          "lemma": "sword",
+          "count": 1,
+          "level": "B1"
+        },
+        {
+          "lemma": "brave",
+          "count": 3,
+          "level": "A2"
+        },
+        {
+          "lemma": "dead",
+          "count": 1,
+          "level": "A2"
+        },
+        {
+          "lemma": "safe",
+          "count": 1,
+          "level": "A2"
+        },
+        {
+          "lemma": "send",
+          "count": 1,
+          "level": "A2"
+        }
+      ],
+      "offList": [
+        {
+          "lemma": "dragon",
+          "count": 3
+        },
+        {
+          "lemma": "nest",
+          "count": 1
+        },
+        {
+          "lemma": "witch",
+          "count": 1
+        }
+      ],
+      "targetCandidates": [
+        {
+          "lemma": "bird",
+          "count": 6,
+          "level": "A1"
+        },
+        {
+          "lemma": "help",
+          "count": 3,
+          "level": "A1"
+        },
+        {
+          "lemma": "home",
+          "count": 3,
+          "level": "A1"
+        },
+        {
+          "lemma": "tree",
+          "count": 3,
+          "level": "A1"
+        }
+      ]
+    },
+    {
+      "story": "er_tostik",
+      "label": "A2",
+      "words": 206,
+      "sentences": 30,
+      "meanSentence": 6.9,
+      "maxSentence": 12,
+      "lemmaTypes": 104,
+      "mattr": 0.782,
+      "levelTokens": {
+        "A1": 168,
+        "A2": 9,
+        "B1": 3,
+        "B2": 0,
+        "C1": 0,
+        "C2": 0,
+        "offList": 7
+      },
+      "nameTokens": 19,
+      "coverage": {
+        "A1": 0.898,
+        "A2": 0.947,
+        "B1": 0.963,
+        "B2": 0.963,
+        "C1": 0.963,
+        "C2": 0.963
+      },
+      "estimatedAdequate": "B1",
+      "estimatedOptimal": "above C2",
+      "estimatedAdequateOffListKnown": "A2",
+      "glossCoverage": 1,
+      "glossMissing": [],
+      "newLemmas": 53,
+      "aboveLabel": [
+        {
+          "lemma": "giant",
+          "count": 1,
+          "level": "B1"
+        },
+        {
+          "lemma": "huge",
+          "count": 1,
+          "level": "B1"
+        },
+        {
+          "lemma": "sword",
+          "count": 1,
+          "level": "B1"
+        }
+      ],
+      "offList": [
+        {
+          "lemma": "dragon",
+          "count": 4
+        },
+        {
+          "lemma": "nest",
+          "count": 1
+        },
+        {
+          "lemma": "steppe",
+          "count": 1
+        },
+        {
+          "lemma": "witch",
+          "count": 1
+        }
+      ],
+      "targetCandidates": [
+        {
+          "lemma": "brave",
+          "count": 3,
+          "level": "A2"
+        },
+        {
+          "lemma": "bird",
+          "count": 5,
+          "level": "A1"
+        },
+        {
+          "lemma": "help",
+          "count": 3,
+          "level": "A1"
+        },
+        {
+          "lemma": "home",
+          "count": 3,
+          "level": "A1"
+        },
+        {
+          "lemma": "tree",
+          "count": 3,
+          "level": "A1"
+        }
+      ]
+    },
+    {
+      "story": "er_tostik",
+      "label": "B1",
+      "words": 343,
+      "sentences": 30,
+      "meanSentence": 11.4,
+      "maxSentence": 19,
+      "lemmaTypes": 172,
+      "mattr": 0.816,
+      "levelTokens": {
+        "A1": 265,
+        "A2": 32,
+        "B1": 7,
+        "B2": 1,
+        "C1": 0,
+        "C2": 0,
+        "offList": 11
+      },
+      "nameTokens": 27,
+      "coverage": {
+        "A1": 0.839,
+        "A2": 0.94,
+        "B1": 0.962,
+        "B2": 0.965,
+        "C1": 0.965,
+        "C2": 0.965
+      },
+      "estimatedAdequate": "B1",
+      "estimatedOptimal": "above C2",
+      "estimatedAdequateOffListKnown": "A2",
+      "glossCoverage": 1,
+      "glossMissing": [],
+      "newLemmas": 85,
+      "aboveLabel": [
+        {
+          "lemma": "evil",
+          "count": 1,
+          "level": "B2"
+        }
+      ],
+      "offList": [
+        {
+          "lemma": "dragon",
+          "count": 4
+        },
+        {
+          "lemma": "nest",
+          "count": 3
+        },
+        {
+          "lemma": "witch",
+          "count": 2
+        },
+        {
+          "lemma": "chick",
+          "count": 1
+        },
+        {
+          "lemma": "steppe",
+          "count": 1
+        }
+      ],
+      "targetCandidates": [
+        {
+          "lemma": "brave",
+          "count": 3,
+          "level": "A2"
+        },
+        {
+          "lemma": "hero",
+          "count": 2,
+          "level": "A2"
+        }
+      ]
+    },
+    {
+      "story": "er_tostik",
+      "label": "B2",
+      "words": 471,
+      "sentences": 31,
+      "meanSentence": 15.2,
+      "maxSentence": 26,
+      "lemmaTypes": 239,
+      "mattr": 0.825,
+      "levelTokens": {
+        "A1": 345,
+        "A2": 53,
+        "B1": 24,
+        "B2": 7,
+        "C1": 0,
+        "C2": 0,
+        "offList": 16
+      },
+      "nameTokens": 26,
+      "coverage": {
+        "A1": 0.775,
+        "A2": 0.894,
+        "B1": 0.948,
+        "B2": 0.964,
+        "C1": 0.964,
+        "C2": 0.964
+      },
+      "estimatedAdequate": "B2",
+      "estimatedOptimal": "above C2",
+      "estimatedAdequateOffListKnown": "B1",
+      "glossCoverage": 1,
+      "glossMissing": [],
+      "newLemmas": 106,
+      "aboveLabel": [],
+      "offList": [
+        {
+          "lemma": "dragon",
+          "count": 4
+        },
+        {
+          "lemma": "chick",
+          "count": 3
+        },
+        {
+          "lemma": "nest",
+          "count": 2
+        },
+        {
+          "lemma": "witch",
+          "count": 2
+        },
+        {
+          "lemma": "cunning",
+          "count": 1
+        },
+        {
+          "lemma": "elder",
+          "count": 1
+        },
+        {
+          "lemma": "gigantic",
+          "count": 1
+        },
+        {
+          "lemma": "steppe",
+          "count": 1
+        },
+        {
+          "lemma": "yurt",
+          "count": 1
+        }
+      ],
+      "targetCandidates": [
+        {
+          "lemma": "darkness",
+          "count": 2,
+          "level": "B1"
+        },
+        {
+          "lemma": "faithful",
+          "count": 2,
+          "level": "B1"
+        },
+        {
+          "lemma": "wing",
+          "count": 2,
+          "level": "B1"
+        }
+      ]
+    },
+    {
+      "story": "er_tostik",
+      "label": "C1",
+      "words": 669,
+      "sentences": 37,
+      "meanSentence": 18.1,
+      "maxSentence": 31,
+      "lemmaTypes": 321,
+      "mattr": 0.85,
+      "levelTokens": {
+        "A1": 457,
+        "A2": 88,
+        "B1": 49,
+        "B2": 19,
+        "C1": 1,
+        "C2": 1,
+        "offList": 25
+      },
+      "nameTokens": 29,
+      "coverage": {
+        "A1": 0.714,
+        "A2": 0.852,
+        "B1": 0.928,
+        "B2": 0.958,
+        "C1": 0.959,
+        "C2": 0.961
+      },
+      "estimatedAdequate": "B2",
+      "estimatedOptimal": "above C2",
+      "estimatedAdequateOffListKnown": "B1",
+      "glossCoverage": 1,
+      "glossMissing": [],
+      "newLemmas": 141,
+      "aboveLabel": [
+        {
+          "lemma": "echo",
+          "count": 1,
+          "level": "C2"
+        }
+      ],
+      "offList": [
+        {
+          "lemma": "chick",
+          "count": 3
+        },
+        {
+          "lemma": "dragon",
+          "count": 3
+        },
+        {
+          "lemma": "nest",
+          "count": 2
+        },
+        {
+          "lemma": "witch",
+          "count": 2
+        },
+        {
+          "lemma": "boundless",
+          "count": 1
+        },
+        {
+          "lemma": "cunning",
+          "count": 1
+        },
+        {
+          "lemma": "gallop",
+          "count": 1
+        },
+        {
+          "lemma": "kin",
+          "count": 1
+        },
+        {
+          "lemma": "monstrous",
+          "count": 1
+        },
+        {
+          "lemma": "realm",
+          "count": 1
+        },
+        {
+          "lemma": "rein",
+          "count": 1
+        },
+        {
+          "lemma": "scrap",
+          "count": 1
+        },
+        {
+          "lemma": "steppe",
+          "count": 1
+        },
+        {
+          "lemma": "summon",
+          "count": 1
+        },
+        {
+          "lemma": "tireless",
+          "count": 1
+        },
+        {
+          "lemma": "uncoil",
+          "count": 1
+        },
+        {
+          "lemma": "unharmed",
+          "count": 1
+        },
+        {
+          "lemma": "unnoticed",
+          "count": 1
+        },
+        {
+          "lemma": "wrestle",
+          "count": 1
+        }
+      ],
+      "targetCandidates": [
+        {
+          "lemma": "master",
+          "count": 2,
+          "level": "B2"
+        },
+        {
+          "lemma": "trunk",
+          "count": 2,
+          "level": "B2"
+        },
+        {
+          "lemma": "underground",
+          "count": 2,
+          "level": "B2"
+        }
+      ]
+    },
+    {
+      "story": "tazsha_bala",
+      "label": "A1",
+      "words": 120,
+      "sentences": 26,
+      "meanSentence": 4.6,
+      "maxSentence": 9,
+      "lemmaTypes": 58,
+      "mattr": 0.674,
+      "levelTokens": {
+        "A1": 107,
+        "A2": 2,
+        "B1": 4,
+        "B2": 3,
+        "C1": 0,
+        "C2": 0,
+        "offList": 1
+      },
+      "nameTokens": 3,
+      "coverage": {
+        "A1": 0.915,
+        "A2": 0.932,
+        "B1": 0.966,
+        "B2": 0.991,
+        "C1": 0.991,
+        "C2": 0.991
+      },
+      "estimatedAdequate": "B1",
+      "estimatedOptimal": "B2",
+      "estimatedAdequateOffListKnown": "B1",
+      "glossCoverage": 1,
+      "glossMissing": [],
+      "newLemmas": null,
+      "aboveLabel": [
+        {
+          "lemma": "squeeze",
+          "count": 3,
+          "level": "B2"
+        },
+        {
+          "lemma": "giant",
+          "count": 3,
+          "level": "B1"
+        },
+        {
+          "lemma": "sand",
+          "count": 1,
+          "level": "B1"
+        },
+        {
+          "lemma": "safe",
+          "count": 1,
+          "level": "A2"
+        },
+        {
+          "lemma": "soft",
+          "count": 1,
+          "level": "A2"
+        }
+      ],
+      "offList": [
+        {
+          "lemma": "steppe",
+          "count": 1
+        }
+      ],
+      "targetCandidates": [
+        {
+          "lemma": "stone",
+          "count": 4,
+          "level": "A1"
+        },
+        {
+          "lemma": "cheese",
+          "count": 3,
+          "level": "A1"
+        },
+        {
+          "lemma": "clever",
+          "count": 3,
+          "level": "A1"
+        },
+        {
+          "lemma": "take",
+          "count": 3,
+          "level": "A1"
+        }
+      ]
+    },
+    {
+      "story": "tazsha_bala",
+      "label": "A2",
+      "words": 198,
+      "sentences": 29,
+      "meanSentence": 6.8,
+      "maxSentence": 11,
+      "lemmaTypes": 94,
+      "mattr": 0.701,
+      "levelTokens": {
+        "A1": 175,
+        "A2": 6,
+        "B1": 7,
+        "B2": 5,
+        "C1": 0,
+        "C2": 0,
+        "offList": 1
+      },
+      "nameTokens": 4,
+      "coverage": {
+        "A1": 0.902,
+        "A2": 0.933,
+        "B1": 0.969,
+        "B2": 0.995,
+        "C1": 0.995,
+        "C2": 0.995
+      },
+      "estimatedAdequate": "B1",
+      "estimatedOptimal": "B2",
+      "estimatedAdequateOffListKnown": "B1",
+      "glossCoverage": 1,
+      "glossMissing": [],
+      "newLemmas": 45,
+      "aboveLabel": [
+        {
+          "lemma": "squeeze",
+          "count": 5,
+          "level": "B2"
+        },
+        {
+          "lemma": "giant",
+          "count": 5,
+          "level": "B1"
+        },
+        {
+          "lemma": "huge",
+          "count": 1,
+          "level": "B1"
+        },
+        {
+          "lemma": "sand",
+          "count": 1,
+          "level": "B1"
+        }
+      ],
+      "offList": [
+        {
+          "lemma": "steppe",
+          "count": 1
+        }
+      ],
+      "targetCandidates": [
+        {
+          "lemma": "village",
+          "count": 3,
+          "level": "A2"
+        },
+        {
+          "lemma": "stone",
+          "count": 6,
+          "level": "A1"
+        },
+        {
+          "lemma": "big",
+          "count": 3,
+          "level": "A1"
+        },
+        {
+          "lemma": "can",
+          "count": 3,
+          "level": "A1"
+        },
+        {
+          "lemma": "cheese",
+          "count": 3,
+          "level": "A1"
+        },
+        {
+          "lemma": "clever",
+          "count": 3,
+          "level": "A1"
+        }
+      ]
+    },
+    {
+      "story": "tazsha_bala",
+      "label": "B1",
+      "words": 297,
+      "sentences": 27,
+      "meanSentence": 11,
+      "maxSentence": 19,
+      "lemmaTypes": 139,
+      "mattr": 0.757,
+      "levelTokens": {
+        "A1": 250,
+        "A2": 19,
+        "B1": 15,
+        "B2": 5,
+        "C1": 0,
+        "C2": 0,
+        "offList": 2
+      },
+      "nameTokens": 6,
+      "coverage": {
+        "A1": 0.859,
+        "A2": 0.924,
+        "B1": 0.976,
+        "B2": 0.993,
+        "C1": 0.993,
+        "C2": 0.993
+      },
+      "estimatedAdequate": "B1",
+      "estimatedOptimal": "B2",
+      "estimatedAdequateOffListKnown": "B1",
+      "glossCoverage": 1,
+      "glossMissing": [],
+      "newLemmas": 65,
+      "aboveLabel": [
+        {
+          "lemma": "squeeze",
+          "count": 3,
+          "level": "B2"
+        },
+        {
+          "lemma": "crack",
+          "count": 1,
+          "level": "B2"
+        },
+        {
+          "lemma": "wit",
+          "count": 1,
+          "level": "B2"
+        }
+      ],
+      "offList": [
+        {
+          "lemma": "firelight",
+          "count": 1
+        },
+        {
+          "lemma": "steppe",
+          "count": 1
+        }
+      ],
+      "targetCandidates": [
+        {
+          "lemma": "giant",
+          "count": 7,
+          "level": "B1"
+        },
+        {
+          "lemma": "beat",
+          "count": 2,
+          "level": "B1"
+        },
+        {
+          "lemma": "village",
+          "count": 4,
+          "level": "A2"
+        },
+        {
+          "lemma": "fall",
+          "count": 2,
+          "level": "A2"
+        }
+      ]
+    },
+    {
+      "story": "tazsha_bala",
+      "label": "B2",
+      "words": 450,
+      "sentences": 38,
+      "meanSentence": 11.8,
+      "maxSentence": 25,
+      "lemmaTypes": 208,
+      "mattr": 0.801,
+      "levelTokens": {
+        "A1": 362,
+        "A2": 41,
+        "B1": 24,
+        "B2": 9,
+        "C1": 1,
+        "C2": 0,
+        "offList": 5
+      },
+      "nameTokens": 8,
+      "coverage": {
+        "A1": 0.819,
+        "A2": 0.912,
+        "B1": 0.966,
+        "B2": 0.986,
+        "C1": 0.989,
+        "C2": 0.989
+      },
+      "estimatedAdequate": "B1",
+      "estimatedOptimal": "B2",
+      "estimatedAdequateOffListKnown": "B1",
+      "glossCoverage": 1,
+      "glossMissing": [],
+      "newLemmas": 101,
+      "aboveLabel": [
+        {
+          "lemma": "crumble",
+          "count": 1,
+          "level": "C1"
+        }
+      ],
+      "offList": [
+        {
+          "lemma": "steppe",
+          "count": 2
+        },
+        {
+          "lemma": "firelight",
+          "count": 1
+        },
+        {
+          "lemma": "fist",
+          "count": 1
+        },
+        {
+          "lemma": "poplar",
+          "count": 1
+        }
+      ],
+      "targetCandidates": [
+        {
+          "lemma": "squeeze",
+          "count": 4,
+          "level": "B2"
+        },
+        {
+          "lemma": "goat",
+          "count": 2,
+          "level": "B2"
+        },
+        {
+          "lemma": "giant",
+          "count": 5,
+          "level": "B1"
+        },
+        {
+          "lemma": "bald",
+          "count": 3,
+          "level": "B1"
+        },
+        {
+          "lemma": "finger",
+          "count": 2,
+          "level": "B1"
+        },
+        {
+          "lemma": "sand",
+          "count": 2,
+          "level": "B1"
+        },
+        {
+          "lemma": "tease",
+          "count": 2,
+          "level": "B1"
+        }
+      ]
+    },
+    {
+      "story": "tazsha_bala",
+      "label": "C1",
+      "words": 728,
+      "sentences": 45,
+      "meanSentence": 16.2,
+      "maxSentence": 32,
+      "lemmaTypes": 312,
+      "mattr": 0.814,
+      "levelTokens": {
+        "A1": 562,
+        "A2": 70,
+        "B1": 51,
+        "B2": 23,
+        "C1": 1,
+        "C2": 0,
+        "offList": 15
+      },
+      "nameTokens": 6,
+      "coverage": {
+        "A1": 0.778,
+        "A2": 0.875,
+        "B1": 0.946,
+        "B2": 0.978,
+        "C1": 0.979,
+        "C2": 0.979
+      },
+      "estimatedAdequate": "B2",
+      "estimatedOptimal": "above C2",
+      "estimatedAdequateOffListKnown": "B1",
+      "glossCoverage": 1,
+      "glossMissing": [],
+      "newLemmas": 139,
+      "aboveLabel": [],
+      "offList": [
+        {
+          "lemma": "steppe",
+          "count": 3
+        },
+        {
+          "lemma": "elder",
+          "count": 2
+        },
+        {
+          "lemma": "fist",
+          "count": 2
+        },
+        {
+          "lemma": "footprint",
+          "count": 2
+        },
+        {
+          "lemma": "fury",
+          "count": 1
+        },
+        {
+          "lemma": "knuckle",
+          "count": 1
+        },
+        {
+          "lemma": "poplar",
+          "count": 1
+        },
+        {
+          "lemma": "tuck",
+          "count": 1
+        },
+        {
+          "lemma": "unbroken",
+          "count": 1
+        },
+        {
+          "lemma": "yurt",
+          "count": 1
+        }
+      ],
+      "targetCandidates": [
+        {
+          "lemma": "squeeze",
+          "count": 4,
+          "level": "B2"
+        },
+        {
+          "lemma": "goat",
+          "count": 3,
+          "level": "B2"
+        },
+        {
+          "lemma": "wit",
+          "count": 3,
+          "level": "B2"
+        },
+        {
+          "lemma": "dawn",
+          "count": 2,
+          "level": "B2"
+        }
+      ]
+    },
+    {
+      "story": "ayaz_bi",
+      "label": "A1",
+      "words": 118,
+      "sentences": 22,
+      "meanSentence": 5.4,
+      "maxSentence": 10,
+      "lemmaTypes": 59,
+      "mattr": 0.698,
+      "levelTokens": {
+        "A1": 88,
+        "A2": 9,
+        "B1": 3,
+        "B2": 0,
+        "C1": 0,
+        "C2": 0,
+        "offList": 6
+      },
+      "nameTokens": 12,
+      "coverage": {
+        "A1": 0.83,
+        "A2": 0.915,
+        "B1": 0.943,
+        "B2": 0.943,
+        "C1": 0.943,
+        "C2": 0.943
+      },
+      "estimatedAdequate": "above C2",
+      "estimatedOptimal": "above C2",
+      "estimatedAdequateOffListKnown": "A2",
+      "glossCoverage": 1,
+      "glossMissing": [],
+      "newLemmas": null,
+      "aboveLabel": [
+        {
+          "lemma": "boot",
+          "count": 2,
+          "level": "B1"
+        },
+        {
+          "lemma": "calm",
+          "count": 1,
+          "level": "B1"
+        },
+        {
+          "lemma": "chest",
+          "count": 3,
+          "level": "A2"
+        },
+        {
+          "lemma": "wise",
+          "count": 3,
+          "level": "A2"
+        },
+        {
+          "lemma": "shout",
+          "count": 1,
+          "level": "A2"
+        },
+        {
+          "lemma": "trust",
+          "count": 1,
+          "level": "A2"
+        },
+        {
+          "lemma": "truth",
+          "count": 1,
+          "level": "A2"
+        }
+      ],
+      "offList": [
+        {
+          "lemma": "khan",
+          "count": 3
+        },
+        {
+          "lemma": "alindi",
+          "count": 1
+        },
+        {
+          "lemma": "bil",
+          "count": 1
+        },
+        {
+          "lemma": "shepherd",
+          "count": 1
+        }
+      ],
+      "targetCandidates": [
+        {
+          "lemma": "old",
+          "count": 4,
+          "level": "A1"
+        },
+        {
+          "lemma": "clothes",
+          "count": 3,
+          "level": "A1"
+        },
+        {
+          "lemma": "gold",
+          "count": 3,
+          "level": "A1"
+        }
+      ]
+    },
+    {
+      "story": "ayaz_bi",
+      "label": "A2",
+      "words": 217,
+      "sentences": 27,
+      "meanSentence": 8,
+      "maxSentence": 14,
+      "lemmaTypes": 101,
+      "mattr": 0.703,
+      "levelTokens": {
+        "A1": 178,
+        "A2": 9,
+        "B1": 4,
+        "B2": 0,
+        "C1": 0,
+        "C2": 0,
+        "offList": 14
+      },
+      "nameTokens": 12,
+      "coverage": {
+        "A1": 0.868,
+        "A2": 0.912,
+        "B1": 0.932,
+        "B2": 0.932,
+        "C1": 0.932,
+        "C2": 0.932
+      },
+      "estimatedAdequate": "above C2",
+      "estimatedOptimal": "above C2",
+      "estimatedAdequateOffListKnown": "A2",
+      "glossCoverage": 1,
+      "glossMissing": [],
+      "newLemmas": 55,
+      "aboveLabel": [
+        {
+          "lemma": "boot",
+          "count": 2,
+          "level": "B1"
+        },
+        {
+          "lemma": "honest",
+          "count": 1,
+          "level": "B1"
+        },
+        {
+          "lemma": "measure",
+          "count": 1,
+          "level": "B1"
+        }
+      ],
+      "offList": [
+        {
+          "lemma": "khan",
+          "count": 8
+        },
+        {
+          "lemma": "shepherd",
+          "count": 3
+        },
+        {
+          "lemma": "alindi",
+          "count": 1
+        },
+        {
+          "lemma": "bil",
+          "count": 1
+        },
+        {
+          "lemma": "steppe",
+          "count": 1
+        }
+      ],
+      "targetCandidates": [
+        {
+          "lemma": "chest",
+          "count": 4,
+          "level": "A2"
+        },
+        {
+          "lemma": "old",
+          "count": 5,
+          "level": "A1"
+        },
+        {
+          "lemma": "clothes",
+          "count": 3,
+          "level": "A1"
+        },
+        {
+          "lemma": "gold",
+          "count": 3,
+          "level": "A1"
+        },
+        {
+          "lemma": "judge",
+          "count": 3,
+          "level": "A1"
+        },
+        {
+          "lemma": "key",
+          "count": 3,
+          "level": "A1"
+        }
+      ]
+    },
+    {
+      "story": "ayaz_bi",
+      "label": "B1",
+      "words": 325,
+      "sentences": 28,
+      "meanSentence": 11.6,
+      "maxSentence": 19,
+      "lemmaTypes": 156,
+      "mattr": 0.781,
+      "levelTokens": {
+        "A1": 250,
+        "A2": 24,
+        "B1": 12,
+        "B2": 2,
+        "C1": 0,
+        "C2": 0,
+        "offList": 22
+      },
+      "nameTokens": 15,
+      "coverage": {
+        "A1": 0.806,
+        "A2": 0.884,
+        "B1": 0.923,
+        "B2": 0.929,
+        "C1": 0.929,
+        "C2": 0.929
+      },
+      "estimatedAdequate": "above C2",
+      "estimatedOptimal": "above C2",
+      "estimatedAdequateOffListKnown": "A2",
+      "glossCoverage": 1,
+      "glossMissing": [],
+      "newLemmas": 71,
+      "aboveLabel": [
+        {
+          "lemma": "humble",
+          "count": 2,
+          "level": "B2"
+        }
+      ],
+      "offList": [
+        {
+          "lemma": "khan",
+          "count": 9
+        },
+        {
+          "lemma": "courtier",
+          "count": 5
+        },
+        {
+          "lemma": "shepherd",
+          "count": 3
+        },
+        {
+          "lemma": "alindi",
+          "count": 1
+        },
+        {
+          "lemma": "bi",
+          "count": 1
+        },
+        {
+          "lemma": "bil",
+          "count": 1
+        },
+        {
+          "lemma": "shapan",
+          "count": 1
+        },
+        {
+          "lemma": "steppe",
+          "count": 1
+        }
+      ],
+      "targetCandidates": [
+        {
+          "lemma": "adviser",
+          "count": 2,
+          "level": "B1"
+        },
+        {
+          "lemma": "boot",
+          "count": 2,
+          "level": "B1"
+        },
+        {
+          "lemma": "jealous",
+          "count": 2,
+          "level": "B1"
+        },
+        {
+          "lemma": "chest",
+          "count": 3,
+          "level": "A2"
+        },
+        {
+          "lemma": "while",
+          "count": 2,
+          "level": "A2"
+        }
+      ]
+    },
+    {
+      "story": "ayaz_bi",
+      "label": "B2",
+      "words": 444,
+      "sentences": 32,
+      "meanSentence": 13.9,
+      "maxSentence": 26,
+      "lemmaTypes": 225,
+      "mattr": 0.82,
+      "levelTokens": {
+        "A1": 326,
+        "A2": 40,
+        "B1": 28,
+        "B2": 11,
+        "C1": 0,
+        "C2": 0,
+        "offList": 24
+      },
+      "nameTokens": 15,
+      "coverage": {
+        "A1": 0.76,
+        "A2": 0.853,
+        "B1": 0.918,
+        "B2": 0.944,
+        "C1": 0.944,
+        "C2": 0.944
+      },
+      "estimatedAdequate": "above C2",
+      "estimatedOptimal": "above C2",
+      "estimatedAdequateOffListKnown": "B1",
+      "glossCoverage": 1,
+      "glossMissing": [],
+      "newLemmas": 110,
+      "aboveLabel": [],
+      "offList": [
+        {
+          "lemma": "khan",
+          "count": 9
+        },
+        {
+          "lemma": "courtier",
+          "count": 4
+        },
+        {
+          "lemma": "shepherd",
+          "count": 4
+        },
+        {
+          "lemma": "alindi",
+          "count": 1
+        },
+        {
+          "lemma": "bi",
+          "count": 1
+        },
+        {
+          "lemma": "bil",
+          "count": 1
+        },
+        {
+          "lemma": "shapan",
+          "count": 1
+        },
+        {
+          "lemma": "steppe",
+          "count": 1
+        },
+        {
+          "lemma": "summon",
+          "count": 1
+        },
+        {
+          "lemma": "treasury",
+          "count": 1
+        }
+      ],
+      "targetCandidates": [
+        {
+          "lemma": "humble",
+          "count": 2,
+          "level": "B2"
+        },
+        {
+          "lemma": "adviser",
+          "count": 2,
+          "level": "B1"
+        },
+        {
+          "lemma": "boot",
+          "count": 2,
+          "level": "B1"
+        },
+        {
+          "lemma": "jealous",
+          "count": 2,
+          "level": "B1"
+        },
+        {
+          "lemma": "whisper",
+          "count": 2,
+          "level": "B1"
+        }
+      ]
+    },
+    {
+      "story": "ayaz_bi",
+      "label": "C1",
+      "words": 658,
+      "sentences": 32,
+      "meanSentence": 20.6,
+      "maxSentence": 31,
+      "lemmaTypes": 322,
+      "mattr": 0.833,
+      "levelTokens": {
+        "A1": 457,
+        "A2": 78,
+        "B1": 52,
+        "B2": 16,
+        "C1": 4,
+        "C2": 0,
+        "offList": 39
+      },
+      "nameTokens": 12,
+      "coverage": {
+        "A1": 0.707,
+        "A2": 0.828,
+        "B1": 0.909,
+        "B2": 0.933,
+        "C1": 0.94,
+        "C2": 0.94
+      },
+      "estimatedAdequate": "above C2",
+      "estimatedOptimal": "above C2",
+      "estimatedAdequateOffListKnown": "B1",
+      "glossCoverage": 1,
+      "glossMissing": [],
+      "newLemmas": 130,
+      "aboveLabel": [],
+      "offList": [
+        {
+          "lemma": "khan",
+          "count": 10
+        },
+        {
+          "lemma": "shepherd",
+          "count": 5
+        },
+        {
+          "lemma": "courtier",
+          "count": 3
+        },
+        {
+          "lemma": "shapan",
+          "count": 2
+        },
+        {
+          "lemma": "summon",
+          "count": 2
+        },
+        {
+          "lemma": "yurt",
+          "count": 2
+        },
+        {
+          "lemma": "accuser",
+          "count": 1
+        },
+        {
+          "lemma": "alindi",
+          "count": 1
+        },
+        {
+          "lemma": "bi",
+          "count": 1
+        },
+        {
+          "lemma": "bil",
+          "count": 1
+        },
+        {
+          "lemma": "counsellor",
+          "count": 1
+        },
+        {
+          "lemma": "creak",
+          "count": 1
+        },
+        {
+          "lemma": "elder",
+          "count": 1
+        },
+        {
+          "lemma": "fury",
+          "count": 1
+        },
+        {
+          "lemma": "grassland",
+          "count": 1
+        },
+        {
+          "lemma": "hoard",
+          "count": 1
+        },
+        {
+          "lemma": "pasture",
+          "count": 1
+        },
+        {
+          "lemma": "speechless",
+          "count": 1
+        },
+        {
+          "lemma": "steppe",
+          "count": 1
+        },
+        {
+          "lemma": "treasury",
+          "count": 1
+        },
+        {
+          "lemma": "unpunished",
+          "count": 1
+        }
+      ],
+      "targetCandidates": [
+        {
+          "lemma": "humble",
+          "count": 2,
+          "level": "B2"
+        }
+      ]
+    },
+    {
+      "story": "asan_kaigy",
+      "label": "A1",
+      "words": 120,
+      "sentences": 19,
+      "meanSentence": 6.3,
+      "maxSentence": 10,
+      "lemmaTypes": 58,
+      "mattr": 0.674,
+      "levelTokens": {
+        "A1": 96,
+        "A2": 8,
+        "B1": 3,
+        "B2": 0,
+        "C1": 0,
+        "C2": 0,
+        "offList": 4
+      },
+      "nameTokens": 9,
+      "coverage": {
+        "A1": 0.865,
+        "A2": 0.937,
+        "B1": 0.964,
+        "B2": 0.964,
+        "C1": 0.964,
+        "C2": 0.964
+      },
+      "estimatedAdequate": "B1",
+      "estimatedOptimal": "above C2",
+      "estimatedAdequateOffListKnown": "A2",
+      "glossCoverage": 1,
+      "glossMissing": [],
+      "newLemmas": null,
+      "aboveLabel": [
+        {
+          "lemma": "camel",
+          "count": 3,
+          "level": "B1"
+        },
+        {
+          "lemma": "land",
+          "count": 5,
+          "level": "A2"
+        },
+        {
+          "lemma": "across",
+          "count": 1,
+          "level": "A2"
+        },
+        {
+          "lemma": "nobody",
+          "count": 1,
+          "level": "A2"
+        },
+        {
+          "lemma": "wise",
+          "count": 1,
+          "level": "A2"
+        }
+      ],
+      "offList": [
+        {
+          "lemma": "khan",
+          "count": 2
+        },
+        {
+          "lemma": "steppe",
+          "count": 2
+        }
+      ],
+      "targetCandidates": [
+        {
+          "lemma": "happy",
+          "count": 3,
+          "level": "A1"
+        },
+        {
+          "lemma": "water",
+          "count": 3,
+          "level": "A1"
+        }
+      ]
+    },
+    {
+      "story": "asan_kaigy",
+      "label": "A2",
+      "words": 220,
+      "sentences": 26,
+      "meanSentence": 8.5,
+      "maxSentence": 14,
+      "lemmaTypes": 102,
+      "mattr": 0.724,
+      "levelTokens": {
+        "A1": 184,
+        "A2": 11,
+        "B1": 4,
+        "B2": 0,
+        "C1": 0,
+        "C2": 0,
+        "offList": 9
+      },
+      "nameTokens": 12,
+      "coverage": {
+        "A1": 0.885,
+        "A2": 0.938,
+        "B1": 0.957,
+        "B2": 0.957,
+        "C1": 0.957,
+        "C2": 0.957
+      },
+      "estimatedAdequate": "B1",
+      "estimatedOptimal": "above C2",
+      "estimatedAdequateOffListKnown": "A2",
+      "glossCoverage": 1,
+      "glossMissing": [],
+      "newLemmas": 54,
+      "aboveLabel": [
+        {
+          "lemma": "camel",
+          "count": 3,
+          "level": "B1"
+        },
+        {
+          "lemma": "huge",
+          "count": 1,
+          "level": "B1"
+        }
+      ],
+      "offList": [
+        {
+          "lemma": "khan",
+          "count": 4
+        },
+        {
+          "lemma": "steppe",
+          "count": 3
+        },
+        {
+          "lemma": "cannot",
+          "count": 1
+        },
+        {
+          "lemma": "goodbye",
+          "count": 1
+        }
+      ],
+      "targetCandidates": [
+        {
+          "lemma": "land",
+          "count": 5,
+          "level": "A2"
+        },
+        {
+          "lemma": "people",
+          "count": 5,
+          "level": "A1"
+        },
+        {
+          "lemma": "grass",
+          "count": 4,
+          "level": "A1"
+        },
+        {
+          "lemma": "water",
+          "count": 4,
+          "level": "A1"
+        },
+        {
+          "lemma": "call",
+          "count": 3,
+          "level": "A1"
+        },
+        {
+          "lemma": "happy",
+          "count": 3,
+          "level": "A1"
+        }
+      ]
+    },
+    {
+      "story": "asan_kaigy",
+      "label": "B1",
+      "words": 314,
+      "sentences": 23,
+      "meanSentence": 13.7,
+      "maxSentence": 20,
+      "lemmaTypes": 149,
+      "mattr": 0.746,
+      "levelTokens": {
+        "A1": 247,
+        "A2": 32,
+        "B1": 9,
+        "B2": 3,
+        "C1": 0,
+        "C2": 0,
+        "offList": 10
+      },
+      "nameTokens": 13,
+      "coverage": {
+        "A1": 0.821,
+        "A2": 0.927,
+        "B1": 0.957,
+        "B2": 0.967,
+        "C1": 0.967,
+        "C2": 0.967
+      },
+      "estimatedAdequate": "B1",
+      "estimatedOptimal": "above C2",
+      "estimatedAdequateOffListKnown": "A2",
+      "glossCoverage": 1,
+      "glossMissing": [],
+      "newLemmas": 73,
+      "aboveLabel": [
+        {
+          "lemma": "loneliness",
+          "count": 1,
+          "level": "B2"
+        },
+        {
+          "lemma": "swift",
+          "count": 1,
+          "level": "B2"
+        },
+        {
+          "lemma": "thinker",
+          "count": 1,
+          "level": "B2"
+        }
+      ],
+      "offList": [
+        {
+          "lemma": "khan",
+          "count": 4
+        },
+        {
+          "lemma": "steppe",
+          "count": 4
+        },
+        {
+          "lemma": "fifteenth",
+          "count": 1
+        },
+        {
+          "lemma": "zhyrau",
+          "count": 1
+        }
+      ],
+      "targetCandidates": [
+        {
+          "lemma": "camel",
+          "count": 2,
+          "level": "B1"
+        },
+        {
+          "lemma": "land",
+          "count": 5,
+          "level": "A2"
+        },
+        {
+          "lemma": "journey",
+          "count": 2,
+          "level": "A2"
+        },
+        {
+          "lemma": "wise",
+          "count": 2,
+          "level": "A2"
+        }
+      ]
+    },
+    {
+      "story": "asan_kaigy",
+      "label": "B2",
+      "words": 443,
+      "sentences": 28,
+      "meanSentence": 15.8,
+      "maxSentence": 25,
+      "lemmaTypes": 219,
+      "mattr": 0.813,
+      "levelTokens": {
+        "A1": 332,
+        "A2": 57,
+        "B1": 25,
+        "B2": 4,
+        "C1": 1,
+        "C2": 0,
+        "offList": 12
+      },
+      "nameTokens": 12,
+      "coverage": {
+        "A1": 0.77,
+        "A2": 0.903,
+        "B1": 0.961,
+        "B2": 0.97,
+        "C1": 0.972,
+        "C2": 0.972
+      },
+      "estimatedAdequate": "B1",
+      "estimatedOptimal": "above C2",
+      "estimatedAdequateOffListKnown": "B1",
+      "glossCoverage": 1,
+      "glossMissing": [],
+      "newLemmas": 100,
+      "aboveLabel": [
+        {
+          "lemma": "clan",
+          "count": 1,
+          "level": "C1"
+        }
+      ],
+      "offList": [
+        {
+          "lemma": "khan",
+          "count": 4
+        },
+        {
+          "lemma": "homeland",
+          "count": 2
+        },
+        {
+          "lemma": "steppe",
+          "count": 2
+        },
+        {
+          "lemma": "fifteenth",
+          "count": 1
+        },
+        {
+          "lemma": "herder",
+          "count": 1
+        },
+        {
+          "lemma": "saying",
+          "count": 1
+        },
+        {
+          "lemma": "zhyrau",
+          "count": 1
+        }
+      ],
+      "targetCandidates": [
+        {
+          "lemma": "camel",
+          "count": 3,
+          "level": "B1"
+        }
+      ]
+    },
+    {
+      "story": "asan_kaigy",
+      "label": "C1",
+      "words": 619,
+      "sentences": 31,
+      "meanSentence": 20,
+      "maxSentence": 32,
+      "lemmaTypes": 294,
+      "mattr": 0.814,
+      "levelTokens": {
+        "A1": 449,
+        "A2": 83,
+        "B1": 42,
+        "B2": 11,
+        "C1": 1,
+        "C2": 0,
+        "offList": 19
+      },
+      "nameTokens": 14,
+      "coverage": {
+        "A1": 0.742,
+        "A2": 0.879,
+        "B1": 0.949,
+        "B2": 0.967,
+        "C1": 0.969,
+        "C2": 0.969
+      },
+      "estimatedAdequate": "B2",
+      "estimatedOptimal": "above C2",
+      "estimatedAdequateOffListKnown": "B1",
+      "glossCoverage": 1,
+      "glossMissing": [],
+      "newLemmas": 124,
+      "aboveLabel": [],
+      "offList": [
+        {
+          "lemma": "khan",
+          "count": 3
+        },
+        {
+          "lemma": "steppe",
+          "count": 3
+        },
+        {
+          "lemma": "homeland",
+          "count": 2
+        },
+        {
+          "lemma": "zhyrau",
+          "count": 2
+        },
+        {
+          "lemma": "accord",
+          "count": 1
+        },
+        {
+          "lemma": "counsellor",
+          "count": 1
+        },
+        {
+          "lemma": "fifteenth",
+          "count": 1
+        },
+        {
+          "lemma": "herder",
+          "count": 1
+        },
+        {
+          "lemma": "meadow",
+          "count": 1
+        },
+        {
+          "lemma": "ought",
+          "count": 1
+        },
+        {
+          "lemma": "reign",
+          "count": 1
+        },
+        {
+          "lemma": "saying",
+          "count": 1
+        },
+        {
+          "lemma": "yurt",
+          "count": 1
+        }
+      ],
+      "targetCandidates": [
+        {
+          "lemma": "legend",
+          "count": 2,
+          "level": "B2"
+        }
+      ]
+    },
+    {
+      "story": "alpamys",
+      "label": "A1",
+      "words": 120,
+      "sentences": 24,
+      "meanSentence": 5,
+      "maxSentence": 7,
+      "lemmaTypes": 59,
+      "mattr": 0.722,
+      "levelTokens": {
+        "A1": 93,
+        "A2": 6,
+        "B1": 4,
+        "B2": 0,
+        "C1": 0,
+        "C2": 0,
+        "offList": 3
+      },
+      "nameTokens": 14,
+      "coverage": {
+        "A1": 0.877,
+        "A2": 0.934,
+        "B1": 0.972,
+        "B2": 0.972,
+        "C1": 0.972,
+        "C2": 0.972
+      },
+      "estimatedAdequate": "B1",
+      "estimatedOptimal": "above C2",
+      "estimatedAdequateOffListKnown": "A2",
+      "glossCoverage": 1,
+      "glossMissing": [],
+      "newLemmas": null,
+      "aboveLabel": [
+        {
+          "lemma": "pit",
+          "count": 4,
+          "level": "B1"
+        },
+        {
+          "lemma": "deep",
+          "count": 1,
+          "level": "A2"
+        },
+        {
+          "lemma": "far",
+          "count": 1,
+          "level": "A2"
+        },
+        {
+          "lemma": "pull",
+          "count": 1,
+          "level": "A2"
+        },
+        {
+          "lemma": "rope",
+          "count": 1,
+          "level": "A2"
+        },
+        {
+          "lemma": "safe",
+          "count": 1,
+          "level": "A2"
+        },
+        {
+          "lemma": "trick",
+          "count": 1,
+          "level": "A2"
+        }
+      ],
+      "offList": [
+        {
+          "lemma": "batyr",
+          "count": 1
+        },
+        {
+          "lemma": "khan",
+          "count": 1
+        },
+        {
+          "lemma": "steppe",
+          "count": 1
+        }
+      ],
+      "targetCandidates": [
+        {
+          "lemma": "home",
+          "count": 4,
+          "level": "A1"
+        },
+        {
+          "lemma": "horse",
+          "count": 4,
+          "level": "A1"
+        },
+        {
+          "lemma": "hope",
+          "count": 3,
+          "level": "A1"
+        },
+        {
+          "lemma": "man",
+          "count": 3,
+          "level": "A1"
+        }
+      ]
+    },
+    {
+      "story": "alpamys",
+      "label": "A2",
+      "words": 218,
+      "sentences": 24,
+      "meanSentence": 9.1,
+      "maxSentence": 14,
+      "lemmaTypes": 106,
+      "mattr": 0.755,
+      "levelTokens": {
+        "A1": 168,
+        "A2": 17,
+        "B1": 8,
+        "B2": 0,
+        "C1": 0,
+        "C2": 0,
+        "offList": 6
+      },
+      "nameTokens": 19,
+      "coverage": {
+        "A1": 0.844,
+        "A2": 0.93,
+        "B1": 0.97,
+        "B2": 0.97,
+        "C1": 0.97,
+        "C2": 0.97
+      },
+      "estimatedAdequate": "B1",
+      "estimatedOptimal": "above C2",
+      "estimatedAdequateOffListKnown": "A2",
+      "glossCoverage": 1,
+      "glossMissing": [],
+      "newLemmas": 55,
+      "aboveLabel": [
+        {
+          "lemma": "pit",
+          "count": 4,
+          "level": "B1"
+        },
+        {
+          "lemma": "cruel",
+          "count": 1,
+          "level": "B1"
+        },
+        {
+          "lemma": "loyalty",
+          "count": 1,
+          "level": "B1"
+        },
+        {
+          "lemma": "prison",
+          "count": 1,
+          "level": "B1"
+        },
+        {
+          "lemma": "protect",
+          "count": 1,
+          "level": "B1"
+        }
+      ],
+      "offList": [
+        {
+          "lemma": "khan",
+          "count": 3
+        },
+        {
+          "lemma": "batyr",
+          "count": 1
+        },
+        {
+          "lemma": "goodbye",
+          "count": 1
+        },
+        {
+          "lemma": "steppe",
+          "count": 1
+        }
+      ],
+      "targetCandidates": [
+        {
+          "lemma": "brave",
+          "count": 3,
+          "level": "A2"
+        },
+        {
+          "lemma": "rope",
+          "count": 3,
+          "level": "A2"
+        },
+        {
+          "lemma": "home",
+          "count": 4,
+          "level": "A1"
+        },
+        {
+          "lemma": "horse",
+          "count": 4,
+          "level": "A1"
+        },
+        {
+          "lemma": "hope",
+          "count": 3,
+          "level": "A1"
+        },
+        {
+          "lemma": "long",
+          "count": 3,
+          "level": "A1"
+        }
+      ]
+    },
+    {
+      "story": "alpamys",
+      "label": "B1",
+      "words": 309,
+      "sentences": 27,
+      "meanSentence": 11.4,
+      "maxSentence": 19,
+      "lemmaTypes": 139,
+      "mattr": 0.771,
+      "levelTokens": {
+        "A1": 235,
+        "A2": 25,
+        "B1": 18,
+        "B2": 0,
+        "C1": 0,
+        "C2": 0,
+        "offList": 8
+      },
+      "nameTokens": 23,
+      "coverage": {
+        "A1": 0.822,
+        "A2": 0.909,
+        "B1": 0.972,
+        "B2": 0.972,
+        "C1": 0.972,
+        "C2": 0.972
+      },
+      "estimatedAdequate": "B1",
+      "estimatedOptimal": "above C2",
+      "estimatedAdequateOffListKnown": "B1",
+      "glossCoverage": 1,
+      "glossMissing": [],
+      "newLemmas": 52,
+      "aboveLabel": [],
+      "offList": [
+        {
+          "lemma": "khan",
+          "count": 5
+        },
+        {
+          "lemma": "batyr",
+          "count": 1
+        },
+        {
+          "lemma": "steppe",
+          "count": 1
+        },
+        {
+          "lemma": "zindan",
+          "count": 1
+        }
+      ],
+      "targetCandidates": [
+        {
+          "lemma": "pit",
+          "count": 4,
+          "level": "B1"
+        },
+        {
+          "lemma": "loyal",
+          "count": 2,
+          "level": "B1"
+        },
+        {
+          "lemma": "protect",
+          "count": 2,
+          "level": "B1"
+        },
+        {
+          "lemma": "escape",
+          "count": 2,
+          "level": "A2"
+        },
+        {
+          "lemma": "rope",
+          "count": 2,
+          "level": "A2"
+        },
+        {
+          "lemma": "tie",
+          "count": 2,
+          "level": "A2"
+        },
+        {
+          "lemma": "while",
+          "count": 2,
+          "level": "A2"
+        }
+      ]
+    },
+    {
+      "story": "alpamys",
+      "label": "B2",
+      "words": 426,
+      "sentences": 27,
+      "meanSentence": 15.8,
+      "maxSentence": 26,
+      "lemmaTypes": 201,
+      "mattr": 0.812,
+      "levelTokens": {
+        "A1": 308,
+        "A2": 51,
+        "B1": 26,
+        "B2": 6,
+        "C1": 0,
+        "C2": 0,
+        "offList": 11
+      },
+      "nameTokens": 24,
+      "coverage": {
+        "A1": 0.766,
+        "A2": 0.893,
+        "B1": 0.958,
+        "B2": 0.973,
+        "C1": 0.973,
+        "C2": 0.973
+      },
+      "estimatedAdequate": "B1",
+      "estimatedOptimal": "above C2",
+      "estimatedAdequateOffListKnown": "B1",
+      "glossCoverage": 1,
+      "glossMissing": [],
+      "newLemmas": 90,
+      "aboveLabel": [],
+      "offList": [
+        {
+          "lemma": "khan",
+          "count": 4
+        },
+        {
+          "lemma": "aul",
+          "count": 2
+        },
+        {
+          "lemma": "batyr",
+          "count": 1
+        },
+        {
+          "lemma": "goodbye",
+          "count": 1
+        },
+        {
+          "lemma": "moonless",
+          "count": 1
+        },
+        {
+          "lemma": "steppe",
+          "count": 1
+        },
+        {
+          "lemma": "zindan",
+          "count": 1
+        }
+      ],
+      "targetCandidates": [
+        {
+          "lemma": "disguise",
+          "count": 3,
+          "level": "B2"
+        },
+        {
+          "lemma": "pit",
+          "count": 3,
+          "level": "B1"
+        },
+        {
+          "lemma": "prison",
+          "count": 3,
+          "level": "B1"
+        },
+        {
+          "lemma": "herd",
+          "count": 2,
+          "level": "B1"
+        },
+        {
+          "lemma": "loyal",
+          "count": 2,
+          "level": "B1"
+        }
+      ]
+    },
+    {
+      "story": "alpamys",
+      "label": "C1",
+      "words": 627,
+      "sentences": 31,
+      "meanSentence": 20.2,
+      "maxSentence": 32,
+      "lemmaTypes": 281,
+      "mattr": 0.803,
+      "levelTokens": {
+        "A1": 442,
+        "A2": 66,
+        "B1": 59,
+        "B2": 11,
+        "C1": 0,
+        "C2": 0,
+        "offList": 24
+      },
+      "nameTokens": 25,
+      "coverage": {
+        "A1": 0.734,
+        "A2": 0.844,
+        "B1": 0.942,
+        "B2": 0.96,
+        "C1": 0.96,
+        "C2": 0.96
+      },
+      "estimatedAdequate": "B2",
+      "estimatedOptimal": "above C2",
+      "estimatedAdequateOffListKnown": "B1",
+      "glossCoverage": 1,
+      "glossMissing": [],
+      "newLemmas": 131,
+      "aboveLabel": [],
+      "offList": [
+        {
+          "lemma": "khan",
+          "count": 5
+        },
+        {
+          "lemma": "batyr",
+          "count": 4
+        },
+        {
+          "lemma": "steppe",
+          "count": 4
+        },
+        {
+          "lemma": "aul",
+          "count": 1
+        },
+        {
+          "lemma": "auls",
+          "count": 1
+        },
+        {
+          "lemma": "creep",
+          "count": 1
+        },
+        {
+          "lemma": "cunning",
+          "count": 1
+        },
+        {
+          "lemma": "moonless",
+          "count": 1
+        },
+        {
+          "lemma": "raid",
+          "count": 1
+        },
+        {
+          "lemma": "unnoticed",
+          "count": 1
+        },
+        {
+          "lemma": "unrecognised",
+          "count": 1
+        },
+        {
+          "lemma": "upstart",
+          "count": 1
+        },
+        {
+          "lemma": "wanderer",
+          "count": 1
+        },
+        {
+          "lemma": "zindan",
+          "count": 1
+        }
+      ],
+      "targetCandidates": [
+        {
+          "lemma": "disguise",
+          "count": 2,
+          "level": "B2"
+        }
+      ]
+    }
+  ],
+  "summary": [
+    {
+      "label": "A1",
+      "texts": 7,
+      "wordsMean": 120.7,
+      "wordsMin": 110,
+      "wordsMax": 138,
+      "meanSentence": 5.6,
+      "mattr": 0.663,
+      "coverageAtLabel": 0.887,
+      "glossCoverage": 1,
+      "adequateBelow": 0,
+      "adequateAt": 1,
+      "adequateAbove": 6
+    },
+    {
+      "label": "A2",
+      "texts": 7,
+      "wordsMean": 195.6,
+      "wordsMin": 137,
+      "wordsMax": 220,
+      "meanSentence": 9.2,
+      "mattr": 0.728,
+      "coverageAtLabel": 0.936,
+      "glossCoverage": 1,
+      "adequateBelow": 0,
+      "adequateAt": 1,
+      "adequateAbove": 6
+    },
+    {
+      "label": "B1",
+      "texts": 7,
+      "wordsMean": 281.9,
+      "wordsMin": 169,
+      "wordsMax": 343,
+      "meanSentence": 14.3,
+      "mattr": 0.77,
+      "coverageAtLabel": 0.955,
+      "glossCoverage": 1,
+      "adequateBelow": 0,
+      "adequateAt": 5,
+      "adequateAbove": 2
+    },
+    {
+      "label": "B2",
+      "texts": 7,
+      "wordsMean": 379,
+      "wordsMin": 184,
+      "wordsMax": 471,
+      "meanSentence": 16.7,
+      "mattr": 0.814,
+      "coverageAtLabel": 0.961,
+      "glossCoverage": 1,
+      "adequateBelow": 3,
+      "adequateAt": 2,
+      "adequateAbove": 2
+    },
+    {
+      "label": "C1",
+      "texts": 7,
+      "wordsMean": 540.1,
+      "wordsMin": 212,
+      "wordsMax": 728,
+      "meanSentence": 21.7,
+      "mattr": 0.829,
+      "coverageAtLabel": 0.951,
+      "glossCoverage": 1,
+      "adequateBelow": 4,
+      "adequateAt": 0,
+      "adequateAbove": 3
+    }
+  ]
+}

@@ -16,6 +16,8 @@ import type { SavedWord } from "../../types";
 import { LEVEL_COLORS, useTr, type UiText } from "./shared";
 import { READ_SPEEDS } from "../../research/params";
 import { track } from "../../utils/events";
+import { glossKey, glossKeys } from "../../utils/gloss";
+import { CORPUS_META } from "../../data/corpusMeta";
 
 /* Small video tile with a night-sky fallback. */
 function StoryVideo({ src, poster, className = "", videoRef, paused }: { src: string; poster?: string; className?: string; videoRef?: React.Ref<HTMLVideoElement>; paused?: boolean }) {
@@ -160,6 +162,11 @@ export function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, s
         <div className="space-y-3">
           {LEVEL_DETAILS.map((lvl) => {
             const c = LEVEL_COLORS[lvl.id];
+            const meta = CORPUS_META[currentStory.id]?.[lvl.id];
+            const metaText = meta && [
+              lang === "kk" ? `${meta.words} сөз` : `${meta.words} words`,
+              meta.newWords ? (lang === "kk" ? `${meta.newWords} жаңа сөз` : `${meta.newWords} new words`) : null,
+            ].filter(Boolean).join(" · ");
             return (
               <button
                 key={lvl.id}
@@ -172,6 +179,14 @@ export function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, s
                 <div className="flex-1 min-w-0">
                   <h3 className="font-display font-extrabold text-[17px] text-ink">{lang === "kk" ? lvl.kkTitle : lvl.title}</h3>
                   <p className="text-sm text-ink-2 leading-snug">{lang === "kk" ? lvl.kkDesc : lvl.desc}</p>
+                  {metaText && (
+                    <p
+                      className="text-xs font-semibold text-ink-3 mt-1"
+                      title={lang === "kk" ? "Жаңа сөз — осы ертегінің төменгі деңгейлерінде кездеспеген сөздер" : "New words: words not used in the lower levels of this tale"}
+                    >
+                      {metaText}
+                    </p>
+                  )}
                 </div>
                 <ChevronRight size={20} className="text-ink-3 shrink-0" />
               </button>
@@ -217,11 +232,10 @@ export function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, s
 
   const handleWordClick = (word: string) => {
     // Try the word as written ("didn't"), then without a possessive ("man's" -> "man"), then letters only.
-    const withApostrophe = foldAccents(word).toLowerCase().replace(/[’]/g, "'").replace(/[^a-z']/g, "").replace(/^'+|'+$/g, "");
-    const candidates = [withApostrophe, withApostrophe.replace(/'s$/, ""), withApostrophe.replace(/[^a-z]/g, "")];
-    const found = candidates.map((c) => WORD_TRANSLATIONS[c]).find(Boolean);
+    const key = glossKey(word, WORD_TRANSLATIONS);
+    const found = key ? WORD_TRANSLATIONS[key] : undefined;
     track("word_tap", {
-      object_type: "word", object_id: candidates.find((c) => WORD_TRANSLATIONS[c]) ?? candidates[2],
+      object_type: "word", object_id: key ?? glossKeys(word)[2],
       story_id: currentStory.id, level: selectedLevel,
       result: { has_translation: !!found, during_audio: isReadAlongPlaying },
     });

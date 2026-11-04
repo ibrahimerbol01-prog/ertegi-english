@@ -192,3 +192,28 @@ export const SPEAK_XP_MIN_SCORE = 50;
 export const SPEAK_XP_BASE = 5;
 /** See SPEAK_XP_BASE. Design decision. */
 export const SPEAK_XP_RANGE = 15;
+
+/* ---------- 3.11 Corpus profile (R6): research analysis, not shown to learners ---------- */
+
+/** Share of running words a reader must know to read with adequate
+ *  comprehension: the lower threshold the corpus profile reports.
+ *  Source: Laufer 1989; Hu & Nation 2000 (medium; not yet read in the
+ *  original, verify before citing). docs §3.11. */
+export const CORPUS_COVERAGE_ADEQUATE = 0.95;
+
+/** The stricter threshold for reading without help. Source: Hu & Nation 2000
+ *  (medium; verify before citing). docs §3.11. */
+export const CORPUS_COVERAGE_OPTIMAL = 0.98;
+
+/** Window for the moving-average type-token ratio (MATTR), so lexical
+ *  diversity can be compared across texts of different length. Method:
+ *  Covington & McFall 2010; the window of 50 is a design decision. docs §3.11. */
+export const CORPUS_MATTR_WINDOW = 50;
+
+/** Most draft target words proposed per text, by level (upper bound of the
+ *  ertegi-story-method level spec). Design decision. docs §3.11. */
+export const CORPUS_TARGETS_PER_LEVEL = { A1: 4, A2: 6, B1: 8, B2: 10, C1: 12 } as const;
+
+/** Times a word must occur in one text to be proposed as a target
+ *  (ertegi-story-method level spec). Design decision. docs §3.11. */
+export const CORPUS_TARGET_MIN_REPEATS = { A1: 3, A2: 3, B1: 2, B2: 2, C1: 2 } as const;

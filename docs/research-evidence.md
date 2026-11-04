@@ -155,7 +155,7 @@
 
 Для чего. Ученик получает посильные новые слова и постепенно сдвигается к следующему уровню.
 
-Как измерить. События `daily_words_seen` (пять слов дня, уровень ученика, сколько слов уровнем выше) и `daily_word_known` («Білемін» на слове дня); сохранение слова в словарь — `word_save` с `source = daily`; `docs/events.md`. Связь метки уровня с внешней шкалой проверяется в R6 (лексический профиль корпуса).
+Как измерить. События `daily_words_seen` (пять слов дня, уровень ученика, сколько слов уровнем выше) и `daily_word_known` («Білемін» на слове дня); сохранение слова в словарь — `word_save` с `source = daily`; `docs/events.md`. Связь метки уровня с внешней шкалой проверена в R6 (раздел 3.11, `docs/corpus.md`): по CEFR-J тексты A1 и A2 в основном труднее своей метки.
 
 Ограничения. Метка уровня зависит от того, как адаптирован текст, и не валидирована. Отметка «знаю» не синхронизируется с сервером. Автотестов на `lexicon.ts` нет.
 
@@ -231,6 +231,24 @@
 
 Ограничения. Дневная цель фиксирована 50 XP.
 
+### 3.11. Корпус как научный объект: профиль 35 текстов (R6)
+
+Исследование. Лексическое покрытие и понимание текста: Laufer (1989), Hu & Nation (2000); пороги около 95 % и 98 % известных слов (обе работы требуют проверки по первоисточнику). Разнообразие лексики: MATTR, Covington & McFall (2010). Внешняя шкала уровней слов: The CEFR-J Wordlist 1.5 (Tono, TUFS) для A1–B2 и Octanove Vocabulary Profile 1.0 для C1–C2. Дорожная карта, пункт 5: без описанной сложности текстов сравнение «фольклор против нейтральных текстов» (R7) невозможно.
+
+Сила доказательств. Средняя для порогов покрытия (исследования взрослых и студентов, читающих без помощи); метод MATTR и выбор CEFR-J как шкалы — проектные решения. Это описание текстов, а не проверка эффекта обучения.
+
+Где в сайте. Экран выбора уровня сказки (Кітапхана → сказка): под каждым уровнем строка «114 сөз · 37 жаңа сөз». Файлы: `src/components/screens/ReaderScreen.tsx`, сгенерированный `src/data/corpusMeta.ts`. Анализ: `src/research/corpus.ts`, `src/research/corpusBuild.ts`, `src/research/lemmatize.ts`, `scripts/corpus-report.mjs` (`npm run corpus`), списки слов `research/cefr/`. Результаты: `docs/corpus.md` и `docs/corpus-profile.json`. Общая функция перевода по нажатию `src/utils/gloss.ts` (ридер и профиль). Таблиц БД нет. PR R6.
+
+Как реализовано. Для каждого текста: число слов и предложений, средняя и максимальная длина предложения, число лемм, MATTR (окно `CORPUS_MATTR_WINDOW`), доля слов каждого уровня CEFR-J, накопленное покрытие и уровень, где оно достигает `CORPUS_COVERAGE_ADEQUATE` и `CORPUS_COVERAGE_OPTIMAL` (строго, со словами вне списков как незнакомыми, и верхняя граница), доля слов с переводом по нажатию, новые леммы против нижних уровней той же сказки, черновик целевых слов (`CORPUS_TARGETS_PER_LEVEL`, `CORPUS_TARGET_MIN_REPEATS`). Имена собственные исключаются из профиля уровней. Тест `src/research/corpus.test.ts` пересобирает отчёт и падает, если тексты, словарь или списки изменились, а `npm run corpus` не запущен. Метод и ограничения подробно: `docs/corpus.md`.
+
+Чем отличается от оригинала. CEFR-J создан для японских школьников, а не казахстанских. Пороги покрытия получены для чтения без помощи, а в Ertegi у каждого слова есть перевод. Целевые слова отобраны алгоритмом и не утверждены: их должен проверить учитель или научный руководитель до теста R5 и контрольных текстов R7.
+
+Для чего. Метка уровня получает внешнюю проверку; у исследования появляются цифры, под которые подгоняются контрольные тексты; ученик видит длину текста и сколько в нём новых слов до того, как откроет его.
+
+Как измерить. Профиль — свойство текстов. Связь с учениками: `story_open` и `word_tap` с `story_id` и `level` (`docs/events.md`) показывают, сколько слов нажимают на текстах с разным покрытием; `content_version` в каждом событии связывает событие с версией профиля.
+
+Ограничения. Только лексика: грамматику, связность и знакомость сюжета профиль не измеряет. Лемматизатор ошибается на редких формах. Слова вне списков (казахские реалии: khan, steppe, yurt, batyr) считаются незнакомыми, поэтому строгая оценка завышает трудность. Новые слова считаются внутри одной сказки, без учёта того, что ученик уже знает.
+
 ## 4. Запланированные методики
 
 План внедрения: https://claude.ai/artifact/8t95GFqyYM1Kx7g3a1t8rC. Каждая задача при внедрении получает полную запись в разделе 3.
@@ -240,7 +258,7 @@ R2. Журнал событий в духе xAPI: процессные данн�
 R3. Перенос прогресса из `localStorage` на сервер: без этого исследователь не видит дебаты, карты, слова «знаю». Сделано: таблица `learner_state`, синхронизация `src/utils/learnerSync.ts`, раздел 9.3.
 R4. Исследовательский режим класса и заморозка функций: условие интерпретируемости этапа 1.
 R5. Тест до, после и отсроченный (формы A и B), опрос мотивации к чтению: Raz-Plus (RCT, 662 ученика K–5) показал на навык чтения ES 0,14, на интерес к чтению ES 0,57–0,63.
-R6. Корпус как научный объект: лексический профиль CEFR семи сказок на пяти уровнях.
+R6. Корпус как научный объект: лексический профиль CEFR семи сказок на пяти уровнях. Сделано: раздел 3.11, `docs/corpus.md`.
 R7. Рандомизация «фольклор против нейтральных текстов»: теория схем (Steffensen, Joag-Dev & Anderson 1979; Carrell 1983, 1987; требует проверки по первоисточнику).
 R8. Экспорт и панель исследователя, одобрение причин в «Дала кеңесі», доступ учителя к дебатам и «Ой ізі».
 I1. Объяснение ошибки и вторая попытка, отказ от порога 60 %, «уверен, но ошибся» в повторение: Wisniewski et al. 2020, Greving & Richter 2018.
@@ -300,6 +318,8 @@ Carrell (1983, 1987). Работы по теории схем в чтении н
 
 Cepeda, Vul, Rohrer, Wixted & Pashler (2008). Оптимальный интервал повторения. Psychological Science. https://pubmed.ncbi.nlm.nih.gov/19076480/
 
+Covington & McFall (2010). Cutting the Gordian knot: The moving-average type–token ratio (MATTR). Journal of Quantitative Linguistics, 17(2). Приведено по памяти; требует проверки по первоисточнику.
+
 Crouch & Mazur (2001). Peer Instruction: Ten years of experience and results. American Journal of Physics. https://mazur.harvard.edu/publications/peer-instruction-ten-years-experience-and-results; сводка: https://derekbruff.org/2009/10/23/article-crouch-mazur-2001
 
 Dajani (2016). Action research по рутинам Visible Thinking с учителями английского. Journal of Educational Research and Practice, 6(1). https://scholarworks.waldenu.edu/jerap/vol6/iss1/1
@@ -308,7 +328,9 @@ Deslauriers, McCarty, Miller, Callaghan & Kestin (2019). Measuring actual learni
 
 Greving & Richter (2018). Обзор эффекта тестирования (вопросы с выбором и с кратким ответом). Frontiers in Psychology. https://frontiersin.org/articles/10.3389/fpsyg.2018.02412/full
 
-Hu & Nation (2000); Laufer. Пороги покрытия словаря для чтения. В заметках отмечены как непроверенные; требует проверки по первоисточнику.
+Hu & Nation (2000). Unknown vocabulary density and reading comprehension. Reading in a Foreign Language, 13(1). Порог около 98 % известных слов для чтения без помощи. Название и издание приведены по памяти; требует проверки по первоисточнику.
+
+Laufer (1989). What percentage of text-lexis is essential for comprehension? В сборнике Special Language: From Humans Thinking to Thinking Machines (ред. Lauren & Nordman). Порог около 95 %. Приведено по памяти; требует проверки по первоисточнику.
 
 Kafes (2026). Shadowing и разборчивость речи студентов EFL. Akdeniz University. https://avesis.akdeniz.edu.tr/yayin/f69e052f-da8a-4c65-aa49-33ccc763d6ed/the-effects-of-shadowing-on-eflstudents-intelligibility-comprehensibility-fluency-and-accentedness-across-speaking-tasks
 
@@ -329,6 +351,8 @@ Silverman & Barasch (Journal of Consumer Research); Silverman, Barasch & Small (
 Snow, Lawrence & White (2009). Квазиэксперимент Word Generation в Boston Public Schools. Издание в заметках не указано; приведено по странице SERP; требует проверки по первоисточнику.
 
 Steffensen, Joag-Dev & Anderson (1979). Культурная перспектива в понимании текста (теория схем). Требует проверки по первоисточнику (в дорожной карте приведено по памяти).
+
+Tono (составитель). The CEFR-J Wordlist Version 1.5. Tokyo University of Foreign Studies. http://www.cefr-j.org/download.html; копия: https://github.com/openlanguageprofiles/olp-en-cefrj. Свободно для исследований и коммерции при цитировании. Вместе с Octanove Vocabulary Profile C1/C2 1.0 (Octanove Labs, CC BY-SA 4.0) используется в R6 (`research/cefr/`).
 
 Teimouri, Goetze & Plonsky (2019). Second language anxiety and achievement (метаанализ). Studies in Second Language Acquisition. https://experts.nau.edu/en/publications/second-language-anxiety-and-achievement/
 
@@ -447,6 +471,11 @@ Wikipedia. Beelinguapp. https://en.wikipedia.org/wiki/Beelinguapp
 | `SPEAK_XP_MIN_SCORE` | 50 из 100 | проектное решение | design | `src/components/screens/SpeakScreen.tsx` |
 | `SPEAK_XP_BASE` | 5 XP | проектное решение | design | `src/components/screens/SpeakScreen.tsx` |
 | `SPEAK_XP_RANGE` | 15 XP (итого 13–20 XP) | проектное решение | design | `src/components/screens/SpeakScreen.tsx` |
+| `CORPUS_COVERAGE_ADEQUATE` | 0,95 | Laufer 1989; Hu & Nation 2000, сверить (3.11) | medium | `src/research/corpus.ts` (анализ, не ученику) |
+| `CORPUS_COVERAGE_OPTIMAL` | 0,98 | Hu & Nation 2000, сверить (3.11) | medium | `src/research/corpus.ts` |
+| `CORPUS_MATTR_WINDOW` | 50 слов | проектное решение; метод Covington & McFall 2010 (3.11) | design | `src/research/corpus.ts` |
+| `CORPUS_TARGETS_PER_LEVEL` | 4 / 6 / 8 / 10 / 12 слов для A1–C1 | проектное решение, спецификация ertegi-story-method (3.11) | design | `src/research/corpus.ts` |
+| `CORPUS_TARGET_MIN_REPEATS` | 3 раза на A1–A2, 2 с B1 | проектное решение, спецификация ertegi-story-method (3.11) | design | `src/research/corpus.ts` |
 
 Серверный лимит Шоқана остаётся в `api/shoqan.js` (`DAILY_LIMIT`): серверные функции Vercel не импортируют код из `src`. Совпадение двух мест проверяет тест.
 
