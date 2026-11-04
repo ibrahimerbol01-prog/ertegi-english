@@ -11,7 +11,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "preview": "vite preview",
-    "perf": "node scripts/perf-measure.cjs http://localhost:4173/ 3"
+    "perf": "node scripts/perf-measure.cjs http://localhost:4173/ 3",
+    "corpus": "node scripts/corpus-report.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.116.0",
@@ -31,6 +32,7 @@
     "typescript": "~6.0.2",
     "vite": "^8.3.0",
     "vite-plugin-pwa": "^2.0.0",
-    "vitest": "^5.1.0"
+    "vitest": "^5.1.0",
+    "wink-lemmatizer": "^3.0.4"
   }
 }

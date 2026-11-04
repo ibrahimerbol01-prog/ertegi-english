@@ -165,4 +165,29 @@ export const RESEARCH_PARAMS: Meta = {
   SPEAK_XP_MIN_SCORE: { value: 50, source: DESIGN, evidence: "design", doc: "8", usedIn: "src/components/screens/SpeakScreen.tsx" },
   SPEAK_XP_BASE: { value: 5, source: DESIGN, evidence: "design", doc: "8", usedIn: "src/components/screens/SpeakScreen.tsx" },
   SPEAK_XP_RANGE: { value: 15, source: DESIGN, evidence: "design", doc: "8", usedIn: "src/components/screens/SpeakScreen.tsx" },
+
+  // 3.11 Corpus profile (R6)
+  CORPUS_COVERAGE_ADEQUATE: {
+    value: 0.95, source: "Laufer (1989); Hu & Nation (2000)", evidence: "medium", doc: "3.11",
+    usedIn: "src/research/corpus.ts (scripts/corpus-report.mjs, docs/corpus.md)",
+    note: "Работы не прочитаны в оригинале, сверить перед цитированием. Порог только для анализа корпуса, ученику не показывается.",
+  },
+  CORPUS_COVERAGE_OPTIMAL: {
+    value: 0.98, source: "Hu & Nation (2000)", evidence: "medium", doc: "3.11",
+    usedIn: "src/research/corpus.ts (scripts/corpus-report.mjs, docs/corpus.md)",
+    note: "Сверить по первоисточнику.",
+  },
+  CORPUS_MATTR_WINDOW: {
+    value: 50, source: `${DESIGN}; метод MATTR — Covington & McFall (2010)`, evidence: "design", doc: "3.11",
+    usedIn: "src/research/corpus.ts (mattr)",
+  },
+  CORPUS_TARGETS_PER_LEVEL: {
+    value: { A1: 4, A2: 6, B1: 8, B2: 10, C1: 12 }, source: `${DESIGN} (спецификация уровней ertegi-story-method)`, evidence: "design", doc: "3.11",
+    usedIn: "src/research/corpus.ts (targetCandidates)",
+    note: "Это черновик целевых слов для проверки учителем, не утверждённый список.",
+  },
+  CORPUS_TARGET_MIN_REPEATS: {
+    value: { A1: 3, A2: 3, B1: 2, B2: 2, C1: 2 }, source: `${DESIGN} (спецификация уровней ertegi-story-method)`, evidence: "design", doc: "3.11",
+    usedIn: "src/research/corpus.ts (targetCandidates)",
+  },
 };
