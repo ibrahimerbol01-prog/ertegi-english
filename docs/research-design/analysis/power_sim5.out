@@ -1,0 +1,26 @@
+T=5 tale-pairs x k=5 target words = 25 words; pretest ~20% known, delayed control ~35% (ASSUMED)
+
+Power, analysis A (1000 sims each)
+   N  btw1.3 wth1.3  btw1.5 wth1.5  btw1.8 wth1.8
+  30  0.10    0.24    0.22    0.51    0.41    0.85
+  40  0.13    0.33    0.31    0.68    0.55    0.94
+  50  0.17    0.39    0.37    0.77    0.64    0.98
+  60  0.19    0.45    0.42    0.84    0.72    0.99
+  80  0.25    0.63    0.57    0.93    0.86    1.00
+ 100  0.32    0.69    0.62    0.97    0.90    1.00
+
+Type I error (OR=1, N=50): {'between': np.float64(0.053), 'within': np.float64(0.05)}
+
+Sensitivity, within, OR=1.5, N=50/60/80 (1000 sims):
+  base                                         : 0.76 / 0.85 / 0.94
+  k=4 words/pair                               : 0.67 / 0.74 / 0.87
+  k=6                                          : 0.85 / 0.91 / 0.96
+  pretest 35% known (b_pre=-0.9,b_post=0.2)    : 0.77 / 0.82 / 0.94
+  SD student slope 0.3                         : 0.73 / 0.81 / 0.91
+  SD tale effect 0.3                           : 0.72 / 0.75 / 0.85
+  SD slope 0.5 + tale 0.5                      : 0.61 / 0.68 / 0.74
+
+Check: analysis B (word-level logistic, student+word FE), within, 300 sims
+  N=50, OR=1.0: rejection rate 0.043
+  N=50, OR=1.5: rejection rate 0.807
+  N=60, OR=1.5: rejection rate 0.890
