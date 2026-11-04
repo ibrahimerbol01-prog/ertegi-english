@@ -73,6 +73,8 @@ export const COUNCIL_LOW_SHARE = 0.3;
 export const COUNCIL_HIGH_SHARE = 0.7;
 
 /** Votes needed before the class distribution is shown and branching starts.
+ *  The server uses the same number to switch council_stats() to the
+ *  learner's own class (migration 20261107000000, checked by params.test.ts).
  *  From the report's UI spec ("fewer than 10 votes"). Design decision. docs §3.2. */
 export const COUNCIL_MIN_VOTES = 10;
 

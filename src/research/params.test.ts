@@ -4,6 +4,7 @@ import { RESEARCH_PARAMS, type EvidenceStrength } from "./params.meta";
 import { WEEKS } from "../data/weekWords";
 import evidenceDoc from "../../docs/research-evidence.md?raw";
 import shoqanApi from "../../api/shoqan.js?raw";
+import teacherPanelSql from "../../supabase/migrations/20261107000000_teacher_panel.sql?raw";
 import paramsSource from "./params.ts?raw";
 
 // Source of every app file (tests excluded), to check what imports what.
@@ -107,6 +108,12 @@ describe("learning parameters: values make sense", () => {
     expect(m, "DAILY_LIMIT in api/shoqan.js").not.toBeNull();
     expect(Number(m![1])).toBe(P.SHOQAN_DAILY_CHAT_LIMIT);
     expect(Number(m![2])).toBe(P.SHOQAN_DAILY_TOOL_LIMIT);
+  });
+
+  it("council_stats switches to class numbers at COUNCIL_MIN_VOTES (migration 20261107000000)", () => {
+    const m = teacherPanelSql.match(/min_votes constant int := (\d+);/);
+    expect(m, "min_votes in council_stats").not.toBeNull();
+    expect(Number(m![1])).toBe(P.COUNCIL_MIN_VOTES);
   });
 });
 

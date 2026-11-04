@@ -5,7 +5,7 @@ import { COUNCIL, type CouncilQuestion } from "../data/council";
 import { supabase } from "../lib/supabase";
 import { safePlayVoice } from "../utils/voice";
 import { displayTitle } from "../utils/text";
-import { track } from "../utils/events";
+import { classIdOf, track } from "../utils/events";
 import { Sheet } from "./UIHelpers";
 import { noteChange, useLearnerState } from "../utils/learnerSync";
 import {
@@ -27,7 +27,8 @@ interface Vote {
   xp: number;
 }
 const EMPTY: Vote = { first: null, confidence: null, reason: "", second: null, done: false, xp: 0 };
-interface Stats { counts: number[]; total: number; reasons: { choice: number; reason: string }[] }
+// scope: "class" when the numbers are the learner's own class (enough votes there), else the whole site.
+interface Stats { scope: "class" | "all"; counts: number[]; total: number; reasons: { choice: number; reason: string }[] }
 
 const key = (userId: string | undefined) => `ertegi_council_${userId || "guest"}`;
 function loadAll(userId: string | undefined): Record<string, Vote> {
@@ -63,12 +64,20 @@ function pushVote(userId: string | undefined, q: CouncilQuestion, round: 1 | 2, 
     .then(() => {}, () => {});
 }
 
-async function fetchStats(q: CouncilQuestion): Promise<Stats | null> {
+// With one class, the class's own numbers when it has enough votes (the
+// server decides). Before migration 20261107000000 the function takes only q:
+// then ask again the old way. An answer without scope is the whole site.
+async function fetchStats(q: CouncilQuestion, userId: string | undefined): Promise<Stats | null> {
   try {
     if (!navigator.onLine) return null;
-    const { data, error } = await supabase.rpc("council_stats", { q: q.id });
-    if (error || !data || typeof data.total !== "number") return null;
-    return data as Stats;
+    const classId = userId ? classIdOf(userId) : null;
+    let res = await supabase.rpc("council_stats", classId ? { q: q.id, p_class: classId } : { q: q.id });
+    if (res.error && classId && (res.error.code === "PGRST202" || res.error.code === "42883")) {
+      res = await supabase.rpc("council_stats", { q: q.id });
+    }
+    const data = res.data;
+    if (res.error || !data || typeof data.total !== "number") return null;
+    return { ...data, scope: data.scope === "class" ? "class" : "all" } as Stats;
   } catch {
     return null;
   }
@@ -130,6 +139,7 @@ export function CouncilCard({ lang, userId, progress = new Set<string>(), onRewa
             q={active}
             kk={kk}
             vote={votes[active.id] ?? EMPTY}
+            userId={userId}
             onChange={(v) => { saveVote(userId, active.id, v); setVotes((all) => ({ ...all, [active.id]: v })); }}
             onPush={(round, choice, confidence, reason) => pushVote(userId, active, round, choice, confidence, reason)}
             onReward={onReward}
@@ -140,9 +150,10 @@ export function CouncilCard({ lang, userId, progress = new Set<string>(), onRewa
   );
 }
 
-function CouncilRound({ q, kk, vote, onChange, onPush, onReward }: {
+function CouncilRound({ q, kk, userId, vote, onChange, onPush, onReward }: {
   q: CouncilQuestion;
   kk: boolean;
+  userId?: string;
   vote: Vote;
   onChange: (v: Vote) => void;
   onPush: (round: 1 | 2, choice: number, confidence: Confidence | null, reason: string) => void;
@@ -159,8 +170,8 @@ function CouncilRound({ q, kk, vote, onChange, onPush, onReward }: {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (stage === "council" && !stats) fetchStats(q).then(setStats);
-  }, [stage, stats, q]);
+    if (stage === "council" && !stats) fetchStats(q, userId).then(setStats);
+  }, [stage, stats, q, userId]);
 
   const enough = !!stats && stats.total >= COUNCIL_MIN_VOTES;
   const share = (i: number) => (enough ? Math.round((stats!.counts[i] / stats!.total) * 100) : 0);
@@ -177,7 +188,7 @@ function CouncilRound({ q, kk, vote, onChange, onPush, onReward }: {
       result: { round: 1, choice: pick, correct: pick === q.correct, confidence, reason_words: (r.match(/[\p{L}']+/gu) ?? []).length, repeat: vote.done },
     });
     // Branch on how the class did (SERC): most right means explain, few right means re-read first.
-    const s = await fetchStats(q);
+    const s = await fetchStats(q, userId);
     setStats(s);
     setLoading(false);
     if (s && s.total >= COUNCIL_MIN_VOTES) {
@@ -305,7 +316,7 @@ function CouncilRound({ q, kk, vote, onChange, onPush, onReward }: {
             {" · "}{kk ? CONF[vote.confidence ?? 1].kk : CONF[vote.confidence ?? 1].en}
           </p>
           <div className="mt-4 rounded-2xl border-2 border-line p-4">
-            <p className="text-xs font-bold uppercase tracking-[0.06em] text-ink-3 flex items-center gap-1.5"><Users size={13} /> {tr("Сынып қалай дауыс берді", "How the class voted")}</p>
+            <p className="text-xs font-bold uppercase tracking-[0.06em] text-ink-3 flex items-center gap-1.5"><Users size={13} aria-hidden /> {enough && stats!.scope === "class" ? tr("Сыныбың бойынша", "Your class") : tr("Сынып қалай дауыс берді", "How the class voted")}</p>
             {enough ? (
               <div className="space-y-2 mt-3">
                 {q.options.map((opt, i) => (
