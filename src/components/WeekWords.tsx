@@ -10,6 +10,7 @@ import { safePlayVoice } from "../utils/voice";
 import { Sheet } from "./UIHelpers";
 import { apiUrl } from "../lib/api";
 import { track } from "../utils/events";
+import { noteChange, useLearnerState } from "../utils/learnerSync";
 
 /* Words of the week and a daily debate (Word Generation): use the week's
    words in an argument, hear Shoqan disagree, answer him, then decide again. */
@@ -41,6 +42,7 @@ function loadEntry(userId: string | undefined, week: string): Entry {
 }
 function saveEntry(userId: string | undefined, week: string, entry: Entry) {
   try { localStorage.setItem(storeKey(userId, week), JSON.stringify(entry)); } catch { /* storage full or blocked */ }
+  noteChange(userId, "debate", week);
 }
 
 // Synced to Supabase when the debate_entries table exists; local storage keeps working without it.
@@ -117,7 +119,7 @@ function DailyCard({ lang, userId, progress = new Set<string>(), onReward = () =
   const kk = lang === "kk";
   const { week, startKey, weekday, dayKey, dilemma } = currentWeek();
   const seen = encounters(week, progress);
-  const [entry, setEntry] = useState<Entry>(() => loadEntry(userId, dayKey));
+  const [entry, setEntry] = useLearnerState<Entry>(() => loadEntry(userId, dayKey));
   // Days of this week already argued: the dots on the card.
   const done = Array.from({ length: 7 }, (_, i) => {
     if (i === weekday) return entry.submitted;

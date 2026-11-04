@@ -6,6 +6,7 @@ import { useEscape } from "../utils/useEscape";
 import { Sheet } from "./UIHelpers";
 import { apiUrl } from "../lib/api";
 import { track } from "../utils/events";
+import { noteChange, useLearnerState } from "../utils/learnerSync";
 import {
   COPY_RUN_WORDS, TRAIL_CLAIM_MIN_WORDS, TRAIL_MAX_EVIDENCE, TRAIL_WONDER_MIN_WORDS, TRAIL_XP_FIRST, TRAIL_XP_REVISION,
 } from "../research/params";
@@ -26,11 +27,19 @@ function loadDraft(userId: string | undefined, storyId: string, level: string): 
     return null;
   }
 }
+const emptyDraft = (d: Draft) => !d.choice && !d.claim && !d.evidence.length && !d.wonder;
 function storeDraft(userId: string | undefined, storyId: string, level: string, d: Draft | null) {
   try {
-    if (d) localStorage.setItem(draftKey(userId, storyId, level), JSON.stringify(d));
+    // Opening the window writes the draft it shows. Nothing changed (or an empty draft where
+    // there was none): no write and no sync, or this device's stale or empty copy would get a
+    // fresh time and replace a newer draft from another device (learnerSync: newer wins).
+    const prev = localStorage.getItem(draftKey(userId, storyId, level));
+    const next = d ? JSON.stringify(d) : null;
+    if (prev === next || (!prev && (!d || emptyDraft(d)))) return;
+    if (next) localStorage.setItem(draftKey(userId, storyId, level), next);
     else localStorage.removeItem(draftKey(userId, storyId, level));
-  } catch { /* storage full or blocked */ }
+  } catch { return; /* storage full or blocked */ }
+  noteChange(userId, "trail_draft", `${storyId}|${level}`);
 }
 
 interface Trail {
@@ -88,7 +97,7 @@ export function TrailButton({ storyId, level, text, lang, userId, onReward = () 
 }) {
   const kk = lang === "kk";
   const [open, setOpen] = useState(false);
-  const [all, setAll] = useState(() => loadTrails(userId));
+  const [all, setAll] = useLearnerState(() => loadTrails(userId));
   const btnRef = useRef<HTMLButtonElement>(null);
   const past = all[storyId] ?? [];
   if (!CLAIMS[storyId]) return null;
@@ -114,6 +123,7 @@ export function TrailButton({ storyId, level, text, lang, userId, onReward = () 
               const next = { ...all, [storyId]: [...past, entry] };
               setAll(next);
               saveTrails(userId, next);
+              noteChange(userId, "trail", `${storyId}|${entry.at}`);
               // Counts only: the claim and the question stay in trail_entries, not in the event log.
               const prev = past[past.length - 1];
               track("trail_entry", {
@@ -141,6 +151,7 @@ export function TrailButton({ storyId, level, text, lang, userId, onReward = () 
               const next = { ...latest, [storyId]: list };
               setAll(next);
               saveTrails(userId, next);
+              noteChange(userId, "trail", `${storyId}|${list[list.length - 1].at}`);
             }}
           />
         )}

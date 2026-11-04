@@ -4,6 +4,7 @@
 // plus a couple from the next one (i+1), so an A2 learner drifts toward B1.
 import { STORIES, WORD_TRANSLATIONS } from "../constants";
 import type { SavedWord } from "../types";
+import { noteChange } from "./learnerSync";
 import {
   DAILY_WORDS_AT_LEVEL, DAILY_WORDS_STRETCH, LEVEL_TARGET_MAX_WORDS, LEVEL_TARGET_SHARE, WORD_MASTERED_BOX,
 } from "../research/params";
@@ -66,7 +67,7 @@ export function wordBank(): LexWord[] {
   return bankCache;
 }
 
-/* Words the learner marked "I know it", kept per user. */
+/* Words the learner marked "I know it", kept per user (synced to learner_state, learnerSync.ts). */
 const knownKey = (userId?: string) => `ertegi_known_${userId || "guest"}`;
 export function loadKnown(userId?: string): string[] {
   try {
@@ -80,6 +81,7 @@ export function markKnown(userId: string | undefined, word: string) {
   const all = new Set(loadKnown(userId));
   all.add(word);
   try { localStorage.setItem(knownKey(userId), JSON.stringify([...all])); } catch { /* storage blocked */ }
+  noteChange(userId, "known_word", word);
 }
 
 export interface LevelStat { level: Level; pool: number; mastered: number; goal: number; done: boolean }
