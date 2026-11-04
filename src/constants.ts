@@ -1,3 +1,4 @@
+import { XP_PER_LEVEL } from "./research/params";
 export const WORD_TRANSLATIONS: Record<string, string> = {
   aldar: "Алдар (аты)",
   kose: "Көсе (лақап аты)",
@@ -2025,8 +2026,9 @@ export const ACHIEVEMENTS = [
     icon: "⭐",
     badge: { glyph: "sunrise", color: "felt" },
     title: "Rising Nomad",
-    desc: "Reach Level 5 (500 XP)",
-    kk: { title: "Өрлеген көшпенді", desc: "5-деңгейге жет (500 XP)" },
-    check: (s: AchievementStats) => s.xp >= 500,
+    desc: "Reach Level 5 (400 XP)",
+    kk: { title: "Өрлеген көшпенді", desc: "5-деңгейге жет (400 XP)" },
+    // Level = floor(xp / XP_PER_LEVEL) + 1 (ProfileScreen), so level 5 starts at 400 XP.
+    check: (s: AchievementStats) => s.xp >= 4 * XP_PER_LEVEL,
   },
 ];

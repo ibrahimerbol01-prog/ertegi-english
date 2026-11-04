@@ -196,7 +196,7 @@ export function SpeakScreen({ onReward, t }: {
     overallScore === null
       ? ""
       : overallScore >= 90
-      ? t.greatIntonation
+      ? t.greatIntonation.replace("{xp}", String(Math.round(SPEAK_XP_BASE + (overallScore / 100) * SPEAK_XP_RANGE)))
       : overallScore >= 70
       ? tr("Жақсы, үлгіге жақын. Тағы тыңдап, қайта айтып көр.", "Good — close to the target. Listen again and try once more.")
       : tr("Жаттыға бер: динамикті басып тыңда да, үлгіге жақындатып айт.", "Keep practicing — tap the speaker to hear it again, then try to match it closely.");
