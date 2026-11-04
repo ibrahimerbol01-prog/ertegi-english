@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { ArrowRight, Volume2, RotateCcw, Trophy, Check, X, Lock, MessageCircle } from "lucide-react";
 import { ScreenHeader } from "../UIHelpers";
 import { displayTitle } from "../../utils/text";
@@ -9,6 +9,7 @@ import { buildLevelQuiz } from "../../utils/levelQuiz";
 import { findEvidence } from "../../utils/evidence";
 import { QUIZ_MAX_TRIES, QUIZ_PASS_SHARE, QUIZ_XP_FIRST_TRY, QUIZ_XP_SECOND_TRY } from "../../research/params";
 import { useTr } from "./shared";
+import { track } from "../../utils/events";
 
 /* --- 6a. QUIZ SETUP --- */
 // Pick the text and its level first; the quiz starts after "Бастау".
@@ -105,7 +106,9 @@ export function QuizSetup({ storyId, level, onChange, onStart, progress, lang, t
 type QuizQuestion = { type?: string; q?: string; sentence?: string; options: string[]; correct: number };
 type QuizResult = "first" | "second" | "missed";
 
-export function QuizScreen({ onReward, t, onQuizFinish, questions, storyTitle, onExit, sourceTexts = [] }: {
+export function QuizScreen({ onReward, t, onQuizFinish, questions, storyTitle, onExit, sourceTexts = [], eventInfo }: {
+  /** Tale and level ("quiz" for the whole tale) for the learning events. */
+  eventInfo?: { story_id: string; level: string };
   onExit?: () => void;
   onReward: (xp: number) => void;
   t: Record<string, string>;
@@ -135,12 +138,25 @@ export function QuizScreen({ onReward, t, onQuizFinish, questions, storyTitle, o
   // A gap sentence read aloud carries the missing word, so it is the hint for gaps.
   const fullSentence = isGap ? (question.sentence || "").replace("___", answer) : null;
   const done = status !== "answering";
+  // When the current question appeared, for duration_ms in the learning events.
+  const shownAt = useRef(Date.now());
+  useEffect(() => { shownAt.current = Date.now(); }, [pos, round]);
 
   useEffect(() => () => stopVoice(), []);
 
   const handleCheck = () => {
     if (selected === null || done) return;
     stopVoice();
+    track("quiz_answer", {
+      object_type: "quiz_question", object_id: round[pos], story_id: eventInfo?.story_id, level: eventInfo?.level,
+      result: {
+        correct: selected === question.correct, attempt: wrongPicks.length + 1, choice: selected,
+        duration_ms: Date.now() - shownAt.current, practice,
+        // The hint seen before this answer: the sentence to listen to (gaps) or the line from the tale.
+        hint: wrongPicks.length === 0 ? "none" : isGap ? "sentence" : evidence ? "evidence" : "reread",
+        type: question.type ?? (isGap ? "gap" : "choice"),
+      },
+    });
     if (selected === question.correct) {
       const firstTry = wrongPicks.length === 0;
       if (!practice) onReward(firstTry ? QUIZ_XP_FIRST_TRY : QUIZ_XP_SECOND_TRY);
@@ -185,6 +201,13 @@ export function QuizScreen({ onReward, t, onQuizFinish, questions, storyTitle, o
   const firstTry = results.filter((r) => r === "first").length;
 
   useEffect(() => {
+    if (finished) {
+      track("quiz_complete", {
+        object_type: "quiz", object_id: eventInfo ? `${eventInfo.story_id}:${eventInfo.level}` : null,
+        story_id: eventInfo?.story_id, level: eventInfo?.level,
+        result: { score: correct, total: round.length, first_try: firstTry, practice },
+      });
+    }
     if (finished && !practice && onQuizFinish) onQuizFinish(correct, round.length, firstTry);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [finished]);

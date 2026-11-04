@@ -8,6 +8,7 @@ import { supabase } from "../../lib/supabase";
 import { apiUrl } from "../../lib/api";
 import { useTr } from "./shared";
 import { SPEAK_XP_BASE, SPEAK_XP_MIN_SCORE, SPEAK_XP_RANGE } from "../../research/params";
+import { track } from "../../utils/events";
 
 /* Score ring for pronunciation results. */
 function ScoreRing({ value, size = 120 }: { value: number; size?: number }) {
@@ -133,7 +134,10 @@ export function SpeakScreen({ onReward, t }: {
           if (result.reason === SpeechSDK.ResultReason.RecognizedSpeech) {
             const assessment = SpeechSDK.PronunciationAssessmentResult.fromResult(result as Parameters<typeof SpeechSDK.PronunciationAssessmentResult.fromResult>[0]);
             setTranscript(result.text);
+            const phrase = { object_type: "phrase", object_id: `${speakLevel}:${phraseIndex % phrases.length}`, level: speakLevel };
             if (matchShare(targetPhrase, result.text) < 0.5 || assessment.completenessScore < 40) {
+              // What was heard is never logged, only that it was not the phrase.
+              track("pronunciation_attempt", { ...phrase, result: { misread: true } });
               setMisread(true);
               recognizer.close();
               return;
@@ -152,6 +156,10 @@ export function SpeakScreen({ onReward, t }: {
               pronunciation: Math.round(assessment.pronunciationScore),
             };
             setScores(next);
+            track("pronunciation_attempt", {
+              ...phrase,
+              result: { score: next.pronunciation, accuracy: next.accuracy, fluency: next.fluency, completeness: next.completeness, words: words.length, weak_words: words.filter((w) => (w.PronunciationAssessment?.AccuracyScore ?? 0) < 60).length },
+            });
             if (next.pronunciation >= SPEAK_XP_MIN_SCORE) onReward(Math.round(SPEAK_XP_BASE + (next.pronunciation / 100) * SPEAK_XP_RANGE));
           } else if (result.reason === SpeechSDK.ResultReason.NoMatch) {
             setSpeechError(tr("Естілмеді. Микрофонға жақынырақ, қаттырақ сөйлеп көр.", "Didn't catch that — try speaking a bit louder and closer to the mic."));

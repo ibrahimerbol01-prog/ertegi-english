@@ -7,6 +7,7 @@ import { useEscape } from "../utils/useEscape";
 import { useDialogFocus } from "../utils/useDialogFocus";
 import { apiUrl } from "../lib/api";
 import { SHOQAN_DAILY_CHAT_LIMIT } from "../research/params";
+import { track } from "../utils/events";
 
 export const ShoqanChat = ({ hidden = false }: { hidden?: boolean }) => {
   const kk = useLang() === "kk";
@@ -72,11 +73,23 @@ export const ShoqanChat = ({ hidden = false }: { hidden?: boolean }) => {
     return () => document.removeEventListener("scroll", onScroll, { capture: true });
   }, [phone]);
 
+  // For the learning events: where the chat was opened from, and the question
+  // another screen prepared (only whether it was sent as is, never its text).
+  const openedFrom = useRef<"bubble" | "prompt" | "event">("bubble");
+  const draftRef = useRef("");
+  useEffect(() => {
+    if (!open) return;
+    track("shoqan_open", { result: { from: openedFrom.current } });
+    openedFrom.current = "bubble";
+  }, [open]);
+
   // Other screens open the chat with a "shoqan:open" event, optionally with a draft question.
   useEffect(() => {
     const onOpen = (e: Event) => {
       const draft = (e as CustomEvent<string | undefined>).detail;
       if (draft) setInput(draft);
+      openedFrom.current = draft ? "prompt" : "event";
+      draftRef.current = draft ? draft.trim() : "";
       setOpen(true);
     };
     window.addEventListener("shoqan:open", onOpen);
@@ -125,6 +138,14 @@ export const ShoqanChat = ({ hidden = false }: { hidden?: boolean }) => {
     if (!text || sending) return;
 
     const nextMessages = [...messages, { role: "user" as const, content: text }];
+    // Only the fact and the length: what the learner wrote is never logged.
+    track("shoqan_message", {
+      result: {
+        chars: text.length, words: (text.match(/[\p{L}']+/gu) ?? []).length,
+        turn: nextMessages.filter((m) => m.role === "user").length, prepared: !!draftRef.current && text === draftRef.current,
+      },
+    });
+    draftRef.current = "";
     setMessages(nextMessages);
     setInput("");
     setChatError(null);
