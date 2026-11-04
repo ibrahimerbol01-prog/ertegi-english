@@ -7,6 +7,7 @@ import { DICT } from "./dict";
 import { loadLang } from "./lang";
 import { capturePendingClass, peekPendingClass } from "./utils/classes";
 import { RoleScreen } from "./components/RolePicker";
+import { ACCOUNT_DELETED_EVENT } from "./utils/account";
 import { clearPendingRole, guessRole, peekPendingRole, roleOf, saveRole, switchRole, takePendingRole, type Role } from "./utils/role";
 
 // The app itself (tales, dictionary, all screens) is a separate file: the
@@ -15,6 +16,8 @@ import { clearPendingRole, guessRole, peekPendingRole, roleOf, saveRole, switchR
 const loadApp = () => import("./KazakhTalesApp");
 const KazakhTalesApp = lazy(loadApp);
 const blank = <div className="min-h-dvh w-full bg-sand" />;
+// Its chunk is already loaded by the time it shows: the delete window lives in the same file.
+const AccountDeletedScreen = lazy(() => import("./components/DeleteAccount").then((m) => ({ default: m.AccountDeletedScreen })));
 
 // A class link (?class=CODE) is remembered before the intro and sign-in, then offered after.
 capturePendingClass();
@@ -28,6 +31,14 @@ export default function App() {
   const [introSeen, setIntroSeen] = useState(false);
   // Bumped after a role is saved on this device only, so the app re-reads it.
   const [, setRoleTick] = useState(0);
+  // Set when the account was just deleted: a goodbye screen instead of the sign-in form.
+  const [accountDeleted, setAccountDeleted] = useState(false);
+
+  useEffect(() => {
+    const onDeleted = () => setAccountDeleted(true);
+    window.addEventListener(ACCOUNT_DELETED_EVENT, onDeleted);
+    return () => window.removeEventListener(ACCOUNT_DELETED_EVENT, onDeleted);
+  }, []);
 
   useEffect(() => {
     const idle = window.requestIdleCallback ?? ((cb: () => void) => window.setTimeout(cb, 1200));
@@ -106,6 +117,14 @@ export default function App() {
   if (!introSeen) {
     return (
       <IntroScreen onFinish={() => setIntroSeen(true)} t={DICT[loadLang()]} />
+    );
+  }
+
+  if (accountDeleted) {
+    return (
+      <Suspense fallback={blank}>
+        <AccountDeletedScreen lang={loadLang()} onDone={() => setAccountDeleted(false)} />
+      </Suspense>
     );
   }
 

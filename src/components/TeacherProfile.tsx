@@ -3,6 +3,7 @@ import { ChevronRight, LogOut } from "lucide-react";
 import { IconBoard } from "./Icons";
 import { OrnamentBand, Shanyraq } from "./Ornaments";
 import { teacherClasses, type ClassRow } from "../utils/classes";
+import { DeleteAccountCard, PolicyRow } from "./AccountRows";
 
 /* The teacher's own profile: who they are, their classes at a glance, and
    settings. No XP, streak or badges: those belong to learners. */
@@ -73,11 +74,14 @@ export function TeacherProfile({ lang, setLang, userName, email, onOpenClasses, 
           </div>
         </div>
         {roleSwitch}
+        <PolicyRow lang={lang} />
         <button onClick={onSignOut} className="w-full flex items-center gap-3 px-4 min-h-[56px] text-left hover:bg-sand/60">
           <span className="w-8 h-8 rounded-lg bg-felt flex items-center justify-center"><LogOut size={16} className="text-white" /></span>
           <span className="flex-1 text-[16px] text-felt font-medium">{kk ? "Шығу" : "Sign out"}</span>
         </button>
       </div>
+
+      <DeleteAccountCard lang={lang} teacher />
     </div>
   );
 }

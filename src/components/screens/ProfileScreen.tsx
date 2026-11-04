@@ -6,6 +6,7 @@ import { ACHIEVEMENTS } from "../../constants";
 import { IconFlame, IconBolt, IconCards, IconTrophy, Badge } from "../Icons";
 import { PUBLIC_URL } from "../../lib/api";
 import { XP_PER_LEVEL } from "../../research/params";
+import { DeleteAccountCard, PolicyRow } from "../AccountRows";
 
 /* --- 8. PROFILE SCREEN --- */
 export function ProfileScreen({ xp, t, lang = "kk", setLang, savedWordsCount = 0, unlockedAchievements = [], userName = "Learner", onSignOut, streakDays = 0, quizzesCompleted = 0, kilim, classes, roleSwitch }: {
@@ -128,11 +129,14 @@ export function ProfileScreen({ xp, t, lang = "kk", setLang, savedWordsCount = 0
           <span className="flex-1 text-[16px] text-ink">{t.shareBuklet}</span>
           <ChevronRight size={18} className="text-ink-3" />
         </button>
+        <PolicyRow lang={lang} />
         <button onClick={onSignOut} className="w-full flex items-center gap-3 px-4 min-h-[56px] text-left hover:bg-sand/60">
           <span className="w-8 h-8 rounded-lg bg-felt flex items-center justify-center"><LogOut size={16} className="text-white" /></span>
           <span className="flex-1 text-[16px] text-felt font-medium">{lang === "kk" ? "Шығу" : "Sign out"}</span>
         </button>
       </div>
+
+      <DeleteAccountCard lang={lang} />
 
       {/* Heritage booklet */}
       <Sheet open={showBuklet} onClose={() => setShowBuklet(false)} label={t.bukletHeader}>
