@@ -1,6 +1,6 @@
 """Extract A2/B1 texts of the 5 study tales from src/constants.ts and count candidate words (simple surface forms)."""
 import re, json, sys
-src = open('/home/claude/ertegi-english/src/constants.ts', encoding='utf-8').read()
+src = open('src/constants.ts', encoding='utf-8').read()
 TALES = ['er_tostik','tazsha_bala','ayaz_bi','asan_kaigy','alpamys']
 out = {}
 for t in TALES:

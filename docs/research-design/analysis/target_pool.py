@@ -10,7 +10,7 @@ names = set(prof['names'])
 lv = {}
 order = {'A1':1,'A2':2,'B1':3,'B2':4,'C1':5,'C2':6}
 for f in ['cefrj-vocabulary-profile-1.5.csv','octanove-vocabulary-profile-c1c2-1.0.csv']:
-    for r in csv.DictReader(open('/home/claude/ertegi-english/research/cefr/'+f, encoding='utf-8')):
+    for r in csv.DictReader(open('research/cefr/'+f, encoding='utf-8')):
         if r['pos'] in ('determiner','preposition','pronoun','conjunction','auxiliary verb','modal verb','number','be-verb','do-verb','have-verb','infinitive-to','interjection'): continue
         for h in r['headword'].lower().split('/'):
             h=h.strip()
