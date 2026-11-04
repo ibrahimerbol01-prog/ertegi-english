@@ -6,6 +6,7 @@ import { useEscape } from "../utils/useEscape";
 import { Sheet } from "./UIHelpers";
 import { apiUrl } from "../lib/api";
 import { track } from "../utils/events";
+import { noteChange, useLearnerState } from "../utils/learnerSync";
 import {
   COPY_RUN_WORDS, TRAIL_CLAIM_MIN_WORDS, TRAIL_MAX_EVIDENCE, TRAIL_WONDER_MIN_WORDS, TRAIL_XP_FIRST, TRAIL_XP_REVISION,
 } from "../research/params";
@@ -31,6 +32,7 @@ function storeDraft(userId: string | undefined, storyId: string, level: string, 
     if (d) localStorage.setItem(draftKey(userId, storyId, level), JSON.stringify(d));
     else localStorage.removeItem(draftKey(userId, storyId, level));
   } catch { /* storage full or blocked */ }
+  noteChange(userId, "trail_draft", `${storyId}|${level}`);
 }
 
 interface Trail {
@@ -88,7 +90,7 @@ export function TrailButton({ storyId, level, text, lang, userId, onReward = () 
 }) {
   const kk = lang === "kk";
   const [open, setOpen] = useState(false);
-  const [all, setAll] = useState(() => loadTrails(userId));
+  const [all, setAll] = useLearnerState(() => loadTrails(userId));
   const btnRef = useRef<HTMLButtonElement>(null);
   const past = all[storyId] ?? [];
   if (!CLAIMS[storyId]) return null;
@@ -114,6 +116,7 @@ export function TrailButton({ storyId, level, text, lang, userId, onReward = () 
               const next = { ...all, [storyId]: [...past, entry] };
               setAll(next);
               saveTrails(userId, next);
+              noteChange(userId, "trail", `${storyId}|${entry.at}`);
               // Counts only: the claim and the question stay in trail_entries, not in the event log.
               const prev = past[past.length - 1];
               track("trail_entry", {
@@ -141,6 +144,7 @@ export function TrailButton({ storyId, level, text, lang, userId, onReward = () 
               const next = { ...latest, [storyId]: list };
               setAll(next);
               saveTrails(userId, next);
+              noteChange(userId, "trail", `${storyId}|${list[list.length - 1].at}`);
             }}
           />
         )}

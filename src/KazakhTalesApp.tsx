@@ -40,6 +40,7 @@ import { clearPendingRole, type Role } from "./utils/role";
 import { AssignmentsCard, JoinClassSheet, MyClassesSection } from "./components/StudentClasses";
 import { clearPendingClass, flushQuizResults, peekPendingClass, saveQuizResult } from "./utils/classes";
 import { setEventsUser, track } from "./utils/events";
+import { setSyncUser } from "./utils/learnerSync";
 import {
   loadProgress, saveProgress, progressKey, loadLocalReviews, saveReview,
   nextReview, lapse, localDay, daysBetween, isDue, MAX_MASTERY, type ProgressStep
@@ -128,6 +129,11 @@ export default function KazakhTalesApp({ session, role, onRoleChange }: { sessio
     setEventsUser(teacher ? null : userId);
     return () => setEventsUser(null);
   }, [userId, teacher]);
+  // Cards, known words, votes, trails, debates follow the learner to another device (utils/learnerSync.ts).
+  useEffect(() => {
+    setSyncUser(userId);
+    return () => setSyncUser(null);
+  }, [userId]);
   useEffect(() => { latestXpRef.current = xp; }, [xp]);
   useEffect(() => { latestQuizzesRef.current = quizzesCompleted; }, [quizzesCompleted]);
   useEffect(() => { latestPerfectRef.current = perfectQuizzes; }, [perfectQuizzes]);

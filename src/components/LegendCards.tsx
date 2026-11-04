@@ -5,11 +5,12 @@ import { ScreenHeader, Sheet } from "./UIHelpers";
 import { stopVoice } from "../utils/voice";
 import { ScenePlayer } from "./ScenePlayer";
 import { LEGENDS, PASS, RARITY, type LegendCard, type Ornament, type Question } from "../data/legends";
+import { noteChange, useLearnerState, useLearnerVersion } from "../utils/learnerSync";
 
 type Lang = "kk" | "en";
 const pick = (lang: string) => (lang === "kk" ? "kk" : "en") as Lang;
 
-/* Collected cards, kept per user in localStorage. */
+/* Collected cards, kept per user in localStorage and synced to learner_state (learnerSync.ts). */
 const cardsKey = (userId?: string) => `ertegi_cards_${userId || "guest"}`;
 function loadCards(userId?: string): string[] {
   try {
@@ -23,6 +24,7 @@ function saveCard(userId: string | undefined, id: string) {
   const all = new Set(loadCards(userId));
   all.add(id);
   try { localStorage.setItem(cardsKey(userId), JSON.stringify([...all])); } catch { /* storage full or blocked */ }
+  noteChange(userId, "card", id);
 }
 
 const ORNAMENT: Record<Ornament, (cls: string) => React.ReactNode> = {
@@ -293,7 +295,7 @@ const CHIP_FILL: Record<string, string> = { ertegi: "bg-sky-deep", epos: "bg-[#1
 
 export function LegendScreen({ lang, userId, onReward }: { lang: string; userId?: string; onReward: (xp: number) => void }) {
   const l = pick(lang);
-  const [owned, setOwned] = useState<string[]>(() => loadCards(userId));
+  const [owned, setOwned] = useLearnerState<string[]>(() => loadCards(userId));
   // play: the card was still locked when opened, so keep the challenge (and its win screen) on.
   const [active, setActive] = useState<{ card: LegendCard; play: boolean } | null>(null);
   const close = () => { stopVoice(); setActive(null); };
@@ -347,6 +349,7 @@ export function LegendScreen({ lang, userId, onReward }: { lang: string; userId?
 /* Home entry: a fanned stack of cards that opens the deck. */
 export function LegendDeckEntry({ lang, userId, onOpen }: { lang: string; userId?: string; onOpen: () => void }) {
   const l = pick(lang);
+  useLearnerVersion(); // re-read after a sign-in merge brought cards from another device
   const owned = loadCards(userId);
   const preview = [...LEGENDS.filter((c) => owned.includes(c.id)), ...LEGENDS.filter((c) => !owned.includes(c.id))].slice(0, 3);
 

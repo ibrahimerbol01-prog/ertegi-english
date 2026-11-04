@@ -7,6 +7,7 @@ import { safePlayVoice } from "../utils/voice";
 import { displayTitle } from "../utils/text";
 import { track } from "../utils/events";
 import { Sheet } from "./UIHelpers";
+import { noteChange, useLearnerState } from "../utils/learnerSync";
 import {
   COUNCIL_HIGH_SHARE, COUNCIL_LOW_SHARE, COUNCIL_MIN_VOTES, COUNCIL_REASON_MAX_CHARS, COUNCIL_REASON_MIN_WORDS,
   COUNCIL_XP_CHANGED_TO_RIGHT, COUNCIL_XP_REASON, COUNCIL_XP_RIGHT, COUNCIL_XP_TAKING_PART,
@@ -41,6 +42,7 @@ function saveVote(userId: string | undefined, id: string, vote: Vote) {
   const all = loadAll(userId);
   all[id] = vote;
   try { localStorage.setItem(key(userId), JSON.stringify(all)); } catch { /* storage full or blocked */ }
+  noteChange(userId, "council_vote", id);
 }
 
 // Reasons others see go through a teacher first; this only keeps obvious junk out of the queue.
@@ -81,7 +83,7 @@ export function CouncilCard({ lang, userId, progress = new Set<string>(), onRewa
   onReward?: (xp: number) => void;
 }) {
   const kk = lang === "kk";
-  const [votes, setVotes] = useState(() => loadAll(userId));
+  const [votes, setVotes] = useLearnerState(() => loadAll(userId));
   const [openId, setOpenId] = useState<string | null>(null);
   const cardRef = useRef<HTMLButtonElement>(null);
   const unlocked = COUNCIL.filter((q) => readTale(q.storyId, progress));

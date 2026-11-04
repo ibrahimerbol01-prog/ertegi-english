@@ -5,6 +5,7 @@ import { analyseLearner, dailyWords, dayIndex, loadKnown, markKnown, wordBank, t
 import type { SavedWord } from "../types";
 import { WORD_OF_DAY_XP } from "../research/params";
 import { track } from "../utils/events";
+import { useLearnerState } from "../utils/learnerSync";
 
 /* Today's picks are frozen per user and day, so acting on a word never reshuffles the list. */
 const todayKey = (userId?: string) => `ertegi_daily_words_${userId || "guest"}`;
@@ -40,7 +41,7 @@ export function WordCoach({ savedWords, progress, userId, lang, onLearn, onRewar
   onReward: (xp: number) => void;
 }) {
   const kk = lang === "kk";
-  const [known, setKnown] = useState<string[]>(() => loadKnown(userId));
+  const [known, setKnown] = useLearnerState<string[]>(() => loadKnown(userId));
   const profile = useMemo(() => analyseLearner(savedWords, known, progress), [savedWords, known, progress]);
 
   const [day] = useState(dayIndex);

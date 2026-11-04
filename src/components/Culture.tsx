@@ -10,6 +10,7 @@ import { useEscape } from "../utils/useEscape";
 import { STORIES } from "../constants";
 import { displayTitle } from "../utils/text";
 import { MAQAL_XP } from "../research/params";
+import { noteChange, useLearnerState } from "../utils/learnerSync";
 import {
   MAQALS, maqalOfDay, dayNumber, BATAS, DEFAULT_BATA, oyuForStory, STORY_HISTORY, TURKIC_WORDS,
 } from "../data/culture";
@@ -17,7 +18,7 @@ import {
 type Lang = "kk" | "en";
 const pick = (lang: string) => (lang === "kk" ? "kk" : "en") as Lang;
 
-/* --- Proverb collection, kept per user in localStorage --- */
+/* --- Proverb collection, kept per user in localStorage, synced to learner_state (learnerSync.ts) --- */
 const maqalKey = (userId?: string) => `ertegi_maqals_${userId || "guest"}`;
 export function loadMaqals(userId?: string): number[] {
   try {
@@ -32,6 +33,7 @@ function saveMaqal(userId: string | undefined, index: number) {
   const all = new Set(loadMaqals(userId));
   all.add(index);
   try { localStorage.setItem(maqalKey(userId), JSON.stringify([...all])); } catch { /* storage full or blocked */ }
+  noteChange(userId, "maqal", String(index));
 }
 
 const ORNAMENTS = {
@@ -45,7 +47,7 @@ export function MaqalCard({ lang, userId, onReward }: { lang: string; userId?: s
   // Starts on today's proverb; "next" walks on to proverbs not yet collected.
   const [day, setDay] = useState(() => dayNumber());
   const { index, maqal, options, correct } = maqalOfDay(day);
-  const [picked, setPicked] = useState<number | null>(() => (loadMaqals(userId).includes(index) ? correct : null));
+  const [picked, setPicked] = useLearnerState<number | null>(() => (loadMaqals(userId).includes(index) ? correct : null));
   const solved = picked === correct;
   const l = pick(lang);
   const collected = loadMaqals(userId);
