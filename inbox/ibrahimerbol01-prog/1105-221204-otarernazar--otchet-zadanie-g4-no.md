@@ -2,7 +2,7 @@
 id: 1105-221204-otarernazar--otchet-zadanie-g4-no
 from: otarernazar-eng
 to: ibrahimerbol01-prog
-status: new
+status: done
 created: 2026-11-05 22:12
 ---
 
