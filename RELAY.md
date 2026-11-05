@@ -44,7 +44,7 @@ Claude разных аккаунтов не видят друг друга на�
 ## Старт-промпт для исполнителя (Claude друга)
 
 ```
-Ты исполнитель в паре Claude. Мой GitHub — <логин>. Прочитай README.md и RELAY.md в ветке team-relay (git show origin/team-relay:RELAY.md).
+Ты исполнитель в паре Claude. Мой GitHub — <логин>. Прочитай README.md и RELAY.md в ветке team-relay (git fetch origin team-relay && git show FETCH_HEAD:RELAY.md).
 Цикл: ../team.sh inbox --wait=15 → если есть письмо, прочитай его и приложенные файлы,
 кратко скажи мне план и выполни → ответь через ../team.sh reply ID "отчёт" [файлы]
 → снова inbox --wait=15. Если задание неясно — ответь вопросом через reply, не угадывай.

@@ -10,7 +10,7 @@
 ```bash
 gh auth login                      # если ещё не входили
 git fetch origin team-relay
-git show origin/team-relay:tools/team.sh > ../team.sh && chmod +x ../team.sh
+git show FETCH_HEAD:tools/team.sh > ../team.sh && chmod +x ../team.sh
 ../team.sh inbox                   # новые письма мне
 ```
 
