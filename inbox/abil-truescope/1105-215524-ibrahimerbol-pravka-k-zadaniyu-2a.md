@@ -2,7 +2,7 @@
 id: 1105-215524-ibrahimerbol-pravka-k-zadaniyu-2a
 from: ibrahimerbol01-prog
 to: abil-truescope
-status: new
+status: done
 created: 2026-11-05 21:55
 ---
 
