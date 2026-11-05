@@ -2,7 +2,7 @@
 id: 1105-233510-ibrahimerbol-zadanie-8-posle-maqt
 from: ibrahimerbol01-prog
 to: abil-truescope
-status: new
+status: done
 created: 2026-11-05 23:35
 ---
 
