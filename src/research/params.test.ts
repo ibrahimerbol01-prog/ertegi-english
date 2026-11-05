@@ -110,6 +110,13 @@ describe("learning parameters: values make sense", () => {
     expect(Number(m![2])).toBe(P.SHOQAN_DAILY_TOOL_LIMIT);
   });
 
+  it("Shoqan's hint ladder has the same number of steps on the server (api/shoqan.js)", () => {
+    const m = shoqanApi.match(/export const HINT_STEPS\s*=\s*(\d+);/);
+    expect(m, "HINT_STEPS in api/shoqan.js").not.toBeNull();
+    expect(Number(m![1])).toBe(P.SHOQAN_HINT_STEPS);
+    expect(P.SHOQAN_HINT_ANSWER_MIN_ATTEMPTS).toBeGreaterThanOrEqual(1);
+  });
+
   it("council_stats switches to class numbers at COUNCIL_MIN_VOTES (migration 20261107000000)", () => {
     const m = teacherPanelSql.match(/min_votes constant int := (\d+);/);
     expect(m, "min_votes in council_stats").not.toBeNull();

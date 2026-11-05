@@ -179,6 +179,16 @@ export const SHOQAN_DAILY_CHAT_LIMIT = 10;
 /** Lesson requests (kind "tool": debate, thinking trail) per learner per UTC
  *  day; server value in api/shoqan.js (DAILY_LIMIT.tool). docs §3.8. */
 export const SHOQAN_DAILY_TOOL_LIMIT = 10;
+/** Steps of Shoqan's help ladder for a quiz question: 1 points to the place in
+ *  the tale, 2 gives a hint (narrows the choice, explains the key word), 3
+ *  explains with the answer. Each "Ask Shoqan" on the same question moves one
+ *  step up. The server keeps its own copy (api/shoqan.js, HINT_STEPS) and
+ *  params.test.ts checks both stay equal. Bastani et al. 2025: hints instead
+ *  of ready answers; the number 3 is ours. docs §3.8. */
+export const SHOQAN_HINT_STEPS = 3;
+/** Wrong attempts on the question needed before the last step (the answer)
+ *  can be reached; without one the ladder stops a step below. docs §3.8. */
+export const SHOQAN_HINT_ANSWER_MIN_ATTEMPTS = 1;
 
 /* ---------- 3.9 Reading along with narration ---------- */
 

@@ -155,6 +155,14 @@ export const RESEARCH_PARAMS: Meta = {
     value: 10, source: `${DESIGN} (стоимость запросов к модели)`, evidence: "design", doc: "3.8",
     usedIn: "api/shoqan.js (DAILY_LIMIT.tool, сервер)",
   },
+  SHOQAN_HINT_STEPS: {
+    value: 3, source: "Bastani et al. (2025, PNAS): подсказки вместо готовых ответов; число ступеней — проектное решение", evidence: "strong", doc: "3.8",
+    usedIn: "src/utils/hintLadder.ts, api/shoqan.js (HINT_STEPS, сервер)",
+  },
+  SHOQAN_HINT_ANSWER_MIN_ATTEMPTS: {
+    value: 1, source: `${DESIGN} (ответ только после попытки ученика, Bastani et al. 2025)`, evidence: "design", doc: "3.8",
+    usedIn: "src/utils/hintLadder.ts",
+  },
 
   // 3.9 Narration
   READ_SPEEDS: {
