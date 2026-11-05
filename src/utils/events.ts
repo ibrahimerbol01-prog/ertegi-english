@@ -1,5 +1,7 @@
 import { supabase } from "../lib/supabase";
 import { CONTENT_VERSION } from "../data/contentVersion";
+import { RESEARCH_MODE, STUDY_ID } from "../research/mode";
+import { readStudyCode, researchContext } from "../research/studyCode";
 
 /* Learning events in the spirit of xAPI (migration 20261105000000_learning_events,
    dictionary docs/events.md). track() is synchronous and never throws: it puts
@@ -32,6 +34,8 @@ export const EVENT_VERBS = [
   "shoqan_open",
   "shoqan_message",
   "pronunciation_attempt",
+  "test_answer",
+  "test_complete",
 ] as const;
 export type Verb = (typeof EVENT_VERBS)[number];
 
@@ -321,6 +325,8 @@ const log = createEventLog({
     if (lang) ctx.lang = lang;
     const classId = classIdOf(userId);
     if (classId) ctx.class_id = classId;
+    // R4: the research build marks every event with the study and the participant code.
+    if (RESEARCH_MODE) Object.assign(ctx, researchContext(STUDY_ID, readStudyCode(typeof localStorage === "undefined" ? null : localStorage, userId)));
     return ctx;
   },
   debug: (msg) => console.debug(msg),

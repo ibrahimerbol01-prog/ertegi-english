@@ -3,7 +3,9 @@ import { ArrowRight, Volume2, RotateCcw, Trophy, Check, X, Lock, MessageCircle }
 import { ScreenHeader } from "../UIHelpers";
 import { displayTitle } from "../../utils/text";
 import { safePlayVoice, stopVoice } from "../../utils/voice";
-import { STORIES, LEVEL_DETAILS } from "../../constants";
+import { LEVEL_DETAILS } from "../../constants";
+import { RESEARCH_MODE } from "../../research/mode";
+import { APP_STORIES as STORIES } from "../../research/stories";
 import { StoryCover } from "../StoryCover";
 import { buildLevelQuiz } from "../../utils/levelQuiz";
 import { findEvidence } from "../../utils/evidence";
@@ -420,7 +422,7 @@ export function QuizScreen({ onReward, t, onQuizFinish, questions, storyTitle, o
               </button>
             </div>
           )}
-          {status === "revealed" && (
+          {!RESEARCH_MODE && status === "revealed" && (
             <button onClick={askShoqan} className="mt-3 h-8 px-3 rounded-full bg-card text-felt-deep text-sm font-bold inline-flex items-center gap-1.5">
               <MessageCircle size={15} /> {tr("Неге? Шоқаннан сұра", "Why? Ask Shoqan")}
             </button>

@@ -4,6 +4,7 @@ import {
   RefreshCw, RotateCcw, Trash2, Trophy, Users, Zap,
 } from "lucide-react";
 import { STORIES } from "../constants";
+import { APP_STORIES } from "../research/stories";
 import { displayTitle } from "../utils/text";
 import { localDay } from "../utils/progress";
 import {
@@ -486,7 +487,7 @@ function TasksTab({ kk, classId, archived, members, assignments, onChanged }: {
     d.setDate(d.getDate() + 7);
     return localDay(d);
   };
-  const [storyId, setStoryId] = useState<string>(STORIES[0].id);
+  const [storyId, setStoryId] = useState<string>(APP_STORIES[0].id);
   const [step, setStep] = useState<AssignStep>("A1");
   const [due, setDue] = useState<string>(weekAhead);
   const [note, setNote] = useState("");
@@ -536,7 +537,7 @@ function TasksTab({ kk, classId, archived, members, assignments, onChanged }: {
           <label className="block">
             <span className="text-sm font-bold text-ink">{kk ? "Ертегі" : "Tale"}</span>
             <select value={storyId} onChange={(e) => setStoryId(e.target.value)} className="field mt-1.5">
-              {STORIES.map((s: { id: string; title: string }) => <option key={s.id} value={s.id}>{displayTitle(s.title)}</option>)}
+              {APP_STORIES.map((s: { id: string; title: string }) => <option key={s.id} value={s.id}>{displayTitle(s.title)}</option>)}
             </select>
           </label>
           <fieldset>
@@ -969,7 +970,7 @@ function StudentSheet({ kk, classId, member, assignments, onClose, onRemoved }: 
   const away = m ? daysAway(m.last_active_date) : null;
   const streak = m ? liveStreak(m) : 0;
   const weak = (detail?.words ?? []).filter((w) => w.mastery <= 1).slice(0, 12);
-  const tales = m ? STORIES.map((s: { id: string; title: string }) => ({
+  const tales = m ? APP_STORIES.map((s: { id: string; title: string }) => ({
     title: displayTitle(s.title),
     // Every tale comes with the learner's report; the class report has only the assigned ones.
     steps: ["A1", "A2", "B1", "B2", "C1", "quiz"].filter((st) => (detail?.steps ?? m.steps).some((x) => x.story_id === s.id && x.step === st)),

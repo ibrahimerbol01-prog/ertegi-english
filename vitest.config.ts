@@ -4,6 +4,8 @@ import { defineConfig } from "vitest/config";
 process.env.TZ = "Asia/Almaty";
 
 export default defineConfig({
+  // Tests run as the ordinary build (src/research/mode.ts).
+  define: { __ERTEGI_RESEARCH__: "false" },
   test: {
     environment: "node",
     include: ["src/**/*.test.ts", "api/**/*.test.js"],

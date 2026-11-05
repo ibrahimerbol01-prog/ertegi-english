@@ -1,4 +1,4 @@
-import { defineConfig } from 'vite'
+import { defineConfig, loadEnv } from 'vite'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 import { VitePWA } from 'vite-plugin-pwa'
@@ -11,10 +11,21 @@ const commit = (process.env.VERCEL_GIT_COMMIT_SHA || '').slice(0, 7)
 const appVersion = commit ? `${pkgVersion}+${commit}` : pkgVersion
 
 // https://vite.dev/config/
-export default defineConfig({
+export default defineConfig(({ mode }) => {
+// R4 research build (src/research/mode.ts, docs/research-build.md): fixed as
+// literals so the ordinary build drops every `if (RESEARCH_MODE)` branch.
+const env = { ...loadEnv(mode, process.cwd(), 'VITE_'), ...process.env }
+const research = env.VITE_RESEARCH_MODE === '1'
+return {
   define: {
     'import.meta.env.VITE_APP_VERSION': JSON.stringify(appVersion),
+    'import.meta.env.VITE_RESEARCH_MODE': JSON.stringify(research ? '1' : '0'),
+    'import.meta.env.VITE_STUDY_ID': JSON.stringify(research ? (env.VITE_STUDY_ID || '') : ''),
+    // A bare boolean literal: the bundler inlines it in every module and drops the dead branches.
+    __ERTEGI_RESEARCH__: JSON.stringify(research),
   },
+  // The ordinary build gets an empty stand-in for the test screen (src/research/testEntry.ts).
+  resolve: { alias: research ? [] : [{ find: /^(.*)\/research\/testEntry$/, replacement: '$1/research/testEntry.off' }] },
   plugins: [
     react(),
     tailwindcss(),
@@ -27,7 +38,7 @@ export default defineConfig({
       injectRegister: 'script-defer',
       includeAssets: ['favicon.svg', 'favicon.ico', 'apple-touch-icon.png', 'shoqan-avatar.*'],
       manifest: {
-        name: 'Ertegi English',
+        name: research ? 'Ertegi English (study)' : 'Ertegi English',
         short_name: 'Ertegi',
         description: 'Learn English through Kazakh folklore: tales at five levels, words, quizzes and pronunciation.',
         lang: 'kk',
@@ -71,4 +82,5 @@ export default defineConfig({
       },
     }),
   ],
+}
 })
