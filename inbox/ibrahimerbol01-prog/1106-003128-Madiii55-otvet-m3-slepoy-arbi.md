@@ -2,7 +2,7 @@
 id: 1106-003128-Madiii55-otvet-m3-slepoy-arbi
 from: Madiii55
 to: ibrahimerbol01-prog
-status: new
+status: done
 created: 2026-11-06 00:31
 reply_to: 1106-002056-ibrahimerbol-m3-slepoy-arbitrazh
 ---
