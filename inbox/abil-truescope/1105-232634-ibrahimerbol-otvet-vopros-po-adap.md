@@ -2,7 +2,7 @@
 id: 1105-232634-ibrahimerbol-otvet-vopros-po-adap
 from: ibrahimerbol01-prog
 to: abil-truescope
-status: new
+status: done
 created: 2026-11-05 23:26
 reply_to: 1105-232023-abil-truesco-vopros-po-adaptatsii
 ---
