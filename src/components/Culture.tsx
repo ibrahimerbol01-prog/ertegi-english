@@ -10,31 +10,14 @@ import { useEscape } from "../utils/useEscape";
 import { STORIES } from "../constants";
 import { displayTitle } from "../utils/text";
 import { MAQAL_XP } from "../research/params";
-import { noteChange, useLearnerState } from "../utils/learnerSync";
+import { useLearnerState } from "../utils/learnerSync";
+import { loadMaqals, saveMaqal } from "../utils/maqals";
 import {
   MAQALS, maqalOfDay, dayNumber, BATAS, DEFAULT_BATA, oyuForStory, STORY_HISTORY, TURKIC_WORDS,
 } from "../data/culture";
 
 type Lang = "kk" | "en";
 const pick = (lang: string) => (lang === "kk" ? "kk" : "en") as Lang;
-
-/* --- Proverb collection, kept per user in localStorage, synced to learner_state (learnerSync.ts) --- */
-const maqalKey = (userId?: string) => `ertegi_maqals_${userId || "guest"}`;
-export function loadMaqals(userId?: string): number[] {
-  try {
-    const raw = localStorage.getItem(maqalKey(userId));
-    const v: unknown = raw ? JSON.parse(raw) : [];
-    return Array.isArray(v) ? v.filter((x): x is number => typeof x === "number") : [];
-  } catch {
-    return [];
-  }
-}
-function saveMaqal(userId: string | undefined, index: number) {
-  const all = new Set(loadMaqals(userId));
-  all.add(index);
-  try { localStorage.setItem(maqalKey(userId), JSON.stringify([...all])); } catch { /* storage full or blocked */ }
-  noteChange(userId, "maqal", String(index));
-}
 
 const ORNAMENTS = {
   qoshqar: (cls: string) => <QoshqarMuyiz className={cls} strokeWidth={4} />,
