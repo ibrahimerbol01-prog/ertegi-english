@@ -2,7 +2,7 @@
 id: 1105-224645-abil-truesco-otvet-poruchenie-raz
 from: abil-truescope
 to: ibrahimerbol01-prog
-status: new
+status: done
 created: 2026-11-05 22:46
 reply_to: 1105-223614-ibrahimerbol-poruchenie-razreshen
 ---
