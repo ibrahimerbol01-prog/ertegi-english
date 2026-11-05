@@ -8,7 +8,7 @@ import { WordsHeader } from "./WordsScreens";
 import { EXCLUDED_UNTIL_DELAYED_TEST, POS_GROUPS, WORDBANK_LEVELS, WORDBANK_SOURCES, cardWord, posGroup, type PosGroup, type WordbankLevel } from "../../data/wordbank/config";
 import { loadWordbankLevel } from "../../data/wordbank";
 import type { WordbankEntry } from "../../data/wordbank/types";
-import { wordbankMeaning } from "./wordbankMeaning";
+import { levelProgress, wordbankMeaning } from "./wordbankMeaning";
 
 /* «Сөздік қоры»: the CEFR word lists by level and part of speech (ordinary
    site only, never in the research build: KazakhTalesApp.tsx). Each level is
@@ -49,6 +49,11 @@ export default function WordbankScreen({ savedWords, onAdd, mode, setMode }: {
   }, [level]);
 
   const saved = useMemo(() => new Set(savedWords.map((w) => w.word.toLowerCase())), [savedWords]);
+  // The level's words without the study's target words, as in the list.
+  const progress = useMemo(
+    () => (data && data.level === level ? levelProgress(data.words.filter((e) => !excluded.has(cardWord(e.word).toLowerCase())), saved) : null),
+    [data, level, saved],
+  );
   const list = useMemo(
     () => (data && data.level === level ? data.words.filter((e) => posGroup(e.pos) === group && !excluded.has(cardWord(e.word).toLowerCase())) : null),
     [data, level, group],
@@ -66,6 +71,11 @@ export default function WordbankScreen({ savedWords, onAdd, mode, setMode }: {
           <button key={l} aria-pressed={level === l} onClick={() => pick(l)}>{l}</button>
         ))}
       </div>
+      {progress && (
+        <p className="text-sm text-ink-2 -mt-2 mb-4" aria-live="polite">
+          {level}: <span className="font-bold text-ink">{progress.inCards} / {progress.total}</span> {t.wbInCards}
+        </p>
+      )}
       <p className="eyebrow mb-2">{t.wbPos}</p>
       <div className="segmented mb-5" role="group" aria-label={t.wbPos}>
         {POS_GROUPS.map((g) => (

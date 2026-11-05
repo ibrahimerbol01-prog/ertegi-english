@@ -23,3 +23,12 @@ export function wordbankMeaning(e: WordbankEntry): Meaning {
   const key = glossKey(cardWord(e.word), WORD_TRANSLATIONS);
   return { kk: key ? WORD_TRANSLATIONS[key] : "", ru: "", auto: false, reviewing: false };
 }
+
+/** How many words of a level (all parts of speech) are already in the learner's flashcards.
+ *  Counted by the card word, so "colour/color" counts once it is saved as "colour". */
+export function levelProgress(words: readonly WordbankEntry[], saved: ReadonlySet<string>): { inCards: number; total: number } {
+  const all = new Set(words.map((e) => cardWord(e.word).toLowerCase()));
+  let inCards = 0;
+  for (const w of all) if (saved.has(w)) inCards++;
+  return { inCards, total: all.size };
+}

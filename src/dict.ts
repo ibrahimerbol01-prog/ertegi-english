@@ -66,7 +66,8 @@ export const DICT = {
     wbSources: "Сөз тізімдерінің дереккөздері",
     wbAutoTr: "автоаударма",
     wbAutoTrHint: "Машиналық аударма. Адам әлі тексерген жоқ.",
-    wbTrReview: "Аударма тексерілуде"
+    wbTrReview: "Аударма тексерілуде",
+    wbInCards: "сөз карточкаларыңда"
   },
   en: {
     skip: "Skip",
@@ -133,6 +134,7 @@ export const DICT = {
     wbSources: "Sources of the word lists",
     wbAutoTr: "machine translation",
     wbAutoTrHint: "Machine translation, not yet checked by a person.",
-    wbTrReview: "Translation being checked"
+    wbTrReview: "Translation being checked",
+    wbInCards: "words in your flashcards"
   }
 };
