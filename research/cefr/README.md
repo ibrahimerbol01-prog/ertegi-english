@@ -10,3 +10,5 @@ Both copied unchanged from https://github.com/openlanguageprofiles/olp-en-cefrj,
 How to cite: The CEFR-J Wordlist Version 1.5. Compiled by Yukio Tono, Tokyo University of Foreign Studies. Retrieved from http://www.cefr-j.org/download.html. Octanove Vocabulary Profile C1/C2 (ver. 1.0), Octanove Labs.
 
 Note: CEFR-J is the CEFR adapted for learners of English in Japan. Its word levels are a reasonable external scale for school learners of English as a foreign language, but they were not built for Kazakh learners.
+
+Also used by the wordbank «Сөздік қоры» (`npm run wordbank` → src/data/wordbank/, see the README there): the app loads the derived lists, not these files.

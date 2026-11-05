@@ -24,8 +24,11 @@ return {
     // A bare boolean literal: the bundler inlines it in every module and drops the dead branches.
     __ERTEGI_RESEARCH__: JSON.stringify(research),
   },
-  // The ordinary build gets an empty stand-in for the test screen (src/research/testEntry.ts).
-  resolve: { alias: research ? [] : [{ find: /^(.*)\/research\/testEntry$/, replacement: '$1/research/testEntry.off' }] },
+  // The ordinary build gets an empty stand-in for the test screen (src/research/testEntry.ts),
+  // the research build one for the wordbank (src/components/screens/WordbankScreen.off.tsx).
+  resolve: { alias: research
+    ? [{ find: /^(.*)\/screens\/WordbankScreen$/, replacement: '$1/screens/WordbankScreen.off' }]
+    : [{ find: /^(.*)\/research\/testEntry$/, replacement: '$1/research/testEntry.off' }] },
   plugins: [
     react(),
     tailwindcss(),
@@ -57,7 +60,8 @@ return {
       workbox: {
         globPatterns: ['**/*.{js,css,html,svg,png,webp,ico}'],
         // The speech SDK is large and only needed online; it is cached when first used.
-        globIgnores: ['**/microsoft.cognitiveservices.speech.sdk-*.js'],
+        // The wordbank levels (src/data/wordbank, ~1.1 MB) load only when a learner opens that level.
+        globIgnores: ['**/microsoft.cognitiveservices.speech.sdk-*.js', '**/assets/{A1,A2,B1,B2,C1,C2}-*.js'],
         maximumFileSizeToCacheInBytes: 3 * 1024 * 1024,
         navigateFallback: '/index.html',
         navigateFallbackDenylist: [/^\/api\//],
