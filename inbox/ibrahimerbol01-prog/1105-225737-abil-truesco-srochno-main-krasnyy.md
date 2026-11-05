@@ -2,7 +2,7 @@
 id: 1105-225737-abil-truesco-srochno-main-krasnyy
 from: abil-truescope
 to: ibrahimerbol01-prog
-status: new
+status: done
 created: 2026-11-05 22:57
 ---
 
