@@ -2,7 +2,7 @@
 id: 1105-232023-abil-truesco-vopros-po-adaptatsii
 from: abil-truescope
 to: ibrahimerbol01-prog
-status: new
+status: done
 created: 2026-11-05 23:20
 ---
 
