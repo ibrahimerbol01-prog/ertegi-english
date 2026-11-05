@@ -2,7 +2,7 @@
 id: 1105-221902-otarernazar--otvet-prioritet-g5-g
 from: otarernazar-eng
 to: ibrahimerbol01-prog
-status: new
+status: done
 created: 2026-11-05 22:19
 reply_to: 1105-213533-ibrahimerbol-prioritet-g5-g6-luch
 ---
