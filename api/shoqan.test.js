@@ -4,7 +4,7 @@ const quota = { takeQuota: vi.fn(), refundQuota: vi.fn() };
 vi.mock("./_usage.js", () => quota);
 vi.mock("./_auth.js", () => ({ requireAuth: async () => ({ user: { id: "u1" }, admin: {} }) }));
 
-const { default: handler } = await import("./shoqan.js");
+const { default: handler, buildSystemPrompt } = await import("./shoqan.js");
 
 function call(body) {
   const res = { statusCode: 0, body: null };
@@ -77,5 +77,50 @@ describe("POST /api/shoqan", () => {
     const sent = JSON.parse(fetchSpy.mock.calls[0][1].body).contents;
     expect(sent.length).toBeLessThanOrEqual(16);
     expect(Math.max(...sent.map((m) => m.parts[0].text.length))).toBeLessThanOrEqual(4000);
+  });
+});
+
+describe("Shoqan's help ladder (I2)", () => {
+  const sentPrompt = (fetchSpy) => JSON.parse(fetchSpy.mock.calls[0][1].body).systemInstruction.parts[0].text;
+
+  it("keeps the fixed prompt with the ladder and the quiz rule when nothing is given", () => {
+    const p = buildSystemPrompt();
+    expect(p).toMatch(/HELP LADDER/);
+    expect(p).toMatch(/quiz question they have not answered yet, do not give the answer/);
+    expect(p).not.toMatch(/THIS REQUEST/);
+  });
+
+  it.each([
+    [1, /help step 1 of 3.*Do not give, name or rule out any option/s],
+    [2, /help step 2 of 3.*Do not say which option is right/s],
+    [3, /help step 3 of 3.*explain with the right answer/s],
+  ])("adds step %i to the prompt", (step, re) => {
+    expect(buildSystemPrompt({ hintStep: step })).toMatch(re);
+  });
+
+  it("explains in Kazakh at A1-A2 and mostly in English at B2-C1", () => {
+    expect(buildSystemPrompt({ level: "A2" })).toMatch(/level A2: explain in Kazakh/);
+    expect(buildSystemPrompt({ level: "C1" })).toMatch(/level C1: explain mostly in English/);
+  });
+
+  it("sends the step and level to the model", async () => {
+    const fetchSpy = vi.fn(async () => new Response(JSON.stringify({ candidates: [{ content: { parts: [{ text: "Қара." }] } }] })));
+    vi.stubGlobal("fetch", fetchSpy);
+    const res = await call({ ...ask(), hint_step: 2, level: "B1" });
+    expect(res.statusCode).toBe(200);
+    expect(sentPrompt(fetchSpy)).toMatch(/help step 2 of 3/);
+    expect(sentPrompt(fetchSpy)).toMatch(/level B1/);
+  });
+
+  it.each([
+    ["step 0", { hint_step: 0 }],
+    ["step above the ladder", { hint_step: 4 }],
+    ["step as text", { hint_step: "2" }],
+    ["unknown level", { level: "B3" }],
+    ["level not text", { level: 2 }],
+  ])("rejects a bad field (%s) without counting it", async (_, extra) => {
+    const res = await call({ ...ask(), ...extra });
+    expect(res.statusCode).toBe(400);
+    expect(quota.takeQuota).not.toHaveBeenCalled();
   });
 });

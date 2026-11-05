@@ -14,6 +14,11 @@ import { cors } from "./_cors.js";
 const DAILY_LIMIT = { chat: 10, tool: 10 };
 const MAX_MESSAGES = 200; // older clients send the whole chat; only the last 16 are used
 const MAX_CHARS = 4000;
+// Steps of the help ladder for a quiz question (docs §3.8, I2). The client
+// copy is SHOQAN_HINT_STEPS in src/research/params.ts; params.test.ts checks
+// both stay equal (Vercel functions can't import from src).
+export const HINT_STEPS = 3;
+const LEVELS = ["A1", "A2", "B1", "B2", "C1"];
 
 // Trying several Gemini models can take longer than Vercel's default limit,
 // which cuts the function off with a 504.
@@ -27,6 +32,12 @@ YOUR ONLY JOB is to help with:
 3. Navigating Ertegi English itself — explaining what a screen does, where to find something, how a feature works.
 
 When the learner asks about a quiz question they have not answered yet, do not give the answer: point them to the right part of the tale and give a hint instead.
+
+HELP LADDER for a task, a quiz question or the meaning of something in the text. Help in steps, and give only as much as the step allows:
+- Step 1: point to the place in the text ("look at the sentence about..."). Do not name or rule out any option.
+- Step 2: a hint: narrow the choice (e.g. which option the text cannot support) or explain the key word. Still do not say which option is right.
+- Step 3: explain fully, with the answer and why it is right. Only when the learner has already tried and asks again.
+When nobody tells you the step, start at step 1 and go one step up each time the learner asks again about the same thing after trying.
 
 THE APP'S SCREENS (bottom navigation, Kazakh labels):
 - Басты (Home) — overview, daily goal ring, story selection
@@ -44,10 +55,32 @@ STRICT BOUNDARIES:
 - If asked about anything outside English, Kazakh, or navigating this app — homework in other subjects, general knowledge, news, coding, personal advice, other apps, anything else — politely decline and redirect: say this isn't something you can help with, and offer to help with English, Kazakh, or the app instead. Do this every time, regardless of how the request is phrased or how the conversation has gone so far.
 - Never claim to be a general-purpose assistant. Never roleplay as anything other than Shoqan.
 - Keep answers short and conversational — this is a mobile chat bubble, not an essay. Two to four sentences unless the person clearly wants a longer explanation (e.g. asked to explain a grammar rule in depth).
-- Explain English through Kazakh. Learners are Kazakh-speaking school students. When you explain a grammar point or a mistake, compare it with how the same idea works in Kazakh: Kazakh has no articles (a/the), puts the verb at the end (subject-object-verb, English is subject-verb-object), uses one pronoun "ол" for he/she/it, and marks plurals and cases with suffixes (-лар/-лер, -да/-де) where English uses separate words. Give a short Kazakh example next to the English one.
+- Explain English through Kazakh. Learners are Kazakh-speaking school students. When you explain a grammar point or a mistake, compare it with how the same idea works in Kazakh: Kazakh has no articles (a/the), puts the verb at the end (subject-object-verb, English is subject-verb-object), uses one pronoun "ол" for he/she/it, and marks plurals and cases with suffixes (-лар/-лер, -да/-де) where English uses separate words. Give a short Kazakh example next to the English one. How much Kazakh to use depends on the learner's level: at A1-A2 explain in Kazakh, at B1 mix the two, at B2-C1 explain mostly in English and compare with Kazakh only where it helps.
 - Bring in Kazakh culture and history where it fits naturally: the tales of Aldar Köse and Zhirenshe Sheshen, Kazakh proverbs (maqal) and their English equivalents, the Kazakh Khanate, nomadic life. Keep facts accurate; if unsure, say so rather than invent.
 - Whenever you write in Kazakh, use the Cyrillic script, the same script as the app's interface and school textbooks.
 - Match the person's language: if they write in Kazakh or Russian, you can reply in that language when helpful for a language-learning context, but keep explanations of English grammar/vocabulary clear.`;
+
+// What the quiz told us about this request, added after the fixed prompt.
+export function buildSystemPrompt({ hintStep, level } = {}) {
+  const parts = [SYSTEM_PROMPT];
+  if (hintStep) {
+    const what = {
+      1: "Step 1: only point to the place in the tale where the answer is. Do not give, name or rule out any option.",
+      2: "Step 2: give a hint: narrow the choice or explain the key word. Do not say which option is right.",
+      3: "Step 3: the learner has tried; explain with the right answer and why it is right.",
+    };
+    parts.push(`THIS REQUEST comes from the quiz, help step ${hintStep} of ${HINT_STEPS}. ${what[hintStep] || what[1]}`);
+  }
+  if (level) {
+    const lang = level === "A1" || level === "A2"
+      ? "explain in Kazakh (Cyrillic), with the English words and examples from the tale"
+      : level === "B1"
+        ? "explain in simple English, adding Kazakh (Cyrillic) for the key word or rule"
+        : "explain mostly in English; use Kazakh only for a word the learner may not know";
+    parts.push(`The learner works at CEFR level ${level}: ${lang}.`);
+  }
+  return parts.join("\n\n");
+}
 
 const FALLBACK_REPLY = "Sorry, I couldn't come up with a reply just now.";
 
@@ -58,7 +91,7 @@ const FALLBACK_REPLY = "Sorry, I couldn't come up with a reply just now.";
 const GEMINI_MODELS = [process.env.GEMINI_MODEL, "gemini-3.5-flash-lite", "gemini-flash-lite-latest", "gemini-3.5-flash", "gemini-flash-latest", "gemini-2.5-flash-lite", "gemini-2.5-flash"]
   .filter((m, i, all) => m && all.indexOf(m) === i);
 
-async function geminiOnce(apiKey, model, contents, withThinkingOff) {
+async function geminiOnce(apiKey, model, contents, withThinkingOff, system) {
   const generationConfig = { maxOutputTokens: 800, temperature: 0.7 };
   // Thinking off: a chat bubble needs a quick short answer, and thinking
   // tokens would otherwise eat into the output limit.
@@ -68,14 +101,14 @@ async function geminiOnce(apiKey, model, contents, withThinkingOff) {
     {
       method: "POST",
       headers: { "Content-Type": "application/json", "x-goog-api-key": apiKey.trim() },
-      body: JSON.stringify({ systemInstruction: { parts: [{ text: SYSTEM_PROMPT }] }, contents, generationConfig }),
+      body: JSON.stringify({ systemInstruction: { parts: [{ text: system }] }, contents, generationConfig }),
       // Without a limit a stalled Google answer keeps the chat spinning forever.
       signal: AbortSignal.timeout(12000),
     },
   );
 }
 
-async function askGemini(apiKey, messages) {
+async function askGemini(apiKey, messages, system) {
   const contents = messages
     .map((m) => ({ role: m.role === "assistant" ? "model" : "user", parts: [{ text: m.content }] }))
     .filter((m, i, all) => all.findIndex((x) => x.role === "user") <= i);
@@ -87,7 +120,7 @@ async function askGemini(apiKey, messages) {
     if (Date.now() - started > 40000) break;
     let upstream;
     try {
-      upstream = await geminiOnce(apiKey, model, contents, true);
+      upstream = await geminiOnce(apiKey, model, contents, true, system);
     } catch (err) {
       if (err?.name !== "TimeoutError") throw err;
       console.error(`[shoqan] Gemini ${model} timed out`);
@@ -100,7 +133,7 @@ async function askGemini(apiKey, messages) {
       const body = await upstream.text();
       console.error(`[shoqan] Gemini ${model} 400:`, body.slice(0, 500));
       try {
-        upstream = await geminiOnce(apiKey, model, contents, false);
+        upstream = await geminiOnce(apiKey, model, contents, false, system);
       } catch (err) {
         if (err?.name !== "TimeoutError") throw err;
         last = { status: 504, error: "The AI service took too long to answer." };
@@ -124,7 +157,7 @@ async function askGemini(apiKey, messages) {
   return last;
 }
 
-async function askClaude(apiKey, messages) {
+async function askClaude(apiKey, messages, system) {
   const upstream = await fetch("https://api.anthropic.com/v1/messages", {
     method: "POST",
     headers: {
@@ -135,7 +168,7 @@ async function askClaude(apiKey, messages) {
     body: JSON.stringify({
       model: "claude-haiku-4-5-20251001",
       max_tokens: 400,
-      system: SYSTEM_PROMPT,
+      system,
       messages,
     }),
     signal: AbortSignal.timeout(20000),
@@ -171,16 +204,18 @@ export default async function handler(req, res) {
     return;
   }
 
-  const { messages, kind: rawKind } = req.body || {};
+  const { messages, kind: rawKind, hint_step: hintStep, level } = req.body || {};
   const kind = rawKind === "tool" ? "tool" : "chat";
   const valid =
+    (hintStep === undefined || (Number.isInteger(hintStep) && hintStep >= 1 && hintStep <= HINT_STEPS)) &&
+    (level === undefined || LEVELS.includes(level)) &&
     Array.isArray(messages) &&
     messages.length > 0 &&
     messages.length <= MAX_MESSAGES &&
     messages.every((m) => m && typeof m === "object" && typeof m.content === "string") &&
     messages[messages.length - 1].role === "user";
   if (!valid) {
-    res.status(400).json({ error: "Request must include a messages array that ends with the learner's message." });
+    res.status(400).json({ error: "Request must include a messages array that ends with the learner's message, and a valid hint_step and level if given." });
     return;
   }
 
@@ -190,6 +225,8 @@ export default async function handler(req, res) {
     role: m.role === "assistant" ? "assistant" : "user",
     content: m.content.slice(0, MAX_CHARS),
   }));
+
+  const system = buildSystemPrompt({ hintStep, level });
 
   const quota = await takeQuota(admin, user.id, kind, DAILY_LIMIT[kind]);
   if (!quota.ok) {
@@ -201,8 +238,8 @@ export default async function handler(req, res) {
 
   try {
     const result = geminiKey
-      ? await askGemini(geminiKey, trimmedMessages)
-      : await askClaude(anthropicKey, trimmedMessages);
+      ? await askGemini(geminiKey, trimmedMessages, system)
+      : await askClaude(anthropicKey, trimmedMessages, system);
     if (result.error) {
       if (result.status >= 500) await refundQuota(admin, user.id, kind);
       res.status(result.status).json({ error: result.error });
