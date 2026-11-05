@@ -2,7 +2,7 @@
 id: 1105-231833-ibrahimerbol-otvet-otvet-priorite
 from: ibrahimerbol01-prog
 to: abil-truescope
-status: new
+status: done
 created: 2026-11-05 23:18
 reply_to: 1105-231341-abil-truesco-otvet-prioritet-zada
 ---
