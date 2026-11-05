@@ -17,6 +17,8 @@ const loadSpeak = () => import("./components/screens/SpeakScreen");
 const loadProfile = () => import("./components/screens/ProfileScreen");
 const FlashcardsScreen = lazy(() => loadWords().then((m) => ({ default: m.FlashcardsScreen })));
 const MatchingGame = lazy(() => loadWords().then((m) => ({ default: m.MatchingGame })));
+// «Сөздік қоры», ordinary site only (R4); its data is a lazy chunk per level (src/data/wordbank).
+const WordbankScreen = RESEARCH_MODE ? null : lazy(() => import("./components/screens/WordbankScreen"));
 const QuizSetup = lazy(() => loadQuiz().then((m) => ({ default: m.QuizSetup })));
 const QuizScreen = lazy(() => loadQuiz().then((m) => ({ default: m.QuizScreen })));
 const SpeakScreen = lazy(() => loadSpeak().then((m) => ({ default: m.SpeakScreen })));
@@ -399,7 +401,7 @@ export default function KazakhTalesApp({ session, role, onRoleChange }: { sessio
     };
   }, []);
 
-  const handleSaveWord = (word: string, translation: string, source: "reader" | "daily" = "reader") => {
+  const handleSaveWord = (word: string, translation: string, source: "reader" | "daily" | "wordbank" = "reader") => {
     if (savedWords.some((w) => w.word === word)) return;
     track("word_save", {
       object_type: "word", object_id: word,
@@ -653,10 +655,12 @@ export default function KazakhTalesApp({ session, role, onRoleChange }: { sessio
                   {!RESEARCH_MODE && <div className="mb-8">
                     <WordCoach savedWords={savedWords} progress={progress} userId={userId} lang={lang} onLearn={(w, tr) => handleSaveWord(w, tr, "daily")} onReward={addXp} />
                   </div>}
-                  {wordsMode === "cards" ? (
-                    <FlashcardsScreen savedWords={savedWords} onReview={handleReview} lang={lang} mode={wordsMode} setMode={setWordsMode} />
-                  ) : (
+                  {!RESEARCH_MODE && WordbankScreen && wordsMode === "bank" ? (
+                    <WordbankScreen savedWords={savedWords} onAdd={(w, tr) => handleSaveWord(w, tr, "wordbank")} mode={wordsMode} setMode={setWordsMode} />
+                  ) : wordsMode === "match" ? (
                     <MatchingGame savedWords={savedWords} onReward={addXp} mode={wordsMode} setMode={setWordsMode} />
+                  ) : (
+                    <FlashcardsScreen savedWords={savedWords} onReview={handleReview} lang={lang} mode={wordsMode} setMode={setWordsMode} />
                   )}
                   {!RESEARCH_MODE && <div className="mt-8"><TurkicWords lang={lang} /></div>}
                 </div>

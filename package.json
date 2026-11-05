@@ -12,7 +12,8 @@
     "test:watch": "vitest",
     "preview": "vite preview",
     "perf": "node scripts/perf-measure.cjs http://localhost:4173/ 3",
-    "corpus": "node scripts/corpus-report.mjs"
+    "corpus": "node scripts/corpus-report.mjs",
+    "wordbank": "node scripts/wordbank-build.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.116.0",

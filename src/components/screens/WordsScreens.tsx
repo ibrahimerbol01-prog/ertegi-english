@@ -9,17 +9,24 @@ import { IconCards, IconTrophy } from "../Icons";
 import { useTr } from "./shared";
 import { ScreenHeader } from "../UIHelpers";
 import { MATCH_XP } from "../../research/params";
+import { RESEARCH_MODE } from "../../research/mode";
+import { DICT } from "../../dict";
+import { useLang } from "../../lang";
 
-/* Words tab switcher shared by flashcards and matching. */
-function WordsHeader({ mode, setMode, trailing }: { mode?: string; setMode?: (m: string) => void; trailing?: React.ReactNode }) {
+/* Words tab switcher shared by flashcards, matching and the wordbank (ordinary site only). */
+export function WordsHeader({ mode, setMode, trailing }: { mode?: string; setMode?: (m: string) => void; trailing?: React.ReactNode }) {
   const tr = useTr();
+  const t = DICT[useLang() === "kk" ? "kk" : "en"];
+  const title = mode === "match" ? tr("Жұбын тап", "Find the pair") : mode === "bank" && !RESEARCH_MODE ? t.wbTitle : tr("Карточкалар", "Flashcards");
   return (
     <>
-      <ScreenHeader eyebrow={tr("Сөздік", "Vocabulary")} title={mode === "match" ? tr("Жұбын тап", "Find the pair") : tr("Карточкалар", "Flashcards")} trailing={trailing} />
+      <ScreenHeader eyebrow={tr("Сөздік", "Vocabulary")} title={title} trailing={trailing} />
       {setMode && (
         <div className="segmented mb-5" role="group" aria-label={tr("Жаттығу түрі", "Practice mode")}>
           <button aria-pressed={mode === "cards"} onClick={() => setMode("cards")}>{tr("Карточкалар", "Flashcards")}</button>
           <button aria-pressed={mode === "match"} onClick={() => setMode("match")}>{tr("Сәйкестендіру", "Matching")}</button>
+          {/* R4: no wordbank in the research build. */}
+          {!RESEARCH_MODE && <button aria-pressed={mode === "bank"} onClick={() => setMode("bank")}>{t.wbTab}</button>}
         </div>
       )}
     </>
