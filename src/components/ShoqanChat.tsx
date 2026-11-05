@@ -9,6 +9,9 @@ import { apiUrl } from "../lib/api";
 import { SHOQAN_DAILY_CHAT_LIMIT } from "../research/params";
 import { track } from "../utils/events";
 
+/** What another screen may pass when it opens the chat. */
+export type ShoqanOpenDetail = string | { draft: string; hintStep?: number; level?: string };
+
 export const ShoqanChat = ({ hidden = false }: { hidden?: boolean }) => {
   const kk = useLang() === "kk";
   const tr = (kkText: string, enText: string) => (kk ? kkText : enText);
@@ -83,10 +86,18 @@ export const ShoqanChat = ({ hidden = false }: { hidden?: boolean }) => {
     openedFrom.current = "bubble";
   }, [open]);
 
-  // Other screens open the chat with a "shoqan:open" event, optionally with a draft question.
+  // Help from the quiz: the ladder step and the text's level, sent with every
+  // message until the chat is closed (docs §3.8, I2).
+  const helpRef = useRef<{ hintStep?: number; level?: string }>({});
+  useEffect(() => { if (!open) helpRef.current = {}; }, [open]);
+
+  // Other screens open the chat with a "shoqan:open" event, optionally with a
+  // draft question, or with { draft, hintStep, level } from the quiz.
   useEffect(() => {
     const onOpen = (e: Event) => {
-      const draft = (e as CustomEvent<string | undefined>).detail;
+      const detail = (e as CustomEvent<ShoqanOpenDetail | undefined>).detail;
+      const draft = typeof detail === "string" ? detail : detail?.draft;
+      helpRef.current = typeof detail === "object" && detail ? { hintStep: detail.hintStep, level: detail.level } : {};
       if (draft) setInput(draft);
       openedFrom.current = draft ? "prompt" : "event";
       draftRef.current = draft ? draft.trim() : "";
@@ -143,6 +154,8 @@ export const ShoqanChat = ({ hidden = false }: { hidden?: boolean }) => {
       result: {
         chars: text.length, words: (text.match(/[\p{L}']+/gu) ?? []).length,
         turn: nextMessages.filter((m) => m.role === "user").length, prepared: !!draftRef.current && text === draftRef.current,
+        // Step of the help ladder asked from the quiz; 0 — not quiz help.
+        hint_step: helpRef.current.hintStep ?? 0,
       },
     });
     draftRef.current = "";
@@ -161,7 +174,7 @@ export const ShoqanChat = ({ hidden = false }: { hidden?: boolean }) => {
           Authorization: `Bearer ${s?.access_token ?? ""}`,
         },
         // The server reads only the last 16 messages.
-        body: JSON.stringify({ messages: nextMessages.slice(-16), kind: "chat" }),
+        body: JSON.stringify({ messages: nextMessages.slice(-16), kind: "chat", hint_step: helpRef.current.hintStep, level: helpRef.current.level }),
         // The server gives up within 60 s; past this the chat stops waiting.
         signal: AbortSignal.timeout(65000),
       });

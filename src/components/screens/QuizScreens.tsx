@@ -9,6 +9,8 @@ import { buildLevelQuiz } from "../../utils/levelQuiz";
 import { findEvidence } from "../../utils/evidence";
 import { QUIZ_MAX_TRIES, QUIZ_PASS_SHARE, QUIZ_XP_FIRST_TRY, QUIZ_XP_SECOND_TRY } from "../../research/params";
 import { useTr } from "./shared";
+import { cefrLevel, hintStep } from "../../utils/hintLadder";
+import type { ShoqanOpenDetail } from "../ShoqanChat";
 import { track } from "../../utils/events";
 
 /* --- 6a. QUIZ SETUP --- */
@@ -128,6 +130,8 @@ export function QuizScreen({ onReward, t, onQuizFinish, questions, storyTitle, o
   const [status, setStatus] = useState<"answering" | "correct" | "revealed">("answering");
   const [results, setResults] = useState<QuizResult[]>([]);
   const [finished, setFinished] = useState(false);
+  // How many times Shoqan's help was asked on the current question (help ladder, §3.8).
+  const [asks, setAsks] = useState(0);
 
   const question = questions[round[pos]];
   const answer = question?.options[question.correct] ?? "";
@@ -180,6 +184,7 @@ export function QuizScreen({ onReward, t, onQuizFinish, questions, storyTitle, o
     setPos(0);
     setSelected(null);
     setWrongPicks([]);
+    setAsks(0);
     setStatus("answering");
     setResults([]);
     setFinished(false);
@@ -194,6 +199,7 @@ export function QuizScreen({ onReward, t, onQuizFinish, questions, storyTitle, o
     setPos(pos + 1);
     setSelected(null);
     setWrongPicks([]);
+    setAsks(0);
     setStatus("answering");
   };
 
@@ -234,12 +240,19 @@ export function QuizScreen({ onReward, t, onQuizFinish, questions, storyTitle, o
     return () => window.removeEventListener("keydown", onKey);
   });
 
+  // Each request on the same question goes one step up the ladder; the draft
+  // never carries the answer before the quiz has shown it.
   const askShoqan = () => {
     const task = question.sentence || question.q || "";
     const mine = wrongPicks.length ? ` I chose "${question.options[wrongPicks[wrongPicks.length - 1]]}".` : "";
-    window.dispatchEvent(new CustomEvent("shoqan:open", {
-      detail: `Why is "${answer}" the right answer here: "${task}"?${mine} Explain simply, comparing with Kazakh.${tr(" Answer in Kazakh, in Cyrillic script.", "")}`,
-    }));
+    const level = cefrLevel(eventInfo?.level);
+    const step = hintStep({ asksBefore: asks, attempts: wrongPicks.length, answerShown: done });
+    const inKazakh = level ? "" : tr(" Answer in Kazakh, in Cyrillic script.", "");
+    const draft = done
+      ? `Why is "${answer}" the right answer here: "${task}"?${mine} Explain simply, comparing with Kazakh.${inKazakh}`
+      : `Help me with this quiz question, without telling me the answer yet: "${task}" Options: ${question.options.filter((_, i) => !wrongPicks.includes(i)).join(" / ")}.${mine}${inKazakh}`;
+    setAsks((n) => n + 1);
+    window.dispatchEvent(new CustomEvent<ShoqanOpenDetail>("shoqan:open", { detail: { draft, hintStep: step, level } }));
   };
 
   if (!question && !finished) {
@@ -389,9 +402,14 @@ export function QuizScreen({ onReward, t, onQuizFinish, questions, storyTitle, o
       )}
 
       {!done ? (
-        <button onClick={handleCheck} disabled={selected === null} className="btn w-full mt-7">
-          {t.checkAnswer}
-        </button>
+        <>
+          <button onClick={handleCheck} disabled={selected === null} className="btn w-full mt-7">
+            {t.checkAnswer}
+          </button>
+          <button onClick={askShoqan} className="btn btn-ghost btn-sm w-full mt-2">
+            <MessageCircle size={15} /> {asks ? tr("Шоқаннан тағы көмек сұра", "Ask Shoqan for more help") : tr("Шоқаннан көмек сұра", "Ask Shoqan for help")}
+          </button>
+        </>
       ) : (
         <div className={`mt-7 rounded-[24px] p-5 animate-pop-in ${status === "correct" ? "bg-jade-soft" : "bg-felt-soft"}`} aria-live="polite">
           <div className="flex items-start gap-3">
