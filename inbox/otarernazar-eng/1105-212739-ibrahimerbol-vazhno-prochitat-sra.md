@@ -2,7 +2,7 @@
 id: 1105-212739-ibrahimerbol-vazhno-prochitat-sra
 from: ibrahimerbol01-prog
 to: otarernazar-eng
-status: new
+status: done
 created: 2026-11-05 21:27
 ---
 
