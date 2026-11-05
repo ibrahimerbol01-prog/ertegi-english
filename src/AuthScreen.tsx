@@ -11,7 +11,8 @@ import { orChunkError } from "./utils/lazyChunk";
 const PrivacyPolicySheet = lazy(() => orChunkError(import("./components/PrivacyPolicy").then((m) => m.PrivacyPolicySheet)));
 
 export default function AuthScreen() {
-  const [mode, setMode] = useState<"signin" | "signup">("signup");
+  const [mode, setMode] = useState<"signin" | "signup" | "forgot">("signup");
+  const [resetSent, setResetSent] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [displayName, setDisplayName] = useState("");
@@ -33,12 +34,23 @@ export default function AuthScreen() {
   // Only account creation is gated on consent — signing back in as an
   // existing user never is, since they already agreed once at sign-up.
   const consentRequired = mode === "signup";
+  const forgot = mode === "forgot";
   const canSubmit = !consentRequired || agreed;
 
   const roleMissing = tr("Алдымен таңда: оқушысың ба, мұғалімсің бе?", "First pick: are you a learner or a teacher?");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (mode === "forgot") {
+      setError(null);
+      setLoading(true);
+      // The same answer whether or not the address has an account: nobody can probe who is registered.
+      const { error: resetError } = await supabase.auth.resetPasswordForEmail(email, { redirectTo: window.location.origin });
+      setLoading(false);
+      if (resetError) { setError(resetError.message); return; }
+      setResetSent(true);
+      return;
+    }
     if (mode === "signup" && !role) {
       setError(roleMissing);
       return;
@@ -55,6 +67,8 @@ export default function AuthScreen() {
           email,
           password,
           options: {
+            // The confirmation link brings the learner back to this site (the study site has its own address).
+            emailRedirectTo: window.location.origin,
             data: {
               display_name: displayName || email.split("@")[0],
               agreed_to_privacy_policy: true,
@@ -118,15 +132,15 @@ export default function AuthScreen() {
           <span className="mx-auto w-16 h-16 rounded-[20px] bg-sky flex items-center justify-center shadow-[0_5px_0_var(--color-sky-deep)]">
             <Shanyraq className="w-11 h-11 text-white" strokeWidth={4} />
           </span>
-          <h1 className="large-title mt-5">{mode === "signin" ? tr("Қайта қош келдің", "Welcome back") : tr("Аккаунт аш", "Create your account")}</h1>
+          <h1 className="large-title mt-5">{forgot ? tr("Құпиясөзді қалпына келтіру", "Reset your password") : mode === "signin" ? tr("Қайта қош келдің", "Welcome back") : tr("Аккаунт аш", "Create your account")}</h1>
           <p className="text-[15px] text-ink-2 mt-1.5">{tr("Ertegi English · қазақ ертегілері арқылы ағылшын тілі", "Ertegi English · Kazakh tales, English fluency")}</p>
         </div>
 
-        {!confirmSent && mode === "signup" && (
+        {!confirmSent && !forgot && mode === "signup" && (
           <RolePicker value={role} onChange={(r) => { setRole(r); if (error === roleMissing) setError(null); }} kk={kk} />
         )}
 
-        {!confirmSent && (
+        {!confirmSent && !forgot && (
           <>
             <button onClick={handleGoogleSignIn} className="btn btn-ghost w-full normal-case tracking-normal text-ink">
               <svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true">
@@ -154,7 +168,32 @@ export default function AuthScreen() {
           </>
         )}
 
-        {confirmSent ? (
+        {forgot ? (
+          resetSent ? (
+            <div className="text-center space-y-4 py-2">
+              <p className="text-[15px] text-ink-2 leading-relaxed">
+                {kk ? (
+                  <>Егер <b className="text-ink">{email}</b> мекенжайымен аккаунт болса, құпиясөзді жаңартуға арналған сілтеме жіберілді. Поштаңды («Спам» бумасын да) тексер.</>
+                ) : (
+                  <>If there is an account for <b className="text-ink">{email}</b>, we sent a link to choose a new password. Check your inbox (and the spam folder).</>
+                )}
+              </p>
+              <button onClick={() => { setResetSent(false); setMode("signin"); }} className="btn btn-ghost w-full">{tr("Кіруге оралу", "Back to sign in")}</button>
+            </div>
+          ) : (
+            <form onSubmit={handleSubmit} className="space-y-3">
+              <p className="text-[15px] text-ink-2 leading-relaxed">{tr("Поштаңды жаз, құпиясөзді жаңартатын сілтеме жібереміз.", "Enter your email and we will send you a link to choose a new password.")}</p>
+              <label className="block">
+                <span className="text-xs font-semibold text-ink-2 mb-1 block">{tr("Электрондық пошта", "Email")}</span>
+                <input type="email" required autoComplete="email" inputMode="email" value={email} onChange={(e) => setEmail(e.target.value)}
+                  aria-invalid={!!error || undefined} aria-describedby={error ? "auth-error" : undefined} className="field" />
+              </label>
+              {error && <p id="auth-error" role="alert" className="text-sm text-felt-deep bg-felt-soft rounded-xl px-3 py-2.5 leading-relaxed">{error}</p>}
+              <button type="submit" disabled={loading} className="btn w-full !mt-5">{loading ? tr("Күте тұр...", "Please wait...") : tr("Сілтеме жіберу", "Send the link")}</button>
+              <button type="button" onClick={() => { setError(null); setMode("signin"); }} className="btn btn-ghost w-full">{tr("Кіруге оралу", "Back to sign in")}</button>
+            </form>
+          )
+        ) : confirmSent ? (
           <div className="text-center space-y-4 py-2">
             <p className="text-[15px] text-ink-2 leading-relaxed">
               {kk ? (
@@ -215,6 +254,11 @@ export default function AuthScreen() {
                 className="field"
               />
               <span id="auth-pass-hint" className="text-xs text-ink-2 mt-1 block">{tr("Кемінде 6 таңба", "At least 6 characters")}</span>
+              {mode === "signin" && (
+                <button type="button" onClick={() => { setError(null); setMode("forgot"); }} className="text-sky-deep text-sm font-semibold underline underline-offset-2 mt-1 py-2 -my-1">
+                  {tr("Құпиясөзді ұмыттың ба?", "Forgot your password?")}
+                </button>
+              )}
             </label>
 
             {mode === "signup" && (
@@ -244,7 +288,7 @@ export default function AuthScreen() {
           </form>
         )}
 
-        {!confirmSent && (
+        {!confirmSent && !forgot && (
           <p className="text-center text-[15px] text-ink-2">
             {mode === "signin" ? tr("Аккаунтың жоқ па?", "No account yet?") : tr("Аккаунтың бар ма?", "Already have an account?")}{" "}
             <button
