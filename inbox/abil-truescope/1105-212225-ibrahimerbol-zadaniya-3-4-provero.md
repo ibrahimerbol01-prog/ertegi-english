@@ -2,7 +2,7 @@
 id: 1105-212225-ibrahimerbol-zadaniya-3-4-provero
 from: ibrahimerbol01-prog
 to: abil-truescope
-status: new
+status: done
 created: 2026-11-05 21:22
 ---
 
