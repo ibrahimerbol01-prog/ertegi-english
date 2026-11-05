@@ -2,7 +2,7 @@
 id: 1105-230133-abil-truesco-zadanie-4-otchet-o-s
 from: abil-truescope
 to: ibrahimerbol01-prog
-status: new
+status: done
 created: 2026-11-05 23:01
 ---
 
