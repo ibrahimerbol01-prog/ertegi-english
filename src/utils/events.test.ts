@@ -258,14 +258,18 @@ describe("sending", () => {
    and the dictionary in docs/events.md. */
 describe("verbs agree everywhere", () => {
   const root = join(__dirname, "..", "..");
-  const migration = readFileSync(join(root, "supabase", "migrations", "20261105000000_learning_events.sql"), "utf8");
+  // The newest migration that sets the verb check (20261105000000 made it, later ones widen it).
+  const migDir = join(root, "supabase", "migrations");
+  const verbCheck = /verb\s+text\s+not null check \(verb in \(([\s\S]*?)\)\)|learning_events_verb_check check \(verb in \(([\s\S]*?)\)\)/;
+  const migration = readdirSync(migDir).filter((f) => f.endsWith(".sql")).sort()
+    .map((f) => readFileSync(join(migDir, f), "utf8")).filter((t) => verbCheck.test(t)).pop() ?? "";
   const doc = readFileSync(join(root, "docs", "events.md"), "utf8");
   const code = [...EVENT_VERBS].sort();
 
   it("migration check = EVENT_VERBS", () => {
-    const check = migration.match(/verb\s+text\s+not null check \(verb in \(([\s\S]*?)\)\)/);
+    const check = migration.match(verbCheck);
     expect(check, "verb check in the migration").not.toBeNull();
-    const sqlVerbs = [...check![1].matchAll(/'(\w+)'/g)].map((m) => m[1]).sort();
+    const sqlVerbs = [...(check![1] ?? check![2]).matchAll(/'(\w+)'/g)].map((m) => m[1]).sort();
     expect(sqlVerbs).toEqual(code);
   });
 

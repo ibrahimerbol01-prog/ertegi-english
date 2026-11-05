@@ -21,8 +21,13 @@ const QuizSetup = lazy(() => loadQuiz().then((m) => ({ default: m.QuizSetup })))
 const QuizScreen = lazy(() => loadQuiz().then((m) => ({ default: m.QuizScreen })));
 const SpeakScreen = lazy(() => loadSpeak().then((m) => ({ default: m.SpeakScreen })));
 const ProfileScreen = lazy(() => loadProfile().then((m) => ({ default: m.ProfileScreen })));
-const prefetchTabs = () => { void loadWords(); void loadQuiz(); void loadSpeak(); void loadProfile(); };
-import { DICT, ACHIEVEMENTS, STORIES } from "./constants";
+const prefetchTabs = () => { void loadWords(); void loadQuiz(); if (!RESEARCH_MODE) void loadSpeak(); void loadProfile(); };
+import { DICT, ACHIEVEMENTS } from "./constants";
+import { RESEARCH_MODE } from "./research/mode";
+import { APP_STORIES as STORIES } from "./research/stories";
+import { StudyGate } from "./research/StudyGate";
+// R5: the vocabulary test exists only in the research build (no chunk in the ordinary one).
+import { TestScreen } from "./research/testEntry";
 import { LangContext, loadLang, saveLang, type Lang } from "./lang";
 import type { SavedWord } from "./types";
 import { supabase } from "./lib/supabase";
@@ -341,7 +346,7 @@ export default function KazakhTalesApp({ session, role, onRoleChange }: { sessio
     saveQuizResult(userId, storyId, step, correctCount, total, firstTry);
     if (correctCount >= Math.ceil(total * QUIZ_LEVEL_UNLOCK_SHARE)) {
       // First time a whole tale is finished: the elder's blessing and its ornament.
-      if (step === "quiz" && !progress.has(progressKey(storyId, "quiz"))) setBataStory(storyId);
+      if (!RESEARCH_MODE && step === "quiz" && !progress.has(progressKey(storyId, "quiz"))) setBataStory(storyId);
       markStep(storyId, step);
     }
     latestQuizzesRef.current += 1;
@@ -441,6 +446,14 @@ export default function KazakhTalesApp({ session, role, onRoleChange }: { sessio
     { id: "teacher", label: lang === "kk" ? "Сыныптар" : "Classes", Icon: IconBoard },
     { id: "read",    label: lang === "kk" ? "Ертегілер" : "Tales", Icon: IconBook },
     { id: "profile", label: t.navProfile, Icon: IconLearner },
+  ] : RESEARCH_MODE ? [
+    // R4: the core loop only (reading with glosses and narration, quiz, word review) and the test.
+    { id: "home",    label: t.navHome,    Icon: IconYurt },
+    { id: "read",    label: t.navRead,    Icon: IconBook },
+    { id: "quiz",    label: t.navQuiz,    Icon: IconTrophy },
+    { id: "words",   label: lang === "kk" ? "Сөздер" : "Words", Icon: IconCards },
+    { id: "test",    label: lang === "kk" ? "Тест" : "Test", Icon: IconBoard },
+    { id: "profile", label: t.navProfile, Icon: IconLearner },
   ] : [
     { id: "home",    label: t.navHome,    Icon: IconYurt },
     { id: "read",    label: t.navRead,    Icon: IconBook },
@@ -481,7 +494,7 @@ export default function KazakhTalesApp({ session, role, onRoleChange }: { sessio
     </div>
   );
 
-  return (
+  const app = (
     <LangContext.Provider value={lang}>
     <div className="relative h-dvh w-full bg-sand font-body text-ink overflow-hidden flex">
       <LevelUpModal show={showLevelUp} rank={levelUpRank} onClose={() => setShowLevelUp(false)} />
@@ -492,7 +505,8 @@ export default function KazakhTalesApp({ session, role, onRoleChange }: { sessio
       />
       {/* The quiz is a focus mode: Shoqan steps aside so he never covers the answer buttons. */}
       {/* Teachers meet Shoqan only while previewing a tale, as their learners do. */}
-      <ShoqanChat hidden={(tab === "quiz" && quizStarted) || (teacher && tab !== "read")} />
+      {/* R4: no Shoqan in the research build. */}
+      {!RESEARCH_MODE && <ShoqanChat hidden={(tab === "quiz" && quizStarted) || (teacher && tab !== "read")} />}
       <SaveErrorToast show={showSaveError} message={t.saveError} onClose={() => setShowSaveError(false)} />
       <JoinClassSheet
         open={!!pendingCode && !teacher}
@@ -633,19 +647,20 @@ export default function KazakhTalesApp({ session, role, onRoleChange }: { sessio
               )}
               {tab === "words" && (
                 <div className="animate-pop-in">
-                  <div className="mb-8">
+                  {!RESEARCH_MODE && <div className="mb-8">
                     <WordCoach savedWords={savedWords} progress={progress} userId={userId} lang={lang} onLearn={(w, tr) => handleSaveWord(w, tr, "daily")} onReward={addXp} />
-                  </div>
+                  </div>}
                   {wordsMode === "cards" ? (
                     <FlashcardsScreen savedWords={savedWords} onReview={handleReview} lang={lang} mode={wordsMode} setMode={setWordsMode} />
                   ) : (
                     <MatchingGame savedWords={savedWords} onReward={addXp} mode={wordsMode} setMode={setWordsMode} />
                   )}
-                  <div className="mt-8"><TurkicWords lang={lang} /></div>
+                  {!RESEARCH_MODE && <div className="mt-8"><TurkicWords lang={lang} /></div>}
                 </div>
               )}
-              {tab === "cards" && <LegendScreen lang={lang} userId={userId} onReward={addXp} />}
-              {tab === "speak" && <SpeakScreen onReward={addXp} t={t} />}
+              {!RESEARCH_MODE && tab === "cards" && <LegendScreen lang={lang} userId={userId} onReward={addXp} />}
+              {!RESEARCH_MODE && tab === "speak" && <SpeakScreen onReward={addXp} t={t} />}
+              {RESEARCH_MODE && TestScreen && tab === "test" && !teacher && <TestScreen userId={userId} lang={lang} />}
               {tab === "profile" && teacher && (
                 <TeacherProfile
                   lang={lang}
@@ -704,7 +719,7 @@ export default function KazakhTalesApp({ session, role, onRoleChange }: { sessio
 
         {/* Tab bar — mobile only, Apple frosted */}
         <nav className="md:hidden fixed bottom-0 inset-x-0 z-30 glass border-t border-line/70 pb-[max(env(safe-area-inset-bottom),8px)] pt-1.5">
-          <div className={`grid ${teacher ? "grid-cols-3" : "grid-cols-7"}`}>
+          <div className={`grid ${teacher ? "grid-cols-3" : RESEARCH_MODE ? "grid-cols-6" : "grid-cols-7"}`}>
             {tabs.map(({ id, label, Icon }) => {
               const active = isActive(id);
               return (
@@ -729,4 +744,6 @@ export default function KazakhTalesApp({ session, role, onRoleChange }: { sessio
     </div>
     </LangContext.Provider>
   );
+  // R4: a learner of the research build types the participant code first.
+  return RESEARCH_MODE && !teacher ? <StudyGate userId={userId} lang={lang}>{app}</StudyGate> : app;
 }

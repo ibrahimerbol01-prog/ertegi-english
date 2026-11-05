@@ -3,7 +3,9 @@ import { Play, Trophy, Check, BookOpen, Lock } from "lucide-react";
 import { DailyGoalRing } from "../UIHelpers";
 import { displayTitle } from "../../utils/text";
 import { OrnamentBand, Tumar } from "../Ornaments";
-import { STORIES, LEVEL_DETAILS } from "../../constants";
+import { LEVEL_DETAILS } from "../../constants";
+import { RESEARCH_MODE } from "../../research/mode";
+import { APP_STORIES as STORIES } from "../../research/stories";
 import { MaqalCard } from "../Culture";
 import { LegendDeckEntry } from "../LegendCards";
 import { CouncilCard } from "../Council";
@@ -98,7 +100,7 @@ export function HomeScreen({ onStartRead, onStartQuiz, t, lang, userName = "", s
   const featured = current?.story || STORIES[0];
   const featuredLevel = current && current.step !== "quiz" ? LEVEL_DETAILS.find((l) => l.id === current.step) : null;
   const totalPlanned = 10;
-  const comingSoon = totalPlanned - STORIES.length;
+  const comingSoon = RESEARCH_MODE ? 0 : totalPlanned - STORIES.length;
 
   const firstName = (userName || "").split(/[\s@]/)[0];
   const [tip] = useState(() => SHOQAN_TIPS[Math.floor(Date.now() / 86400000) % SHOQAN_TIPS.length]);
@@ -149,7 +151,7 @@ export function HomeScreen({ onStartRead, onStartQuiz, t, lang, userName = "", s
       )}
 
       {/* Shoqan by the path, like Duolingo's owl: tip of the day + a ready question */}
-      <div className="flex items-end gap-3">
+      {!RESEARCH_MODE && <div className="flex items-end gap-3">
         <img src="/shoqan-avatar.webp" width={128} height={128} decoding="async" alt="Shoqan" className="w-16 h-16 rounded-full object-cover border-[3px] border-sun shadow-[0_4px_0_var(--color-sun-deep)] shrink-0" />
         <div className="relative flex-1 card p-4 rounded-bl-md">
           <p className="eyebrow text-sun-deep">{lang === "kk" ? "Шоқанның кеңесі" : "Shoqan's tip"}</p>
@@ -161,12 +163,15 @@ export function HomeScreen({ onStartRead, onStartQuiz, t, lang, userName = "", s
             {lang === "kk" ? "Шоқаннан сұра ›" : "Ask Shoqan ›"}
           </button>
         </div>
-      </div>
+      </div>}
 
-      <WeekWordsCard lang={lang} userId={userId} progress={progress} onReward={onReward} />
-      <MaqalCard lang={lang} userId={userId} onReward={onReward} />
-      <LegendDeckEntry lang={lang} userId={userId} onOpen={onOpenCards} />
-      <CouncilCard lang={lang} userId={userId} progress={progress} onReward={onReward} />
+      {/* R4: the research build keeps the core loop only. */}
+      {!RESEARCH_MODE && <>
+        <WeekWordsCard lang={lang} userId={userId} progress={progress} onReward={onReward} />
+        <MaqalCard lang={lang} userId={userId} onReward={onReward} />
+        <LegendDeckEntry lang={lang} userId={userId} onOpen={onOpenCards} />
+        <CouncilCard lang={lang} userId={userId} progress={progress} onReward={onReward} />
+      </>}
 
       {/* Caravan path: one unit per story, islands are CEFR levels */}
       {STORIES.map((story, si) => {

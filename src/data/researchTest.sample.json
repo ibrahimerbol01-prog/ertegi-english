@@ -1,0 +1,14 @@
+{
+  "version": "SAMPLE-2026-11-05",
+  "sample": true,
+  "note": "ОБРАЗЕЦ / SAMPLE. Not the study test: 4 example items that show the four formats (study-design.md 5.5). The real items are approved by the supervisor and go to src/data/researchTest.json (docs/research-build.md).",
+  "items": [
+    { "id": "SAMPLE-A-rec-01", "word": "loyal", "format": "recognition", "prompt": null, "options": ["yes", "no"], "answer": "yes", "form": "A", "timepoints": ["pre", "post", "delayed"], "story_id": "alpamys" },
+    { "id": "SAMPLE-A-rec-02", "word": "drunsel", "format": "recognition", "prompt": null, "options": ["yes", "no"], "answer": "no", "pseudo": true, "form": "A", "timepoints": ["pre", "post", "delayed"] },
+    { "id": "SAMPLE-A-mean-01", "word": "loyal", "format": "meaning", "prompt": null, "options": ["адал", "ашулы", "сабырлы", "батыл"], "answer": "адал", "dont_know": true, "form": "A", "timepoints": ["pre", "post", "delayed"], "story_id": "alpamys" },
+    { "id": "SAMPLE-A-use-01", "word": "prison", "format": "use", "prompt": "The thieves were locked in a ___ for ten years.", "options": ["pit", "prison", "chest", "village"], "answer": "prison", "form": "A", "timepoints": ["pre", "post", "delayed"], "story_id": "alpamys" },
+    { "id": "SAMPLE-B-rec-01", "word": "loyal", "format": "recognition", "prompt": null, "options": ["yes", "no"], "answer": "yes", "form": "B", "timepoints": ["pre", "post", "delayed"], "story_id": "alpamys" },
+    { "id": "SAMPLE-B-mean-01", "word": "loyal", "format": "meaning", "prompt": null, "options": ["батыл", "сабырлы", "адал", "ашулы"], "answer": "адал", "dont_know": true, "form": "B", "timepoints": ["pre", "post", "delayed"], "story_id": "alpamys" },
+    { "id": "SAMPLE-B-comp-01", "word": "", "format": "comprehension", "prompt": "SAMPLE: a question about the plot of the text goes here (not about a target word).", "options": ["Sample answer 1", "Sample answer 2", "Sample answer 3"], "answer": "Sample answer 1", "form": "B", "timepoints": ["post"], "story_id": "alpamys" }
+  ]
+}
