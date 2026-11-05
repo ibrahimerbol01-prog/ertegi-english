@@ -52,8 +52,9 @@ export function writeStudyCode(s: Store, uid: string, code: string, at = new Dat
 }
 
 /** What the research build adds to the context of every event. */
-export function researchContext(studyId: string, studyCode: string | null): Record<string, unknown> {
+export function researchContext(studyId: string, studyCode: string | null, assentVersion?: string | null): Record<string, unknown> {
   const ctx: Record<string, unknown> = { research: true, study_id: studyId || "unset" };
   if (studyCode) ctx.study_code = studyCode;
+  if (assentVersion) ctx.assent_version = assentVersion;
   return ctx;
 }
