@@ -2,7 +2,7 @@
 id: 1105-221554-ibrahimerbol-pravilo-limity-wip-p
 from: ibrahimerbol01-prog
 to: otarernazar-eng
-status: new
+status: done
 created: 2026-11-05 22:15
 ---
 
