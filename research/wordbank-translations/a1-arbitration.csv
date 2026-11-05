@@ -1,0 +1,175 @@
+id,headword,pos,kk_choice,kk_final,ru_choice,ru_final,source_url,comment
+1,a,determiner,human,,human,,,"Неопределенный артикль; в казахском и русском нет прямого словарного эквивалента, зависит от контекста"
+2,about,adverb,both,шамамен,both,около / приблизительно,https://en.wiktionary.org/wiki/about#Translations,Значение приблизительности
+3,activity,noun,v1,іс-әрекет,both,деятельность / занятие,https://en.wiktionary.org/wiki/activity#Translations,"Лемма activity: іс-әрекет, деятельность"
+4,again,adverb,both,қайтадан / тағы,both,снова / опять,https://en.wiktionary.org/wiki/again#Translations,"қайтадан, снова"
+5,almost,adverb,both,дерлік,both,почти,https://en.wiktionary.org/wiki/almost#Translations,"дерлік, почти"
+6,always,adverb,both,әрқашан / әрдайым,both,всегда,https://en.wiktionary.org/wiki/always#Translations,"әрқашан / әрдайым, всегда"
+7,am,be-verb,human,,human,,,Служебная связка 1 л. ед. ч. настоящего времени (to be)
+8,an,determiner,human,,human,,,Неопределенный артикль an перед гласными
+9,anybody,pronoun,both,біреу / әлдекім,both,кто-нибудь,https://en.wiktionary.org/wiki/anybody#Translations,Неопределенное местоимение
+10,anyone,pronoun,both,біреу / әлдекім,both,кто-нибудь,https://en.wiktionary.org/wiki/anyone#Translations,Синоним anybody
+11,are,be-verb,human,,human,,,Служебная связка множественного числа / 2 лица (to be)
+12,aunt,noun,human,,both,тетя,https://en.wiktionary.org/wiki/aunt#Translations,В казахском термин родства дифференцирован (тәте/апа vs нағашы апа)
+13,away,adverb,v2,алысқа,both,прочь / далеко,https://en.wiktionary.org/wiki/away#Translations,"Наречие удаления (прочь, алысқа)"
+14,back,adverb,both,артқа / кері,both,назад / обратно,https://en.wiktionary.org/wiki/back#Translations,Направление назад
+15,bat,noun,both,жарқанат,both,летучая мышь / бита,https://en.wiktionary.org/wiki/bat#Translations,Омоним: животное и спортивный инвентарь
+16,bathroom,noun,both,жуынатын бөлме,both,ванная комната,https://en.wiktionary.org/wiki/bathroom#Translations,ванная комната
+17,biscuit,noun,both,печенье,both,печенье,https://en.wiktionary.org/wiki/biscuit#Translations,печенье
+18,block,noun,both,квартал / блок,both,квартал / блок,https://en.wiktionary.org/wiki/block#Translations,Городской квартал или строительный блок
+19,boring,adjective,both,қызықсыз / жалықтыратын,both,скучный,https://en.wiktionary.org/wiki/boring#Translations,скучный
+20,both,adverb,human,,human,,,Парный союз/наречие (both ... and)
+21,both,pronoun,both,екеуі де,both,оба,https://en.wiktionary.org/wiki/both#Translations,"оба, екеуі де"
+22,brush,verb,v2,щеткамен тазалау / тарау,both,чистить (щеткой) / причесывать,https://en.wiktionary.org/wiki/brush#Translations,Чистить зубы/одежду щеткой
+23,busy,adjective,both,бос емес,both,занятой,https://en.wiktionary.org/wiki/busy#Translations,"бос емес, занятой"
+24,can,modal auxiliary,human,,both,мочь / уметь,https://en.wiktionary.org/wiki/can#Translations,В казахском выражается синтетическим аффиксом возможности (-а алу)
+25,careful,adjective,v1,ұқыпты / сақ,both,осторожный / внимательный,https://en.wiktionary.org/wiki/careful#Translations,осторожный
+26,carefully,adverb,both,абайлап / мұқият,both,осторожно / внимательно,https://en.wiktionary.org/wiki/carefully#Translations,осторожно
+27,case,noun,both,жағдай / чехол,both,случай / чехол,https://en.wiktionary.org/wiki/case#Translations,случай (in that case) или чехол
+28,catch,noun,both,ұстап алу / олжа,both,поимка / улов,https://en.wiktionary.org/wiki/catch#Translations,поимка / улов
+29,cd,noun,both,компакт-диск / CD,both,компакт-диск / CD,https://en.wiktionary.org/wiki/compact_disc#Translations,компакт-диск
+30,cd player,noun,both,CD-ойнатқыш,both,CD-плеер,https://en.wiktionary.org/wiki/CD_player#Translations,проигрыватель дисков
+31,change,noun,both,өзгеріс / ұсақ ақша,both,перемена / сдача,https://en.wiktionary.org/wiki/change#Translations,изменение или сдача
+32,climb,noun,both,өрмелеу,both,подъем / восхождение,https://en.wiktionary.org/wiki/climb#Translations,подъем
+33,clock,noun,both,сағат (қабырға сағаты),both,часы (настенные),https://en.wiktionary.org/wiki/clock#Translations,настенные часы (в отличие от watch)
+34,clothes,noun,both,киім / киім-кешек,both,одежда,https://en.wiktionary.org/wiki/clothes#Translations,"киім, одежда"
+35,cold,noun,both,суық / суық тию (тұмау),both,простуда / холод,https://en.wiktionary.org/wiki/cold#Translations,простуда или холод
+36,cook,verb,both,тамақ пісіру,both,готовить еду,https://en.wiktionary.org/wiki/cook#Translations,готовить еду
+37,corn,noun,both,жүгері,both,кукуруза,https://en.wiktionary.org/wiki/corn#Translations,"жүгері, кукуруза"
+38,could,modal auxiliary,human,,v2,мог / мог бы,https://en.wiktionary.org/wiki/could#Translations,В казахском выражается через аффиксы прош. времени глагола алу
+39,cousin,noun,human,,both,двоюродный брат / сестра,https://en.wiktionary.org/wiki/cousin#Translations,"В казахском термин зависит от пола и ветви родства (бөле, немере аға/қарындас)"
+40,credit card,noun,both,несие картасы,both,кредитная карта,https://en.wiktionary.org/wiki/credit_card#Translations,несие картасы
+41,dad,noun,both,әке / папа,both,папа,https://en.wiktionary.org/wiki/dad#Translations,папа
+42,daddy,noun,v1,әкетай / папочка,both,папочка,https://en.wiktionary.org/wiki/daddy#Translations,ласковая форма папа
+43,dig,noun,both,қазба / қазу,both,раскопки,https://en.wiktionary.org/wiki/dig#Translations,раскопки
+44,do,do-verb,both,істеу / жасау,both,делать,https://en.wiktionary.org/wiki/do#Translations,делать
+45,does,do-verb,human,,both,делает,https://en.wiktionary.org/wiki/does,Форма 3-го лица ед. ч. настоящего времени
+46,doing,do-verb,human,,human,,,Форма причастия/герундия (doing)
+47,drama,noun,both,драма,both,драма / пьеса,https://en.wiktionary.org/wiki/drama#Translations,драма
+48,drive,noun,both,көлікпен жүру / сапар,both,поездка на машине,https://en.wiktionary.org/wiki/drive#Translations,поездка на машине
+49,due,adjective,both,мерзімі келген / күтілетін,both,должный (к сроку) / ожидаемый,https://en.wiktionary.org/wiki/due#Translations,ожидаемый к определенному сроку
+50,dvd,noun,both,DVD-диск,both,DVD-диск,https://en.wiktionary.org/wiki/DVD#Translations,DVD-диск
+51,each other,pronoun,both,бір-бірін / бір-біріне,both,друг друга,https://en.wiktionary.org/wiki/each_other#Translations,взаимное местоимение
+52,either,adverb,human,,both,также / тоже (в отрицании),https://en.wiktionary.org/wiki/either#Translations,Контекстное отрицательное согласование (да/де/сондай-ақ)
+53,email/e-mail/e-mail,noun,both,электронды пошта / электрондық хат,both,электронная почта / письмо,https://en.wiktionary.org/wiki/email#Translations,электронная почта
+54,excited,adjective,both,толқыған / қуанған,both,взволнованный / воодушевленный,https://en.wiktionary.org/wiki/excited#Translations,взволнованный
+55,exercise,verb,both,жаттығу жасау,both,упражняться / тренироваться,https://en.wiktionary.org/wiki/exercise#Translations,тренироваться
+56,feed,noun,both,жем / азық,both,корм,https://en.wiktionary.org/wiki/feed#Translations,корм для животных
+57,fever,noun,both,қызу / ыстық (дене қызуы),both,жар / температура,https://en.wiktionary.org/wiki/fever#Translations,температура/жар
+58,focus,verb,both,назар аудару,both,сосредоточиться / фокусироваться,https://en.wiktionary.org/wiki/focus#Translations,сосредоточиться
+59,foreign,adjective,both,шетелдік,both,иностранный / зарубежный,https://en.wiktionary.org/wiki/foreign#Translations,иностранный
+60,foreigner,noun,both,шетелдік,both,иностранец,https://en.wiktionary.org/wiki/foreigner#Translations,иностранец
+61,ghost,noun,both,елес / рух,both,призрак / привидение,https://en.wiktionary.org/wiki/ghost#Translations,призрак
+62,glad,adjective,both,қуанышты / риза,both,рад / радостный,https://en.wiktionary.org/wiki/glad#Translations,радостный
+63,glass,noun,both,стақан / шыны,both,стакан / стекло,https://en.wiktionary.org/wiki/glass#Translations,стакан или стекло
+64,grandparent,noun,human,,both,дедушка или бабушка,https://en.wiktionary.org/wiki/grandparent#Translations,В казахском нет единого термина для дедушки/бабушки в ед. числе
+65,great,adjective,both,тамаша / керемет / ұлы,both,отличный / великий,https://en.wiktionary.org/wiki/great#Translations,великий / отличный
+66,greet,verb,both,амандасу / сәлемдесу,both,приветствовать / здороваться,https://en.wiktionary.org/wiki/greet#Translations,здороваться
+67,handsome,adjective,both,сымбатты / келбетті,both,красивый (о мужчине),https://en.wiktionary.org/wiki/handsome#Translations,красивый (о мужчине)
+68,hard,adverb,v1,қатты / тынымсыз,both,упорно / усердно,https://en.wiktionary.org/wiki/hard#Translations,упорно работать
+69,healthy,adjective,both,дені сау / сау,both,здоровый,https://en.wiktionary.org/wiki/healthy#Translations,здоровый
+70,hold,noun,both,ұстау / тұтқа,both,захват / хватка,https://en.wiktionary.org/wiki/hold#Translations,хватка
+71,homework,noun,both,үй тапсырмасы / үй жұмысы,both,домашнее задание,https://en.wiktionary.org/wiki/homework#Translations,домашнее задание
+72,hotel,noun,both,қонақүй,both,гостиница / отель,https://en.wiktionary.org/wiki/hotel#Translations,гостиница
+73,hurry,noun,both,асығыстық / қарбалас,both,спешка,https://en.wiktionary.org/wiki/hurry#Translations,спешка
+74,interested,adjective,both,қызыққан / ынталы,both,заинтересованный,https://en.wiktionary.org/wiki/interested#Translations,заинтересованный
+75,jacket,noun,both,күрте / куртка,both,куртка / пиджак,https://en.wiktionary.org/wiki/jacket#Translations,куртка
+76,kitchen,noun,both,асүй,both,кухня,https://en.wiktionary.org/wiki/kitchen#Translations,кухня
+77,lily,noun,both,лалагүл,both,лилия,https://en.wiktionary.org/wiki/lily#Translations,лилия
+78,living room,noun,both,қонақ бөлмесі,both,гостиная,https://en.wiktionary.org/wiki/living_room#Translations,гостиная
+79,lot,adverb,both,көп,both,много / намного,https://en.wiktionary.org/wiki/a_lot#Translations,наречие степени
+80,lovely,adjective,both,сүйкімді / әдемі,both,прекрасный / милый,https://en.wiktionary.org/wiki/lovely#Translations,милый/прекрасный
+81,lucky,adjective,v2,жолы болғыш / сәтті,both,удачливый / везучий,https://en.wiktionary.org/wiki/lucky#Translations,удачливый (бақытты — скорее happy)
+82,m,be-verb,human,,human,,,Краткая служебная форма am
+83,matter,noun,both,мәселе / іс,both,дело / вопрос,https://en.wiktionary.org/wiki/matter#Translations,дело / вопрос
+84,may,modal auxiliary,both,мүмкін / рұқсат,both,мочь / можно,https://en.wiktionary.org/wiki/may#Translations,модальный глагол
+85,memory,noun,both,естелік / жады,both,память / воспоминание,https://en.wiktionary.org/wiki/memory#Translations,память
+86,mind,noun,both,ақыл-ой / сана,both,разум / ум,https://en.wiktionary.org/wiki/mind#Translations,разум / ум
+87,miss,noun,both,мисс / бойжеткен,both,мисс,https://en.wiktionary.org/wiki/miss#Translations,обращение к девушке
+88,most,determiner,both,көпшілік / басым бөлігі,both,большинство,https://en.wiktionary.org/wiki/most#Translations,большинство
+89,mouse,noun,both,тышқан,both,мышь,https://en.wiktionary.org/wiki/mouse#Translations,мышь
+90,move,noun,both,қозғалыс / қадам,both,движение / ход,https://en.wiktionary.org/wiki/move#Translations,ход / движение
+91,much,adverb,both,көп / әлдеқайда,both,намного / гораздо,https://en.wiktionary.org/wiki/much#Translations,наречие степени
+92,name,noun,both,есім / ат,both,имя,https://en.wiktionary.org/wiki/name#Translations,имя
+93,news,noun,both,жаңалықтар,both,новости,https://en.wiktionary.org/wiki/news#Translations,новости
+94,nice,adjective,both,жақсы / жағымды,both,приятный / хороший,https://en.wiktionary.org/wiki/nice#Translations,хороший / приятный
+95,note,verb,both,байқау / белгілеп алу,both,замечать / отмечать,https://en.wiktionary.org/wiki/note#Translations,замечать / отмечать
+96,o'clock,adverb,both,сағат,both,часов (ровно),https://en.wiktionary.org/wiki/o%27clock#Translations,указание времени
+97,of,preposition,human,,human,,,Служебный предлог родительного падежа
+98,off,adjective,both,өшірулі / сөндірулі,both,выключенный,https://en.wiktionary.org/wiki/off#Translations,выключенный
+99,ok/okay,adverb,both,жарайды / жақсы,both,хорошо / ладно,https://en.wiktionary.org/wiki/OK#Translations,хорошо
+100,old,adjective,v1,кәрі / ескі,both,старый / пожилой,https://en.wiktionary.org/wiki/old#Translations,старый (человек или предмет)
+101,olympics,noun,both,Олимпиада / Олимпиада ойындары,both,Олимпийские игры,https://en.wiktionary.org/wiki/Olympic_Games#Translations,Олимпийские игры
+102,own,adjective,both,өз / өзінің,both,собственный / свой,https://en.wiktionary.org/wiki/own#Translations,собственный
+103,palace,noun,both,сарай,both,дворец,https://en.wiktionary.org/wiki/palace#Translations,дворец
+104,pardon,noun,both,кешірім,both,прощение / помилование,https://en.wiktionary.org/wiki/pardon#Translations,прощение
+105,parent,noun,human,,both,родитель (отец или мать),https://en.wiktionary.org/wiki/parent#Translations,В казахском термин в ед. ч. требует контекста (ата-ананың бірі)
+106,pet,noun,both,үй жануары,both,домашний питомец,https://en.wiktionary.org/wiki/pet#Translations,домашний питомец
+107,phone,verb,both,қоңырау шалу / телефон шалу,both,звонить,https://en.wiktionary.org/wiki/phone#Translations,звонить по телефону
+108,picnic,noun,both,пикник,both,пикник,https://en.wiktionary.org/wiki/picnic#Translations,пикник
+109,play,noun,both,пьеса / спектакль / қойылым,both,пьеса / спектакль,https://en.wiktionary.org/wiki/play#Translations,спектакль/пьеса
+110,pray,verb,both,дұға ету / сыйыну,both,молиться,https://en.wiktionary.org/wiki/pray#Translations,молиться
+111,princess,noun,both,ханшайым / принцесса,both,принцесса,https://en.wiktionary.org/wiki/princess#Translations,принцесса
+112,re,be-verb,human,,human,,,Краткая форма связки are
+113,ribbon,noun,both,лента / таспа,both,лента,https://en.wiktionary.org/wiki/ribbon#Translations,лента
+114,ring,verb,both,қоңырау шалу / сыңғырлау,both,звонить / звенеть,https://en.wiktionary.org/wiki/ring#Translations,звонить
+115,run,verb,v1,жүгіру,both,бежать,https://en.wiktionary.org/wiki/run#Translations,бежать (для A1 основное значение)
+116,s,be-verb,human,,human,,,Краткая форма связки is
+117,sad,adjective,both,мұңды / көңілсіз,both,грустный / печальный,https://en.wiktionary.org/wiki/sad#Translations,грустный
+118,sale,noun,both,сатылым / распродажа,both,продажа / распродажа,https://en.wiktionary.org/wiki/sale#Translations,распродажа / продажа
+119,same,adverb,both,дәл солай / бірдей,both,так же / одинаково,https://en.wiktionary.org/wiki/same#Translations,так же
+120,self,noun,both,өзі,both,сам / собственное я,https://en.wiktionary.org/wiki/self#Translations,личность / сам
+121,shake,noun,both,коктейль (сүт коктейлі),both,молочный коктейль,https://en.wiktionary.org/wiki/milkshake#Translations,коктейль
+122,shopping,noun,both,сауда жасау / сатып алу,both,покупки / шопинг,https://en.wiktionary.org/wiki/shopping#Translations,покупки
+123,short,adverb,both,қысқаша,both,коротко,https://en.wiktionary.org/wiki/short#Translations,коротко
+124,sight,noun,both,көру қабілеті / көрініс,both,зрение / вид,https://en.wiktionary.org/wiki/sight#Translations,зрение / вид
+125,solve,verb,both,шешу,both,решать,https://en.wiktionary.org/wiki/solve#Translations,решать задачу
+126,some,pronoun,both,кейбіреулері / біразы,both,некоторые,https://en.wiktionary.org/wiki/some#Translations,некоторые
+127,sorry,adjective,both,өкінішті / кешіріңіз,both,сожалеющий / виноватый,https://en.wiktionary.org/wiki/sorry#Translations,сожалеющий
+128,soup,noun,both,сорпа,both,суп,https://en.wiktionary.org/wiki/soup#Translations,суп
+129,spell,noun,both,сиқыр / заклинание,both,заклинание / чары,https://en.wiktionary.org/wiki/spell#Translations,заклинание
+130,stand,noun,both,стенд / тұғыр,both,стенд / стойка,https://en.wiktionary.org/wiki/stand#Translations,стенд
+131,start,noun,both,бастау / бас,both,начало / старт,https://en.wiktionary.org/wiki/start#Translations,начало
+132,station,noun,both,станция / вокзал / бекет,both,станция / вокзал,https://en.wiktionary.org/wiki/station#Translations,вокзал/станция
+133,still,adjective,both,тыныш / қозғалыссыз,both,тихий / неподвижный,https://en.wiktionary.org/wiki/still#Translations,неподвижный
+134,stop,verb,both,тоқтау / тоқтату,both,останавливаться / останавливать,https://en.wiktionary.org/wiki/stop#Translations,останавливаться
+135,super,adjective,both,керемет,both,отличный / супер,https://en.wiktionary.org/wiki/super#Translations,великолепный
+136,surf,noun,both,толқын / прибой,both,прибой / волны прибоя,https://en.wiktionary.org/wiki/surf#Translations,прибой
+137,surprise,noun,both,тосынсый / таңдану,both,сюрприз / удивление,https://en.wiktionary.org/wiki/surprise#Translations,сюрприз
+138,swimming pool,noun,both,бассейн,both,бассейн,https://en.wiktionary.org/wiki/swimming_pool#Translations,плавательный бассейн
+139,than,preposition,human,,both,чем,https://en.wiktionary.org/wiki/than#Translations,В казахском выражается через шығыс септік (-дан/-ден)
+140,that,determiner,both,сол / анау,both,тот / та,https://en.wiktionary.org/wiki/that#Translations,указательное слово
+141,that,pronoun,both,сол / анау / ол,both,то / это,https://en.wiktionary.org/wiki/that#Translations,указательное местоимение
+142,then,adverb,both,содан кейін / сосын,both,тогда / затем / потом,https://en.wiktionary.org/wiki/then#Translations,затем
+143,those,pronoun,both,аналар / солар,both,те,https://en.wiktionary.org/wiki/those#Translations,те
+144,tired,adjective,both,шаршаған,both,уставший,https://en.wiktionary.org/wiki/tired#Translations,уставший
+145,to,infinitive-to,human,,human,,,Грамматический маркер инфинитива
+146,today,noun,both,бүгінгі күн,both,сегодняшний день,https://en.wiktionary.org/wiki/today#Translations,сегодняшний день (существительное)
+147,tomorrow,noun,both,ертеңгі күн,both,завтрашний день,https://en.wiktionary.org/wiki/tomorrow#Translations,завтрашний день (существительное)
+148,tonight,adverb,both,бүгін кешке / түнде,both,сегодня вечером,https://en.wiktionary.org/wiki/tonight#Translations,сегодня вечером
+149,too,adverb,both,тым / сондай-ақ,both,слишком / тоже,https://en.wiktionary.org/wiki/too#Translations,слишком или тоже
+150,top,noun,both,үсті / жоғарғы жақ,both,верх / вершина,https://en.wiktionary.org/wiki/top#Translations,верх
+151,town,noun,both,қала (шағын қала),both,небольшой город / городок,https://en.wiktionary.org/wiki/town#Translations,город/городок
+152,turn,noun,both,кезек / бұрылыс,both,очередь / поворот,https://en.wiktionary.org/wiki/turn#Translations,очередь (it is your turn) или поворот
+153,uncle,noun,human,,both,дядя,https://en.wiktionary.org/wiki/uncle#Translations,В казахском дифференцируется (аға/көке vs нағашы аға)
+154,underline,noun,both,астын сызу,both,подчеркивание,https://en.wiktionary.org/wiki/underline#Translations,подчеркивание
+155,up,preposition,both,жоғары,both,вверх / наверх,https://en.wiktionary.org/wiki/up#Translations,вверх
+156,vase,noun,both,ваза / құмыра,both,ваза,https://en.wiktionary.org/wiki/vase#Translations,ваза
+157,video,noun,both,бейнежазба / видео,both,видео,https://en.wiktionary.org/wiki/video#Translations,видео
+158,waitress,noun,both,даяшы (әйел),both,официантка,https://en.wiktionary.org/wiki/waitress#Translations,официантка
+159,wake,noun,human,,human,,,Существительное wake в A1 нетипично (обычно фразовый глагол wake up)
+160,watch,noun,both,қолсағат,both,наручные часы,https://en.wiktionary.org/wiki/watch#Translations,наручные часы
+161,watch,verb,both,қарау / көру,both,смотреть,https://en.wiktionary.org/wiki/watch#Translations,смотреть
+162,weekend,noun,both,демалыс күндері,both,выходные дни,https://en.wiktionary.org/wiki/weekend#Translations,выходные
+163,well,adjective,both,сау / дені сау,both,здоровый,https://en.wiktionary.org/wiki/well#Translations,здоровый (в предикативе)
+164,what,determiner,both,қандай,both,какой,https://en.wiktionary.org/wiki/what#Translations,вопросительное слово
+165,wheel,noun,both,доңғалақ / дөңгелек,both,колесо,https://en.wiktionary.org/wiki/wheel#Translations,колесо
+166,where,conjunction,both,қай жерде / жерде,both,где / куда,https://en.wiktionary.org/wiki/where#Translations,союз места
+167,which,determiner,both,қай,both,какой / который,https://en.wiktionary.org/wiki/which#Translations,вопросительный детерминатив
+168,whose,determiner,both,кімнің,both,чей,https://en.wiktionary.org/wiki/whose#Translations,притяжательное вопросительное слово
+169,whose,pronoun,both,кімдікі,both,чей,https://en.wiktionary.org/wiki/whose#Translations,абсолютное вопросительное местоимение
+170,will,modal auxiliary,human,,human,,,Служебный глагол будущего времени
+171,woman,noun,both,әйел,both,женщина,https://en.wiktionary.org/wiki/woman#Translations,женщина
+172,worry,noun,both,алаңдаушылық / уайым,both,беспокойство / тревога,https://en.wiktionary.org/wiki/worry#Translations,беспокойство
+173,would,modal auxiliary,human,,human,,,Модальная частица сослагательного наклонения
+174,yogurt/yoghurt,noun,both,йогурт,both,йогурт,https://en.wiktionary.org/wiki/yogurt#Translations,йогурт
