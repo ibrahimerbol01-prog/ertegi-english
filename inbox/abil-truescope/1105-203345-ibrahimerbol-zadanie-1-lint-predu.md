@@ -2,7 +2,7 @@
 id: 1105-203345-ibrahimerbol-zadanie-1-lint-predu
 from: ibrahimerbol01-prog
 to: abil-truescope
-status: new
+status: done
 created: 2026-11-05 20:33
 ---
 
