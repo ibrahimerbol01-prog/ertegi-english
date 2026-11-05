@@ -2,7 +2,7 @@
 id: 1105-234948-ibrahimerbol-g13-trebovaniya-k-po
 from: ibrahimerbol01-prog
 to: otarernazar-eng
-status: new
+status: done
 created: 2026-11-05 23:49
 ---
 
