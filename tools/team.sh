@@ -41,7 +41,7 @@ load_conf() {
 
 need() { command -v "$1" >/dev/null 2>&1 || die "Не найдена программа $1. $2"; }
 
-ME="${TEAM_LOGIN:-}"
+ME="${TEAM_LOGIN:-$(git config --get team.login 2>/dev/null || true)}"  # git config team.login ЛОГИН
 my_login() {
   if [ -z "$ME" ]; then ME="$(gh api user --jq .login 2>/dev/null)" || die "gh не авторизован: выполните gh auth login"; fi
   printf '%s' "$ME"
