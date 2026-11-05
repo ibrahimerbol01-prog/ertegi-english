@@ -8,9 +8,9 @@ import { displayTitle } from "../utils/text";
 import { localDay } from "../utils/progress";
 import {
   ASSIGN_STEPS, addAssignment, cellFor, classLink, classReport, createClass, daysAway, deleteAssignment,
-  dueAtEndOf, errorText, helpFlags, newClassCode, renameClass, setArchived, setMemberRemoved, studentReport,
-  teacherClasses,
-  type AssignStep, type Assignment, type Cell, type ClassError, type ClassReport, type ClassRow, type Member, type Result,
+  dueAtEndOf, errorText, helpFlags, newClassCode, renameClass, requestTeacherRole, setArchived, setMemberRemoved,
+  studentReport, teacherClasses,
+  type AssignStep, type TeacherStatus, type Assignment, type Cell, type ClassError, type ClassReport, type ClassRow, type Member, type Result,
   type StudentReport,
 } from "../utils/classes";
 import {
@@ -31,6 +31,36 @@ import { CLAIMS, splitSentences } from "../data/trailClaims";
    their email. */
 
 type Kk = { kk: boolean };
+
+/* Teacher access is checked by the project owner (20261108000000_teacher_role).
+   Pending: a calm note and no "New class" form; revoked: the same, with why. */
+function AccessNote({ status, kk }: { status: Exclude<TeacherStatus, "approved">; kk: boolean }) {
+  const pending = status === "pending";
+  return (
+    <div role="status" className="card p-5 space-y-2">
+      <h2 className="font-display font-extrabold text-ink text-[17px] flex items-center gap-2">
+        <Clock size={20} className="text-sky-deep shrink-0" aria-hidden />
+        {pending
+          ? (kk ? "Мұғалім рөлі тексерілуде" : "Your teacher access is being checked")
+          : (kk ? "Мұғалім рөлі жабылған" : "Your teacher access is closed")}
+      </h2>
+      <p className="text-[15px] text-ink-2">
+        {pending
+          ? (kk
+            ? "Сынып оқушылардың прогресі мен жазғандарын көрсетеді, сондықтан әр мұғалімді жоба командасы растайды. Расталғанша сынып ашу жабық, ал ертегілер мен басқа бөлімдер ашық."
+            : "A class shows learners' progress and writing, so the project team confirms every teacher. Until then you can't create a class; tales and the rest of the app stay open.")
+          : (kk
+            ? "Жоба командасы бұл аккаунттың мұғалім рөлін жапты: сынып ашу және оқушылардың прогресін көру мүмкін емес."
+            : "The project team has closed teacher access for this account: you can't create classes or see learners' progress.")}
+      </p>
+      <p className="text-[15px] text-ink-2">
+        {kk
+          ? "Не істеу керек: жоба әкімшісіне жаз (байланыс: құпиялылық саясатының 7-бөлімі). Мектебіңді және аккаунт поштаңды көрсет."
+          : "What to do: write to the project admin (contact: part 7 of the privacy policy). Say which school you teach at and the email of this account."}
+      </p>
+    </div>
+  );
+}
 
 function Notice({ error, kk, onRetry }: { error: ClassError; kk: boolean; onRetry?: () => void }) {
   return (
@@ -105,6 +135,15 @@ export function TeacherScreen({ lang, onBack }: { lang: string; onBack?: () => v
   }, [openId]);
   const [showArchived, setShowArchived] = useState(false);
 
+  // null while asking or when the server can't say (no migration, offline):
+  // then the cabinet works as before and create_class() still decides.
+  const [access, setAccess] = useState<TeacherStatus | null>(null);
+  useEffect(() => {
+    let live = true;
+    requestTeacherRole().then((res) => { if (live && res.ok) setAccess(res.data); });
+    return () => { live = false; };
+  }, []);
+
   const [attempt, setAttempt] = useState(0);
   const load = () => setAttempt((n) => n + 1);
   useEffect(() => {
@@ -126,7 +165,11 @@ export function TeacherScreen({ lang, onBack }: { lang: string; onBack?: () => v
     setCreateError(null);
     const res = await createClass(name);
     setBusy(false);
-    if (!res.ok) { setCreateError(res.error); return; }
+    if (!res.ok) {
+      setCreateError(res.error);
+      if (res.error === "not_approved") setAccess((a) => (a === "revoked" ? a : "pending"));
+      return;
+    }
     setName("");
     setClasses((prev) => [...(prev ?? []), res.data]);
     setOpenId(res.data.id);
@@ -157,10 +200,11 @@ export function TeacherScreen({ lang, onBack }: { lang: string; onBack?: () => v
         backLabel={kk ? "Профиль" : "Profile"}
       />
 
+      {access && access !== "approved" && <AccessNote status={access} kk={kk} />}
       {error && <Notice error={error} kk={kk} onRetry={load} />}
       {!classes && !error && <div role="status" className="card p-6 text-center text-ink-2">{kk ? "Жүктеліп жатыр…" : "Loading…"}</div>}
 
-      {classes && classes.length === 0 && !error && (
+      {classes && classes.length === 0 && !error && (access === null || access === "approved") && (
         <div className="card p-5">
           <h2 className="font-display font-extrabold text-ink text-[17px]">{kk ? "Бірінші сыныпты аш" : "Start your first class"}</h2>
           <ol className="mt-3 space-y-2 text-[15px] text-ink-2 list-decimal pl-5">
@@ -188,7 +232,7 @@ export function TeacherScreen({ lang, onBack }: { lang: string; onBack?: () => v
         </ul>
       )}
 
-      {classes && error !== "missing" && (
+      {classes && error !== "missing" && (access === null || access === "approved") && (
         <form onSubmit={create} className="card p-5" noValidate>
           <label htmlFor="new-class" className="font-display font-extrabold text-ink text-[17px] block">{kk ? "Жаңа сынып" : "New class"}</label>
           <div className="flex flex-col sm:flex-row gap-3 mt-3">

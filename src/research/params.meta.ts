@@ -46,13 +46,27 @@ export const RESEARCH_PARAMS: Meta = {
     value: 4, source: DESIGN, evidence: "design", doc: "3.4", usedIn: "src/components/screens/WordsScreens.tsx (MatchingGame)",
     note: "Сопоставление — узнавание, срок повторения не меняет (вывод отчёта).",
   },
+  SRS_PRODUCE_FROM_BOX: {
+    value: 2, source: `${DESIGN}; производительные форматы — Yanagisawa, Webb & Uchihara (2020), сверить`, evidence: "design", doc: "3.4",
+    usedIn: "src/utils/progress.ts (cardDirection), src/components/screens/WordsScreens.tsx",
+    note: "Новое и слабое слово (коробки 0–1) — узнавание EN→ҚАЗ; с коробки 2 — воспроизведение ҚАЗ→EN.",
+  },
   SAVE_WORD_XP: { value: 5, source: DESIGN, evidence: "design", doc: "3.4", usedIn: "src/KazakhTalesApp.tsx (handleSaveWord)" },
 
   // 3.5 Quiz
   QUIZ_PASS_SHARE: {
     value: 0.6, source: DESIGN, evidence: "design", doc: "3.5",
-    usedIn: "src/KazakhTalesApp.tsx, src/components/screens/QuizScreens.tsx, src/utils/classes.ts",
-    note: "Порог сохранён с прежней версии; отчёт предлагает отказаться от него (задача I1).",
+    usedIn: "src/components/screens/QuizScreens.tsx (итог: «хороший счёт»)",
+    note: "С I1 уровень не блокирует (см. QUIZ_LEVEL_UNLOCK_SHARE), только отмечает низкий счёт; равен QUIZ_PASS_PERCENT / 100.",
+  },
+  QUIZ_LEVEL_UNLOCK_SHARE: {
+    value: 0, source: `${REPORT}; Greving & Richter (2018); Wisniewski, Zierer & Hattie (2020)`, evidence: "design", doc: "3.5",
+    usedIn: "src/KazakhTalesApp.tsx (handleQuizFinish), src/utils/classes.ts (cellFor)",
+    note: "0 — уровень засчитывается за весь пройденный квиз; ошибки сразу идут в повтор. Счёт в отчёт учителя пишется как раньше.",
+  },
+  QUIZ_CONFIDENCE_EVERY: {
+    value: 2, source: `${DESIGN}; гиперкоррекция — Butterfield & Metcalfe (2001), сверить; голос уверенности — SERC (Peer Instruction)`, evidence: "design", doc: "3.5",
+    usedIn: "src/utils/quizRetry.ts (asksConfidence), src/components/screens/QuizScreens.tsx",
   },
   QUIZ_PASS_PERCENT: { value: 60, source: DESIGN, evidence: "design", doc: "3.5", usedIn: "src/utils/classes.ts (helpFlags), src/components/Teacher.tsx" },
   QUIZ_MAX_TRIES: {

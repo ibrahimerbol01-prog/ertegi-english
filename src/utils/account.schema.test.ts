@@ -57,5 +57,5 @@ describe("privacy policy names every outside service", () => {
       expect(body, s).toContain(s);
     }
   });
-  it("the update date is 04.11.2026", () => expect(policy).toContain('POLICY_UPDATED = "04.11.2026"'));
+  it("the update date is 05.11.2026", () => expect(policy).toContain('POLICY_UPDATED = "05.11.2026"'));
 });

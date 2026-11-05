@@ -6,7 +6,7 @@ import { Sheet } from "./UIHelpers";
    The text follows the code: if a feature starts collecting something new or
    sends data to a new service, this file changes in the same PR. */
 
-export const POLICY_UPDATED = "04.11.2026";
+export const POLICY_UPDATED = "05.11.2026";
 type PolicyLang = "kk" | "ru" | "en";
 
 const KK = `
@@ -28,7 +28,7 @@ const KK = `
 Сынып (егер қосылсаң):
 - сыныптағы лақап атың (әдепкіде профильдегі атың немесе поштаңның @ белгісіне дейінгі бөлігі), қосылған және шыққан күнің.
 Сыныпта тұрғанда сол сыныптың мұғалімі көреді: лақап атыңды, XP мен күн қатарыңды, соңғы белсенді күніңді, сақтаған сөздеріңді (аудармасымен және қаншалықты меңгергеніңмен), өткен ертегі деңгейлерің мен соңғы сынақ нәтижелеріңді. Сонымен қатар өзің жазған жұмыстарды: апта дебатындағы дәлелдерің мен Шоқанға жауабыңды, «Ой ізі» жазбаларыңды барлық нұсқаларымен, «Дала кеңесіндегі» дауыстарың мен себептеріңді. Бұл жұмыстардың ішінен мұғалім тек сыныпқа қосылғаннан кейін жазғандарыңды көреді. Мұғалім «Дала кеңесіне» жазған себебіңді басқа оқушыларға атыңсыз көрсетуге рұқсат бере алады. Сыныптан шықсаң, мұғалім тек лақап атың мен күндерді көреді.
-Мұғалім үшін: ашқан сыныптарың, кодтары мен тапсырмалары.
+Мұғалім үшін: ашқан сыныптарың, кодтары мен тапсырмалары; мұғалім рөліне өтінішің және оның күйі (тексерілуде, расталды немесе жабылды), өтініш пен шешім күні, әкімшінің қысқа белгісі (мысалы, мектеп). Сынып ашуға жоба әкімшісі растаған мұғалім ғана рұқсат алады.
 Есептегіштер: Шоқанға және дыбыс қызметіне күніне неше рет жүгінгенің (тек сан, күнделікті шекті сақтау үшін).
 
 Сақтамаймыз: Шоқанмен чатыңды (оның «Ой ізі» мен дебатқа берген жауабы ғана сақталады, жоғарыда жазылғандай), дауыс жазбаларыңды, орныңды (геолокация), телефон нөміріңді. Жарнама жоқ, деректеріңді ешкімге сатпаймыз.
@@ -54,7 +54,7 @@ const KK = `
 Ertegi English мектеп оқушыларына арналған. Қосымшаны ата-анаң немесе мұғалімің біліп отырсын, басқа мектеп бағдарламалары сияқты.
 
 6. ҚҰҚЫҚТАРЫҢ
-- Аккаунтты өзің толық өшіре аласың: Профиль → «Аккаунтты өшіру». Аккаунт, прогресс, сөздер, жазбалар, дауыстар, дебаттар, оқу журналы, сыныптар мен сыныпқа мүшелік бірден дерекқордан өшеді, осы құрылғыдағы деректер де тазаланады. Мұны қайтару мүмкін емес. Дерекқордың резервтік көшірмелерінде деректер біраз уақыт қалуы мүмкін, кейін олар да жойылады.
+- Аккаунтты өзің толық өшіре аласың: Профиль → «Аккаунтты өшіру». Аккаунт, прогресс, сөздер, жазбалар, дауыстар, дебаттар, оқу журналы, сыныптар, сыныпқа мүшелік және мұғалім рөліне өтініш бірден дерекқордан өшеді, осы құрылғыдағы деректер де тазаланады. Мұны қайтару мүмкін емес. Дерекқордың резервтік көшірмелерінде деректер біраз уақыт қалуы мүмкін, кейін олар да жойылады.
 - Шыққан сәтте сессия бірден аяқталады.
 
 7. БАЙЛАНЫС
@@ -80,7 +80,7 @@ const RU = `
 Класс (если ты вступил):
 - твой ник в классе (по умолчанию имя из профиля или часть почты до знака @), даты вступления и выхода.
 Пока ты в классе, учитель этого класса видит: ник, XP и серию дней, последний активный день, сохранённые слова (с переводом и тем, насколько ты их выучил), пройденные уровни сказок и последние результаты тестов. А также твои работы: аргументы в дебатах недели и ответ Шоқану, записи «Ой ізі» со всеми версиями, голоса и причины в «Дала кеңесі». Из этих работ учитель видит только те, что ты сделал после вступления в класс. Учитель может разрешить показывать твою причину из «Дала кеңесі» другим ученикам без твоего имени. Если ты вышел из класса, учитель видит только ник и даты.
-Для учителя: созданные классы, их коды и задания.
+Для учителя: созданные классы, их коды и задания; заявка на роль учителя и её статус (на проверке, подтверждена или закрыта), даты заявки и решения, короткая пометка администратора (например, школа). Открыть класс может только учитель, которого подтвердил администратор проекта.
 Счётчики: сколько раз за день ты обращался к Шоқану и к голосовому сервису (только число, чтобы соблюдать дневной лимит).
 
 Мы не храним: переписку с Шоқаном в чате (хранятся только его ответы на «Ой ізі» и дебат, как написано выше), записи голоса, геолокацию, номер телефона. Рекламы нет, данные никому не продаём.
@@ -106,7 +106,7 @@ const RU = `
 Ertegi English создан для школьников. Пусть родители или учитель знают, что ты пользуешься приложением, как и любой другой школьной программой.
 
 6. ТВОИ ПРАВА
-- Аккаунт можно удалить самому: Профиль → «Аккаунтты өшіру» (в английском интерфейсе «Delete account»). Аккаунт, прогресс, слова, записи, голоса, дебаты, журнал учебных действий, классы и членство в классах сразу удаляются из базы данных, данные на этом устройстве тоже очищаются. Отменить это нельзя. В резервных копиях базы данные могут оставаться ещё некоторое время, потом удаляются и там.
+- Аккаунт можно удалить самому: Профиль → «Аккаунтты өшіру» (в английском интерфейсе «Delete account»). Аккаунт, прогресс, слова, записи, голоса, дебаты, журнал учебных действий, классы, членство в классах и заявка на роль учителя сразу удаляются из базы данных, данные на этом устройстве тоже очищаются. Отменить это нельзя. В резервных копиях базы данные могут оставаться ещё некоторое время, потом удаляются и там.
 - При выходе из аккаунта сессия сразу завершается.
 
 7. КОНТАКТ
@@ -132,7 +132,7 @@ Learning:
 Class (if you join one):
 - your nickname in the class (by default your profile name or the part of your email before @), the dates you joined and left.
 While you are in the class, its teacher sees: your nickname, XP and streak, last active day, saved words (with translation and how well you know them), the tale levels you finished and your recent quiz results. The teacher also sees your work: your arguments in the debate of the week and your reply to Shoqan, your Thinking trail entries with every version, and your Steppe council votes and reasons. Of this work, the teacher sees only what you did after joining the class. The teacher can allow your Steppe council reason to be shown to other learners without your name. After you leave, the teacher sees only your nickname and the dates.
-For teachers: the classes you create, their codes and assignments.
+For teachers: the classes you create, their codes and assignments; your request for teacher access and its status (being checked, confirmed or closed), the dates of the request and the decision, and a short note by the admin (for example, the school). Only a teacher the project admin has confirmed can create a class.
 Counters: how many times a day you used Shoqan and the voice service (just a number, to keep the daily limit).
 
 We do not keep: your chat with Shoqan (only his replies to your Thinking trail and debate are kept, as listed above), voice recordings, your location, your phone number. No ads, and we never sell your data.
@@ -158,7 +158,7 @@ Apart from what is listed above, we do not share your learning data with Google,
 Ertegi English is built for school students. Use it with a parent's or teacher's awareness, like any other school software.
 
 6. YOUR RIGHTS
-- You can delete your whole account yourself: Profile → "Delete account". Your account, progress, words, entries, votes, debates, learning log, classes and class memberships are removed from the database at once, and the app's data on this device is cleared. This cannot be undone. Database backups may keep the data for a while longer before it is removed there too.
+- You can delete your whole account yourself: Profile → "Delete account". Your account, progress, words, entries, votes, debates, learning log, classes, class memberships and your teacher access request are removed from the database at once, and the app's data on this device is cleared. This cannot be undone. Database backups may keep the data for a while longer before it is removed there too.
 - Signing out ends your session immediately.
 
 7. CONTACT

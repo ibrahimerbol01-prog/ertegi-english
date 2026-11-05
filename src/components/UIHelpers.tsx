@@ -230,7 +230,8 @@ export const Sheet = ({ open, onClose, children, label }: { open: boolean; onClo
       {/* The backdrop closes on tap; keyboard users have the close button and Esc. */}
       <button aria-hidden="true" tabIndex={-1} onClick={onClose} className="absolute inset-0 bg-ink/35 backdrop-blur-[2px] animate-pop-in" />
       <div ref={boxRef} className="relative outline-none w-full sm:max-w-[420px] max-h-[85dvh] overflow-y-auto bg-card rounded-t-[28px] sm:rounded-[28px] shadow-2xl animate-sheet-up sm:animate-pop-in pb-[max(env(safe-area-inset-bottom),16px)]">
-        <div className="sticky top-0 z-10 flex justify-end px-3 pt-3 -mb-2">
+        {/* An opaque bar of its own: titles and scrolled text never run under the close button. */}
+        <div className="sticky top-0 z-10 flex justify-end px-3 pt-3 pb-1 bg-card">
           <div className="sm:hidden absolute left-1/2 -translate-x-1/2 top-2.5 w-10 h-1.5 rounded-full bg-sand-3" />
           <CloseButton onClick={onClose} />
         </div>

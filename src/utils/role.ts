@@ -4,7 +4,9 @@ import { supabase } from "../lib/supabase";
 /* Who the account is for: a learner or a teacher. Kept in the user's auth
    metadata so it follows them to any device; a local copy lets the app open
    even when that save has not reached the server yet. The role only picks
-   which screens to show: the database checks class ownership on its own. */
+   which screens to show: the database checks class ownership on its own,
+   and opening a class needs a teacher request the project owner approved
+   (migration 20261108000000_teacher_role). */
 export type Role = "student" | "teacher";
 export const isRole = (v: unknown): v is Role => v === "student" || v === "teacher";
 
@@ -59,6 +61,12 @@ export function takePendingRole(): Role | null {
 // True when the server has it; false means it is kept on this device only for now.
 export async function saveRole(session: Session, role: Role): Promise<boolean> {
   try { localStorage.setItem(localKey(session.user.id), role); } catch { /* storage blocked */ }
+  // Choosing "teacher" files the request for approval. Best effort: the
+  // teacher cabinet asks again when it opens, and an older database without
+  // the function just answers with an error that is ignored here.
+  if (role === "teacher") {
+    void Promise.resolve(supabase.rpc("request_teacher_role")).catch(() => { /* asked again in the cabinet */ });
+  }
   try {
     const { error } = await supabase.auth.updateUser({ data: { role } });
     return !error;
