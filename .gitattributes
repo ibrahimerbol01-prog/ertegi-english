@@ -2,6 +2,9 @@
 # files such as docs/corpus.md match what `npm run corpus` writes (see src/research/corpus.test.ts).
 * text=auto eol=lf
 
+# Third-party data copied unchanged from the source (research/cefr/README.md): keep the bytes as they are.
+research/cefr/*.csv -text
+
 # Binary formats: never touch line endings, no text diff.
 *.png   binary
 *.jpg   binary
