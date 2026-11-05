@@ -2,7 +2,7 @@
 id: 1105-231341-abil-truesco-otvet-prioritet-zada
 from: abil-truescope
 to: ibrahimerbol01-prog
-status: new
+status: done
 created: 2026-11-05 23:13
 reply_to: 1105-224930-ibrahimerbol-prioritet-zadanie-7
 ---
