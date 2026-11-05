@@ -86,9 +86,46 @@ describe("participant codes", () => {
     expect(rows.filter((r) => r.sequence === "AB").length).toBe(20);
   });
   it("learner_state kinds in the code = the check in the newest migration", () => {
-    const sql = readFileSync(join(root, "supabase", "migrations", "20261109000000_study_code.sql"), "utf8").replace(/--.*$/gm, "");
+    const sql = readFileSync(join(root, "supabase", "migrations", "20261110000000_study_assent.sql"), "utf8").replace(/--.*$/gm, "");
     const m = sql.match(/learner_state_kind_check check \(kind in \(([\s\S]*?)\)\);/);
     expect(m).not.toBeNull();
     expect([...m![1].matchAll(/'(\w+)'/g)].map((x) => x[1]).sort()).toEqual([...KINDS].sort());
+  });
+});
+
+import { assentKey, assentStatus, readAssent, validateAssentFile, writeAssent } from "./assent";
+import assentFile from "../data/studyAssent.json";
+
+describe("R9 assent", () => {
+  const mem = () => { const m = new Map<string, string>(); return { m, getItem: (k: string) => m.get(k) ?? null, setItem: (k: string, v: string) => void m.set(k, v) }; };
+  it("round-trips and is keyed by the user", () => {
+    const s = mem();
+    writeAssent(s, "u1", { version: "v1", answer: "yes", at: "2026-11-05T09:00:00.000Z", sample: true });
+    expect(JSON.parse(s.m.get(assentKey("u1"))!)).toEqual({ assent: { version: "v1", answer: "yes", at: "2026-11-05T09:00:00.000Z", sample: true } });
+    expect(readAssent(s, "u1")?.answer).toBe("yes");
+    expect(readAssent(s, "u2")).toBeNull();
+  });
+  it("refuses broken or foreign-shaped records", () => {
+    const s = mem();
+    for (const bad of ['{"assent":{"version":"v1","answer":"maybe"}}', '{"assent":{"answer":"yes"}}', '{"assent":"yes"}', "{broken", "null"]) {
+      s.setItem(assentKey("u3"), bad);
+      expect(readAssent(s, "u3")).toBeNull();
+    }
+  });
+  it("asks again for a new text version and for no record; no stays no for the same version", () => {
+    const yes = { version: "v1", answer: "yes" as const, at: "", sample: false };
+    expect(assentStatus(null, "v1")).toBe("ask");
+    expect(assentStatus(yes, "v1")).toBe("yes");
+    expect(assentStatus(yes, "v2")).toBe("ask");
+    expect(assentStatus({ ...yes, answer: "no" }, "v1")).toBe("no");
+  });
+  it("puts the assent version into the event context", () => {
+    expect(researchContext("s", "ERT-5724", "draft-1")).toEqual({ research: true, study_id: "s", study_code: "ERT-5724", assent_version: "draft-1" });
+    expect(researchContext("s", null)).toEqual({ research: true, study_id: "s" });
+  });
+  it("ships a well-formed assent text in both languages, still marked as a sample until approved", () => {
+    expect(validateAssentFile(assentFile)).toEqual([]);
+    expect((assentFile as { sample: boolean }).sample).toBe(true);
+    expect(validateAssentFile({ version: "x", sample: false, texts: { kk: {} } })).not.toEqual([]);
   });
 });

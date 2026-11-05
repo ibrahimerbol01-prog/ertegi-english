@@ -130,7 +130,9 @@ export default function KazakhTalesApp({ session, role, onRoleChange }: { sessio
     idle(prefetchTabs);
   }, []);
   // Learning events (docs/events.md): the learner's own; a teacher's preview is not learning.
+  // In the research build the StudyGate switches events on only after the code and the learner's assent.
   useEffect(() => {
+    if (RESEARCH_MODE) return;
     setEventsUser(teacher ? null : userId);
     return () => setEventsUser(null);
   }, [userId, teacher]);

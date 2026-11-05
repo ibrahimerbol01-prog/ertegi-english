@@ -28,7 +28,7 @@
 | `object_type`, `object_id` | с чем: слово, вопрос, сказка, фраза | `quiz_question`, `3` |
 | `story_id`, `level` | сказка и уровень (`A1`…`C1`, `quiz` для сказки целиком) | `aldar_kose`, `A2` |
 | `result` | маленький JSON (меньше 2000 байт): верно, попытка, время, счёт, длины | `{"correct":false,"attempt":1,"duration_ms":5400}` |
-| `context` | `app_version` (версия из `package.json` и коммит Vercel), `content_version` (`src/data/contentVersion.ts`), `lang` (`kk`/`en`), `class_id`; в исследовательской сборке ещё `research: true`, `study_id` (переменная `VITE_STUDY_ID`) и `study_code` (код участника, когда он введён; `docs/research-build.md`) | `{"app_version":"0.0.0+94f5543","content_version":"2026-11-04","lang":"kk"}` |
+| `context` | `app_version` (версия из `package.json` и коммит Vercel), `content_version` (`src/data/contentVersion.ts`), `lang` (`kk`/`en`), `class_id`; в исследовательской сборке ещё `research: true`, `study_id` (переменная `VITE_STUDY_ID`) `study_code` (код участника, когда он введён) и `assent_version` (версия текста, на который ответил ученик; `docs/research-build.md`) | `{"app_version":"0.0.0+94f5543","content_version":"2026-11-04","lang":"kk"}` |
 | `occurred_at` | когда случилось на устройстве | |
 
 `content_version` меняется вместе с текстами сказок, вопросами квизов и вопросами «Дала кеңесі»: тест `src/data/contentVersion.test.ts` сверяет хеш контента и падает, пока дату и хеш не обновили. Так анализ знает, какой именно текст читал ученик.
