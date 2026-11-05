@@ -34,7 +34,8 @@ import { supabase } from "./lib/supabase";
 import { saveToSupabase } from "./utils/supabase-save";
 import { buildLevelQuiz } from "./utils/levelQuiz";
 import { DAILY_GOAL_XP, QUIZ_LEVEL_UNLOCK_SHARE, REVIEW_KNOWN_XP, SAVE_WORD_XP, XP_PER_LEVEL } from "./research/params";
-import { BataModal, OyuKilim, TurkicWords, loadMaqals } from "./components/Culture";
+import { BataModal, OyuKilim, TurkicWords } from "./components/Culture";
+import { loadMaqals } from "./utils/maqals";
 import { WordCoach } from "./components/WordCoach";
 import { LegendScreen } from "./components/LegendCards";
 // Teacher screens load only for teachers.

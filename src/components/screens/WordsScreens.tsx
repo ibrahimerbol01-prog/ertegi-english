@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useMemo } from "react";
 import { Volume2, Check } from "lucide-react";
 import { KilimStrip } from "../Ornaments";
 import { safePlayVoice } from "../../utils/voice";
@@ -195,33 +195,48 @@ interface MatchTile {
   kind: "word" | "translation";
 }
 
-export function MatchingGame({ savedWords, onReward, mode, setMode }: {
+const MATCH_GRID_SIZE = 6;
+
+/* Deal a shuffled board of up to MATCH_GRID_SIZE word/translation pairs. */
+function dealTiles(savedWords: SavedWord[]): MatchTile[] {
+  const shuffled = [...savedWords].sort(() => Math.random() - 0.5).slice(0, Math.min(MATCH_GRID_SIZE, savedWords.length));
+  const wordTiles = shuffled.map((w, i) => ({ tileId: `w-${i}`, pairId: i, text: w.word, kind: "word" as const }));
+  const transTiles = shuffled.map((w, i) => ({ tileId: `t-${i}`, pairId: i, text: w.translation, kind: "translation" as const }));
+  return [...wordTiles, ...transTiles].sort(() => Math.random() - 0.5);
+}
+
+type MatchingProps = {
   savedWords: SavedWord[];
   onReward: (xp: number) => void;
   mode?: string;
   setMode?: (m: string) => void;
-}) {
-  const tr = useTr();
-  const GRID_SIZE = 6;
+};
+
+/* Each round is its own keyed MatchingRound: a new round or a changed word list remounts it,
+   so the board is dealt fresh and the round state resets without setState in an effect. */
+export function MatchingGame(props: MatchingProps) {
   const [round, setRound] = useState(0);
-  const [tiles, setTiles] = useState<MatchTile[]>([]);
+  const { savedWords } = props;
+  const deckKey = useMemo(
+    () => (savedWords ?? []).map((w) => `${w.word}\u0000${w.translation}`).join("\u0001"),
+    [savedWords],
+  );
+  return (
+    <MatchingRound
+      key={`${round}\u0002${deckKey}`}
+      {...props}
+      onNextRound={() => setRound((r) => r + 1)}
+    />
+  );
+}
+
+function MatchingRound({ savedWords, onReward, mode, setMode, onNextRound }: MatchingProps & { onNextRound: () => void }) {
+  const tr = useTr();
+  const [tiles] = useState<MatchTile[]>(() => (savedWords && savedWords.length >= 3 ? dealTiles(savedWords) : []));
   const [selectedTile, setSelectedTile] = useState<MatchTile | null>(null);
   const [matchedIds, setMatchedIds] = useState<number[]>([]);
   const [wrongPair, setWrongPair] = useState<string[]>([]);
   const [roundComplete, setRoundComplete] = useState(false);
-
-  useEffect(() => {
-    if (!savedWords || savedWords.length < 3) return;
-    const shuffled = [...savedWords].sort(() => Math.random() - 0.5).slice(0, Math.min(GRID_SIZE, savedWords.length));
-    const wordTiles = shuffled.map((w, i) => ({ tileId: `w-${i}`, pairId: i, text: w.word, kind: "word" as const }));
-    const transTiles = shuffled.map((w, i) => ({ tileId: `t-${i}`, pairId: i, text: w.translation, kind: "translation" as const }));
-    const combined = [...wordTiles, ...transTiles].sort(() => Math.random() - 0.5);
-    setTiles(combined);
-    setMatchedIds([]);
-    setSelectedTile(null);
-    setWrongPair([]);
-    setRoundComplete(false);
-  }, [round, savedWords]);
 
   const handleTileTap = (tile: MatchTile) => {
     if (matchedIds.includes(tile.pairId) || wrongPair.length > 0) return;
@@ -269,7 +284,7 @@ export function MatchingGame({ savedWords, onReward, mode, setMode }: {
           <IconTrophy size={88} className="mx-auto animate-pop-in" />
           <p className="font-display font-black text-2xl text-ink mt-5">{tr("Бәрі сәйкес келді!", "All matched!")}</p>
           <p className="text-[15px] text-ink-2 mt-1">{tr("Сөздерді тез таныдың.", "Great recognition speed.")}</p>
-          <button onClick={() => setRound((r) => r + 1)} className="btn w-full mt-6">{tr("Келесі раунд", "Next round")}</button>
+          <button onClick={onNextRound} className="btn w-full mt-6">{tr("Келесі раунд", "Next round")}</button>
         </div>
       </div>
     );
