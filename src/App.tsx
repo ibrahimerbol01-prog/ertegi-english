@@ -2,6 +2,7 @@ import { lazy, Suspense, useEffect, useState } from "react";
 import type { Session } from "@supabase/supabase-js";
 import { supabase } from "./lib/supabase";
 import AuthScreen from "./AuthScreen";
+import { SetPasswordScreen } from "./components/SetPassword";
 import { IntroScreen } from "./components/IntroScreen";
 import { DICT } from "./dict";
 import { loadLang } from "./lang";
@@ -33,6 +34,8 @@ export default function App() {
   const [, setRoleTick] = useState(0);
   // Set when the account was just deleted: a goodbye screen instead of the sign-in form.
   const [accountDeleted, setAccountDeleted] = useState(false);
+  // Set when the learner opened the link of the "reset password" e-mail: choose the new password first.
+  const [recovering, setRecovering] = useState(false);
 
   useEffect(() => {
     const onDeleted = () => setAccountDeleted(true);
@@ -51,7 +54,8 @@ export default function App() {
       setLoading(false);
     });
 
-    const { data: listener } = supabase.auth.onAuthStateChange((_event, newSession) => {
+    const { data: listener } = supabase.auth.onAuthStateChange((event, newSession) => {
+      if (event === "PASSWORD_RECOVERY") setRecovering(true);
       setSession(newSession);
     });
 
@@ -113,6 +117,10 @@ export default function App() {
     setRoleTick((n) => n + 1);
     return ok;
   };
+
+  if (recovering && session) {
+    return <SetPasswordScreen lang={loadLang()} onDone={() => { setRecovering(false); setIntroSeen(true); }} />;
+  }
 
   if (!introSeen) {
     return (
