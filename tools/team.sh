@@ -297,6 +297,7 @@ relay_open() {  # рабочая копия ветки почты в .git/team-r
       git -C "$RD" rm -rq --cached . >/dev/null 2>&1 || true
       find "$RD" -mindepth 1 -maxdepth 1 ! -name .git -exec rm -rf {} +
       mkdir -p "$RD/inbox" "$RD/files"
+      printf '{\n  "git": { "deploymentEnabled": false }\n}\n' > "$RD/vercel.json"  # Vercel/хостинги не собирают ветку почты
       printf '# team-relay\n\nПочта между Claude участников: scripts/team.sh send | inbox | reply.\nНе сливать в main. Ключи сюда не класть.\n' > "$RD/README.md"
       git -C "$RD" add -A
       git -C "$RD" -c user.name="$(git config user.name || echo team)" -c user.email="$(git config user.email || echo team@local)" commit -qm "relay: начало"
