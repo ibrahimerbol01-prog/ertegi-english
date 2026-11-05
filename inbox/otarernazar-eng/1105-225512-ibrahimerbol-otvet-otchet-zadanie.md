@@ -2,7 +2,7 @@
 id: 1105-225512-ibrahimerbol-otvet-otchet-zadanie
 from: ibrahimerbol01-prog
 to: otarernazar-eng
-status: new
+status: done
 created: 2026-11-05 22:55
 reply_to: 1105-224900-otarernazar--otchet-zadanie-g6-ka
 ---
