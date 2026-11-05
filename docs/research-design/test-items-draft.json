@@ -1,0 +1,2727 @@
+{
+ "version": "stage0-draft-1",
+ "sample": true,
+ "note": "ЧЕРНОВИК, не утверждён руководителем и учителем казахского. sample=true оставлен намеренно: утверждённый набор получает sample=false и версию без слова draft. Нет вопросов на понимание: они ждут контрольных текстов (R7).",
+ "items": [
+  {
+   "id": "A-rec-01",
+   "word": "prison",
+   "format": "recognition",
+   "prompt": null,
+   "options": [
+    "yes",
+    "no"
+   ],
+   "answer": "yes",
+   "form": "A",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "story_id": "alpamys"
+  },
+  {
+   "id": "A-rec-02",
+   "word": "adviser",
+   "format": "recognition",
+   "prompt": null,
+   "options": [
+    "yes",
+    "no"
+   ],
+   "answer": "yes",
+   "form": "A",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "story_id": "ayaz_bi"
+  },
+  {
+   "id": "A-rec-03",
+   "word": "journey",
+   "format": "recognition",
+   "prompt": null,
+   "options": [
+    "yes",
+    "no"
+   ],
+   "answer": "yes",
+   "form": "A",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "story_id": "asan_kaigy"
+  },
+  {
+   "id": "A-rec-04",
+   "word": "camel",
+   "format": "recognition",
+   "prompt": null,
+   "options": [
+    "yes",
+    "no"
+   ],
+   "answer": "yes",
+   "form": "A",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "story_id": "asan_kaigy"
+  },
+  {
+   "id": "A-rec-05",
+   "word": "skorvin",
+   "format": "recognition",
+   "prompt": null,
+   "options": [
+    "yes",
+    "no"
+   ],
+   "answer": "no",
+   "form": "A",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "pseudo": true
+  },
+  {
+   "id": "A-rec-06",
+   "word": "courtier",
+   "format": "recognition",
+   "prompt": null,
+   "options": [
+    "yes",
+    "no"
+   ],
+   "answer": "yes",
+   "form": "A",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "story_id": "ayaz_bi"
+  },
+  {
+   "id": "A-rec-07",
+   "word": "snelter",
+   "format": "recognition",
+   "prompt": null,
+   "options": [
+    "yes",
+    "no"
+   ],
+   "answer": "no",
+   "form": "A",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "pseudo": true
+  },
+  {
+   "id": "A-rec-08",
+   "word": "village",
+   "format": "recognition",
+   "prompt": null,
+   "options": [
+    "yes",
+    "no"
+   ],
+   "answer": "yes",
+   "form": "A",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "story_id": "tazsha_bala"
+  },
+  {
+   "id": "A-rec-09",
+   "word": "plimmet",
+   "format": "recognition",
+   "prompt": null,
+   "options": [
+    "yes",
+    "no"
+   ],
+   "answer": "no",
+   "form": "A",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "pseudo": true
+  },
+  {
+   "id": "A-rec-10",
+   "word": "brave",
+   "format": "recognition",
+   "prompt": null,
+   "options": [
+    "yes",
+    "no"
+   ],
+   "answer": "yes",
+   "form": "A",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "story_id": "er_tostik"
+  },
+  {
+   "id": "A-rec-11",
+   "word": "jealous",
+   "format": "recognition",
+   "prompt": null,
+   "options": [
+    "yes",
+    "no"
+   ],
+   "answer": "yes",
+   "form": "A",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "story_id": "ayaz_bi"
+  },
+  {
+   "id": "A-rec-12",
+   "word": "humble",
+   "format": "recognition",
+   "prompt": null,
+   "options": [
+    "yes",
+    "no"
+   ],
+   "answer": "yes",
+   "form": "A",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "story_id": "ayaz_bi"
+  },
+  {
+   "id": "A-rec-13",
+   "word": "hero",
+   "format": "recognition",
+   "prompt": null,
+   "options": [
+    "yes",
+    "no"
+   ],
+   "answer": "yes",
+   "form": "A",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "story_id": "er_tostik"
+  },
+  {
+   "id": "A-rec-14",
+   "word": "nest",
+   "format": "recognition",
+   "prompt": null,
+   "options": [
+    "yes",
+    "no"
+   ],
+   "answer": "yes",
+   "form": "A",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "story_id": "er_tostik"
+  },
+  {
+   "id": "A-rec-15",
+   "word": "giant",
+   "format": "recognition",
+   "prompt": null,
+   "options": [
+    "yes",
+    "no"
+   ],
+   "answer": "yes",
+   "form": "A",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "story_id": "tazsha_bala"
+  },
+  {
+   "id": "A-rec-16",
+   "word": "fremple",
+   "format": "recognition",
+   "prompt": null,
+   "options": [
+    "yes",
+    "no"
+   ],
+   "answer": "no",
+   "form": "A",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "pseudo": true
+  },
+  {
+   "id": "A-rec-17",
+   "word": "witch",
+   "format": "recognition",
+   "prompt": null,
+   "options": [
+    "yes",
+    "no"
+   ],
+   "answer": "yes",
+   "form": "A",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "story_id": "er_tostik"
+  },
+  {
+   "id": "A-rec-18",
+   "word": "drunsel",
+   "format": "recognition",
+   "prompt": null,
+   "options": [
+    "yes",
+    "no"
+   ],
+   "answer": "no",
+   "form": "A",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "pseudo": true
+  },
+  {
+   "id": "A-rec-19",
+   "word": "land",
+   "format": "recognition",
+   "prompt": null,
+   "options": [
+    "yes",
+    "no"
+   ],
+   "answer": "yes",
+   "form": "A",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "story_id": "asan_kaigy"
+  },
+  {
+   "id": "A-rec-20",
+   "word": "blenthy",
+   "format": "recognition",
+   "prompt": null,
+   "options": [
+    "yes",
+    "no"
+   ],
+   "answer": "no",
+   "form": "A",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "pseudo": true
+  },
+  {
+   "id": "A-rec-21",
+   "word": "squeeze",
+   "format": "recognition",
+   "prompt": null,
+   "options": [
+    "yes",
+    "no"
+   ],
+   "answer": "yes",
+   "form": "A",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "story_id": "tazsha_bala"
+  },
+  {
+   "id": "A-rec-22",
+   "word": "beat",
+   "format": "recognition",
+   "prompt": null,
+   "options": [
+    "yes",
+    "no"
+   ],
+   "answer": "yes",
+   "form": "A",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "story_id": "tazsha_bala"
+  },
+  {
+   "id": "A-rec-23",
+   "word": "protect",
+   "format": "recognition",
+   "prompt": null,
+   "options": [
+    "yes",
+    "no"
+   ],
+   "answer": "yes",
+   "form": "A",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "story_id": "alpamys"
+  },
+  {
+   "id": "A-rec-24",
+   "word": "pit",
+   "format": "recognition",
+   "prompt": null,
+   "options": [
+    "yes",
+    "no"
+   ],
+   "answer": "yes",
+   "form": "A",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "story_id": "alpamys"
+  },
+  {
+   "id": "A-rec-25",
+   "word": "glondish",
+   "format": "recognition",
+   "prompt": null,
+   "options": [
+    "yes",
+    "no"
+   ],
+   "answer": "no",
+   "form": "A",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "pseudo": true
+  },
+  {
+   "id": "A-rec-26",
+   "word": "wuddick",
+   "format": "recognition",
+   "prompt": null,
+   "options": [
+    "yes",
+    "no"
+   ],
+   "answer": "no",
+   "form": "A",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "pseudo": true
+  },
+  {
+   "id": "A-rec-27",
+   "word": "tavrick",
+   "format": "recognition",
+   "prompt": null,
+   "options": [
+    "yes",
+    "no"
+   ],
+   "answer": "no",
+   "form": "A",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "pseudo": true
+  },
+  {
+   "id": "A-rec-28",
+   "word": "loyal",
+   "format": "recognition",
+   "prompt": null,
+   "options": [
+    "yes",
+    "no"
+   ],
+   "answer": "yes",
+   "form": "A",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "story_id": "alpamys"
+  },
+  {
+   "id": "A-rec-29",
+   "word": "quorbit",
+   "format": "recognition",
+   "prompt": null,
+   "options": [
+    "yes",
+    "no"
+   ],
+   "answer": "no",
+   "form": "A",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "pseudo": true
+  },
+  {
+   "id": "A-rec-30",
+   "word": "wise",
+   "format": "recognition",
+   "prompt": null,
+   "options": [
+    "yes",
+    "no"
+   ],
+   "answer": "yes",
+   "form": "A",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "story_id": "asan_kaigy"
+  },
+  {
+   "id": "A-mean-01",
+   "word": "camel",
+   "format": "meaning",
+   "prompt": null,
+   "options": [
+    "жылқы",
+    "түйе",
+    "қой",
+    "сиыр"
+   ],
+   "answer": "түйе",
+   "dont_know": true,
+   "form": "A",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "story_id": "asan_kaigy"
+  },
+  {
+   "id": "A-mean-02",
+   "word": "land",
+   "format": "meaning",
+   "prompt": null,
+   "options": [
+    "аспан",
+    "ауа",
+    "жер",
+    "су"
+   ],
+   "answer": "жер",
+   "dont_know": true,
+   "form": "A",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "story_id": "asan_kaigy"
+  },
+  {
+   "id": "A-mean-03",
+   "word": "courtier",
+   "format": "meaning",
+   "prompt": null,
+   "options": [
+    "шаруа",
+    "жылқышы",
+    "саудагер",
+    "сарай адамы"
+   ],
+   "answer": "сарай адамы",
+   "dont_know": true,
+   "form": "A",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "story_id": "ayaz_bi"
+  },
+  {
+   "id": "A-mean-04",
+   "word": "humble",
+   "format": "meaning",
+   "prompt": null,
+   "options": [
+    "қарапайым",
+    "тәкаппар",
+    "күшті",
+    "сараң"
+   ],
+   "answer": "қарапайым",
+   "dont_know": true,
+   "form": "A",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "story_id": "ayaz_bi"
+  },
+  {
+   "id": "A-mean-05",
+   "word": "protect",
+   "format": "meaning",
+   "prompt": null,
+   "options": [
+    "тастау",
+    "қорғау",
+    "жою",
+    "ұрлау"
+   ],
+   "answer": "қорғау",
+   "dont_know": true,
+   "form": "A",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "story_id": "alpamys"
+  },
+  {
+   "id": "A-mean-06",
+   "word": "prison",
+   "format": "meaning",
+   "prompt": null,
+   "options": [
+    "мектеп",
+    "базар",
+    "түрме",
+    "мешіт"
+   ],
+   "answer": "түрме",
+   "dont_know": true,
+   "form": "A",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "story_id": "alpamys"
+  },
+  {
+   "id": "A-mean-07",
+   "word": "giant",
+   "format": "meaning",
+   "prompt": null,
+   "options": [
+    "ергежейлі",
+    "ұры",
+    "тау",
+    "алып"
+   ],
+   "answer": "алып",
+   "dont_know": true,
+   "form": "A",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "story_id": "tazsha_bala"
+  },
+  {
+   "id": "A-mean-08",
+   "word": "journey",
+   "format": "meaning",
+   "prompt": null,
+   "options": [
+    "сапар",
+    "мереке",
+    "ойын",
+    "дауыс"
+   ],
+   "answer": "сапар",
+   "dont_know": true,
+   "form": "A",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "story_id": "asan_kaigy"
+  },
+  {
+   "id": "A-mean-09",
+   "word": "jealous",
+   "format": "meaning",
+   "prompt": null,
+   "options": [
+    "жомарт",
+    "қызғаншақ",
+    "қорқақ",
+    "жалқау"
+   ],
+   "answer": "қызғаншақ",
+   "dont_know": true,
+   "form": "A",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "story_id": "ayaz_bi"
+  },
+  {
+   "id": "A-mean-10",
+   "word": "squeeze",
+   "format": "meaning",
+   "prompt": null,
+   "options": [
+    "жүгіру",
+    "жазу",
+    "сығу",
+    "күлу"
+   ],
+   "answer": "сығу",
+   "dont_know": true,
+   "form": "A",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "story_id": "tazsha_bala"
+  },
+  {
+   "id": "A-mean-11",
+   "word": "village",
+   "format": "meaning",
+   "prompt": null,
+   "options": [
+    "қала",
+    "тау",
+    "өзен",
+    "ауыл"
+   ],
+   "answer": "ауыл",
+   "dont_know": true,
+   "form": "A",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "story_id": "tazsha_bala"
+  },
+  {
+   "id": "A-mean-12",
+   "word": "brave",
+   "format": "meaning",
+   "prompt": null,
+   "options": [
+    "батыл",
+    "жалқау",
+    "сабырлы",
+    "сараң"
+   ],
+   "answer": "батыл",
+   "dont_know": true,
+   "form": "A",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "story_id": "er_tostik"
+  },
+  {
+   "id": "A-mean-13",
+   "word": "adviser",
+   "format": "meaning",
+   "prompt": null,
+   "options": [
+    "сарбаз",
+    "кеңесші",
+    "әнші",
+    "құл"
+   ],
+   "answer": "кеңесші",
+   "dont_know": true,
+   "form": "A",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "story_id": "ayaz_bi"
+  },
+  {
+   "id": "A-mean-14",
+   "word": "witch",
+   "format": "meaning",
+   "prompt": null,
+   "options": [
+    "әнші",
+    "жылқышы",
+    "мыстан",
+    "құл"
+   ],
+   "answer": "мыстан",
+   "dont_know": true,
+   "form": "A",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "story_id": "er_tostik"
+  },
+  {
+   "id": "A-mean-15",
+   "word": "wise",
+   "format": "meaning",
+   "prompt": null,
+   "options": [
+    "қу",
+    "ашушаң",
+    "күшті",
+    "дана"
+   ],
+   "answer": "дана",
+   "dont_know": true,
+   "form": "A",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "story_id": "asan_kaigy"
+  },
+  {
+   "id": "A-mean-16",
+   "word": "beat",
+   "format": "meaning",
+   "prompt": null,
+   "options": [
+    "жеңу",
+    "қашу",
+    "іздеу",
+    "күту"
+   ],
+   "answer": "жеңу",
+   "dont_know": true,
+   "form": "A",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "story_id": "tazsha_bala"
+  },
+  {
+   "id": "A-mean-17",
+   "word": "loyal",
+   "format": "meaning",
+   "prompt": null,
+   "options": [
+    "қу",
+    "адал",
+    "ашкөз",
+    "сараң"
+   ],
+   "answer": "адал",
+   "dont_know": true,
+   "form": "A",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "story_id": "alpamys"
+  },
+  {
+   "id": "A-mean-18",
+   "word": "hero",
+   "format": "meaning",
+   "prompt": null,
+   "options": [
+    "саудагер",
+    "шаруа",
+    "батыр",
+    "құл"
+   ],
+   "answer": "батыр",
+   "dont_know": true,
+   "form": "A",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "story_id": "er_tostik"
+  },
+  {
+   "id": "A-mean-19",
+   "word": "nest",
+   "format": "meaning",
+   "prompt": null,
+   "options": [
+    "тау",
+    "өзен",
+    "көше",
+    "ұя"
+   ],
+   "answer": "ұя",
+   "dont_know": true,
+   "form": "A",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "story_id": "er_tostik"
+  },
+  {
+   "id": "A-mean-20",
+   "word": "pit",
+   "format": "meaning",
+   "prompt": null,
+   "options": [
+    "ор",
+    "тау",
+    "қабырға",
+    "төбе"
+   ],
+   "answer": "ор",
+   "dont_know": true,
+   "form": "A",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "story_id": "alpamys"
+  },
+  {
+   "id": "A-use-01",
+   "word": "village",
+   "format": "use",
+   "prompt": "My grandmother lives in a small ___ with only fifty houses.",
+   "options": [
+    "prison",
+    "village",
+    "camel",
+    "journey"
+   ],
+   "answer": "village",
+   "form": "A",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "story_id": "tazsha_bala"
+  },
+  {
+   "id": "A-use-02",
+   "word": "jealous",
+   "format": "use",
+   "prompt": "She felt ___ when her friend got a new bicycle and she did not.",
+   "options": [
+    "brave",
+    "loyal",
+    "jealous",
+    "wise"
+   ],
+   "answer": "jealous",
+   "form": "A",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "story_id": "ayaz_bi"
+  },
+  {
+   "id": "A-use-03",
+   "word": "prison",
+   "format": "use",
+   "prompt": "The thief was sent to ___ for stealing.",
+   "options": [
+    "nest",
+    "camel",
+    "village",
+    "prison"
+   ],
+   "answer": "prison",
+   "form": "A",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "story_id": "alpamys"
+  },
+  {
+   "id": "A-use-04",
+   "word": "beat",
+   "format": "use",
+   "prompt": "Our school team hopes to ___ the other team in the final match.",
+   "options": [
+    "beat",
+    "squeeze",
+    "protect",
+    "escape"
+   ],
+   "answer": "beat",
+   "form": "A",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "story_id": "tazsha_bala"
+  },
+  {
+   "id": "A-use-05",
+   "word": "pit",
+   "format": "use",
+   "prompt": "The explorer fell into a deep dark ___ and could not climb out.",
+   "options": [
+    "nest",
+    "pit",
+    "village",
+    "courtier"
+   ],
+   "answer": "pit",
+   "form": "A",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "story_id": "alpamys"
+  },
+  {
+   "id": "A-use-06",
+   "word": "adviser",
+   "format": "use",
+   "prompt": "The king asked his ___ for advice about the war.",
+   "options": [
+    "camel",
+    "nest",
+    "adviser",
+    "hero"
+   ],
+   "answer": "adviser",
+   "form": "A",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "story_id": "ayaz_bi"
+  },
+  {
+   "id": "A-use-07",
+   "word": "loyal",
+   "format": "use",
+   "prompt": "The dog stayed ___ to its owner for fifteen years.",
+   "options": [
+    "brave",
+    "humble",
+    "jealous",
+    "loyal"
+   ],
+   "answer": "loyal",
+   "form": "A",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "story_id": "alpamys"
+  },
+  {
+   "id": "A-use-08",
+   "word": "courtier",
+   "format": "use",
+   "prompt": "Every ___ at the palace bowed when the queen entered the hall.",
+   "options": [
+    "courtier",
+    "pit",
+    "nest",
+    "camel"
+   ],
+   "answer": "courtier",
+   "form": "A",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "story_id": "ayaz_bi"
+  },
+  {
+   "id": "A-use-09",
+   "word": "hero",
+   "format": "use",
+   "prompt": "The boy saved three children from the river, and the town called him a ___.",
+   "options": [
+    "camel",
+    "hero",
+    "village",
+    "nest"
+   ],
+   "answer": "hero",
+   "form": "A",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "story_id": "er_tostik"
+  },
+  {
+   "id": "A-use-10",
+   "word": "brave",
+   "format": "use",
+   "prompt": "The firefighter was very ___ and ran into the burning house.",
+   "options": [
+    "wise",
+    "jealous",
+    "brave",
+    "humble"
+   ],
+   "answer": "brave",
+   "form": "A",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "story_id": "er_tostik"
+  },
+  {
+   "id": "A-use-11",
+   "word": "giant",
+   "format": "use",
+   "prompt": "The ___ was so tall that he could touch the clouds.",
+   "options": [
+    "nest",
+    "village",
+    "camel",
+    "giant"
+   ],
+   "answer": "giant",
+   "form": "A",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "story_id": "tazsha_bala"
+  },
+  {
+   "id": "A-use-12",
+   "word": "land",
+   "format": "use",
+   "prompt": "The farmers planted wheat on the rich, flat ___ near the river.",
+   "options": [
+    "land",
+    "prison",
+    "camel",
+    "hero"
+   ],
+   "answer": "land",
+   "form": "A",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "story_id": "asan_kaigy"
+  },
+  {
+   "id": "A-use-13",
+   "word": "witch",
+   "format": "use",
+   "prompt": "In the old story, an evil ___ lived in the forest and cooked magic soup.",
+   "options": [
+    "courtier",
+    "witch",
+    "camel",
+    "pit"
+   ],
+   "answer": "witch",
+   "form": "A",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "story_id": "er_tostik"
+  },
+  {
+   "id": "A-use-14",
+   "word": "camel",
+   "format": "use",
+   "prompt": "The desert traveller drank water and then rode his ___ across the sand.",
+   "options": [
+    "nest",
+    "witch",
+    "camel",
+    "prison"
+   ],
+   "answer": "camel",
+   "form": "A",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "story_id": "asan_kaigy"
+  },
+  {
+   "id": "A-use-15",
+   "word": "squeeze",
+   "format": "use",
+   "prompt": "Please ___ the lemon so that we can make some juice.",
+   "options": [
+    "protect",
+    "escape",
+    "beat",
+    "squeeze"
+   ],
+   "answer": "squeeze",
+   "form": "A",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "story_id": "tazsha_bala"
+  },
+  {
+   "id": "A-use-16",
+   "word": "protect",
+   "format": "use",
+   "prompt": "Wearing a helmet can ___ your head if you fall off the bike.",
+   "options": [
+    "protect",
+    "squeeze",
+    "beat",
+    "escape"
+   ],
+   "answer": "protect",
+   "form": "A",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "story_id": "alpamys"
+  },
+  {
+   "id": "A-use-17",
+   "word": "nest",
+   "format": "use",
+   "prompt": "The bird built a ___ in the tall tree and laid three eggs.",
+   "options": [
+    "camel",
+    "nest",
+    "prison",
+    "journey"
+   ],
+   "answer": "nest",
+   "form": "A",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "story_id": "er_tostik"
+  },
+  {
+   "id": "A-use-18",
+   "word": "journey",
+   "format": "use",
+   "prompt": "The ___ from Almaty to Aktau takes more than a day by train.",
+   "options": [
+    "witch",
+    "nest",
+    "journey",
+    "pit"
+   ],
+   "answer": "journey",
+   "form": "A",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "story_id": "asan_kaigy"
+  },
+  {
+   "id": "A-use-19",
+   "word": "humble",
+   "format": "use",
+   "prompt": "Although she won the prize, she stayed ___ and thanked everyone.",
+   "options": [
+    "jealous",
+    "brave",
+    "loyal",
+    "humble"
+   ],
+   "answer": "humble",
+   "form": "A",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "story_id": "ayaz_bi"
+  },
+  {
+   "id": "A-use-20",
+   "word": "wise",
+   "format": "use",
+   "prompt": "The old teacher gave ___ advice, and everyone listened to her.",
+   "options": [
+    "wise",
+    "jealous",
+    "brave",
+    "humble"
+   ],
+   "answer": "wise",
+   "form": "A",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "story_id": "asan_kaigy"
+  },
+  {
+   "id": "B-rec-01",
+   "word": "giant",
+   "format": "recognition",
+   "prompt": null,
+   "options": [
+    "yes",
+    "no"
+   ],
+   "answer": "yes",
+   "form": "B",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "story_id": "tazsha_bala"
+  },
+  {
+   "id": "B-rec-02",
+   "word": "flempit",
+   "format": "recognition",
+   "prompt": null,
+   "options": [
+    "yes",
+    "no"
+   ],
+   "answer": "no",
+   "form": "B",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "pseudo": true
+  },
+  {
+   "id": "B-rec-03",
+   "word": "protect",
+   "format": "recognition",
+   "prompt": null,
+   "options": [
+    "yes",
+    "no"
+   ],
+   "answer": "yes",
+   "form": "B",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "story_id": "alpamys"
+  },
+  {
+   "id": "B-rec-04",
+   "word": "hanvick",
+   "format": "recognition",
+   "prompt": null,
+   "options": [
+    "yes",
+    "no"
+   ],
+   "answer": "no",
+   "form": "B",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "pseudo": true
+  },
+  {
+   "id": "B-rec-05",
+   "word": "land",
+   "format": "recognition",
+   "prompt": null,
+   "options": [
+    "yes",
+    "no"
+   ],
+   "answer": "yes",
+   "form": "B",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "story_id": "asan_kaigy"
+  },
+  {
+   "id": "B-rec-06",
+   "word": "humble",
+   "format": "recognition",
+   "prompt": null,
+   "options": [
+    "yes",
+    "no"
+   ],
+   "answer": "yes",
+   "form": "B",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "story_id": "ayaz_bi"
+  },
+  {
+   "id": "B-rec-07",
+   "word": "gorlish",
+   "format": "recognition",
+   "prompt": null,
+   "options": [
+    "yes",
+    "no"
+   ],
+   "answer": "no",
+   "form": "B",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "pseudo": true
+  },
+  {
+   "id": "B-rec-08",
+   "word": "beat",
+   "format": "recognition",
+   "prompt": null,
+   "options": [
+    "yes",
+    "no"
+   ],
+   "answer": "yes",
+   "form": "B",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "story_id": "tazsha_bala"
+  },
+  {
+   "id": "B-rec-09",
+   "word": "crimsel",
+   "format": "recognition",
+   "prompt": null,
+   "options": [
+    "yes",
+    "no"
+   ],
+   "answer": "no",
+   "form": "B",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "pseudo": true
+  },
+  {
+   "id": "B-rec-10",
+   "word": "village",
+   "format": "recognition",
+   "prompt": null,
+   "options": [
+    "yes",
+    "no"
+   ],
+   "answer": "yes",
+   "form": "B",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "story_id": "tazsha_bala"
+  },
+  {
+   "id": "B-rec-11",
+   "word": "trumble",
+   "format": "recognition",
+   "prompt": null,
+   "options": [
+    "yes",
+    "no"
+   ],
+   "answer": "no",
+   "form": "B",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "pseudo": true
+  },
+  {
+   "id": "B-rec-12",
+   "word": "squeeze",
+   "format": "recognition",
+   "prompt": null,
+   "options": [
+    "yes",
+    "no"
+   ],
+   "answer": "yes",
+   "form": "B",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "story_id": "tazsha_bala"
+  },
+  {
+   "id": "B-rec-13",
+   "word": "brantle",
+   "format": "recognition",
+   "prompt": null,
+   "options": [
+    "yes",
+    "no"
+   ],
+   "answer": "no",
+   "form": "B",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "pseudo": true
+  },
+  {
+   "id": "B-rec-14",
+   "word": "dolvent",
+   "format": "recognition",
+   "prompt": null,
+   "options": [
+    "yes",
+    "no"
+   ],
+   "answer": "no",
+   "form": "B",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "pseudo": true
+  },
+  {
+   "id": "B-rec-15",
+   "word": "jealous",
+   "format": "recognition",
+   "prompt": null,
+   "options": [
+    "yes",
+    "no"
+   ],
+   "answer": "yes",
+   "form": "B",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "story_id": "ayaz_bi"
+  },
+  {
+   "id": "B-rec-16",
+   "word": "wise",
+   "format": "recognition",
+   "prompt": null,
+   "options": [
+    "yes",
+    "no"
+   ],
+   "answer": "yes",
+   "form": "B",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "story_id": "asan_kaigy"
+  },
+  {
+   "id": "B-rec-17",
+   "word": "witch",
+   "format": "recognition",
+   "prompt": null,
+   "options": [
+    "yes",
+    "no"
+   ],
+   "answer": "yes",
+   "form": "B",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "story_id": "er_tostik"
+  },
+  {
+   "id": "B-rec-18",
+   "word": "hero",
+   "format": "recognition",
+   "prompt": null,
+   "options": [
+    "yes",
+    "no"
+   ],
+   "answer": "yes",
+   "form": "B",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "story_id": "er_tostik"
+  },
+  {
+   "id": "B-rec-19",
+   "word": "brave",
+   "format": "recognition",
+   "prompt": null,
+   "options": [
+    "yes",
+    "no"
+   ],
+   "answer": "yes",
+   "form": "B",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "story_id": "er_tostik"
+  },
+  {
+   "id": "B-rec-20",
+   "word": "journey",
+   "format": "recognition",
+   "prompt": null,
+   "options": [
+    "yes",
+    "no"
+   ],
+   "answer": "yes",
+   "form": "B",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "story_id": "asan_kaigy"
+  },
+  {
+   "id": "B-rec-21",
+   "word": "camel",
+   "format": "recognition",
+   "prompt": null,
+   "options": [
+    "yes",
+    "no"
+   ],
+   "answer": "yes",
+   "form": "B",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "story_id": "asan_kaigy"
+  },
+  {
+   "id": "B-rec-22",
+   "word": "prellow",
+   "format": "recognition",
+   "prompt": null,
+   "options": [
+    "yes",
+    "no"
+   ],
+   "answer": "no",
+   "form": "B",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "pseudo": true
+  },
+  {
+   "id": "B-rec-23",
+   "word": "pit",
+   "format": "recognition",
+   "prompt": null,
+   "options": [
+    "yes",
+    "no"
+   ],
+   "answer": "yes",
+   "form": "B",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "story_id": "alpamys"
+  },
+  {
+   "id": "B-rec-24",
+   "word": "sondrick",
+   "format": "recognition",
+   "prompt": null,
+   "options": [
+    "yes",
+    "no"
+   ],
+   "answer": "no",
+   "form": "B",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "pseudo": true
+  },
+  {
+   "id": "B-rec-25",
+   "word": "adviser",
+   "format": "recognition",
+   "prompt": null,
+   "options": [
+    "yes",
+    "no"
+   ],
+   "answer": "yes",
+   "form": "B",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "story_id": "ayaz_bi"
+  },
+  {
+   "id": "B-rec-26",
+   "word": "mintrul",
+   "format": "recognition",
+   "prompt": null,
+   "options": [
+    "yes",
+    "no"
+   ],
+   "answer": "no",
+   "form": "B",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "pseudo": true
+  },
+  {
+   "id": "B-rec-27",
+   "word": "prison",
+   "format": "recognition",
+   "prompt": null,
+   "options": [
+    "yes",
+    "no"
+   ],
+   "answer": "yes",
+   "form": "B",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "story_id": "alpamys"
+  },
+  {
+   "id": "B-rec-28",
+   "word": "courtier",
+   "format": "recognition",
+   "prompt": null,
+   "options": [
+    "yes",
+    "no"
+   ],
+   "answer": "yes",
+   "form": "B",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "story_id": "ayaz_bi"
+  },
+  {
+   "id": "B-rec-29",
+   "word": "nest",
+   "format": "recognition",
+   "prompt": null,
+   "options": [
+    "yes",
+    "no"
+   ],
+   "answer": "yes",
+   "form": "B",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "story_id": "er_tostik"
+  },
+  {
+   "id": "B-rec-30",
+   "word": "loyal",
+   "format": "recognition",
+   "prompt": null,
+   "options": [
+    "yes",
+    "no"
+   ],
+   "answer": "yes",
+   "form": "B",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "story_id": "alpamys"
+  },
+  {
+   "id": "B-mean-01",
+   "word": "land",
+   "format": "meaning",
+   "prompt": null,
+   "options": [
+    "от",
+    "жер",
+    "жел",
+    "күн"
+   ],
+   "answer": "жер",
+   "dont_know": true,
+   "form": "B",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "story_id": "asan_kaigy"
+  },
+  {
+   "id": "B-mean-02",
+   "word": "brave",
+   "format": "meaning",
+   "prompt": null,
+   "options": [
+    "жомарт",
+    "ұялшақ",
+    "батыл",
+    "ашкөз"
+   ],
+   "answer": "батыл",
+   "dont_know": true,
+   "form": "B",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "story_id": "er_tostik"
+  },
+  {
+   "id": "B-mean-03",
+   "word": "hero",
+   "format": "meaning",
+   "prompt": null,
+   "options": [
+    "жылқышы",
+    "ұры",
+    "әнші",
+    "батыр"
+   ],
+   "answer": "батыр",
+   "dont_know": true,
+   "form": "B",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "story_id": "er_tostik"
+  },
+  {
+   "id": "B-mean-04",
+   "word": "courtier",
+   "format": "meaning",
+   "prompt": null,
+   "options": [
+    "сарай адамы",
+    "әнші",
+    "құл",
+    "ұры"
+   ],
+   "answer": "сарай адамы",
+   "dont_know": true,
+   "form": "B",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "story_id": "ayaz_bi"
+  },
+  {
+   "id": "B-mean-05",
+   "word": "squeeze",
+   "format": "meaning",
+   "prompt": null,
+   "options": [
+    "секіру",
+    "сығу",
+    "ұйықтау",
+    "ойнау"
+   ],
+   "answer": "сығу",
+   "dont_know": true,
+   "form": "B",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "story_id": "tazsha_bala"
+  },
+  {
+   "id": "B-mean-06",
+   "word": "adviser",
+   "format": "meaning",
+   "prompt": null,
+   "options": [
+    "ұры",
+    "саудагер",
+    "кеңесші",
+    "жылқышы"
+   ],
+   "answer": "кеңесші",
+   "dont_know": true,
+   "form": "B",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "story_id": "ayaz_bi"
+  },
+  {
+   "id": "B-mean-07",
+   "word": "jealous",
+   "format": "meaning",
+   "prompt": null,
+   "options": [
+    "сабырлы",
+    "ұялшақ",
+    "күшті",
+    "қызғаншақ"
+   ],
+   "answer": "қызғаншақ",
+   "dont_know": true,
+   "form": "B",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "story_id": "ayaz_bi"
+  },
+  {
+   "id": "B-mean-08",
+   "word": "nest",
+   "format": "meaning",
+   "prompt": null,
+   "options": [
+    "ұя",
+    "тас",
+    "ағаш",
+    "бақ"
+   ],
+   "answer": "ұя",
+   "dont_know": true,
+   "form": "B",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "story_id": "er_tostik"
+  },
+  {
+   "id": "B-mean-09",
+   "word": "camel",
+   "format": "meaning",
+   "prompt": null,
+   "options": [
+    "есек",
+    "түйе",
+    "ешкі",
+    "ит"
+   ],
+   "answer": "түйе",
+   "dont_know": true,
+   "form": "B",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "story_id": "asan_kaigy"
+  },
+  {
+   "id": "B-mean-10",
+   "word": "village",
+   "format": "meaning",
+   "prompt": null,
+   "options": [
+    "көше",
+    "бақ",
+    "ауыл",
+    "дала"
+   ],
+   "answer": "ауыл",
+   "dont_know": true,
+   "form": "B",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "story_id": "tazsha_bala"
+  },
+  {
+   "id": "B-mean-11",
+   "word": "loyal",
+   "format": "meaning",
+   "prompt": null,
+   "options": [
+    "ашушаң",
+    "қорқақ",
+    "ақымақ",
+    "адал"
+   ],
+   "answer": "адал",
+   "dont_know": true,
+   "form": "B",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "story_id": "alpamys"
+  },
+  {
+   "id": "B-mean-12",
+   "word": "witch",
+   "format": "meaning",
+   "prompt": null,
+   "options": [
+    "мыстан",
+    "ұры",
+    "саудагер",
+    "шаруа"
+   ],
+   "answer": "мыстан",
+   "dont_know": true,
+   "form": "B",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "story_id": "er_tostik"
+  },
+  {
+   "id": "B-mean-13",
+   "word": "humble",
+   "format": "meaning",
+   "prompt": null,
+   "options": [
+    "қу",
+    "қарапайым",
+    "жомарт",
+    "ашушаң"
+   ],
+   "answer": "қарапайым",
+   "dont_know": true,
+   "form": "B",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "story_id": "ayaz_bi"
+  },
+  {
+   "id": "B-mean-14",
+   "word": "wise",
+   "format": "meaning",
+   "prompt": null,
+   "options": [
+    "ақымақ",
+    "жалқау",
+    "дана",
+    "тәкаппар"
+   ],
+   "answer": "дана",
+   "dont_know": true,
+   "form": "B",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "story_id": "asan_kaigy"
+  },
+  {
+   "id": "B-mean-15",
+   "word": "giant",
+   "format": "meaning",
+   "prompt": null,
+   "options": [
+    "бала",
+    "шаруа",
+    "әнші",
+    "алып"
+   ],
+   "answer": "алып",
+   "dont_know": true,
+   "form": "B",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "story_id": "tazsha_bala"
+  },
+  {
+   "id": "B-mean-16",
+   "word": "protect",
+   "format": "meaning",
+   "prompt": null,
+   "options": [
+    "қорғау",
+    "жасау",
+    "табу",
+    "шақыру"
+   ],
+   "answer": "қорғау",
+   "dont_know": true,
+   "form": "B",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "story_id": "alpamys"
+  },
+  {
+   "id": "B-mean-17",
+   "word": "beat",
+   "format": "meaning",
+   "prompt": null,
+   "options": [
+    "жасыру",
+    "жеңу",
+    "сату",
+    "айту"
+   ],
+   "answer": "жеңу",
+   "dont_know": true,
+   "form": "B",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "story_id": "tazsha_bala"
+  },
+  {
+   "id": "B-mean-18",
+   "word": "pit",
+   "format": "meaning",
+   "prompt": null,
+   "options": [
+    "бұлақ",
+    "көпір",
+    "ор",
+    "қақпа"
+   ],
+   "answer": "ор",
+   "dont_know": true,
+   "form": "B",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "story_id": "alpamys"
+  },
+  {
+   "id": "B-mean-19",
+   "word": "prison",
+   "format": "meaning",
+   "prompt": null,
+   "options": [
+    "сарай",
+    "дүкен",
+    "аурухана",
+    "түрме"
+   ],
+   "answer": "түрме",
+   "dont_know": true,
+   "form": "B",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "story_id": "alpamys"
+  },
+  {
+   "id": "B-mean-20",
+   "word": "journey",
+   "format": "meaning",
+   "prompt": null,
+   "options": [
+    "сапар",
+    "жұмыс",
+    "ән",
+    "ұйқы"
+   ],
+   "answer": "сапар",
+   "dont_know": true,
+   "form": "B",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "story_id": "asan_kaigy"
+  },
+  {
+   "id": "B-use-01",
+   "word": "squeeze",
+   "format": "use",
+   "prompt": "He had to ___ through the narrow gap between the two rocks.",
+   "options": [
+    "protect",
+    "squeeze",
+    "beat",
+    "tie"
+   ],
+   "answer": "squeeze",
+   "form": "B",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "story_id": "tazsha_bala"
+  },
+  {
+   "id": "B-use-02",
+   "word": "brave",
+   "format": "use",
+   "prompt": "Only a ___ child would walk alone into a dark cave at night.",
+   "options": [
+    "loyal",
+    "humble",
+    "brave",
+    "jealous"
+   ],
+   "answer": "brave",
+   "form": "B",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "story_id": "er_tostik"
+  },
+  {
+   "id": "B-use-03",
+   "word": "witch",
+   "format": "use",
+   "prompt": "The children were afraid of the ___ who could turn people into frogs.",
+   "options": [
+    "adviser",
+    "village",
+    "prison",
+    "witch"
+   ],
+   "answer": "witch",
+   "form": "B",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "story_id": "er_tostik"
+  },
+  {
+   "id": "B-use-04",
+   "word": "wise",
+   "format": "use",
+   "prompt": "A ___ person thinks carefully before making a big decision.",
+   "options": [
+    "wise",
+    "loyal",
+    "jealous",
+    "brave"
+   ],
+   "answer": "wise",
+   "form": "B",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "story_id": "asan_kaigy"
+  },
+  {
+   "id": "B-use-05",
+   "word": "journey",
+   "format": "use",
+   "prompt": "After a long ___ across the mountains, the travellers were very tired.",
+   "options": [
+    "giant",
+    "journey",
+    "village",
+    "nest"
+   ],
+   "answer": "journey",
+   "form": "B",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "story_id": "asan_kaigy"
+  },
+  {
+   "id": "B-use-06",
+   "word": "pit",
+   "format": "use",
+   "prompt": "A deep ___ in the road stopped the car.",
+   "options": [
+    "hero",
+    "journey",
+    "pit",
+    "adviser"
+   ],
+   "answer": "pit",
+   "form": "B",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "story_id": "alpamys"
+  },
+  {
+   "id": "B-use-07",
+   "word": "land",
+   "format": "use",
+   "prompt": "Birds flew over the sea for days before they finally saw dry ___.",
+   "options": [
+    "witch",
+    "adviser",
+    "pit",
+    "land"
+   ],
+   "answer": "land",
+   "form": "B",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "story_id": "asan_kaigy"
+  },
+  {
+   "id": "B-use-08",
+   "word": "village",
+   "format": "use",
+   "prompt": "All the people in the ___ came to the wedding feast.",
+   "options": [
+    "village",
+    "nest",
+    "giant",
+    "pit"
+   ],
+   "answer": "village",
+   "form": "B",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "story_id": "tazsha_bala"
+  },
+  {
+   "id": "B-use-09",
+   "word": "adviser",
+   "format": "use",
+   "prompt": "The president listens to her ___ before she makes big decisions.",
+   "options": [
+    "giant",
+    "adviser",
+    "village",
+    "nest"
+   ],
+   "answer": "adviser",
+   "form": "B",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "story_id": "ayaz_bi"
+  },
+  {
+   "id": "B-use-10",
+   "word": "prison",
+   "format": "use",
+   "prompt": "The guards locked the door of the ___ and went home.",
+   "options": [
+    "pit",
+    "nest",
+    "prison",
+    "giant"
+   ],
+   "answer": "prison",
+   "form": "B",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "story_id": "alpamys"
+  },
+  {
+   "id": "B-use-11",
+   "word": "nest",
+   "format": "use",
+   "prompt": "We saw a small ___ with two baby birds on the branch.",
+   "options": [
+    "village",
+    "adviser",
+    "giant",
+    "nest"
+   ],
+   "answer": "nest",
+   "form": "B",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "story_id": "er_tostik"
+  },
+  {
+   "id": "B-use-12",
+   "word": "beat",
+   "format": "use",
+   "prompt": "She can ___ everyone at chess, even her teacher.",
+   "options": [
+    "beat",
+    "tie",
+    "protect",
+    "squeeze"
+   ],
+   "answer": "beat",
+   "form": "B",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "story_id": "tazsha_bala"
+  },
+  {
+   "id": "B-use-13",
+   "word": "loyal",
+   "format": "use",
+   "prompt": "A ___ friend never leaves you when you are in trouble.",
+   "options": [
+    "jealous",
+    "loyal",
+    "humble",
+    "wise"
+   ],
+   "answer": "loyal",
+   "form": "B",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "story_id": "alpamys"
+  },
+  {
+   "id": "B-use-14",
+   "word": "hero",
+   "format": "use",
+   "prompt": "In the story, the ___ fights the dragon and saves the people.",
+   "options": [
+    "camel",
+    "nest",
+    "hero",
+    "village"
+   ],
+   "answer": "hero",
+   "form": "B",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "story_id": "er_tostik"
+  },
+  {
+   "id": "B-use-15",
+   "word": "camel",
+   "format": "use",
+   "prompt": "A ___ can walk for days in the desert without drinking.",
+   "options": [
+    "hero",
+    "witch",
+    "giant",
+    "camel"
+   ],
+   "answer": "camel",
+   "form": "B",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "story_id": "asan_kaigy"
+  },
+  {
+   "id": "B-use-16",
+   "word": "jealous",
+   "format": "use",
+   "prompt": "The brothers were ___ of their sister because everyone praised her.",
+   "options": [
+    "jealous",
+    "humble",
+    "wise",
+    "brave"
+   ],
+   "answer": "jealous",
+   "form": "B",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "story_id": "ayaz_bi"
+  },
+  {
+   "id": "B-use-17",
+   "word": "protect",
+   "format": "use",
+   "prompt": "The dog will ___ the house from thieves.",
+   "options": [
+    "beat",
+    "protect",
+    "tie",
+    "squeeze"
+   ],
+   "answer": "protect",
+   "form": "B",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "story_id": "alpamys"
+  },
+  {
+   "id": "B-use-18",
+   "word": "humble",
+   "format": "use",
+   "prompt": "Even after becoming famous, the singer stayed ___ and did not think she was better than others.",
+   "options": [
+    "jealous",
+    "brave",
+    "humble",
+    "wise"
+   ],
+   "answer": "humble",
+   "form": "B",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "story_id": "ayaz_bi"
+  },
+  {
+   "id": "B-use-19",
+   "word": "giant",
+   "format": "use",
+   "prompt": "The ground shook when the huge ___ walked past the houses.",
+   "options": [
+    "nest",
+    "prison",
+    "adviser",
+    "giant"
+   ],
+   "answer": "giant",
+   "form": "B",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "story_id": "tazsha_bala"
+  },
+  {
+   "id": "B-use-20",
+   "word": "courtier",
+   "format": "use",
+   "prompt": "The king's ___ whispered about the strange visitor at the royal dinner.",
+   "options": [
+    "courtier",
+    "camel",
+    "journey",
+    "prison"
+   ],
+   "answer": "courtier",
+   "form": "B",
+   "timepoints": [
+    "pre",
+    "post",
+    "delayed"
+   ],
+   "story_id": "ayaz_bi"
+  }
+ ]
+}
