@@ -2,7 +2,7 @@
 id: 1105-233633-ibrahimerbol-g11-utochnenie-sobir
 from: ibrahimerbol01-prog
 to: otarernazar-eng
-status: new
+status: done
 created: 2026-11-05 23:36
 ---
 
