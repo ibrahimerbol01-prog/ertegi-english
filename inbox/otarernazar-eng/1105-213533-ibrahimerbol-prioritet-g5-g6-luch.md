@@ -2,7 +2,7 @@
 id: 1105-213533-ibrahimerbol-prioritet-g5-g6-luch
 from: ibrahimerbol01-prog
 to: otarernazar-eng
-status: new
+status: done
 created: 2026-11-05 21:35
 ---
 
