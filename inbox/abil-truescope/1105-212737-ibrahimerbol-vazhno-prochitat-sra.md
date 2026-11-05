@@ -2,7 +2,7 @@
 id: 1105-212737-ibrahimerbol-vazhno-prochitat-sra
 from: ibrahimerbol01-prog
 to: abil-truescope
-status: new
+status: done
 created: 2026-11-05 21:27
 ---
 
