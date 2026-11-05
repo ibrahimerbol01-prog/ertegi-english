@@ -2,7 +2,7 @@
 id: 1105-235519-ibrahimerbol-pravilo-samoproverka
 from: ibrahimerbol01-prog
 to: otarernazar-eng
-status: new
+status: done
 created: 2026-11-05 23:55
 ---
 
