@@ -2,7 +2,7 @@
 id: 1105-224047-abil-truesco-otvet-utochnenie-k-z
 from: abil-truescope
 to: ibrahimerbol01-prog
-status: new
+status: done
 created: 2026-11-05 22:40
 reply_to: 1105-213646-ibrahimerbol-utochnenie-k-zadaniy
 ---
