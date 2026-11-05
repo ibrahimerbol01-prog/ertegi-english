@@ -66,7 +66,10 @@ export const DICT = {
     wbSources: "Сөз тізімдерінің дереккөздері",
     wbAutoTr: "автоаударма",
     wbAutoTrHint: "Машиналық аударма. Адам әлі тексерген жоқ.",
-    wbTrReview: "Аударма тексерілуде"
+    wbTrReview: "Аударма тексерілуде",
+    wbSearch: "Іздеу",
+    wbSearchHint: "Ағылшынша не қазақша сөз",
+    wbNotFound: "Бұл деңгейде мұндай сөз жоқ"
   },
   en: {
     skip: "Skip",
@@ -133,6 +136,9 @@ export const DICT = {
     wbSources: "Sources of the word lists",
     wbAutoTr: "machine translation",
     wbAutoTrHint: "Machine translation, not yet checked by a person.",
-    wbTrReview: "Translation being checked"
+    wbTrReview: "Translation being checked",
+    wbSearch: "Search",
+    wbSearchHint: "A word in English or Kazakh",
+    wbNotFound: "No such word at this level"
   }
 };

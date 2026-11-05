@@ -8,7 +8,7 @@ import { WordsHeader } from "./WordsScreens";
 import { EXCLUDED_UNTIL_DELAYED_TEST, POS_GROUPS, WORDBANK_LEVELS, WORDBANK_SOURCES, cardWord, posGroup, type PosGroup, type WordbankLevel } from "../../data/wordbank/config";
 import { loadWordbankLevel } from "../../data/wordbank";
 import type { WordbankEntry } from "../../data/wordbank/types";
-import { wordbankMeaning } from "./wordbankMeaning";
+import { matchesQuery, wordbankMeaning } from "./wordbankMeaning";
 
 /* «Сөздік қоры»: the CEFR word lists by level and part of speech (ordinary
    site only, never in the research build: KazakhTalesApp.tsx). Each level is
@@ -38,6 +38,8 @@ export default function WordbankScreen({ savedWords, onAdd, mode, setMode }: {
   const [data, setData] = useState<{ level: WordbankLevel; words: WordbankEntry[] } | null>(null);
   const [failed, setFailed] = useState<WordbankLevel | null>(null);
   const [shown, setShown] = useState(PAGE);
+  const [query, setQuery] = useState("");
+  const searching = query.trim() !== "";
 
   useEffect(() => {
     let live = true;
@@ -50,8 +52,11 @@ export default function WordbankScreen({ savedWords, onAdd, mode, setMode }: {
 
   const saved = useMemo(() => new Set(savedWords.map((w) => w.word.toLowerCase())), [savedWords]);
   const list = useMemo(
-    () => (data && data.level === level ? data.words.filter((e) => posGroup(e.pos) === group && !excluded.has(cardWord(e.word).toLowerCase())) : null),
-    [data, level, group],
+    // A search looks through every part of speech of the level; otherwise the chosen group only.
+    () => (data && data.level === level
+      ? data.words.filter((e) => !excluded.has(cardWord(e.word).toLowerCase()) && (searching ? matchesQuery(e, query) : posGroup(e.pos) === group))
+      : null),
+    [data, level, group, query, searching],
   );
   const pick = (l: WordbankLevel) => { setLevel(l); setShown(PAGE); setFailed(null); };
   const pickGroup = (g: PosGroup) => { setGroup(g); setShown(PAGE); };
@@ -66,8 +71,19 @@ export default function WordbankScreen({ savedWords, onAdd, mode, setMode }: {
           <button key={l} aria-pressed={level === l} onClick={() => pick(l)}>{l}</button>
         ))}
       </div>
+      <label className="block mb-4">
+        <span className="eyebrow mb-2 block">{t.wbSearch}</span>
+        <input
+          type="search"
+          value={query}
+          onChange={(ev) => { setQuery(ev.target.value); setShown(PAGE); }}
+          placeholder={t.wbSearchHint}
+          autoComplete="off" spellCheck={false}
+          className="w-full h-12 px-4 rounded-2xl border-2 border-line bg-card text-[16px]"
+        />
+      </label>
       <p className="eyebrow mb-2">{t.wbPos}</p>
-      <div className="segmented mb-5" role="group" aria-label={t.wbPos}>
+      <div className={`segmented mb-5 ${searching ? "opacity-50" : ""}`} role="group" aria-label={t.wbPos}>
         {POS_GROUPS.map((g) => (
           <button key={g} aria-pressed={group === g} onClick={() => pickGroup(g)}>{t[POS_LABEL[g]]}</button>
         ))}
@@ -79,7 +95,7 @@ export default function WordbankScreen({ savedWords, onAdd, mode, setMode }: {
         <p className="card p-4 text-[15px] text-ink-2" aria-live="polite">{t.wbLoading}</p>
       ) : (
         <>
-          <p className="text-sm text-ink-2 mb-3" aria-live="polite">{list.length} {t.wbCount}</p>
+          <p className="text-sm text-ink-2 mb-3" aria-live="polite">{searching && !list.length ? t.wbNotFound : `${list.length} ${t.wbCount}`}</p>
           <ul className="card overflow-hidden divide-y divide-line">
             {list.slice(0, shown).map((e) => {
               const word = cardWord(e.word);

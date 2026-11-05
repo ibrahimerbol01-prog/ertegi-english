@@ -23,3 +23,15 @@ export function wordbankMeaning(e: WordbankEntry): Meaning {
   const key = glossKey(cardWord(e.word), WORD_TRANSLATIONS);
   return { kk: key ? WORD_TRANSLATIONS[key] : "", ru: "", auto: false, reviewing: false };
 }
+
+const fold = (s: string) => s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/ё/g, "е").trim();
+
+/** Search in the wordbank: the English headword (any spelling, from the start of a word),
+ *  or the shown Kazakh / Russian meaning (anywhere). An empty query matches everything. */
+export function matchesQuery(e: WordbankEntry, query: string): boolean {
+  const q = fold(query);
+  if (!q) return true;
+  if (fold(e.word).split(/[\s/-]+/).some((w) => w.startsWith(q))) return true;
+  const m = wordbankMeaning(e);
+  return fold(m.kk).includes(q) || fold(m.ru).includes(q);
+}
