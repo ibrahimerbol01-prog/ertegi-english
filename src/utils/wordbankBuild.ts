@@ -9,6 +9,7 @@ import {
   type WordbankLevel, type WordbankSource,
 } from "../data/wordbank/config";
 import type { WordbankEntry, WordbankExample } from "../data/wordbank/types";
+import { applyTranslations, translationMap, type TranslationFiles } from "./wordbankTranslations";
 
 const TALE_LEVELS = ["A1", "A2", "B1", "B2", "C1"] as const;
 interface Tale { id: string; levels: Record<(typeof TALE_LEVELS)[number], string> }
@@ -68,7 +69,12 @@ export const isExcluded = (headword: string) => {
 };
 
 /** csvs: file path → CSV text for every source in config. */
-export function buildWordbank(csvs: Record<string, string>, tales: readonly Tale[], lemmaAs: LemmaAs, sources: readonly WordbankSource[] = WORDBANK_SOURCES) {
+/** translations: the translation files of a level (research/wordbank-translations), only A1 so far. */
+export function buildWordbank(
+  csvs: Record<string, string>, tales: readonly Tale[], lemmaAs: LemmaAs,
+  sources: readonly WordbankSource[] = WORDBANK_SOURCES,
+  translations: Partial<Record<WordbankLevel, TranslationFiles>> = {},
+) {
   const byKey = new Map<string, WordbankEntry>();
   let excluded = 0;
   for (const src of sources) {
@@ -92,6 +98,10 @@ export function buildWordbank(csvs: Record<string, string>, tales: readonly Tale
   const example = exampleIndex(tales, lemmaAs);
   const levels = Object.fromEntries(WORDBANK_LEVELS.map((l) => [l, [] as WordbankEntry[]])) as Record<WordbankLevel, WordbankEntry[]>;
   for (const e of byKey.values()) levels[e.level].push({ ...e, example: example(e.word, e.pos) });
+  for (const l of WORDBANK_LEVELS) {
+    const files = translations[l];
+    if (files) levels[l] = applyTranslations(levels[l], translationMap(files));
+  }
   for (const l of WORDBANK_LEVELS) levels[l].sort((a, b) => a.word.localeCompare(b.word, "en") || a.pos.localeCompare(b.pos, "en"));
   const files = Object.fromEntries(WORDBANK_LEVELS.map((l) => [l, fileText(levels[l])])) as Record<WordbankLevel, string>;
   return { levels, files, excluded };

@@ -1,4 +1,4 @@
-import { readFileSync, readdirSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
@@ -8,7 +8,7 @@ import { DICT } from "../dict";
 import { LangContext } from "../lang";
 import { lemmaAs } from "../research/lemmatize";
 import { sentences } from "../research/corpus";
-import { EXCLUDED_UNTIL_DELAYED_TEST, POS_GROUPS, WORDBANK_LEVELS, WORDBANK_SOURCES, cardWord, posGroup } from "../data/wordbank/config";
+import { EXCLUDED_UNTIL_DELAYED_TEST, POS_GROUPS, WORDBANK_LEVELS, WORDBANK_SOURCES, WORDBANK_TRANSLATION_FILES, cardWord, posGroup } from "../data/wordbank/config";
 import { loadWordbankLevel } from "../data/wordbank";
 import type { WordbankEntry } from "../data/wordbank/types";
 import { buildWordbank, isExcluded, variants } from "./wordbankBuild";
@@ -21,7 +21,10 @@ import { FlashcardsScreen } from "../components/screens/WordsScreens";
 const root = join(__dirname, "..", "..");
 const read = (p: string) => readFileSync(join(root, p), "utf8");
 const csvs = Object.fromEntries(WORDBANK_SOURCES.map((s) => [s.file, read(s.file)]));
-const built = buildWordbank(csvs, STORIES, lemmaAs);
+// The translation files as the build reads them (a missing file is skipped).
+const translations = Object.fromEntries(Object.entries(WORDBANK_TRANSLATION_FILES).map(([l, kinds]) => [l,
+  Object.fromEntries(Object.entries(kinds).filter(([, p]) => existsSync(join(root, p))).map(([k, p]) => [k, read(p)]))]));
+const built = buildWordbank(csvs, STORIES, lemmaAs, WORDBANK_SOURCES, translations);
 const files = Object.fromEntries(WORDBANK_LEVELS.map((l) => [l, read(`src/data/wordbank/${l}.json`)]));
 const data = Object.fromEntries(WORDBANK_LEVELS.map((l) => [l, JSON.parse(files[l]) as WordbankEntry[]]));
 const all = WORDBANK_LEVELS.flatMap((l) => data[l]);
@@ -37,20 +40,26 @@ describe("wordbank data", () => {
     expect(WORDBANK_LEVELS[0]).toBe("A1");
   });
 
-  it("every entry is well formed, in the file of its level, from a known source, with empty translations", () => {
+  it("every entry is well formed, in the file of its level, from a known source; translations only from the translation files", () => {
     const ids = new Set(WORDBANK_SOURCES.map((s) => s.id));
     for (const l of WORDBANK_LEVELS) {
       const keys = new Set<string>();
+      const translated = !!WORDBANK_TRANSLATION_FILES[l];
       for (const e of data[l]) {
-        expect(Object.keys(e).sort()).toEqual(["example", "kk", "level", "pos", "ru", "source", "word"]);
+        expect(Object.keys(e).sort()).toEqual(["example", "kk", "level", "pos", "ru", "source", "word", ...(translated ? ["tr"] : [])].sort());
         expect(e.level).toBe(l);
         expect(ids.has(e.source)).toBe(true);
         expect(WORDBANK_SOURCES.find((s) => s.id === e.source)!.levels).toContain(l);
         expect(e.word.trim()).toBe(e.word);
         expect(e.word).not.toBe("");
-        // Translations come later, from a reviewed task: nothing invented here.
-        expect(e.kk).toBe("");
-        expect(e.ru).toBe("");
+        // A level without translation files has none; a needs-review pair has none either.
+        if (!translated || e.tr === "needs-review") {
+          expect(e.kk).toBe("");
+          expect(e.ru).toBe("");
+        } else {
+          expect(e.kk).not.toBe("");
+          expect(e.ru).not.toBe("");
+        }
         const k = `${e.word.toLowerCase()}|${e.pos}`;
         expect(keys.has(k), `duplicate ${k}`).toBe(false);
         keys.add(k);

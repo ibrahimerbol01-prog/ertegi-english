@@ -1,8 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Check, Plus, Volume2 } from "lucide-react";
 import { safePlayVoice } from "../../utils/voice";
-import { glossKey } from "../../utils/gloss";
-import { WORD_TRANSLATIONS } from "../../constants";
 import { DICT } from "../../dict";
 import { useLang } from "../../lang";
 import type { SavedWord } from "../../types";
@@ -10,12 +8,15 @@ import { WordsHeader } from "./WordsScreens";
 import { EXCLUDED_UNTIL_DELAYED_TEST, POS_GROUPS, WORDBANK_LEVELS, WORDBANK_SOURCES, cardWord, posGroup, type PosGroup, type WordbankLevel } from "../../data/wordbank/config";
 import { loadWordbankLevel } from "../../data/wordbank";
 import type { WordbankEntry } from "../../data/wordbank/types";
+import { wordbankMeaning } from "./wordbankMeaning";
 
 /* «Сөздік қоры»: the CEFR word lists by level and part of speech (ordinary
    site only, never in the research build: KazakhTalesApp.tsx). Each level is
    its own chunk, loaded when picked. A word goes into the learner's existing
-   flashcards (spaced repetition) with the app's own Kazakh gloss; a word the
-   glossary does not have yet cannot be added, since a card needs a meaning. */
+   flashcards (spaced repetition) with its Kazakh meaning (wordbankMeaning.ts:
+   a checked or agreed translation, marked when it is a machine one, or the
+   app's own glossary); a word still under review, or with no meaning yet,
+   cannot be added, since a card needs a meaning. */
 
 const PAGE = 60;
 const excluded = new Set(EXCLUDED_UNTIL_DELAYED_TEST);
@@ -82,16 +83,24 @@ export default function WordbankScreen({ savedWords, onAdd, mode, setMode }: {
           <ul className="card overflow-hidden divide-y divide-line">
             {list.slice(0, shown).map((e) => {
               const word = cardWord(e.word);
-              const key = glossKey(word, WORD_TRANSLATIONS);
-              const translation = key ? WORD_TRANSLATIONS[key] : "";
+              const m = wordbankMeaning(e);
+              const translation = m.kk;
               const isSaved = saved.has(word.toLowerCase());
+              const noAdd = m.reviewing ? t.wbTrReview : t.wbNoTranslation;
               return (
                 <li key={`${e.word}|${e.pos}`} className="p-4 flex items-start gap-3">
                   <div className="flex-1 min-w-0">
                     <p className="font-display font-extrabold text-[17px] text-ink">
                       <span lang="en">{e.word}</span> <span className="text-sm font-bold text-ink-3">{e.pos}</span>
                     </p>
-                    {translation && <p className="text-[15px] text-ink-2">{translation}</p>}
+                    {translation && (
+                      <p className="text-[15px] text-ink-2">
+                        <span lang="kk">{translation}</span>
+                        {m.ru && <span lang="ru" className="text-ink-3"> · {m.ru}</span>}
+                        {m.auto && <span className="ml-2 text-xs text-ink-3" title={t.wbAutoTrHint}>{t.wbAutoTr}</span>}
+                      </p>
+                    )}
+                    {m.reviewing && <p className="text-sm text-ink-3">{t.wbTrReview}</p>}
                     {e.example && (
                       <p className="text-sm text-ink-2 mt-1">
                         <span className="text-ink-3">{t.wbExampleFrom}: </span><span lang="en">{e.example.text}</span>
@@ -105,8 +114,8 @@ export default function WordbankScreen({ savedWords, onAdd, mode, setMode }: {
                     type="button"
                     disabled={isSaved || !translation}
                     onClick={() => onAdd(word, translation)}
-                    aria-label={`${isSaved ? t.wbAdded : translation ? t.wbAdd : t.wbNoTranslation}: ${word}`}
-                    title={isSaved ? t.wbAdded : translation ? t.wbAdd : t.wbNoTranslation}
+                    aria-label={`${isSaved ? t.wbAdded : translation ? t.wbAdd : noAdd}: ${word}`}
+                    title={isSaved ? t.wbAdded : translation ? t.wbAdd : noAdd}
                     className="btn btn-ghost btn-sm shrink-0 disabled:opacity-50"
                   >
                     {isSaved ? <Check size={16} /> : <Plus size={16} />}

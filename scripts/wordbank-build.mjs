@@ -6,18 +6,19 @@ import { readFileSync, writeFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { runnerImport } from "vite";
+import { readTranslations } from "./wordbank-translations.mjs";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const at = (p) => resolve(root, p);
 const load = async (p) => (await runnerImport(at(p), { root, configFile: false, logLevel: "error" })).module;
 
-const { WORDBANK_SOURCES, WORDBANK_LEVELS, posGroup } = await load("src/data/wordbank/config.ts");
+const { WORDBANK_SOURCES, WORDBANK_LEVELS, WORDBANK_TRANSLATION_FILES, posGroup } = await load("src/data/wordbank/config.ts");
 const { buildWordbank } = await load("src/utils/wordbankBuild.ts");
 const { STORIES } = await load("src/constants.ts");
 const { lemmaAs } = await load("src/research/lemmatize.ts");
 
 const csvs = Object.fromEntries(WORDBANK_SOURCES.map((s) => [s.file, readFileSync(at(s.file), "utf8")]));
-const { levels, files, excluded } = buildWordbank(csvs, STORIES, lemmaAs);
+const { levels, files, excluded } = buildWordbank(csvs, STORIES, lemmaAs, WORDBANK_SOURCES, readTranslations(root, WORDBANK_TRANSLATION_FILES));
 
 for (const l of WORDBANK_LEVELS) writeFileSync(at(`src/data/wordbank/${l}.json`), files[l]);
 

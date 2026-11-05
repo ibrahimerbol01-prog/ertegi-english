@@ -60,3 +60,12 @@ export const posGroup = (pos: string): PosGroup =>
 
 /** The word a card stores and the voice reads: the first spelling of the headword ("colour/color" → "colour"). */
 export const cardWord = (headword: string) => headword.split("/")[0].trim();
+
+/** Translation files per level (src/utils/wordbankTranslations.ts). A missing file is skipped. */
+export const WORDBANK_TRANSLATION_FILES: Partial<Record<WordbankLevel, { agreed: string; review: string; arbitration: string }>> = {
+  A1: {
+    agreed: "research/wordbank-translations/a1-agreed.csv",
+    review: "research/wordbank-translations/a1-review.csv",
+    arbitration: "research/wordbank-translations/a1-arbitration.csv",
+  },
+};
