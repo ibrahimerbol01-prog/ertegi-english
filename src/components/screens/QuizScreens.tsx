@@ -7,7 +7,8 @@ import { STORIES, LEVEL_DETAILS } from "../../constants";
 import { StoryCover } from "../StoryCover";
 import { buildLevelQuiz } from "../../utils/levelQuiz";
 import { findEvidence } from "../../utils/evidence";
-import { QUIZ_MAX_TRIES, QUIZ_PASS_SHARE, QUIZ_XP_FIRST_TRY, QUIZ_XP_SECOND_TRY } from "../../research/params";
+import { QUIZ_LEVEL_UNLOCK_SHARE, QUIZ_MAX_TRIES, QUIZ_PASS_SHARE, QUIZ_XP_FIRST_TRY, QUIZ_XP_SECOND_TRY } from "../../research/params";
+import { asksConfidence, retryOrder, type Confidence, type QuizResult } from "../../utils/quizRetry";
 import { useTr } from "./shared";
 import { track } from "../../utils/events";
 
@@ -87,10 +88,11 @@ export function QuizSetup({ storyId, level, onChange, onStart, progress, lang, t
       <div className="card p-4 mt-6 grid grid-cols-3 text-center">
         <div><p className="font-display font-black text-xl text-ink">{count}</p><p className="text-xs text-ink-2">{kk ? "сұрақ" : "questions"}</p></div>
         <div className="border-x-2 border-line"><p className="font-display font-black text-xl text-ink">2</p><p className="text-xs text-ink-2">{kk ? "мүмкіндік" : "tries each"}</p></div>
-        <div><p className="font-display font-black text-xl text-ink">{Math.ceil(count * QUIZ_PASS_SHARE)}/{count}</p><p className="text-xs text-ink-2">{kk ? "өту үшін" : "to pass"}</p></div>
+        <div><p className="font-display font-black text-xl text-ink"><RotateCcw size={20} className="inline -mt-1" aria-hidden /></p><p className="text-xs text-ink-2">{kk ? "қате қайталанады" : "mistakes return"}</p></div>
       </div>
       <p className="text-[13px] text-ink-2 mt-3 leading-relaxed">
         {kk ? "Уақыт шектеулі емес. Қателессең, ертегідегі сөйлемді көрсетіп, тағы бір мүмкіндік береміз." : "No time limit. If you get one wrong, we show you the line in the tale and give you another try."}
+        {" "}{kk ? "Қате кеткен сұрақтар соңында қайта шығады. Деңгей сынақты соңына дейін өткенде есептеледі." : "Questions you miss come back at the end. The level counts once you finish the quiz."}
       </p>
 
       <button onClick={onStart} className="btn w-full mt-6">
@@ -104,7 +106,6 @@ export function QuizSetup({ storyId, level, onChange, onStart, progress, lang, t
 // No timer and no hearts: a wrong answer sends the learner back to the tale
 // for one more try, and only then shows the right answer with its sentence.
 type QuizQuestion = { type?: string; q?: string; sentence?: string; options: string[]; correct: number };
-type QuizResult = "first" | "second" | "missed";
 
 export function QuizScreen({ onReward, t, onQuizFinish, questions, storyTitle, onExit, sourceTexts = [], eventInfo }: {
   /** Tale and level ("quiz" for the whole tale) for the learning events. */
@@ -128,6 +129,11 @@ export function QuizScreen({ onReward, t, onQuizFinish, questions, storyTitle, o
   const [status, setStatus] = useState<"answering" | "correct" | "revealed">("answering");
   const [results, setResults] = useState<QuizResult[]>([]);
   const [finished, setFinished] = useState(false);
+  // How sure the learner was, by question index (asked on some questions, main round only).
+  const [conf, setConf] = useState<Record<number, Confidence>>({});
+  // Score of the main round, kept while the retry round runs; it is what counts.
+  const [main, setMain] = useState<{ correct: number; firstTry: number; total: number } | null>(null);
+  const [autoRetry, setAutoRetry] = useState(false);
 
   const question = questions[round[pos]];
   const answer = question?.options[question.correct] ?? "";
@@ -138,14 +144,19 @@ export function QuizScreen({ onReward, t, onQuizFinish, questions, storyTitle, o
   // A gap sentence read aloud carries the missing word, so it is the hint for gaps.
   const fullSentence = isGap ? (question.sentence || "").replace("___", answer) : null;
   const done = status !== "answering";
+  const askConf = !practice && wrongPicks.length === 0 && asksConfidence(round[pos]);
+  const myConf = conf[round[pos]];
+  const needConf = askConf && !myConf;
+  // "Неге?": the line from the tale that holds the answer, shown after every answer.
+  const why = fullSentence || evidence;
   // When the current question appeared, for duration_ms in the learning events.
-  const shownAt = useRef(Date.now());
+  const shownAt = useRef(0);
   useEffect(() => { shownAt.current = Date.now(); }, [pos, round]);
 
   useEffect(() => () => stopVoice(), []);
 
   const handleCheck = () => {
-    if (selected === null || done) return;
+    if (selected === null || done || needConf) return;
     stopVoice();
     track("quiz_answer", {
       object_type: "quiz_question", object_id: round[pos], story_id: eventInfo?.story_id, level: eventInfo?.level,
@@ -155,6 +166,7 @@ export function QuizScreen({ onReward, t, onQuizFinish, questions, storyTitle, o
         // The hint seen before this answer: the sentence to listen to (gaps) or the line from the tale.
         hint: wrongPicks.length === 0 ? "none" : isGap ? "sentence" : evidence ? "evidence" : "reread",
         type: question.type ?? (isGap ? "gap" : "choice"),
+        confidence: myConf ?? null,
       },
     });
     if (selected === question.correct) {
@@ -183,11 +195,32 @@ export function QuizScreen({ onReward, t, onQuizFinish, questions, storyTitle, o
     setStatus("answering");
     setResults([]);
     setFinished(false);
+    if (!isPractice) { setConf({}); setMain(null); }
+    setAutoRetry(false);
   };
+
+  const correct = results.filter((r) => r !== "missed").length;
+  const firstTry = results.filter((r) => r === "first").length;
 
   const handleNext = () => {
     stopVoice();
     if (pos + 1 >= round.length) {
+      track("quiz_complete", {
+        object_type: "quiz", object_id: eventInfo ? `${eventInfo.story_id}:${eventInfo.level}` : null,
+        story_id: eventInfo?.story_id, level: eventInfo?.level,
+        result: { score: correct, total: round.length, first_try: firstTry, practice, retry: autoRetry },
+      });
+      if (!practice) {
+        setMain({ correct, firstTry, total: round.length });
+        onQuizFinish?.(correct, round.length, firstTry);
+        // Mistakes come back at once, "sure but wrong" first (I1).
+        const again = retryOrder(round, results, conf);
+        if (again.length) {
+          startRound(again, true);
+          setAutoRetry(true);
+          return;
+        }
+      }
       setFinished(true);
       return;
     }
@@ -196,21 +229,6 @@ export function QuizScreen({ onReward, t, onQuizFinish, questions, storyTitle, o
     setWrongPicks([]);
     setStatus("answering");
   };
-
-  const correct = results.filter((r) => r !== "missed").length;
-  const firstTry = results.filter((r) => r === "first").length;
-
-  useEffect(() => {
-    if (finished) {
-      track("quiz_complete", {
-        object_type: "quiz", object_id: eventInfo ? `${eventInfo.story_id}:${eventInfo.level}` : null,
-        story_id: eventInfo?.story_id, level: eventInfo?.level,
-        result: { score: correct, total: round.length, first_try: firstTry, practice },
-      });
-    }
-    if (finished && !practice && onQuizFinish) onQuizFinish(correct, round.length, firstTry);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [finished]);
 
   // Keyboard: 1–4 pick an option, Enter checks or moves on.
   useEffect(() => {
@@ -252,8 +270,12 @@ export function QuizScreen({ onReward, t, onQuizFinish, questions, storyTitle, o
   }
 
   if (finished) {
-    const total = round.length;
-    const passed = correct >= Math.ceil(total * QUIZ_PASS_SHARE);
+    // After a retry round the main round's score is shown: it is the one that counts.
+    const shown = main ?? { correct, firstTry, total: round.length };
+    const total = shown.total;
+    const passed = shown.correct >= Math.ceil(total * QUIZ_PASS_SHARE);
+    const counted = shown.correct >= Math.ceil(total * QUIZ_LEVEL_UNLOCK_SHARE);
+    const afterQuiz = !!main;
     const toPractice = round.filter((_, i) => results[i] !== "first");
     return (
       <div className="animate-pop-in">
@@ -262,21 +284,23 @@ export function QuizScreen({ onReward, t, onQuizFinish, questions, storyTitle, o
             <Trophy className={passed ? "text-ink" : "text-ink-3"} size={52} />
           </span>
           <h2 className="large-title mt-6">
-            {practice ? tr("Жаттығу аяқталды", "Practice done") : passed ? tr("Сабақ аяқталды!", "Lesson complete!") : tr("Аз қалды", "Almost there")}
+            {!afterQuiz ? tr("Жаттығу аяқталды", "Practice done") : !counted ? tr("Аз қалды", "Almost there") : passed ? tr("Сабақ аяқталды!", "Lesson complete!") : tr("Сынақ өтті", "Quiz done")}
           </h2>
           <p className="text-[15px] text-ink-2 mt-2 max-w-[320px] mx-auto">
-            {practice
+            {!afterQuiz
               ? tr("Қате кеткен сұрақтарды тағы бір рет өттің.", "You went over the questions you missed once more.")
-              : passed
-                ? tr("Керемет! Ертегіні жақсы түсіндің.", "Great comprehension! You understood the story well.")
-                : tr(`Өту үшін ${Math.ceil(total * QUIZ_PASS_SHARE)} дұрыс жауап керек. Ертегіні қайта оқып, тағы байқап көр.`, `You need ${Math.ceil(total * QUIZ_PASS_SHARE)} right answers to pass. Re-read the story and try again.`)}
+              : !counted
+                ? tr(`Деңгей үшін ${Math.ceil(total * QUIZ_LEVEL_UNLOCK_SHARE)} дұрыс жауап керек. Ертегіні қайта оқып, тағы байқап көр.`, `The level needs ${Math.ceil(total * QUIZ_LEVEL_UNLOCK_SHARE)} right answers. Re-read the story and try again.`)
+                : passed
+                  ? tr("Керемет! Ертегіні жақсы түсіндің.", "Great comprehension! You understood the story well.")
+                  : tr("Деңгей есептелді. Қателерді қайталадың. Ертегіні қайта оқысаң, нәтиже жақсарады.", "The level counts, and you went over your mistakes. Re-read the tale to do even better.")}
           </p>
         </div>
         <div className="grid grid-cols-3 gap-3 mt-7">
           {[
-            { label: tr("Дұрыс", "Correct"), value: `${correct}/${total}`, color: "border-sky text-sky-deep", head: "bg-sky-deep text-white" },
-            { label: tr("Бірден", "First try"), value: `${firstTry}/${total}`, color: "border-jade text-jade-deep", head: "bg-[#15805A] text-white" },
-            { label: "XP", value: practice ? "—" : `+${firstTry * QUIZ_XP_FIRST_TRY + (correct - firstTry) * QUIZ_XP_SECOND_TRY}`, color: "border-sun-deep text-ink", head: "bg-sun-deep text-ink" },
+            { label: tr("Дұрыс", "Correct"), value: `${shown.correct}/${total}`, color: "border-sky text-sky-deep", head: "bg-sky-deep text-white" },
+            { label: tr("Бірден", "First try"), value: `${shown.firstTry}/${total}`, color: "border-jade text-jade-deep", head: "bg-[#15805A] text-white" },
+            { label: "XP", value: !afterQuiz ? "—" : `+${shown.firstTry * QUIZ_XP_FIRST_TRY + (shown.correct - shown.firstTry) * QUIZ_XP_SECOND_TRY}`, color: "border-sun-deep text-ink", head: "bg-sun-deep text-ink" },
           ].map((s) => (
             <div key={s.label} className={`rounded-2xl border-2 overflow-hidden ${s.color}`}>
               <p className={`${s.head} text-xs font-bold uppercase tracking-[0.06em] py-1 text-center truncate px-1`}>{s.label}</p>
@@ -284,12 +308,12 @@ export function QuizScreen({ onReward, t, onQuizFinish, questions, storyTitle, o
             </div>
           ))}
         </div>
-        {toPractice.length > 0 && (
+        {toPractice.length > 0 && !afterQuiz && (
           <button onClick={() => startRound(toPractice, true)} className="btn w-full mt-7">
             <RotateCcw size={18} /> {tr(`Қателерді қайталау (${toPractice.length})`, `Practise mistakes (${toPractice.length})`)}
           </button>
         )}
-        <button onClick={() => startRound(questions.map((_, i) => i), false)} className={`btn w-full ${toPractice.length ? "btn-ghost mt-3" : "mt-7"}`}>
+        <button onClick={() => startRound(questions.map((_, i) => i), false)} className={`btn w-full ${toPractice.length && !afterQuiz ? "btn-ghost mt-3" : "mt-7"}`}>
           {tr("Басынан бастау", "Start again")}
         </button>
         {onExit && <button onClick={onExit} className="btn btn-ghost w-full mt-3">{tr("Сынақтарға оралу", "Back to quizzes")}</button>}
@@ -314,8 +338,14 @@ export function QuizScreen({ onReward, t, onQuizFinish, questions, storyTitle, o
 
       <div className="flex items-center justify-between gap-3 mt-5">
         <p className="eyebrow truncate">{storyTitle ? displayTitle(storyTitle) : t.quizTitle}</p>
-        {practice && <span className="chip h-7 text-[13px] text-ink-2 shrink-0"><RotateCcw size={13} /> {tr("Жаттығу", "Practice")}</span>}
+        {practice && <span className="chip h-7 text-[13px] text-ink-2 shrink-0"><RotateCcw size={13} /> {autoRetry ? tr("Қайталау", "Retry") : tr("Жаттығу", "Practice")}</span>}
       </div>
+      {autoRetry && pos === 0 && status === "answering" && wrongPicks.length === 0 && (
+        <div className="mt-3 rounded-2xl bg-sky-soft p-3 flex items-center gap-3" role="status">
+          <p className="text-[14px] text-ink leading-snug flex-1">{tr("Деңгей есептелді. Енді қате кеткен сұрақтарды тағы бір рет көр: осылай есте жақсы қалады. XP берілмейді.", "The level counts. Now go over the questions you missed once more: that helps you remember. No XP here.")}</p>
+          <button onClick={() => setFinished(true)} className="h-9 px-3 rounded-full bg-card text-ink text-sm font-bold shrink-0">{tr("Өткізу", "Skip")}</button>
+        </div>
+      )}
 
       <div className="mt-3 mb-6">
         {isGap ? (
@@ -388,8 +418,21 @@ export function QuizScreen({ onReward, t, onQuizFinish, questions, storyTitle, o
         </div>
       )}
 
+      {/* How sure? Asked on some questions before checking (I1, hypercorrection). */}
+      {askConf && !done && (
+        <div className="mt-5">
+          <p id="conf-label" className="text-[14px] font-bold text-ink-2 mb-2">{tr("Қаншалықты сенімдісің?", "How sure are you?")}</p>
+          <div className="grid grid-cols-3 gap-2" role="group" aria-labelledby="conf-label">
+            {([["sure", tr("Сенімдімін", "I'm sure")], ["guess", tr("Шамамен", "I think so")], ["unsure", tr("Білмеймін", "I don't know")]] as [Confidence, string][]).map(([c, label]) => (
+              <button key={c} onClick={() => setConf((m) => ({ ...m, [round[pos]]: c }))} aria-pressed={myConf === c}
+                className={`tile min-h-11 px-1 text-[13px] font-bold leading-tight ${myConf === c ? "tile-selected" : "text-ink"}`}>{label}</button>
+            ))}
+          </div>
+        </div>
+      )}
+
       {!done ? (
-        <button onClick={handleCheck} disabled={selected === null} className="btn w-full mt-7">
+        <button onClick={handleCheck} disabled={selected === null || needConf} className="btn w-full mt-7">
           {t.checkAnswer}
         </button>
       ) : (
@@ -407,18 +450,23 @@ export function QuizScreen({ onReward, t, onQuizFinish, questions, storyTitle, o
               {status === "revealed" && <p className="text-[15px] text-felt-deep font-semibold">{answer}</p>}
               {!practice && (
                 <p className="text-sm font-bold text-ink-2 mt-0.5">
-                  {status === "correct" ? `+${wrongPicks.length ? QUIZ_XP_SECOND_TRY : QUIZ_XP_FIRST_TRY} XP` : tr("Бұл сұрақ жаттығуда қайта шығады", "This one comes back in practice")}
+                  {status === "correct" ? `+${wrongPicks.length ? QUIZ_XP_SECOND_TRY : QUIZ_XP_FIRST_TRY} XP` : myConf === "sure"
+                    ? tr("Сенімді едің: бұл сұрақ соңында бірінші болып қайта шығады", "You were sure: this one comes back first at the end")
+                    : tr("Бұл сұрақ сынақ соңында қайта шығады", "This one comes back at the end of the quiz")}
                 </p>
               )}
             </div>
           </div>
-          {status === "revealed" && (fullSentence || evidence) && (
+          {why ? (
             <div className="mt-3 rounded-2xl bg-card p-3">
-              <p className="text-[15px] text-ink leading-relaxed italic">{fullSentence || evidence}</p>
-              <button onClick={() => safePlayVoice(fullSentence || evidence || "")} className="mt-2 h-8 px-3 rounded-full bg-sand-2 text-ink text-sm font-bold inline-flex items-center gap-1.5">
+              <p className="text-[13px] font-bold text-ink-2">{tr("Неге? Ертегіде былай делінген:", "Why? Here is what the tale says:")}</p>
+              <p lang="en" className="text-[15px] text-ink leading-relaxed italic mt-1">{why}</p>
+              <button onClick={() => safePlayVoice(why)} className="mt-2 h-8 px-3 rounded-full bg-sand-2 text-ink text-sm font-bold inline-flex items-center gap-1.5">
                 <Volume2 size={15} /> {tr("Тыңдау", "Listen")}
               </button>
             </div>
+          ) : status === "revealed" && (
+            <p className="mt-3 text-[14px] text-ink-2">{tr("Ертегіде бұл жер табылмады. Шоқаннан неге екенін сұрап көр.", "We couldn't find this place in the tale. Ask Shoqan why.")}</p>
           )}
           {status === "revealed" && (
             <button onClick={askShoqan} className="mt-3 h-8 px-3 rounded-full bg-card text-felt-deep text-sm font-bold inline-flex items-center gap-1.5">
