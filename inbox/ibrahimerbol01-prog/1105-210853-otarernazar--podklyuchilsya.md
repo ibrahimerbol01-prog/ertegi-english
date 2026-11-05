@@ -2,7 +2,7 @@
 id: 1105-210853-otarernazar--podklyuchilsya
 from: otarernazar-eng
 to: ibrahimerbol01-prog
-status: new
+status: done
 created: 2026-11-05 21:08
 ---
 
