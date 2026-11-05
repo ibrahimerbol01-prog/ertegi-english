@@ -12,7 +12,13 @@ export interface WordbankEntry {
   /** Source id from config.ts (cefrj, octanove). */
   source: string;
   example: WordbankExample | null;
-  /** Translations: empty until a reviewed translation task fills them. */
+  /** Translations: empty until a reviewed translation task fills them (research/wordbank-translations). */
   kk: string;
   ru: string;
+  /** Where kk/ru come from, when the level has translations: see src/utils/wordbankTranslations.ts. */
+  tr?: TrStatus;
 }
+
+/** agreed: two machine translations agreed; ai-reviewed: a model chose with a source;
+ *  human: a person checked; needs-review: not shown yet. */
+export type TrStatus = "agreed" | "ai-reviewed" | "human" | "needs-review";

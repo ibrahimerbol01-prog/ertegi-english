@@ -63,7 +63,10 @@ export const DICT = {
     wbNoTranslation: "Аудармасы әзірге жоқ",
     wbMore: "Тағы көрсету",
     wbExampleFrom: "Ертегіден",
-    wbSources: "Сөз тізімдерінің дереккөздері"
+    wbSources: "Сөз тізімдерінің дереккөздері",
+    wbAutoTr: "автоаударма",
+    wbAutoTrHint: "Машиналық аударма. Адам әлі тексерген жоқ.",
+    wbTrReview: "Аударма тексерілуде"
   },
   en: {
     skip: "Skip",
@@ -127,6 +130,9 @@ export const DICT = {
     wbNoTranslation: "No translation yet",
     wbMore: "Show more",
     wbExampleFrom: "From the tale",
-    wbSources: "Sources of the word lists"
+    wbSources: "Sources of the word lists",
+    wbAutoTr: "machine translation",
+    wbAutoTrHint: "Machine translation, not yet checked by a person.",
+    wbTrReview: "Translation being checked"
   }
 };
