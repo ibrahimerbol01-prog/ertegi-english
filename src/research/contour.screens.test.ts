@@ -193,7 +193,8 @@ describe("research contour: the test screen gives no XP and no hints (item 4)", 
 describe("research contour: other checks for clean data (item 5)", () => {
   it("the ordinary build cannot reach the test screen: the alias swaps testEntry for the empty stand-in", async () => {
     const cfg = read("vite.config.ts");
-    const m = cfg.match(/find: \/(.+?)\/, replacement: '(.+?)'/);
+    // vite.config.ts has several aliases (test screen, wordbank): take the one for testEntry.
+    const m = cfg.match(/find: \/([^\n]*?testEntry[^\n]*?)\/, replacement: '([^']+)'/);
     expect(m).not.toBeNull();
     const re = new RegExp(m![1]);
     const imp = read("src/KazakhTalesApp.tsx").match(/import \{ TestScreen \} from "(.+?)";/)![1];
