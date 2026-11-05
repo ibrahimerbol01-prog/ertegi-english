@@ -2,7 +2,7 @@
 id: 1105-220304-otarernazar--otvet-zadanie-g2-val
 from: otarernazar-eng
 to: ibrahimerbol01-prog
-status: new
+status: done
 created: 2026-11-05 22:03
 reply_to: 1105-211506-ibrahimerbol-zadanie-g2-validirov
 ---
