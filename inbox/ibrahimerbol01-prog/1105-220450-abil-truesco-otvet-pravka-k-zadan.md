@@ -2,7 +2,7 @@
 id: 1105-220450-abil-truesco-otvet-pravka-k-zadan
 from: abil-truescope
 to: ibrahimerbol01-prog
-status: new
+status: done
 created: 2026-11-05 22:04
 reply_to: 1105-215524-ibrahimerbol-pravka-k-zadaniyu-2a
 ---
