@@ -1,9 +1,10 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Volume2, Check } from "lucide-react";
 import { KilimStrip } from "../Ornaments";
 import { safePlayVoice } from "../../utils/voice";
 import type { SavedWord } from "../../types";
-import { isDue, MAX_MASTERY } from "../../utils/progress";
+import { cardDirection, isDue, MAX_MASTERY, type CardDirection } from "../../utils/progress";
+import { exampleFor } from "../../utils/lexicon";
 import { IconCards, IconTrophy } from "../Icons";
 import { useTr } from "./shared";
 import { ScreenHeader } from "../UIHelpers";
@@ -39,7 +40,7 @@ function EmptyState({ text }: { text: string }) {
 /* --- 3.5 FLASHCARDS SCREEN: spaced repetition (Leitner boxes) --- */
 export function FlashcardsScreen({ savedWords, onReview, lang = "kk", mode, setMode }: {
   savedWords: SavedWord[];
-  onReview: (word: string, known: boolean) => void;
+  onReview: (word: string, known: boolean, direction: CardDirection) => void;
   lang?: string;
   mode?: string;
   setMode?: (m: string) => void;
@@ -58,6 +59,7 @@ export function FlashcardsScreen({ savedWords, onReview, lang = "kk", mode, setM
   const [flipped, setFlipped] = useState(false);
   const [openedAt] = useState(() => Date.now());
   const kk = lang === "kk";
+  const example = useMemo(() => (queue[0] ? exampleFor(queue[0]) : null), [queue]);
 
   if (!savedWords || savedWords.length === 0) {
     return (
@@ -105,11 +107,14 @@ export function FlashcardsScreen({ savedWords, onReview, lang = "kk", mode, setM
 
   const currentWord = savedWords.find((w) => w.word === queue[0]) || savedWords[0];
   const box = currentWord.mastery ?? 0;
+  // New and weak words: English first (recognition); from box 2 Kazakh first (recall), I3.
+  const dir = cardDirection(box);
+  const recall = dir === "kk_en";
 
   const handleNext = (known: boolean) => {
     // Free practice doesn't move words between boxes. A word missed in this
     // session drops one box once; getting it right on the second pass doesn't undo that.
-    if (!practice && !missed.has(currentWord.word)) onReview(currentWord.word, known);
+    if (!practice && !missed.has(currentWord.word)) onReview(currentWord.word, known, dir);
     if (!known) setMissed((m) => new Set(m).add(currentWord.word));
     setFlipped(false);
     setQueue((q) => (known || practice ? q.slice(1) : [...q.slice(1), q[0]]));
@@ -129,7 +134,8 @@ export function FlashcardsScreen({ savedWords, onReview, lang = "kk", mode, setM
       <button
         onClick={() => {
           setFlipped(!flipped);
-          safePlayVoice(currentWord.word);
+          // On a recall card the English word is the answer: say it only when it shows.
+          if (!recall || !flipped) safePlayVoice(currentWord.word);
         }}
         aria-pressed={flipped}
         className="flip block w-full h-[280px]"
@@ -137,9 +143,19 @@ export function FlashcardsScreen({ savedWords, onReview, lang = "kk", mode, setM
         <div className={`flip-inner w-full h-full ${flipped ? "is-flipped" : ""}`}>
           <div aria-hidden={flipped} className="flip-face card overflow-hidden flex flex-col items-center justify-center p-6">
             <KilimStrip className="absolute top-0 inset-x-0 h-2 w-full" />
-            <span className="eyebrow">{kk ? "Ағылшынша" : "English"}</span>
-            <span lang="en" className="font-display font-black text-[40px] text-ink mt-2">{currentWord.word}</span>
-            <span className="mt-6 text-sm text-ink-3 flex items-center gap-1.5"><Volume2 size={15} /> {kk ? "Аудару үшін бас" : "Tap to flip"}</span>
+            {recall ? (
+              <>
+                <span className="eyebrow">{kk ? "Ағылшынша қалай?" : "How do you say it in English?"}</span>
+                <span lang="kk" className="font-display font-black text-[32px] text-ink mt-2 text-center break-words max-w-full">{currentWord.translation}</span>
+                <span className="mt-6 text-sm text-ink-3 text-center">{kk ? "Ойыңда айт, сосын аударып тексер" : "Say it to yourself, then flip to check"}</span>
+              </>
+            ) : (
+              <>
+                <span className="eyebrow">{kk ? "Ағылшынша" : "English"}</span>
+                <span lang="en" className="font-display font-black text-[40px] text-ink mt-2 break-words max-w-full">{currentWord.word}</span>
+                <span className="mt-6 text-sm text-ink-3 flex items-center gap-1.5"><Volume2 size={15} /> {kk ? "Аудару үшін бас" : "Tap to flip"}</span>
+              </>
+            )}
             <span role="img" className="absolute bottom-4 flex gap-1.5" aria-label={kk ? `${MAX_MASTERY} қораптың ${box}-сі` : `Box ${box} of ${MAX_MASTERY}`}>
               {Array.from({ length: MAX_MASTERY }, (_, i) => (
                 <span key={i} className={`w-2 h-2 rounded-full ${i < box ? "bg-jade" : "bg-sand-3"}`} />
@@ -147,8 +163,13 @@ export function FlashcardsScreen({ savedWords, onReview, lang = "kk", mode, setM
             </span>
           </div>
           <div aria-hidden={!flipped} className="flip-face flip-back rounded-[24px] bg-sky-deep shadow-[0_6px_0_#075F75] flex flex-col items-center justify-center p-6 text-white">
-            <span className="text-xs font-bold uppercase tracking-[0.08em] text-white">Қазақша</span>
-            <span className="font-display font-black text-[32px] mt-2 text-center">{currentWord.translation}</span>
+            <span className="text-xs font-bold uppercase tracking-[0.08em] text-white">{recall ? (kk ? "Ағылшынша" : "English") : (kk ? "Қазақша" : "Kazakh")}</span>
+            <span lang={recall ? "en" : "kk"} className="font-display font-black text-[32px] mt-2 text-center break-words max-w-full">{recall ? currentWord.word : currentWord.translation}</span>
+            {example && (
+              <span lang="en" className="mt-4 text-[14px] leading-snug text-center italic text-white/90 line-clamp-3">
+                <span className="sr-only">{kk ? "Ертегіден: " : "From the tale: "}</span>{example}
+              </span>
+            )}
           </div>
         </div>
       </button>

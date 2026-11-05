@@ -28,7 +28,7 @@ import type { SavedWord } from "./types";
 import { supabase } from "./lib/supabase";
 import { saveToSupabase } from "./utils/supabase-save";
 import { buildLevelQuiz } from "./utils/levelQuiz";
-import { DAILY_GOAL_XP, QUIZ_PASS_SHARE, REVIEW_KNOWN_XP, SAVE_WORD_XP, XP_PER_LEVEL } from "./research/params";
+import { DAILY_GOAL_XP, QUIZ_LEVEL_UNLOCK_SHARE, REVIEW_KNOWN_XP, SAVE_WORD_XP, XP_PER_LEVEL } from "./research/params";
 import { BataModal, OyuKilim, TurkicWords, loadMaqals } from "./components/Culture";
 import { WordCoach } from "./components/WordCoach";
 import { LegendScreen } from "./components/LegendCards";
@@ -43,7 +43,7 @@ import { setEventsUser, track } from "./utils/events";
 import { setSyncUser } from "./utils/learnerSync";
 import {
   loadProgress, saveProgress, progressKey, loadLocalReviews, saveReview,
-  nextReview, lapse, localDay, daysBetween, isDue, MAX_MASTERY, type ProgressStep
+  nextReview, lapse, localDay, daysBetween, isDue, MAX_MASTERY, type ProgressStep, type CardDirection
 } from "./utils/progress";
 
 export default function KazakhTalesApp({ session, role, onRoleChange }: { session: Session; role: Role; onRoleChange: (r: Role) => Promise<boolean> }) {
@@ -303,7 +303,7 @@ export default function KazakhTalesApp({ session, role, onRoleChange }: { sessio
   };
 
   // Leitner review: "knew it" moves the word up a box, "not yet" one box back.
-  const handleReview = (word: string, known: boolean) => {
+  const handleReview = (word: string, known: boolean, direction: CardDirection = "en_kk") => {
     const current = savedWords.find((w) => w.word === word);
     if (!current) return;
     const up = Math.min((current.mastery ?? 0) + 1, MAX_MASTERY);
@@ -315,7 +315,7 @@ export default function KazakhTalesApp({ session, role, onRoleChange }: { sessio
     track("srs_review", {
       object_type: "word", object_id: word,
       result: {
-        correct: known, box_before: current.mastery ?? 0, box_after: mastery,
+        correct: known, box_before: current.mastery ?? 0, box_after: mastery, direction,
         days_overdue: Number.isFinite(due) ? Math.round((Date.now() - due) / 86_400_000 * 10) / 10 : null,
       },
     });
@@ -339,7 +339,7 @@ export default function KazakhTalesApp({ session, role, onRoleChange }: { sessio
     const step = quizLevel ?? "quiz";
     // The score goes to the teacher's report; it waits on the device while offline.
     saveQuizResult(userId, storyId, step, correctCount, total, firstTry);
-    if (correctCount >= Math.ceil(total * QUIZ_PASS_SHARE)) {
+    if (correctCount >= Math.ceil(total * QUIZ_LEVEL_UNLOCK_SHARE)) {
       // First time a whole tale is finished: the elder's blessing and its ornament.
       if (step === "quiz" && !progress.has(progressKey(storyId, "quiz"))) setBataStory(storyId);
       markStep(storyId, step);
@@ -712,7 +712,7 @@ export default function KazakhTalesApp({ session, role, onRoleChange }: { sessio
                   key={id}
                   onClick={() => { if (id === "quiz") { setQuizLevel(null); setQuizStarted(false); } setTab(id); }}
                   aria-current={active ? "page" : undefined}
-                  className={`flex flex-col items-center justify-center gap-0.5 min-h-[50px] ${active ? "text-sky-deep" : "text-ink-2"}`}
+                  className={`flex flex-col items-center justify-center gap-0.5 min-h-[50px] ${active ? "text-sky-ink" : "text-ink-2"}`}
                 >
                   {/* The active tab is in colour on a soft pill; the rest stay grey, so the state reads at a glance. */}
                   <span className={`relative px-2 py-0.5 rounded-full transition-colors ${active ? "bg-sky-soft" : ""}`}>

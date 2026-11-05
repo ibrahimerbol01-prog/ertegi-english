@@ -1,5 +1,5 @@
 import { supabase } from "../lib/supabase";
-import { LAPSE_BOX_DROP, LAPSE_RETRY_DAYS, REVIEW_INTERVAL_DAYS } from "../research/params";
+import { LAPSE_BOX_DROP, LAPSE_RETRY_DAYS, REVIEW_INTERVAL_DAYS, SRS_PRODUCE_FROM_BOX } from "../research/params";
 
 /* Path progress and word review schedule.
    Supabase is the source of truth once the 20261022 migration is applied;
@@ -73,6 +73,13 @@ export function lapse(mastery: number, from = new Date()): { mastery: number; ne
 }
 
 // The learner's own calendar day (Kazakhstan is UTC+5, so UTC would roll over at 5 am).
+/** Which side of a flashcard asks: "en_kk" shows the English word (recognition),
+ *  "kk_en" shows the Kazakh meaning and asks for the English word (recall).
+ *  docs/research-evidence.md §3.4, I3. */
+export type CardDirection = "en_kk" | "kk_en";
+export const cardDirection = (mastery: number | undefined): CardDirection =>
+  (mastery ?? 0) >= SRS_PRODUCE_FROM_BOX ? "kk_en" : "en_kk";
+
 export function localDay(d = new Date()): string {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 }
