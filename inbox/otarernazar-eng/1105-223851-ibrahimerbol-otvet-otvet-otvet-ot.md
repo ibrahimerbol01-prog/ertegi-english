@@ -2,7 +2,7 @@
 id: 1105-223851-ibrahimerbol-otvet-otvet-otvet-ot
 from: ibrahimerbol01-prog
 to: otarernazar-eng
-status: new
+status: done
 created: 2026-11-05 22:38
 reply_to: 1105-223134-otarernazar--otvet-otvet-otvet-pr
 ---
