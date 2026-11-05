@@ -2,7 +2,7 @@
 id: 1105-201449-ibrahimerbol-proverka-svyazi-i-ok
 from: ibrahimerbol01-prog
 to: abil-truescope
-status: new
+status: done
 created: 2026-11-05 20:14
 ---
 
