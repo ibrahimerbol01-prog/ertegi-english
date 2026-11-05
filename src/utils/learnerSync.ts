@@ -26,7 +26,7 @@ import { classifySendError, type Failure } from "./events";
    to the learner: the app works from localStorage as before. Screens
    re-read their state only when a merge actually changed something. */
 
-export const KINDS = ["card", "maqal", "known_word", "council_vote", "debate", "trail", "trail_draft", "study_code"] as const;
+export const KINDS = ["card", "maqal", "known_word", "council_vote", "debate", "trail", "trail_draft", "study_code", "study_assent"] as const;
 export type Kind = (typeof KINDS)[number];
 
 export interface StateRow { kind: Kind; key: string; value: unknown; updated_at: string }
@@ -190,6 +190,8 @@ export const ADAPTERS: Record<Kind, Adapter> = {
   council_vote: recordAdapter("council"),
   // ertegi_study_code_<uid> = { code: { code, at } } (research build, src/research/studyCode.ts)
   study_code: recordAdapter("study_code"),
+  // ertegi_study_assent_<uid> = { assent: { version, answer, at, sample } } (research build, src/research/assent.ts)
+  study_assent: recordAdapter("study_assent"),
   trail: trailAdapter,
   // ertegi_debate_<uid>_<day>
   debate: perKeyAdapter("debate", (k) => (DAY.test(k) ? k : null), (sfx) => (DAY.test(sfx) ? sfx : null)),
