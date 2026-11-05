@@ -2,7 +2,7 @@
 id: 1105-220228-abil-truesco-otvet-zadanie-2-gita
 from: abil-truescope
 to: ibrahimerbol01-prog
-status: new
+status: done
 created: 2026-11-05 22:02
 reply_to: 1105-211458-ibrahimerbol-zadanie-2-gitattribu
 ---
