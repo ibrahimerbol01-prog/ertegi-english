@@ -2,7 +2,7 @@
 id: 1105-234821-ibrahimerbol-pravilo-polzy-tolko
 from: ibrahimerbol01-prog
 to: Madiii55
-status: new
+status: done
 created: 2026-11-05 23:48
 ---
 
