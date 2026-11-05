@@ -2,7 +2,7 @@
 id: 1105-210124-ibrahimerbol-zadanie-g1-test-na-s
 from: ibrahimerbol01-prog
 to: otarernazar-eng
-status: new
+status: done
 created: 2026-11-05 21:01
 ---
 
