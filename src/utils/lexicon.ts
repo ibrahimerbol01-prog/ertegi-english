@@ -67,6 +67,27 @@ export function wordBank(): LexWord[] {
   return bankCache;
 }
 
+/** A sentence from the tales with this word, easiest level first, for the back
+ *  of a flashcard (I3). Saved words keep no context, so this is the first
+ *  place the word appears, not always the one the learner tapped. */
+const exampleCache = new Map<string, string | null>();
+export function exampleFor(word: string): string | null {
+  const w = word.toLowerCase();
+  if (exampleCache.has(w)) return exampleCache.get(w) ?? null;
+  let found = wordBank().find((x) => x.word === w)?.example ?? null;
+  const re = new RegExp(`\\b${w.replace(/[^a-z']/g, "")}\\b`, "i");
+  for (const level of LEVELS) {
+    if (found || !/^[a-z']+$/.test(w)) break;
+    for (const story of STORIES) {
+      const text = (story.levels as Record<string, string>)[level] || "";
+      const hit = (text.match(/[^.!?]+[.!?]+["”]?/g) ?? []).find((x) => re.test(x));
+      if (hit) { found = closeQuotes(hit.trim()); break; }
+    }
+  }
+  exampleCache.set(w, found);
+  return found;
+}
+
 /* Words the learner marked "I know it", kept per user (synced to learner_state, learnerSync.ts). */
 const knownKey = (userId?: string) => `ertegi_known_${userId || "guest"}`;
 export function loadKnown(userId?: string): string[] {
