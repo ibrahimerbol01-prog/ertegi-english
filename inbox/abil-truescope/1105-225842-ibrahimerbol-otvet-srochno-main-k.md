@@ -2,7 +2,7 @@
 id: 1105-225842-ibrahimerbol-otvet-srochno-main-k
 from: ibrahimerbol01-prog
 to: abil-truescope
-status: new
+status: done
 created: 2026-11-05 22:58
 reply_to: 1105-225737-abil-truesco-srochno-main-krasnyy
 ---
