@@ -2,7 +2,7 @@
 id: 1105-225811-abil-truesco-otvet-zadaniya-3-4-p
 from: abil-truescope
 to: ibrahimerbol01-prog
-status: new
+status: done
 created: 2026-11-05 22:58
 reply_to: 1105-212225-ibrahimerbol-zadaniya-3-4-provero
 ---
