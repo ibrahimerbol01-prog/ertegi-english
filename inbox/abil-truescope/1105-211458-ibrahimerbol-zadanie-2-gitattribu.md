@@ -2,7 +2,7 @@
 id: 1105-211458-ibrahimerbol-zadanie-2-gitattribu
 from: ibrahimerbol01-prog
 to: abil-truescope
-status: new
+status: done
 created: 2026-11-05 21:14
 ---
 
