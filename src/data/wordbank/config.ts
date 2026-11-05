@@ -68,4 +68,10 @@ export const WORDBANK_TRANSLATION_FILES: Partial<Record<WordbankLevel, { agreed:
     review: "research/wordbank-translations/a1-review.csv",
     arbitration: "research/wordbank-translations/a1-arbitration.csv",
   },
+  // A2: the same pipeline; the files do not exist yet, so A2.json stays without translations.
+  A2: {
+    agreed: "research/wordbank-translations/a2-agreed.csv",
+    review: "research/wordbank-translations/a2-review.csv",
+    arbitration: "research/wordbank-translations/a2-arbitration.csv",
+  },
 };

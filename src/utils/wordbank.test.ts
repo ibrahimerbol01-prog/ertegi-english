@@ -44,7 +44,8 @@ describe("wordbank data", () => {
     const ids = new Set(WORDBANK_SOURCES.map((s) => s.id));
     for (const l of WORDBANK_LEVELS) {
       const keys = new Set<string>();
-      const translated = !!WORDBANK_TRANSLATION_FILES[l];
+      // A level is translated once any of its translation files exists (A2: not yet).
+      const translated = Object.values(WORDBANK_TRANSLATION_FILES[l] ?? {}).some((p) => existsSync(join(root, p)));
       for (const e of data[l]) {
         expect(Object.keys(e).sort()).toEqual(["example", "kk", "level", "pos", "ru", "source", "word", ...(translated ? ["tr"] : [])].sort());
         expect(e.level).toBe(l);

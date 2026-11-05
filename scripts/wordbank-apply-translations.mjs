@@ -1,4 +1,5 @@
-// node scripts/wordbank-apply-translations.mjs: put the translations of
+// node scripts/wordbank-apply-translations.mjs: put the translations of every level in
+// WORDBANK_TRANSLATION_FILES (src/data/wordbank/config.ts; A1 now, A2 when its files arrive):
 // research/wordbank-translations/ (a1-agreed.csv, a1-review.csv, a1-arbitration.csv
 // if it exists) into src/data/wordbank/A1.json. Run it after a person fills
 // kk_final / ru_final in a1-review.csv, or when a1-arbitration.csv arrives.
@@ -23,6 +24,8 @@ const csvs = Object.fromEntries(WORDBANK_SOURCES.map((s) => [s.file, readFileSyn
 const { levels, files } = buildWordbank(csvs, STORIES, lemmaAs, WORDBANK_SOURCES, translations);
 
 for (const level of Object.keys(WORDBANK_TRANSLATION_FILES)) {
+  // A level whose translation files are not there yet is left exactly as it is.
+  if (!Object.keys(translations[level]).length) { console.log(`${level}: no translation files yet, ${level}.json unchanged`); continue; }
   writeFileSync(at(`src/data/wordbank/${level}.json`), files[level]);
   const n = { agreed: 0, "ai-reviewed": 0, human: 0, "needs-review": 0, none: 0 };
   for (const e of levels[level]) n[e.tr ?? "none"]++;
