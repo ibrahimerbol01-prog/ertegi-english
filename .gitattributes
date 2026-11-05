@@ -1,0 +1,24 @@
+# Text files are stored and checked out with LF on every OS (Windows included), so generated
+# files such as docs/corpus.md match what `npm run corpus` writes (see src/research/corpus.test.ts).
+* text=auto eol=lf
+
+# Binary formats: never touch line endings, no text diff.
+*.png   binary
+*.jpg   binary
+*.jpeg  binary
+*.gif   binary
+*.webp  binary
+*.avif  binary
+*.ico   binary
+*.mp3   binary
+*.mp4   binary
+*.wav   binary
+*.ogg   binary
+*.webm  binary
+*.pdf   binary
+*.zip   binary
+*.gz    binary
+*.woff  binary
+*.woff2 binary
+*.ttf   binary
+*.otf   binary
