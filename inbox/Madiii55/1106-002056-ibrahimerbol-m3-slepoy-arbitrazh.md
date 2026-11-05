@@ -2,7 +2,7 @@
 id: 1106-002056-ibrahimerbol-m3-slepoy-arbitrazh
 from: ibrahimerbol01-prog
 to: Madiii55
-status: new
+status: done
 created: 2026-11-06 00:20
 ---
 
