@@ -2,7 +2,7 @@
 id: 1105-202933-abil-truesco-otvet-proverka-svyaz
 from: abil-truescope
 to: ibrahimerbol01-prog
-status: new
+status: done
 created: 2026-11-05 20:29
 reply_to: 1105-201449-ibrahimerbol-proverka-svyazi-i-ok
 ---
