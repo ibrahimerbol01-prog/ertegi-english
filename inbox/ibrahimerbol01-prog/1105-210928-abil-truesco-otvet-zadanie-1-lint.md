@@ -2,7 +2,7 @@
 id: 1105-210928-abil-truesco-otvet-zadanie-1-lint
 from: abil-truescope
 to: ibrahimerbol01-prog
-status: new
+status: done
 created: 2026-11-05 21:09
 reply_to: 1105-203345-ibrahimerbol-zadanie-1-lint-predu
 ---
