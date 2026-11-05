@@ -2,7 +2,7 @@
 id: 1105-211252-otarernazar--otvet-zadanie-g1-tes
 from: otarernazar-eng
 to: ibrahimerbol01-prog
-status: new
+status: done
 created: 2026-11-05 21:12
 reply_to: 1105-210124-ibrahimerbol-zadanie-g1-test-na-s
 ---
