@@ -149,7 +149,7 @@
 
 ### 3.6. Адаптивная лексика: «5 слов дня» (уровень и уровень выше)
 
-Исследование. Отчёт не приводит источника для правила «три слова уровня ученика и два слова следующего уровня». Обозначение i+1 восходит к гипотезе входного материала Крашена, но в отчёте и заметках эта работа не цитируется. Пороги покрытия словаря для чтения без помощи (около 95–98 % известных слов; Hu & Nation 2000; Laufer) в заметках упомянуты как непроверенные. Из отчёта к функции относится только рекомендация брать два слова уровнем выше из сказок, которые ученик прочитает следующими, и с B1 добавлять словообразовательные семейства по модели Лесо.
+Исследование. Отчёт не приводит источника для правила «три слова уровня ученика и два слова следующего уровня». Обозначение i+1 восходит к гипотезе входного материала Крашена, но в отчёте и заметках эта работа не цитируется. Пороги покрытия словаря для чтения без помощи (около 95–98 % известных слов; Hu & Nation 2000; Laufer 1989) подтверждены по вторичному источнику (Schmitt, Jiang & Grabe 2011); там же показано, что чёткого порога нет (см. раздел 7 и `docs/research-design/literature-review.md`). Из отчёта к функции относится только рекомендация брать два слова уровнем выше из сказок, которые ученик прочитает следующими, и с B1 добавлять словообразовательные семейства по модели Лесо.
 
 Сила доказательств. Проектный вывод.
 
@@ -243,7 +243,7 @@
 
 ### 3.11. Корпус как научный объект: профиль 35 текстов (R6)
 
-Исследование. Лексическое покрытие и понимание текста: Laufer (1989), Hu & Nation (2000); пороги около 95 % и 98 % известных слов (обе работы требуют проверки по первоисточнику). Разнообразие лексики: MATTR, Covington & McFall (2010). Внешняя шкала уровней слов: The CEFR-J Wordlist 1.5 (Tono, TUFS) для A1–B2 и Octanove Vocabulary Profile 1.0 для C1–C2. Дорожная карта, пункт 5: без описанной сложности текстов сравнение «фольклор против нейтральных текстов» (R7) невозможно.
+Исследование. Лексическое покрытие и понимание текста: Laufer (1989), Hu & Nation (2000); пороги около 95 % и 98 % известных слов (выходные данные подтверждены, результаты пока по пересказу Schmitt, Jiang & Grabe 2011; Schmitt и соавт. порога не нашли, репликации Hu & Nation 98 % полностью не подтвердили; см. раздел 7). Разнообразие лексики: MATTR, Covington & McFall (2010). Внешняя шкала уровней слов: The CEFR-J Wordlist 1.5 (Tono, TUFS) для A1–B2 и Octanove Vocabulary Profile 1.0 для C1–C2. Дорожная карта, пункт 5: без описанной сложности текстов сравнение «фольклор против нейтральных текстов» (R7) невозможно.
 
 Сила доказательств. Средняя для порогов покрытия (исследования взрослых и студентов, читающих без помощи); метод MATTR и выбор CEFR-J как шкалы — проектные решения. Это описание текстов, а не проверка эффекта обучения.
 
@@ -269,7 +269,7 @@ R3. Перенос прогресса из `localStorage` на сервер: б�
 R4. Исследовательский режим класса и заморозка функций: условие интерпретируемости этапа 1. Фундамент сделан 05.11.2026: отдельная сборка того же кода с `VITE_RESEARCH_MODE=1` (второй проект Vercel, заморозка 31.12.2026): только 5 сказок исследования, Шоқан выключен, вне базового цикла (чтение с глоссами, озвучка, квиз, повторение слов) всё скрыто, каждое событие с `research`, `study_id` и кодом участника (`src/research/mode.ts`, `docs/research-build.md`, раздел 9.6). Ждут решения руководителя: уровень B1 только, SRS для целевых слов, закрытие 5 сказок на обычном сайте, отдельная база.
 R5. Тест до, после и отсроченный (формы A и B), опрос мотивации к чтению: Raz-Plus (RCT, 662 ученика K–5) показал на навык чтения ES 0,14, на интерес к чтению ES 0,57–0,63. Фундамент сделан 05.11.2026: движок теста `src/research/test/` (форматы узнавание, значение, употребление, понимание; формы A/B с контрбалансировкой по коду участника; моменты pre/post/delayed; без XP, подсказок и таймера; прогресс на устройстве переживает обрыв сети), события `test_answer` и `test_complete` (`docs/events.md`), миграция `20261109000000_study_code.sql`. В репозитории только образец из 7 пунктов (`src/data/researchTest.sample.json`, помечен `sample`); настоящие пункты утверждает руководитель. Не сделаны: аудио в пунктах узнавания, вопросы на понимание сразу после текста, опрос мотивации.
 R6. Корпус как научный объект: лексический профиль CEFR семи сказок на пяти уровнях. Сделано: раздел 3.11, `docs/corpus.md`.
-R7. Рандомизация «фольклор против нейтральных текстов»: теория схем (Steffensen, Joag-Dev & Anderson 1979; Carrell 1983, 1987; требует проверки по первоисточнику).
+R7. Рандомизация «фольклор против нейтральных текстов»: теория схем (Steffensen, Joag-Dev & Anderson 1979; Carrell 1983, 1987; по спискам литературы). Ближайшая работа с мерой лексики: Pulido (2004), полный текст прочитан: малый немедленный эффект знакомости у взрослых. Репликация Klassen (2020) эффекта знакомости на понимание не нашла (вероятно, из-за лексической трудности), поэтому в R7 покрытие условий нужно уравнять. Подробно: `docs/research-design/literature-review.md`.
 R8. Экспорт и панель исследователя, одобрение причин в «Дала кеңесі», доступ учителя к дебатам и «Ой ізі». Сделано для учителя: вкладка «Белсенділік» (30 дней из журнала, трудные слова и вопросы, CSV класса), «Ойлау жұмысы» в карточке ученика, одобрение причин, `council_stats` по классу; миграция `20261107000000_teacher_panel.sql`, разделы 3.1–3.3 и 9.4. Панель и построчный экспорт для исследователя отложены на исследовательский сайт (раздел 9.2).
 I1. Объяснение ошибки и вторая попытка, отказ от порога 60 %, «уверен, но ошибся» в повторение: Wisniewski et al. 2020, Greving & Richter 2018. Сделано частично (ветка `feature/i1-i3-evidence`, раздел 3.5): «Неге?» с предложением из сказки после каждого ответа, уровень за пройденный квиз (`QUIZ_LEVEL_UNLOCK_SHARE` = 0), повтор ошибок сразу после квиза, шкала уверенности на каждом втором вопросе, «уверен, но ошибся» — первым. Не сделано: возврат ошибок в следующих сессиях (нужна миграция `learner_state`, перенесено в I4), словесное объяснение без Шоқана.
 I2. Лестница подсказок Шоқана: Bastani et al. 2025. Сделано: три ступени в системной подсказке, ступень из квиза в запросе (`hint_step`), язык объяснения по уровню текста (`level`), `result.hint_step` в `shoqan_message`; раздел 3.8. Эффект нашей версии не измерен.
@@ -326,11 +326,11 @@ Bastani et al. (2025). Generative AI without guardrails can harm learning. Proce
 
 Butterfield & Metcalfe (2001). Errors committed with high confidence are hypercorrected. Journal of Experimental Psychology: Learning, Memory, and Cognition. Цитируется по названию: эффект гиперкоррекции (ошибка, сделанная с высокой уверенностью, после исправления запоминается лучше). Цифр не приводим; требует проверки по первоисточнику.
 
-Carrell (1983, 1987). Работы по теории схем в чтении на втором языке. Требует проверки по первоисточнику (в дорожной карте приведены по памяти).
+Carrell (1983). Three components of background knowledge in reading comprehension. Language Learning, 33(2), 183–203. https://doi.org/10.1111/j.1467-1770.1983.tb00534.x (метаданные). Carrell (1987). Content and formal schemata in ESL reading. TESOL Quarterly, 21, 461–481 (по списку литературы; DOI 10.2307/3586498 не подтверждён). Тексты не открыты.
 
 Cepeda, Vul, Rohrer, Wixted & Pashler (2008). Оптимальный интервал повторения. Psychological Science. https://pubmed.ncbi.nlm.nih.gov/19076480/
 
-Covington & McFall (2010). Cutting the Gordian knot: The moving-average type–token ratio (MATTR). Journal of Quantitative Linguistics, 17(2). Приведено по памяти; требует проверки по первоисточнику.
+Covington & McFall (2010). Cutting the Gordian knot: The moving-average type–token ratio (MATTR). Journal of Quantitative Linguistics, 17(2), 94–100. https://doi.org/10.1080/09296171003643098. Выходные данные по ссылке в документации quanteda (`textstat_lexdiv`); страница издателя не открыта.
 
 Crouch & Mazur (2001). Peer Instruction: Ten years of experience and results. American Journal of Physics. https://mazur.harvard.edu/publications/peer-instruction-ten-years-experience-and-results; сводка: https://derekbruff.org/2009/10/23/article-crouch-mazur-2001
 
@@ -338,11 +338,15 @@ Dajani (2016). Action research по рутинам Visible Thinking с учит�
 
 Deslauriers, McCarty, Miller, Callaghan & Kestin (2019). Measuring actual learning versus feeling of learning in response to being actively engaged in the classroom. Proceedings of the National Academy of Sciences, 116(39), 19251–19257. https://kellymiller.scholars.harvard.edu/publications/measuring-actual-learning-versus-feeling-learning-response-being-actively-engaged-classroom
 
+Erten & Razı (2009). The effects of cultural familiarity on reading comprehension. Reading in a Foreign Language, 21(1), 60–77. https://doi.org/10.64152/10125/66632 (DOI подтверждён по странице журнала). Полный текст прочитан: d = 0.81–1.61 для понимания, n = 44.
+
 Greving & Richter (2018). Обзор эффекта тестирования (вопросы с выбором и с кратким ответом). Frontiers in Psychology. https://frontiersin.org/articles/10.3389/fpsyg.2018.02412/full
 
-Hu & Nation (2000). Unknown vocabulary density and reading comprehension. Reading in a Foreign Language, 13(1). Порог около 98 % известных слов для чтения без помощи. Название и издание приведены по памяти; требует проверки по первоисточнику.
+Hu & Nation (2000). Unknown vocabulary density and reading comprehension. Reading in a Foreign Language, 13(1), 403–430. https://doi.org/10.64152/10125/66973. Название, том и DOI подтверждены по странице журнала (nflrc.hawaii.edu/rfl/item/43); страницы и результат по пересказу Schmitt, Jiang & Grabe (2011): 66 студентов, условия 80/90/95/100 % покрытия, вывод о 98–99 % для чтения без помощи. Сам текст не открыт. Репликации (Kremmel и соавт. 2023; Webb, Pellicer-Sánchez & Wang 2025, RFL 37(1)) результат полностью не подтвердили.
 
-Laufer (1989). What percentage of text-lexis is essential for comprehension? В сборнике Special Language: From Humans Thinking to Thinking Machines (ред. Lauren & Nordman). Порог около 95 %. Приведено по памяти; требует проверки по первоисточнику.
+Laufer (1989). What percentage of text-lexis is essential for comprehension? В сборнике Special Language: From Humans Thinking to Thinking Machines (ред. Lauren & Nordman), с. 316–323, Multilingual Matters. Выходные данные и результат по списку литературы и пересказу Schmitt, Jiang & Grabe (2011): 95 % покрытия лучше всего разделяли читателей, достигших и не достигших 55 % понимания (точка для группы, а не порог). Сам текст не открыт; название сборника сверить по книге.
+
+Klassen (2020). The effect of cultural familiarity on reading comprehension: An approximate replication of Erten and Razi (2009). Reading Psychology, 41(3), 205–228. https://doi.org/10.1080/02702711.2020.1768976. По аннотации: эффекта знакомости не найдено, вероятная причина в лексической трудности текста.
 
 Kafes (2026). Shadowing и разборчивость речи студентов EFL. Akdeniz University. https://avesis.akdeniz.edu.tr/yayin/f69e052f-da8a-4c65-aa49-33ccc763d6ed/the-effects-of-shadowing-on-eflstudents-intelligibility-comprehensibility-fluency-and-accentedness-across-speaking-tasks
 
@@ -354,15 +358,19 @@ Ngo, Chen & Lai (2024). Effectiveness of automatic speech recognition in ESL/EFL
 
 Phelps (2012); Rowland (2014). Метаанализы эффекта тестирования. Приведены по обзору Greving & Richter (2018); требует проверки по первоисточнику.
 
+Pulido (2004). The effect of cultural familiarity on incidental vocabulary acquisition through reading. The Reading Matrix, 4(2), 20–52. https://www.readingmatrix.com/articles/pulido/article.pdf. Полный текст прочитан: 23 взрослых (испанский как L2), псевдослова, VKS 1–5, немедленный тест; знакомые версии 2.08 против 1.92, F(1, 20) = 13.76, p < .01.
+
 Sailer & Homner (2020). Метаанализ геймификации в обучении. Educational Psychology Review. https://opus.bibliothek.uni-augsburg.de/opus4/frontdoor/index/index/docId/109056
 
 Settles & Meeder (2016). Half-life regression (HLR). Proceedings of ACL 2016 (P16-1174). https://preview.aclanthology.org/fix_video/P16-1174.pdf
 
 Silverman & Barasch (Journal of Consumer Research); Silverman, Barasch & Small (Organizational Behavior and Human Decision Processes). Мотивация сериями. Приведены по пересказу Phys.org (2024), https://phys.org/news/2024-03-streaks.pdf; требует проверки по первоисточнику.
 
+Schmitt, Jiang & Grabe (2011). The percentage of words known in a text and reading comprehension. The Modern Language Journal, 95(1), 26–43. https://doi.org/10.1111/j.1540-4781.2011.01146.x. Полный текст прочитан: 661 участник, связь покрытия и понимания примерно линейная, порога нет.
+
 Snow, Lawrence & White (2009). Квазиэксперимент Word Generation в Boston Public Schools. Издание в заметках не указано; приведено по странице SERP; требует проверки по первоисточнику.
 
-Steffensen, Joag-Dev & Anderson (1979). Культурная перспектива в понимании текста (теория схем). Требует проверки по первоисточнику (в дорожной карте приведено по памяти).
+Steffensen, Joag-Dev & Anderson (1979). A cross-cultural perspective on reading comprehension. Reading Research Quarterly, 15, 10–29 (по списку литературы Erten & Razı 2009). Ранняя версия: Technical Report No. 97 (1978), Center for the Study of Reading, UIUC, https://hdl.handle.net/2142/17998 (метаданные). Текст не открыт.
 
 Tono (составитель). The CEFR-J Wordlist Version 1.5. Tokyo University of Foreign Studies. http://www.cefr-j.org/download.html; копия: https://github.com/openlanguageprofiles/olp-en-cefrj. Свободно для исследований и коммерции при цитировании. Вместе с Octanove Vocabulary Profile C1/C2 1.0 (Octanove Labs, CC BY-SA 4.0) используется в R6 (`research/cefr/`).
 
@@ -488,8 +496,8 @@ Wikipedia. Beelinguapp. https://en.wikipedia.org/wiki/Beelinguapp
 | `SPEAK_XP_MIN_SCORE` | 50 из 100 | проектное решение | design | `src/components/screens/SpeakScreen.tsx` |
 | `SPEAK_XP_BASE` | 5 XP | проектное решение | design | `src/components/screens/SpeakScreen.tsx` |
 | `SPEAK_XP_RANGE` | 15 XP (итого 13–20 XP) | проектное решение | design | `src/components/screens/SpeakScreen.tsx` |
-| `CORPUS_COVERAGE_ADEQUATE` | 0,95 | Laufer 1989; Hu & Nation 2000, сверить (3.11) | medium | `src/research/corpus.ts` (анализ, не ученику) |
-| `CORPUS_COVERAGE_OPTIMAL` | 0,98 | Hu & Nation 2000, сверить (3.11) | medium | `src/research/corpus.ts` |
+| `CORPUS_COVERAGE_ADEQUATE` | 0,95 | Laufer 1989; Hu & Nation 2000, по вторичному источнику, см. разд. 7 (3.11) | medium | `src/research/corpus.ts` (анализ, не ученику) |
+| `CORPUS_COVERAGE_OPTIMAL` | 0,98 | Hu & Nation 2000, по вторичному источнику, см. разд. 7 (3.11) | medium | `src/research/corpus.ts` |
 | `CORPUS_MATTR_WINDOW` | 50 слов | проектное решение; метод Covington & McFall 2010 (3.11) | design | `src/research/corpus.ts` |
 | `CORPUS_TARGETS_PER_LEVEL` | 4 / 6 / 8 / 10 / 12 слов для A1–C1 | проектное решение, спецификация ertegi-story-method (3.11) | design | `src/research/corpus.ts` |
 | `CORPUS_TARGET_MIN_REPEATS` | 3 раза на A1–A2, 2 с B1 | проектное решение, спецификация ertegi-story-method (3.11) | design | `src/research/corpus.ts` |
