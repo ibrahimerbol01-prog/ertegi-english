@@ -35,12 +35,13 @@ describe("teacher grid cells", () => {
     expect(cellFor(member(), task(), now).status).toBe("open");
     expect(cellFor(member(), task(), new Date("2026-11-06T00:00:00Z")).status).toBe("overdue");
   });
-  it("done only with a passed quiz (60%)", () => {
+  it("done once the quiz is finished; the score stays visible (I1)", () => {
     const steps = [{ story_id: "aldar_kose", step: "A1", completed_at: "2026-11-04T10:00:00Z" }];
     const quiz = (best: number) => [{ story_id: "aldar_kose", step: "A1", best, total: 4, attempts: 1, last_at: "2026-11-04T10:00:00Z" }];
     expect(cellFor(member({ steps, quizzes: quiz(0.75) } as Partial<Member>), task(), now)).toMatchObject({ status: "done", score: 75 });
     expect(cellFor(member({ steps, quizzes: quiz(0.6) } as Partial<Member>), task(), now).status).toBe("done");
-    expect(cellFor(member({ steps, quizzes: quiz(0.5) } as Partial<Member>), task(), now).status).toBe("open");
+    expect(cellFor(member({ steps, quizzes: quiz(0.25) } as Partial<Member>), task(), now)).toMatchObject({ status: "done", score: 25 });
+    expect(cellFor(member({ quizzes: quiz(0.25) } as Partial<Member>), task(), now).status).toBe("open");
   });
   it("late when finished after the date", () => {
     const steps = [{ story_id: "aldar_kose", step: "A1", completed_at: "2026-11-07T10:00:00Z" }];
