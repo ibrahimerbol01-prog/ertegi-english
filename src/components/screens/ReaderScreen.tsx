@@ -5,7 +5,9 @@ import { displayTitle, foldAccents } from "../../utils/text";
 import { Shanyraq } from "../Ornaments";
 import { safePlayVoice, stopVoice } from "../../utils/voice";
 import { narrate, alignWords, bestBrowserVoice, primeAudio } from "../../utils/narration";
-import { BG_VIDEO_ASSETS, STORIES, LEVEL_DETAILS, WORD_TRANSLATIONS } from "../../constants";
+import { BG_VIDEO_ASSETS, LEVEL_DETAILS, WORD_TRANSLATIONS } from "../../constants";
+import { RESEARCH_MODE } from "../../research/mode";
+import { APP_STORIES as STORIES } from "../../research/stories";
 import { MAX_MASTERY } from "../../utils/progress";
 import { StoryHistory } from "../Culture";
 import { TrailButton } from "../ThinkingTrail";
@@ -157,7 +159,7 @@ export function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, s
           title={t.selectLevelTitle}
         />
         <p className="text-[15px] text-ink-2 -mt-2 mb-5">{t.selectLevelSub}</p>
-        <div className="mb-5"><StoryHistory storyId={currentStory.id} lang={lang} /></div>
+        {!RESEARCH_MODE && <div className="mb-5"><StoryHistory storyId={currentStory.id} lang={lang} /></div>}
 
         <div className="space-y-3">
           {LEVEL_DETAILS.map((lvl) => {
@@ -364,8 +366,8 @@ export function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, s
   const cleanTok = (tok: string) => foldAccents(tok).replace(/[^a-zA-Z]/g, "").toLowerCase();
   const savedInText = new Set(tokens.map(cleanTok).filter((w: string) => savedMastery.has(w))).size;
   const { week } = currentWeek();
-  const activeWeekWord = activeWord ? weekWordOf(week, activeWord) : null;
-  const weekInText = tokens.some((tok: string) => !savedMastery.has(cleanTok(tok)) && !!weekWordOf(week, tok));
+  const activeWeekWord = !RESEARCH_MODE && activeWord ? weekWordOf(week, activeWord) : null;
+  const weekInText = !RESEARCH_MODE && tokens.some((tok: string) => !savedMastery.has(cleanTok(tok)) && !!weekWordOf(week, tok));
 
   return (
     <div className="space-y-4 animate-pop-in relative">
@@ -402,7 +404,8 @@ export function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, s
         )}
       </div>
 
-      <StoryHistory storyId={currentStory.id} lang={lang} />
+      {/* R4: the research build shows the text only: no history notes, plot choice, trail or week words, which a control text could not have. */}
+      {!RESEARCH_MODE && <StoryHistory storyId={currentStory.id} lang={lang} />}
 
       {/* Read-along player (Apple Music mini player) */}
       <div className="card p-3.5 space-y-3">
@@ -467,7 +470,7 @@ export function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, s
             const isCurrentlyRead = i === readAlongTokenIndex;
             const isActive = activeWord === tok;
             const mastery = savedMastery.get(cleanTok(tok));
-            const savedCls = mastery === undefined && weekWordOf(week, tok)
+            const savedCls = !RESEARCH_MODE && mastery === undefined && weekWordOf(week, tok)
               ? "font-bold text-sky-deep hover:bg-sky-soft decoration-sky decoration-dashed decoration-2 underline underline-offset-[6px]"
               : mastery === undefined
               ? "hover:bg-sky-soft decoration-ink-3/40 decoration-dotted underline underline-offset-[6px]"
@@ -512,11 +515,11 @@ export function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, s
         >
           {t.takeQuiz} <ChevronRight size={18} strokeWidth={3} />
         </button>
-        <button onClick={() => setShowChoiceModal(true)} className="btn btn-ghost flex-1">
+        {!RESEARCH_MODE && <button onClick={() => setShowChoiceModal(true)} className="btn btn-ghost flex-1">
           <Compass size={18} strokeWidth={2.6} /> {t.interactiveChoiceTitle}
-        </button>
+        </button>}
       </div>
-      <TrailButton storyId={currentStory.id} level={selectedLevel} text={text} lang={lang} userId={userId} onReward={onReward} />
+      {!RESEARCH_MODE && <TrailButton storyId={currentStory.id} level={selectedLevel} text={text} lang={lang} userId={userId} onReward={onReward} />}
 
       {/* Word sheet */}
       <Sheet open={!!activeWord} onClose={() => setActiveWord(null)} label={tr("Сөз", "Word")}>

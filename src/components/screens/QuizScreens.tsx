@@ -3,7 +3,9 @@ import { ArrowRight, Volume2, RotateCcw, Trophy, Check, X, Lock, MessageCircle }
 import { ScreenHeader } from "../UIHelpers";
 import { displayTitle } from "../../utils/text";
 import { safePlayVoice, stopVoice } from "../../utils/voice";
-import { STORIES, LEVEL_DETAILS } from "../../constants";
+import { LEVEL_DETAILS } from "../../constants";
+import { RESEARCH_MODE } from "../../research/mode";
+import { APP_STORIES as STORIES } from "../../research/stories";
 import { StoryCover } from "../StoryCover";
 import { buildLevelQuiz } from "../../utils/levelQuiz";
 import { findEvidence } from "../../utils/evidence";
@@ -449,9 +451,11 @@ export function QuizScreen({ onReward, t, onQuizFinish, questions, storyTitle, o
           <button onClick={handleCheck} disabled={selected === null || needConf} className="btn w-full mt-7">
             {t.checkAnswer}
           </button>
+{!RESEARCH_MODE && (
           <button onClick={askShoqan} className="btn btn-ghost btn-sm w-full mt-2">
             <MessageCircle size={15} /> {asks ? tr("Шоқаннан тағы көмек сұра", "Ask Shoqan for more help") : tr("Шоқаннан көмек сұра", "Ask Shoqan for help")}
           </button>
+          )}
         </>
       ) : (
         <div className={`mt-7 rounded-[24px] p-5 animate-pop-in ${status === "correct" ? "bg-jade-soft" : "bg-felt-soft"}`} aria-live="polite">
@@ -486,7 +490,7 @@ export function QuizScreen({ onReward, t, onQuizFinish, questions, storyTitle, o
           ) : status === "revealed" && (
             <p className="mt-3 text-[14px] text-ink-2">{tr("Ертегіде бұл жер табылмады. Шоқаннан неге екенін сұрап көр.", "We couldn't find this place in the tale. Ask Shoqan why.")}</p>
           )}
-          {status === "revealed" && (
+          {!RESEARCH_MODE && status === "revealed" && (
             <button onClick={askShoqan} className="mt-3 h-8 px-3 rounded-full bg-card text-felt-deep text-sm font-bold inline-flex items-center gap-1.5">
               <MessageCircle size={15} /> {tr("Неге? Шоқаннан сұра", "Why? Ask Shoqan")}
             </button>

@@ -28,7 +28,7 @@
 | `object_type`, `object_id` | с чем: слово, вопрос, сказка, фраза | `quiz_question`, `3` |
 | `story_id`, `level` | сказка и уровень (`A1`…`C1`, `quiz` для сказки целиком) | `aldar_kose`, `A2` |
 | `result` | маленький JSON (меньше 2000 байт): верно, попытка, время, счёт, длины | `{"correct":false,"attempt":1,"duration_ms":5400}` |
-| `context` | `app_version` (версия из `package.json` и коммит Vercel), `content_version` (`src/data/contentVersion.ts`), `lang` (`kk`/`en`), `class_id` | `{"app_version":"0.0.0+94f5543","content_version":"2026-11-04","lang":"kk"}` |
+| `context` | `app_version` (версия из `package.json` и коммит Vercel), `content_version` (`src/data/contentVersion.ts`), `lang` (`kk`/`en`), `class_id`; в исследовательской сборке ещё `research: true`, `study_id` (переменная `VITE_STUDY_ID`) и `study_code` (код участника, когда он введён; `docs/research-build.md`) | `{"app_version":"0.0.0+94f5543","content_version":"2026-11-04","lang":"kk"}` |
 | `occurred_at` | когда случилось на устройстве | |
 
 `content_version` меняется вместе с текстами сказок, вопросами квизов и вопросами «Дала кеңесі»: тест `src/data/contentVersion.test.ts` сверяет хеш контента и падает, пока дату и хеш не обновили. Так анализ знает, какой именно текст читал ученик.
@@ -56,6 +56,8 @@
 | `shoqan_open` | открыт чат Шоқана | `result.from` (`bubble` — кнопка, `prompt` — с готовым вопросом из квиза (до ответа — просьба о подсказке, после раскрытия — «неге?») или подсказки дня, `event`) | `src/components/ShoqanChat.tsx` | когда ученик зовёт помощника: до или после своей попытки (§3.8, Bastani et al. 2025; I2) |
 | `shoqan_message` | сообщение Шоқану отправлено | `result.chars`, `words`, `turn`, `prepared` (готовый вопрос отправлен без изменений), `hint_step` (ступень лестницы подсказок из квиза, 1–3; 0 — не из квиза); текст не пишется | `ShoqanChat.tsx` | нагрузка на помощника и лестница подсказок (§3.8, I2) |
 | `pronunciation_attempt` | оценка произношения получена или фраза не распознана | `phrase`/`<level>:<номер>`, `level`; `result.score`, `accuracy`, `fluency`, `completeness`, `words`, `weak_words` или `misread` | `src/components/screens/SpeakScreen.tsx` | рост произношения за 5–8 недель (I5, Ngo, Chen & Lai 2024) |
+| `test_answer` | ответ на пункт теста R5 (только исследовательская сборка), каждый пункт один раз | `test_item`/id пункта, `story_id` (сказка целевого слова или текста); `result.format` (`recognition`/`meaning`/`use`/`comprehension`), `form` (`A`/`B`), `timepoint` (`pre`/`post`/`delayed`), `set_version`, `sample`, `word`, `pseudo`, `position`, `choice` (вариант или `dont_know`), `correct` (0/1), `duration_ms` | `src/research/test/TestScreen.tsx` | основная мера H1: знание значения на отсроченном тесте (`docs/research-design/study-design.md`, 1.2 и 5.4); надёжность и равенство форм на этапе 0 (4.2) |
+| `test_complete` | тестовая сессия закончена (все пункты отвечены) | `test`/`<set_version>\|<timepoint>`; `result.form`, `timepoint`, `set_version`, `sample`, `answered`, `total`, `meaning`/`meaning_n`, `use`/`use_n`, `comprehension`/`comprehension_n`, `rec_hits`/`rec_real`, `rec_false_alarms`/`rec_pseudo`, `rec_flag` (ложных тревог > 30 %), `duration_ms` | `TestScreen.tsx` | время теста и доля прошедших сессии (критерии этапа 0, 4.2); отметка учеников с ложными тревогами (5.4) |
 
 ## Для учителя
 

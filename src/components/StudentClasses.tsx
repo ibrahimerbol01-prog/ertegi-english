@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { STORIES } from "../constants";
+import { APP_STORIES as STORIES } from "../research/stories";
 import { BookOpen, Check, ChevronRight, ClipboardList, Clock, LogOut, Trophy, Users } from "lucide-react";
 import {
   cleanCode, codeHasBadLetters, errorText, joinClass, leaveClass,
