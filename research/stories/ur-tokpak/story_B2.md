@@ -1,0 +1,11 @@
+TITLE: Hit, Club!
+LEVEL: B2
+TARGETS: goose, pot, donkey, club, children, magic, trap, words, trick
+---
+[1] There once lived an old man and his wife who were so poor that the only food they had was whatever their traps caught. One day the old man found a goose struggling in a trap.
+[2] He felt sorry for the bird and freed it from the trap. To his surprise, the goose spoke: if he came back after a year had passed, he could ask for anything he wished. His wife scolded him, but when the year was over, the old man kept his side of the bargain and went.
+[3] Along the way he came upon a huge herd of camels. Their herdsman explained that they belonged to a wealthy man named Kazbai. The old man realised that this must be the goose he had saved. A shepherd boy told him more. Kazbai owned three magic things, and each of them obeyed special words. There was a pot that would cook any dish, a donkey that would produce gold and a club that would beat whoever it was told to. Kazbai gave the old man the pot. On his way home he passed some children playing knucklebones, and they invited him in for a meal. He warned them not to say the pot's words while he was inside. They said them anyway, ate their fill and replaced the magic pot with an ordinary one. When the old man complained to Kazbai, he was given the donkey, and exactly the same trick was played on him again.
+[4] Twice he had been fooled, and twice he had gone back empty-handed. Perhaps, he thought, the gifts were simply not meant for a poor man like him. Would it be wiser to accept his bad luck, or to return to Kazbai one last time?
+[5] He chose to return, and Kazbai handed him the club. The children, who had not been punished for anything so far, tried the same trick. As soon as the old man stepped inside, they called out, "Hit, club!" and the club leapt into the air and began to beat them.
+[6] Before long they were begging him to call it off and promising to give back everything they had taken. The old man agreed and told the club to stop, and the children brought back the real pot and the real donkey. Then he set off home with all three gifts.
+[7] Kindness is often repaid in unexpected ways, and a trick that works twice may not work a third time.
