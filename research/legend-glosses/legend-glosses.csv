@@ -1,0 +1,184 @@
+word,pos,kk,ru,source,cards
+abilmansur,proper noun,Әбілмансұр,Абильмансур,"перевод Claude, поштучно со словарём не сверен; имя Абылая при рождении; написание проверить по источнику",abylai
+abulkhair,proper noun,Әбілқайыр,Абулхаир,"перевод Claude, поштучно со словарём не сверен",khanate
+abylai,proper noun,Абылай,Абылай,"перевод Claude, поштучно со словарём не сверен; написание как в legends.ts (kk: «Абылай хан»)",abylai
+agree,verb,келісу,соглашаться,"перевод Claude, поштучно со словарём не сверен",khanate
+agreed,verb,келісті,согласился,"перевод Claude, поштучно со словарём не сверен; форма agree",tomiris
+almaty,proper noun,Алматы,Алматы,"перевод Claude, поштучно со словарём не сверен; написание как в legends.ts",abylai qozy
+anniversary,noun,мерейтой,годовщина,"перевод Claude, поштучно со словарём не сверен",khanate
+army,noun,әскер,армия,"перевод Claude, поштучно со словарём не сверен",tomiris
+ata,noun,ата,отец; предок (в имени Қорқыт Ата),"перевод Claude, поштучно со словарём не сверен; часть имени",qorqyt
+avenue,noun,даңғыл,проспект,"перевод Claude, поштучно со словарём не сверен",abylai
+ayagoz,proper noun,Аягөз,Аягоз,"перевод Claude, поштучно со словарём не сверен; написание как в legends.ts",qozy
+bayan,proper noun,Баян,Баян,"перевод Claude, поштучно со словарём не сверен; написание как в legends.ts",qozy
+bayans,proper noun,Баянның,Баян (род. п.),"перевод Claude, поштучно со словарём не сверен; форма Bayan's",qozy
+bazaar,noun,базар,базар,"перевод Claude, поштучно со словарём не сверен",aldar
+bc,abbreviation,б.з.д.,до н. э.,"перевод Claude, поштучно со словарём не сверен; токен из «BC»",tomiris
+beginning,noun,басы,начало,"перевод Claude, поштучно со словарём не сверен",khanate
+brothers,noun,ағалы-інілер,братья,"перевод Claude, поштучно со словарём не сверен; форма brother",qyzzhibek tostik
+captured,verb,тұтқынға алды,взял в плен,"перевод Claude, поштучно со словарём не сверен; форма capture",tomiris
+caspian,proper noun,Каспий,Каспийский,"перевод Claude, поштучно со словарём не сверен",qozy
+catch,verb,ұстау,ловить; поймать,"перевод Claude, поштучно со словарём не сверен",alpamys qobylandy
+centuries,noun,ғасырлар,века,"перевод Claude, поштучно со словарём не сверен; форма century",qobylandy
+cities,noun,қалалар,города,"перевод Claude, поштучно со словарём не сверен; форма city",khanate
+city,noun,қала,город,"перевод Claude, поштучно со словарём не сверен",qorqyt tomiris zhirenshe
+closest,adjective,ең жақын,ближайший,"перевод Claude, поштучно со словарём не сверен; форма close",tostik
+corner,noun,бұрыш,угол,"перевод Claude, поштучно со словарём не сверен",qorqyt
+cyrus,proper noun,Кир,Кир,"перевод Claude, поштучно со словарём не сверен; персидский царь Кир II",tomiris
+dangerous,adjective,қауіпті,опасный,"перевод Claude, поштучно со словарём не сверен",shoqan
+darya,proper noun,(Сыр)дария,(Сыр)дарья,"перевод Claude, поштучно со словарём не сверен; часть названия Syr Darya",qorqyt
+dated,verb,(-ға) жатады (уақыты),датируется,"перевод Claude, поштучно со словарём не сверен; форма date",khanate
+death,noun,өлім,смерть,"перевод Claude, поштучно со словарём не сверен",qorqyt
+die,verb,өлу; қайтыс болу,умирать,"перевод Claude, поштучно со словарём не сверен",qorqyt
+died,verb,қайтыс болды,умер,"перевод Claude, поштучно со словарём не сверен; форма die",qorqyt qozy qyzzhibek shoqan
+digging,verb,қазу,копание,"перевод Claude, поштучно со словарём не сверен; форма dig",qorqyt
+divided,verb,бөлінді,разделил(ся),"перевод Claude, поштучно со словарём не сверен; форма divide",abylai
+dostoevsky,proper noun,Достоевский,Достоевский,"перевод Claude, поштучно со словарём не сверен",shoqan
+dreamed,verb,армандады; түс көрді,мечтал; видел во сне,"перевод Claude, поштучно со словарём не сверен; форма dream",qorqyt
+dressed,verb,киінді,оделся,"перевод Claude, поштучно со словарём не сверен; форма dress",shoqan
+drink,verb,ішу,пить,"перевод Claude, поштучно со словарём не сверен",alpamys
+dzungar,proper noun,жоңғар,джунгарский,"перевод Claude, поштучно со словарём не сверен",abylai
+dzungars,proper noun,жоңғарлар,джунгары,"перевод Claude, поштучно со словарём не сверен",abylai
+eighteenth,number,он сегізінші,восемнадцатый,"перевод Claude, поштучно со словарём не сверен",abylai
+empire,noun,империя,империя,"перевод Claude, поштучно со словарём не сверен",khanate
+ending,noun,соңы,концовка,"перевод Claude, поштучно со словарём не сверен",qyzzhibek
+enemies,noun,жаулар,враги,"перевод Claude, поштучно со словарём не сверен; форма enemy",alpamys qobylandy qyzzhibek
+epic,noun,жыр; эпос,эпос,"перевод Claude, поштучно со словарём не сверен; в казахской традиции — жыр",alpamys qobylandy qyzzhibek shoqan
+escaped,verb,қашып құтылды,сбежал,"перевод Claude, поштучно со словарём не сверен; форма escape",alpamys
+everywhere,adverb,барлық жерде,везде,"перевод Claude, поштучно со словарём не сверен",qorqyt
+farmer,noun,егінші; шаруа,фермер; земледелец,"перевод Claude, поштучно со словарём не сверен",qobylandy
+farmers,noun,егіншілер,земледельцы,"перевод Claude, поштучно со словарём не сверен; форма farmer",tomiris
+fathers,noun,әкелер,отцы,"перевод Claude, поштучно со словарём не сверен; форма father",qozy
+fighter,noun,күрескер,боец,"перевод Claude, поштучно со словарём не сверен",abylai
+film,noun,фильм,фильм,"перевод Claude, поштучно со словарём не сверен",qyzzhibek
+foal,noun,құлын,жеребёнок,"перевод Claude, поштучно со словарём не сверен",qobylandy
+forest,noun,орман,лес,"перевод Claude, поштучно со словарём не сверен",alpamys
+freezing,adjective,қақаған суық,морозный,"перевод Claude, поштучно со словарём не сверен",aldar
+frozen,adjective,қатқан,замёрзший,"перевод Claude, поштучно со словарём не сверен",tostik
+fur,noun,тері (аң терісі),мех,"перевод Claude, поштучно со словарём не сверен",aldar
+fyodor,proper noun,Фёдор,Фёдор,"перевод Claude, поштучно со словарём не сверен",shoqan
+golden,adjective,алтын,золотой,"перевод Claude, поштучно со словарём не сверен",tostik
+grandfather,noun,ата,дедушка,"перевод Claude, поштучно со словарём не сверен",abylai
+grandfathers,noun,аталар,деды,"перевод Claude, поштучно со словарём не сверен; форма grandfather",abylai
+grave,noun,көр; бейіт,могила,"перевод Claude, поштучно со словарём не сверен",qorqyt
+greek,adjective,грек,греческий,"перевод Claude, поштучно со словарём не сверен",tomiris
+heartbroken,adjective,жүрегі жараланған,убитый горем,"перевод Claude, поштучно со словарём не сверен",qyzzhibek
+herodotus,proper noun,Геродот,Геродот,"перевод Claude, поштучно со словарём не сверен",tomiris
+heroic,adjective,батырлық,героический,"перевод Claude, поштучно со словарём не сверен; «батырлық жыр» в legends.ts",qobylandy
+historian,noun,тарихшы,историк,"перевод Claude, поштучно со словарём не сверен",tomiris
+history,noun,тарих,история,"перевод Claude, поштучно со словарём не сверен",shoqan
+hole,noun,тесік,дыра,"перевод Claude, поштучно со словарём не сверен",aldar
+homes,noun,үйлер,дома,"перевод Claude, поштучно со словарём не сверен; форма home",abylai
+joined,verb,қосылды,присоединился,"перевод Claude, поштучно со словарём не сверен; форма join",khanate
+karabai,proper noun,Қарабай,Карабай,"перевод Claude, поштучно со словарём не сверен",qozy
+karashash,proper noun,Қарашаш,Карашаш,"перевод Claude, поштучно со словарём не сверен",zhirenshe
+kashgar,proper noun,Қашқар,Кашгар,"перевод Claude, поштучно со словарём не сверен",shoqan
+kazakhstan,proper noun,Қазақстан,Казахстан,"перевод Claude, поштучно со словарём не сверен",khanate
+kerey,proper noun,Керей,Керей,"перевод Claude, поштучно со словарём не сверен; написание как в legends.ts",khanate
+khanate,noun,хандық,ханство,"перевод Claude, поштучно со словарём не сверен",khanate
+killed,verb,өлтірді,убил,"перевод Claude, поштучно со словарём не сверен; форма kill",tomiris
+king,noun,патша,царь; король,"перевод Claude, поштучно со словарём не сверен",alpamys tomiris
+kobyz,noun,қобыз,кобыз,"перевод Claude, поштучно со словарём не сверен",qorqyt
+korkyt,proper noun,Қорқыт,Коркыт,"перевод Claude, поштучно со словарём не сверен; написание как в legends.ts",qorqyt
+korpesh,proper noun,Көрпеш,Корпеш,"перевод Claude, поштучно со словарём не сверен; написание как в legends.ts",qozy
+kozy,proper noun,Қозы,Козы,"перевод Claude, поштучно со словарём не сверен; написание как в legends.ts",qozy
+kozys,proper noun,Қозының,Козы (род. п.),"перевод Claude, поштучно со словарём не сверен; форма Kozy's",qozy
+kurtka,proper noun,Құртқа,Куртка,"перевод Claude, поштучно со словарём не сверен; жена Қобыланды",qobylandy
+kyrgyz,adjective,қырғыз,киргизский,"перевод Claude, поштучно со словарём не сверен",shoqan
+kyzylorda,proper noun,Қызылорда,Кызылорда,"перевод Claude, поштучно со словарём не сверен; написание как в legends.ts",qorqyt
+language,noun,тіл,язык,"перевод Claude, поштучно со словарём не сверен",tomiris
+lazy,adjective,жалқау,ленивый,"перевод Claude, поштучно со словарём не сверен",qobylandy
+leader,noun,көсем; басшы,вождь; лидер,"перевод Claude, поштучно со словарём не сверен",abylai
+leaders,noun,басшылар,лидеры,"перевод Claude, поштучно со словарём не сверен; форма leader",khanate
+learn,verb,үйрену,учиться,"перевод Claude, поштучно со словарём не сверен",tomiris
+legends,noun,аңыздар,легенды,"перевод Claude, поштучно со словарём не сверен; форма legend",shoqan
+letters,noun,хаттар; әріптер,письма; буквы,"перевод Claude, поштучно со словарём не сверен; форма letter",shoqan
+london,proper noun,Лондон,Лондон,"перевод Claude, поштучно со словарём не сверен",shoqan
+lyric,adjective,лирикалық,лирический,"перевод Claude, поштучно со словарём не сверен; «лиро-эпостық жыр» в legends.ts",qyzzhibek
+magic,adjective,сиқырлы,волшебный,"перевод Claude, поштучно со словарём не сверен",aldar
+manas,proper noun,Манас,Манас,"перевод Claude, поштучно со словарём не сверен; написание как в legends.ts",shoqan
+maps,noun,карталар,карты,"перевод Claude, поштучно со словарём не сверен; форма map",shoqan
+massagetae,proper noun,массагеттер,массагеты,"перевод Claude, поштучно со словарём не сверен",tomiris
+mausoleum,noun,кесене,мавзолей,"перевод Claude, поштучно со словарём не сверен; «кесене» в legends.ts",qozy
+memorial,noun,ескерткіш,мемориал,"перевод Claude, поштучно со словарём не сверен",qorqyt
+money,noun,ақша,деньги,"перевод Claude, поштучно со словарём не сверен",aldar
+monk,noun,монах,монах,"перевод Claude, поштучно со словарём не сверен",shoqan
+monsters,noun,құбыжықтар,чудовища,"перевод Claude, поштучно со словарём не сверен; форма monster",tostik
+mountain,noun,тау,гора,"перевод Claude, поштучно со словарём не сверен",qorqyt
+musician,noun,музыкант,музыкант,"перевод Claude, поштучно со словарём не сверен",qorqyt
+near,preposition,жанында; маңында,возле,"перевод Claude, поштучно со словарём не сверен",qorqyt qozy
+new,adjective,жаңа,новый,"перевод Claude, поштучно со словарём не сверен",asan
+nine,number,тоғыз,девять,"перевод Claude, поштучно со словарём не сверен",shoqan
+nomads,noun,көшпенділер,кочевники,"перевод Claude, поштучно со словарём не сверен; форма nomad",tomiris
+oldest,adjective,ең көне; ең үлкен,древнейший; старший,"перевод Claude, поштучно со словарём не сверен; форма old",tostik
+omsk,proper noun,Омбы,Омск,"перевод Claude, поштучно со словарём не сверен",shoqan
+paint,verb,бояу; сурет салу,рисовать красками,"перевод Claude, поштучно со словарём не сверен",qyzzhibek
+paper,noun,қағаз,бумага,"перевод Claude, поштучно со словарём не сверен",aldar
+peoples,noun,халықтар,народы,"перевод Claude, поштучно со словарём не сверен; форма people",alpamys shoqan
+persian,adjective,парсы,персидский,"перевод Claude, поштучно со словарём не сверен",tomiris
+pictures,noun,суреттер,картины,"перевод Claude, поштучно со словарём не сверен; форма picture",shoqan
+played,verb,ойнады,играл,"перевод Claude, поштучно со словарём не сверен; форма play",qorqyt
+qobylandy,proper noun,Қобыланды,Кобыланды,"перевод Claude, поштучно со словарём не сверен; написание как в legends.ts",qobylandy
+queen,noun,патшайым,царица,"перевод Claude, поштучно со словарём не сверен",tomiris
+quickly,adverb,тез,быстро,"перевод Claude, поштучно со словарём не сверен",zhirenshe
+qyz,noun,қыз,девушка,"перевод Claude, поштучно со словарём не сверен; часть имени Қыз Жібек",qyzzhibek
+race,noun,бәйге; жарыс,скачки; гонка,"перевод Claude, поштучно со словарём не сверен",abylai
+recipes,noun,рецептер,рецепты,"перевод Claude, поштучно со словарём не сверен; форма recipe",shoqan
+region,noun,облыс; өңір,область; регион,"перевод Claude, поштучно со словарём не сверен",khanate qorqyt
+republic,noun,республика,республика,"перевод Claude, поштучно со словарём не сверен",khanate
+riddle,noun,жұмбақ,загадка,"перевод Claude, поштучно со словарём не сверен",zhirenshe
+riddles,noun,жұмбақтар,загадки,"перевод Claude, поштучно со словарём не сверен; форма riddle",zhirenshe
+rivers,noun,өзендер,реки,"перевод Claude, поштучно со словарём не сверен; форма river",khanate
+sadly,adverb,мұңайып,грустно,"перевод Claude, поштучно со словарём не сверен",qozy
+sailors,noun,теңізшілер,моряки,"перевод Claude, поштучно со словарём не сверен; форма sailor",tomiris
+sarybai,proper noun,Сарыбай,Сарыбай,"перевод Claude, поштучно со словарём не сверен",qozy
+scholars,noun,ғалымдар,учёные,"перевод Claude, поштучно со словарём не сверен; форма scholar",shoqan
+searched,verb,іздеді,искал,"перевод Claude, поштучно со словарём не сверен; форма search",asan
+sesen,noun,шешен,оратор,"перевод Claude, поштучно со словарём не сверен; написание как в legends.ts (Жиренше шешен)",zhirenshe
+shared,verb,бөлісті,поделился,"перевод Claude, поштучно со словарём не сверен; форма share",alpamys
+ships,noun,кемелер,корабли,"перевод Claude, поштучно со словарём не сверен; форма ship",qozy tostik
+shivering,verb,қалтырап,дрожа,"перевод Claude, поштучно со словарём не сверен; форма shiver",aldar
+shokan,proper noun,Шоқан,Шокан,"перевод Claude, поштучно со словарём не сверен; написание как в legends.ts",shoqan
+silk,noun,жібек,шёлк,"перевод Claude, поштучно со словарём не сверен",aldar
+singing,verb,ән айтып,поя,"перевод Claude, поштучно со словарём не сверен; форма sing",aldar
+smiling,verb,күлімдеп,улыбаясь,"перевод Claude, поштучно со словарём не сверен; форма smile",aldar
+sold,verb,сатты,продал,"перевод Claude, поштучно со словарём не сверен; форма sell",qyzzhibek
+song,noun,ән,песня,"перевод Claude, поштучно со словарём не сверен",abylai zhirenshe
+songs,noun,әндер,песни,"перевод Claude, поштучно со словарём не сверен; форма song",shoqan
+stands,verb,тұр,стоит,"перевод Claude, поштучно со словарём не сверен; форма stand",qorqyt qozy
+state,noun,мемлекет,государство,"перевод Claude, поштучно со словарём не сверен",khanate
+storytellers,noun,жыраулар; әңгімешілер,сказители,"перевод Claude, поштучно со словарём не сверен; форма storyteller; в legends.ts «жыраулар»",qobylandy
+study,verb,оқу; зерттеу,изучать,"перевод Claude, поштучно со словарём не сверен",shoqan
+sulu,adjective,сұлу,красавица,"перевод Claude, поштучно со словарём не сверен; часть имени Баян сұлу",qozy
+summers,noun,жаздар,лета,"перевод Claude, поштучно со словарём не сверен; форма summer",asan
+sung,verb,айтылған (жыр),исполнен,"перевод Claude, поштучно со словарём не сверен; форма sing",qobylandy qyzzhibek
+syr,proper noun,Сыр(дария),Сыр(дарья),"перевод Claude, поштучно со словарём не сверен; часть названия",qorqyt
+taiburyl,proper noun,Тайбурыл,Тайбурыл,"перевод Claude, поштучно со словарём не сверен; конь Қобыланды",qobylandy
+tales,noun,ертегілер,сказки,"перевод Claude, поштучно со словарём не сверен; форма tale",aldar tostik
+th,suffix,-ыншы,-й (порядковый),"перевод Claude, поштучно со словарём не сверен; токен из «18th», не слово",asan khanate
+today,adverb,бүгін; қазір,сегодня,"перевод Claude, поштучно со словарём не сверен",asan qyzzhibek shoqan
+tolegen,proper noun,Төлеген,Тулеген,"перевод Claude, поштучно со словарём не сверен",qyzzhibek
+tomb,noun,мола; кесене,гробница,"перевод Claude, поштучно со словарём не сверен",qozy
+tomiris,proper noun,Томирис,Томирис,"перевод Claude, поштучно со словарём не сверен; написание как в legends.ts",tomiris
+trade,noun,сауда,торговля,"перевод Claude, поштучно со словарём не сверен",tomiris
+trader,noun,саудагер,торговец,"перевод Claude, поштучно со словарём не сверен",qobylandy
+trials,noun,сынақтар,испытания,"перевод Claude, поштучно со словарём не сверен; форма trial",tostik
+tribe,noun,тайпа,племя,"перевод Claude, поштучно со словарём не сверен",qyzzhibek
+turkic,adjective,түркі,тюркский,"перевод Claude, поштучно со словарём не сверен",alpamys
+twentieth,number,жиырмасыншы,двадцатый,"перевод Claude, поштучно со словарём не сверен",khanate
+twenty,number,жиырма,двадцать,"перевод Claude, поштучно со словарём не сверен",shoqan
+two,number,екі,два,"перевод Claude, поштучно со словарём не сверен",khanate
+ualikhanov,proper noun,Уәлиханов,Валиханов,"перевод Claude, поштучно со словарём не сверен; написание как в legends.ts",shoqan
+united,verb,біріктірді,объединил,"перевод Claude, поштучно со словарём не сверен; форма unite",abylai
+university,noun,университет,университет,"перевод Claude, поштучно со словарём не сверен",abylai
+uzbeks,noun,өзбектер,узбеки,"перевод Claude, поштучно со словарём не сверен",alpamys
+visit,verb,бару; зиярат ету,посещать,"перевод Claude, поштучно со словарём не сверен",qyzzhibek
+weapon,noun,қару,оружие,"перевод Claude, поштучно со словарём не сверен",zhirenshe
+wisely,adverb,ақылмен,мудро,"перевод Claude, поштучно со словарём не сверен",zhirenshe
+wood,noun,ағаш,дерево,"перевод Claude, поштучно со словарём не сверен",qorqyt
+write,verb,жазу,писать,"перевод Claude, поштучно со словарём не сверен",shoqan
+writer,noun,жазушы,писатель,"перевод Claude, поштучно со словарём не сверен",shoqan
+wrote,verb,жазды,написал,"перевод Claude, поштучно со словарём не сверен; форма write",shoqan tomiris
+zhetysu,proper noun,Жетісу,Жетысу,"перевод Claude, поштучно со словарём не сверен",khanate
+zhibek,proper noun,Жібек,Жибек,"перевод Claude, поштучно со словарём не сверен; написание как в legends.ts",qyzzhibek
+zhibeks,proper noun,Жібектің,Жибек (род. п.),"перевод Claude, поштучно со словарём не сверен; форма Zhibek's",qyzzhibek
