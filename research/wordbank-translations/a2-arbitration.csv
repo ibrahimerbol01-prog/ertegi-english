@@ -1,0 +1,243 @@
+id,headword,pos,kk_choice,kk_final,ru_choice,ru_final,source_url,comment
+1,actually,adverb,v1,шынында; негізінде,both,на самом деле; фактически,https://en.wiktionary.org/wiki/actually#English https://glosbe.com/en/kk/actually,kk: по Glosbe (без учёта части речи)
+2,adjective,noun,both,сын есім,both,имя прилагательное,https://en.wiktionary.org/wiki/adjective#English,kk и ru подтверждены Wiktionary
+3,adult,noun,human,,v1,взрослый (человек),https://en.wiktionary.org/wiki/adult#English,kk: ни один вариант не в Wiktionary (там: үлкен; ересек)
+4,aged,adjective,v1,жасындағы; қарт,human,,https://glosbe.com/en/kk/aged,kk: по Glosbe (без учёта части речи) | ru: в Wiktionary нет перевода для «adjective»
+5,aisle,noun,human,,v2,проход (между рядами),https://en.wiktionary.org/wiki/aisle#English,kk: ни один вариант не в Glosbe (там: Неф)
+6,amused,adjective,human,,human,,,kk: ни один вариант не в Glosbe (там: едәуір) | ru: в Wiktionary нет перевода для «adjective»
+7,ancestor,noun,v1,арғы ата; баба,both,предок,https://en.wiktionary.org/wiki/ancestor#English https://glosbe.com/en/kk/ancestor,kk: по Glosbe (без учёта части речи)
+8,annoy,verb,human,,both,раздражать,https://en.wiktionary.org/wiki/annoy#English,kk: ни один вариант не в Glosbe (там: түршіктір)
+9,annoying,adjective,human,,both,раздражающий; надоедливый,https://en.wiktionary.org/wiki/annoying#English,"kk: в Wiktionary нет перевода для «adjective», в Glosbe тоже нет"
+10,anymore,adverb,human,,human,,,"kk: в Wiktionary нет перевода для «adverb», в Glosbe тоже нет | ru: в Wiktionary нет перевода для «adverb»"
+11,anyway,adverb,human,,both,в любом случае; все равно,https://en.wiktionary.org/wiki/anyway#English,kk: ни один вариант не в Glosbe (там: олай)
+12,anywhere,adverb,human,,v1,везде; где-нибудь (в отриц. нигде),https://en.wiktionary.org/wiki/anywhere#English,kk: ни один вариант не в Glosbe (там: барлық жерде; әр жерде)
+13,appearance,noun,human,,both,внешность; появление,https://en.wiktionary.org/wiki/appearance#English,kk: ни один вариант не в Wiktionary (там: сиық)
+14,architecture,noun,v1,сәулет,both,архитектура,https://en.wiktionary.org/wiki/architecture#English,kk и ru подтверждены Wiktionary
+15,around,adverb,v2,айналада; шамамен,both,вокруг; кругом,https://en.wiktionary.org/wiki/around#English https://glosbe.com/en/kk/around,kk: по Glosbe (без учёта части речи)
+16,audience,noun,human,,both,аудитория; зрители,https://en.wiktionary.org/wiki/audience#English,kk: ни один вариант не в Wiktionary (там: әлеумет; оқырмандар; қабылдау)
+17,average,noun,human,,v1,среднее (значение),https://en.wiktionary.org/wiki/average#English,kk: ни один вариант не в Glosbe (там: орташа)
+18,background,noun,v2,артқы көрініс; шығу тегі,both,фон; происхождение,https://en.wiktionary.org/wiki/background#English,kk и ru подтверждены Wiktionary
+19,balloon,noun,v2,әуе шары,v2,воздушный шар,https://en.wiktionary.org/wiki/balloon#English,kk и ru подтверждены Wiktionary
+20,bank,verb,human,,human,,,kk: ни один вариант не в Glosbe (там: банк; жаға; Банк) | ru: ни один вариант не в Wiktionary (там: накреня́ться)
+21,bargain,noun,human,,v2,выгодная покупка; сделка,https://en.wiktionary.org/wiki/bargain#English,kk: ни один вариант не в Glosbe (там: тиімді; пайдалы; саудалас)
+22,been,be-verb,human,,human,,,"kk: в Wiktionary нет перевода для «be-verb», в Glosbe тоже нет | ru: в Wiktionary нет перевода для «be-verb»"
+23,before,conjunction,v2,дейін; алдында,both,до того как; прежде чем,https://en.wiktionary.org/wiki/before#English https://glosbe.com/en/kk/before,kk: по Glosbe (без учёта части речи)
+24,besides,adverb,v2,оның үстіне,both,кроме того; к тому же,https://en.wiktionary.org/wiki/besides#English https://glosbe.com/en/kk/besides,kk: по Glosbe (без учёта части речи)
+25,beyond,preposition,human,,v2,за; вне,https://en.wiktionary.org/wiki/beyond#English,kk: ни один вариант не в Glosbe (там: кейін; арасында)
+26,blackboard,noun,both,сынып тақтасы,both,классная доска,https://en.wiktionary.org/wiki/blackboard#English,kk и ru подтверждены Wiktionary
+27,blonde,adjective,human,,human,,,"kk: в Wiktionary нет перевода для «adjective», в Glosbe тоже нет | ru: в Wiktionary нет перевода для «adjective»"
+28,bored,adjective,human,,both,скучающий,https://en.wiktionary.org/wiki/bored#English,"kk: в Wiktionary нет перевода для «adjective», в Glosbe тоже нет"
+29,bra,noun,human,,both,бюстгальтер,https://en.wiktionary.org/wiki/bra#English,kk: ни один вариант не в Wiktionary (там: емшекқап)
+30,brainstorm,noun,human,,human,,,"kk: в Wiktionary нет перевода для «noun», в Glosbe тоже нет | ru: в Wiktionary нет перевода для «noun»"
+31,breeze,noun,human,,both,ветерок,https://en.wiktionary.org/wiki/breeze#English,kk: ни один вариант не в Glosbe (там: бриз)
+32,brilliant,adjective,human,,both,блестящий; великолепный,https://en.wiktionary.org/wiki/brilliant#English,kk: ни один вариант не в Glosbe (там: гауһар; Гауһар)
+33,bus stop,noun,both,аялдама,both,автобусная остановка,https://en.wiktionary.org/wiki/bus_stop#English,kk и ru подтверждены Wiktionary
+34,camp,verb,human,,human,,,kk: ни один вариант не в Glosbe (там: лагерьге; лагерь) | ru: ни один вариант не в Wiktionary (там: [[жить]] [[в]] [[палатка; [[располага́ться]] [[лагерь)
+35,can,noun,human,,human,,,"kk: ни один вариант не в Glosbe (там: 1)тобатай 2)шамасы келу 3)істей білу 4)істей алу 5)модальды етістік (қабілет; болу, шамасы келу; консервілеу; қаңылтыр) | ru: ни один вариант не в Wiktionary (там: бидо́н; жбан; ле́йка; консе́рвная ба́нка)"
+36,cash,noun,human,,v2,наличные,https://en.wiktionary.org/wiki/cash#English,kk: ни один вариант не в Wiktionary (там: қолда бар ақша; нақты)
+37,champagne,noun,both,шампан,both,шампанское,https://en.wiktionary.org/wiki/champagne#English,kk и ru подтверждены Wiktionary
+38,cheer,verb,human,,both,подбадривать; аплодировать,https://en.wiktionary.org/wiki/cheer#English,kk: ни один вариант не в Glosbe (там: көңіл; қуан)
+39,chef,noun,v2,аспаз,both,шеф-повар,https://en.wiktionary.org/wiki/chef#English https://glosbe.com/en/kk/chef,kk: по Glosbe (без учёта части речи)
+40,cheque,noun,both,чек,v1,чек,https://en.wiktionary.org/wiki/cheque#English,kk и ru подтверждены Wiktionary
+41,chirp,noun,v2,шырылдау (құстың),both,чириканье; щебет,https://en.wiktionary.org/wiki/chirp#English https://glosbe.com/en/kk/chirp,kk: по Glosbe (без учёта части речи)
+42,clerk,noun,v1,қызметкер; клерк,both,клерк; служащий,https://en.wiktionary.org/wiki/clerk#English,kk и ru подтверждены Wiktionary
+43,clown,noun,v1,клоун,both,клоун,https://en.wiktionary.org/wiki/clown#English,kk и ru подтверждены Wiktionary
+44,common,adjective,v2,ортақ; жиі кездесетін,both,общий; распространённый,https://en.wiktionary.org/wiki/common#English https://glosbe.com/en/kk/common,kk: по Glosbe (без учёта части речи)
+45,communicate,verb,human,,both,общаться; поддерживать связь,https://en.wiktionary.org/wiki/communicate#English,kk: ни один вариант не в Glosbe (там: байланыс)
+46,concentrate,verb,v2,назар аудару; шоғырлану,both,сосредоточиться,https://en.wiktionary.org/wiki/concentrate#English,kk и ru подтверждены Wiktionary
+47,confused,adjective,human,,human,,,"kk: в Wiktionary нет перевода для «adjective», в Glosbe тоже нет | ru: ни один вариант не в Wiktionary (там: спу́танный; беспоря́дочный; бессмы́сленный; сконфу́женный)"
+48,cooker,noun,human,,v1,плита,https://en.wiktionary.org/wiki/cooker#English,kk: ни один вариант не в Glosbe (там: пеш)
+49,couple,noun,both,жұп; бірнеше,both,пара; несколько,https://en.wiktionary.org/wiki/couple#English,kk и ru подтверждены Wiktionary
+50,cream,adjective,human,,both,кремовый; сливочный,https://en.wiktionary.org/wiki/cream#English,kk: ни один вариант не в Glosbe (там: қаймақ; Кілегей; кілегей)
+51,creature,noun,both,жан иесі; мақұлық,both,существо,https://en.wiktionary.org/wiki/creature#English,kk и ru подтверждены Wiktionary
+52,crisp,noun,human,,human,,,kk: ни один вариант не в Wiktionary (там: қытырлақ) | ru: в Wiktionary нет перевода для «noun»
+53,curry,noun,human,,v2,карри,https://en.wiktionary.org/wiki/curry#English,"kk: в Wiktionary нет перевода для «noun», в Glosbe тоже нет"
+54,custom,noun,both,салт; әдет-ғұрып,both,обычай,https://en.wiktionary.org/wiki/custom#English,kk и ru подтверждены Wiktionary
+55,digital camera,noun,human,,both,цифровой фотоаппарат,https://en.wiktionary.org/wiki/digital_camera#English,kk: ни один вариант не в Glosbe (там: Сандық камера)
+56,disappear,verb,v2,жоғалу,both,исчезать; пропадать,https://en.wiktionary.org/wiki/disappear#English,kk и ru подтверждены Wiktionary
+57,disappointing,adjective,human,,human,,,"kk: в Wiktionary нет перевода для «adjective», в Glosbe тоже нет | ru: ни один вариант не в Wiktionary (там: разочаровывать; доса́дный; неутеши́тельный)"
+58,dislike,noun,human,,both,неприязнь,https://en.wiktionary.org/wiki/dislike#English,"kk: в Wiktionary нет перевода для «noun», в Glosbe тоже нет"
+59,dizzy,adjective,human,,human,,,"kk: в Wiktionary нет перевода для «adjective», в Glosbe тоже нет | ru: ни один вариант не в Wiktionary (там: головокружи́тельный)"
+60,done,do-verb,human,,human,,,"kk: в Wiktionary нет перевода для «do-verb», в Glosbe тоже нет | ru: в Wiktionary нет перевода для «do-verb»"
+61,double,adjective,human,,both,двойной,https://en.wiktionary.org/wiki/double#English,kk: ни один вариант не в Glosbe (там: еселе; еселенген)
+62,downstairs,adverb,human,,both,вниз; внизу (на нижнем этаже),https://en.wiktionary.org/wiki/downstairs#English,kk: ни один вариант не в Glosbe (там: төмен)
+63,drawer,noun,both,тартпа,both,ящик (выдвижной),https://en.wiktionary.org/wiki/drawer#English,kk и ru подтверждены Wiktionary
+64,drive,verb,human,,v2,водить машину; ехать,https://en.wiktionary.org/wiki/drive#English,kk: ни один вариант не в Glosbe (там: дискіенгізгі; дискі; қағу)
+65,earn,verb,human,,both,зарабатывать,https://en.wiktionary.org/wiki/earn#English,kk: ни один вариант не в Glosbe (там: табыс)
+66,either,conjunction,human,,human,,,kk: ни один вариант не в Glosbe (там: да; әр; әйтпесе) | ru: ни один вариант не в Wiktionary (там: [[и́ли]] ... [[и́ли]]; [[ли́бо]] ... [[ли́бо]]; любо́й; [[оди́н]] из [[два)
+67,email,verb,human,,human,,,kk: ни один вариант не в Glosbe (там: электронды пошта; электрондық) | ru: ни один вариант не в Wiktionary (там: посла́ть име́йл)
+68,endangered,adjective,human,,v1,исчезающий (вид),https://en.wiktionary.org/wiki/endangered#English,"kk: в Wiktionary нет перевода для «adjective», в Glosbe тоже нет"
+69,enough,determiner,both,жеткілікті,v2,достаточно,https://en.wiktionary.org/wiki/enough#English,kk и ru подтверждены Wiktionary
+70,ever,adverb,v1,бір кезде; әрқашан,both,когда-либо,https://en.wiktionary.org/wiki/ever#English https://glosbe.com/en/kk/ever,kk: по Glosbe (без учёта части речи)
+71,except,conjunction,human,,human,,,"kk: ни один вариант не в Glosbe (там: басқа; шығар; шығарту) | ru: ни один вариант не в Wiktionary (там: за исключе́нием того́, что; кро́ме)"
+72,except,preposition,v2,басқа; өзге,both,кроме,https://en.wiktionary.org/wiki/except#English https://glosbe.com/en/kk/except,kk: по Glosbe (без учёта части речи)
+73,express,noun,human,,both,экспресс,https://en.wiktionary.org/wiki/express#English,kk: ни один вариант не в Glosbe (там: білдір)
+74,expression,noun,human,,v1,выражение,https://en.wiktionary.org/wiki/expression#English,kk: ни один вариант не в Wiktionary (там: өрнек)
+75,fairly,adverb,human,,both,довольно; справедливо,https://en.wiktionary.org/wiki/fairly#English,"kk: в Wiktionary нет перевода для «adverb», в Glosbe тоже нет"
+76,fantastic,adjective,human,,both,фантастический; великолепный,https://en.wiktionary.org/wiki/fantastic#English,kk: ни один вариант не в Glosbe (там: фантастикалық)
+77,fare,noun,human,,human,,,kk: ни один вариант не в Glosbe (там: жол) | ru: ни один вариант не в Wiktionary (там: пое́здка; путеше́ствие; [[пла́та]] за [[прое́зд]]; [[цена́]] [[билет)
+78,fascinating,adjective,human,,v2,очаровательный; увлекательный,https://en.wiktionary.org/wiki/fascinating#English,"kk: в Wiktionary нет перевода для «adjective», в Glosbe тоже нет"
+79,fast food,noun,v1,фастфуд; тез дайындалатын тағам,both,фастфуд; быстрая еда,https://en.wiktionary.org/wiki/fast_food#English,kk и ru подтверждены Wiktionary
+80,fence,noun,v2,дуал; шарбақ,both,забор; изгородь,https://en.wiktionary.org/wiki/fence#English,kk и ru подтверждены Wiktionary
+81,fighter,noun,human,,both,боец; истребитель,https://en.wiktionary.org/wiki/fighter#English,kk: ни один вариант не в Glosbe (там: күресуші; соғысушы)
+82,fit,adjective,human,,v1,в хорошей форме; подходящий,https://en.wiktionary.org/wiki/fit#English,kk: ни один вариант не в Glosbe (там: сәйкес; қиыстыру; жарасу)
+83,fix,noun,human,,both,затруднение; починка,https://en.wiktionary.org/wiki/fix#English,kk: ни один вариант не в Glosbe (там: жөнде; байлау; өлтіру; қателерді түзету)
+84,frame,noun,both,жақтау,both,рамка,https://en.wiktionary.org/wiki/frame#English https://glosbe.com/en/kk/frame,kk: по Glosbe (без учёта части речи)
+85,front,noun,human,,both,передняя часть; перед,https://en.wiktionary.org/wiki/front#English,kk: ни один вариант не в Wiktionary (там: майдан; фронт)
+86,fry,noun,human,,human,,,kk: ни один вариант не в Glosbe (там: қуыру; қуыр) | ru: ни один вариант не в Wiktionary (там: малёк)
+87,fully,adverb,human,,both,полностью; целиком,https://en.wiktionary.org/wiki/fully#English,kk: ни один вариант не в Glosbe (там: толықтай)
+88,good-looking,adjective,human,,both,красивый; симпатичный,https://en.wiktionary.org/wiki/good-looking#English,"kk: в Wiktionary нет перевода для «adjective», в Glosbe тоже нет"
+89,graduate,verb,human,,human,,,kk: ни один вариант не в Glosbe (там: оқу; түлек) | ru: ни один вариант не в Wiktionary (там: око́нчить; дипломи́ровать; градуи́ровать)
+90,greatly,adverb,v1,өте; зор,both,очень; значительно,https://en.wiktionary.org/wiki/greatly#English https://glosbe.com/en/kk/greatly,kk: по Glosbe (без учёта части речи)
+91,grilled,adjective,human,,human,,,"kk: в Wiktionary нет перевода для «adjective», в Glosbe тоже нет | ru: ни один вариант не в Wiktionary (там: жа́реный)"
+92,guidebook,noun,human,,human,,,"kk: в Wiktionary нет перевода для «noun», в Glosbe тоже нет | ru: в Wiktionary нет перевода для «noun»"
+93,half-price,adjective,human,,human,,,"kk: в Wiktionary нет перевода для «adjective», в Glosbe тоже нет | ru: в Wiktionary нет перевода для «adjective»"
+94,half-price,adverb,human,,human,,,"kk: в Wiktionary нет перевода для «adverb», в Glosbe тоже нет | ru: в Wiktionary нет перевода для «adverb»"
+95,handbag,noun,v1,сөмке (әйелдер),both,дамская сумочка,https://en.wiktionary.org/wiki/handbag#English,kk и ru подтверждены Wiktionary
+96,handicapped,adjective,v2,мүгедек,human,,https://glosbe.com/en/kk/handicapped,kk: по Glosbe (без учёта части речи) | ru: ни один вариант не в Wiktionary (там: инвали́д)
+97,happily,adverb,human,,both,счастливо; с радостью,https://en.wiktionary.org/wiki/happily#English,kk: ни один вариант не в Glosbe (там: ойдағыдай)
+98,harmony,noun,human,,both,гармония,https://en.wiktionary.org/wiki/harmony#English,kk: ни один вариант не в Wiktionary (там: гармония)
+99,head,verb,human,,both,направляться; возглавлять,https://en.wiktionary.org/wiki/head#English,kk: ни один вариант не в Glosbe (там: бас; кәллә; басшы)
+100,headphone,noun,both,құлаққап,v2,наушники,https://en.wiktionary.org/wiki/headphone#English,kk и ru подтверждены Wiktionary
+101,heating,noun,v2,жылыту,both,отопление,https://en.wiktionary.org/wiki/heating#English,kk и ru подтверждены Wiktionary
+102,high school,noun,human,,v1,старшие классы; средняя школа,https://en.wiktionary.org/wiki/high_school#English,"kk: в Wiktionary нет перевода для «noun», в Glosbe тоже нет"
+103,hiking,noun,v1,жаяу туризм; жорық,both,пеший туризм,https://en.wiktionary.org/wiki/hiking#English https://glosbe.com/en/kk/hiking,kk: по Glosbe (без учёта части речи)
+104,importantly,adverb,human,,human,,,"kk: в Wiktionary нет перевода для «adverb», в Glosbe тоже нет | ru: в Wiktionary нет перевода для «adverb»"
+105,impress,verb,human,,v2,впечатлять; производить впечатление,https://en.wiktionary.org/wiki/impress#English,"kk: в Wiktionary нет перевода для «verb», в Glosbe тоже нет"
+106,include,verb,human,,both,включать в себя; содержать,https://en.wiktionary.org/wiki/include#English,kk: ни один вариант не в Glosbe (там: қос)
+107,indeed,adverb,human,,both,действительно; в самом деле,https://en.wiktionary.org/wiki/indeed#English,kk: ни один вариант не в Glosbe (там: ақиқатты)
+108,indoor,adjective,both,үй ішіндегі; жабық,v1,находящийся в помещении; закрытый,https://en.wiktionary.org/wiki/indoor#English https://glosbe.com/en/kk/indoor,kk: по Glosbe (без учёта части речи)
+109,instead,adverb,human,,human,,,kk: ни один вариант не в Glosbe (там: орн; орынына) | ru: ни один вариант не в Wiktionary (там: вме́сто того́)
+110,instrument,noun,both,аспап,v1,инструмент,https://en.wiktionary.org/wiki/instrument#English,kk и ru подтверждены Wiktionary
+111,intelligence,noun,v1,ақыл; зият,both,интеллект; ум,https://en.wiktionary.org/wiki/intelligence#English,kk и ru подтверждены Wiktionary
+112,killer,noun,v2,өлтіруші; қанішер,both,убийца,https://en.wiktionary.org/wiki/killer#English,kk и ru подтверждены Wiktionary
+113,kilo,noun,v2,килограмм; кило,both,кило,https://en.wiktionary.org/wiki/kilo#English https://glosbe.com/en/kk/kilo,kk: по Glosbe (без учёта части речи)
+114,kindly,adjective,human,,v1,добрый,https://en.wiktionary.org/wiki/kindly#English,kk: ни один вариант не в Glosbe (там: жайдарлы)
+115,landscape,noun,v2,пейзаж; ландшафт,both,пейзаж,https://en.wiktionary.org/wiki/landscape#English,kk и ru подтверждены Wiktionary
+116,latter,adverb,human,,human,,,kk: ни один вариант не в Glosbe (там: соңғы; ол) | ru: в Wiktionary нет перевода для «adverb»
+117,less,determiner,both,азырақ,both,меньше,https://en.wiktionary.org/wiki/less#English https://glosbe.com/en/kk/less,kk: по Glosbe (без учёта части речи)
+118,less,pronoun,v1,азырақ,human,,https://glosbe.com/en/kk/less,kk: по Glosbe (без учёта части речи) | ru: в Wiktionary нет перевода для «pronoun»
+119,marvelous/marvellous,adjective,human,,both,чудесный,https://en.wiktionary.org/wiki/marvelous#English,kk: ни один вариант не в Wiktionary (там: тамаша; таңғажайып)
+120,max,noun,human,,human,,,kk: ни один вариант не в Glosbe (там: Макс) | ru: в Wiktionary нет перевода для «noun»
+121,midday,noun,v2,түс; талтүс,human,,https://glosbe.com/en/kk/midday,kk: по Glosbe (без учёта части речи) | ru: в Wiktionary нет перевода для «noun»
+122,middle,noun,v2,орта,both,середина,https://en.wiktionary.org/wiki/middle#English,kk и ru подтверждены Wiktionary
+123,might,modal auxiliary,human,,human,,,"kk: в Wiktionary нет перевода для «modal auxiliary», в Glosbe тоже нет | ru: в Wiktionary нет перевода для «modal auxiliary»"
+124,mistake,noun,both,қате,both,ошибка,https://en.wiktionary.org/wiki/mistake#English,kk и ru подтверждены Wiktionary
+125,mostly,adverb,both,көбінесе,v2,в основном,https://en.wiktionary.org/wiki/mostly#English https://glosbe.com/en/kk/mostly,kk: по Glosbe (без учёта части речи)
+126,mp3 player,noun,human,,human,,,"kk: страница Wiktionary не найдена, в Glosbe тоже нет | ru: страница Wiktionary не найдена"
+127,mysterious,adjective,v1,құпия; сырлы,both,таинственный; загадочный,https://en.wiktionary.org/wiki/mysterious#English https://glosbe.com/en/kk/mysterious,kk: по Glosbe (без учёта части речи)
+128,necessary,adjective,both,қажетті; маңызды,both,необходимый,https://en.wiktionary.org/wiki/necessary#English,kk и ru подтверждены Wiktionary
+129,need,verb,human,,both,нуждаться; требоваться,https://en.wiktionary.org/wiki/need#English,kk: ни один вариант не в Glosbe (там: қажет; керек; қажетсіну)
+130,nervous,adjective,human,,both,нервный; взволнованный,https://en.wiktionary.org/wiki/nervous#English,kk: ни один вариант не в Glosbe (там: жүйкелі)
+131,net,adjective,human,,v1,чистый; нетто,https://en.wiktionary.org/wiki/net#English,kk: ни один вариант не в Glosbe (там: таза; ау; тор; желі)
+132,next,adverb,v1,сосын; келесі,both,затем; дальше,https://en.wiktionary.org/wiki/next#English https://glosbe.com/en/kk/next,kk: по Glosbe (без учёта части речи)
+133,noon,noun,both,талтүс,both,полдень,https://en.wiktionary.org/wiki/noon#English,kk и ru подтверждены Wiktionary
+134,noun,noun,both,зат есім,both,имя существительное,https://en.wiktionary.org/wiki/noun#English,kk и ru подтверждены Wiktionary
+135,nowadays,adverb,human,,both,в наши дни; в настоящее время,https://en.wiktionary.org/wiki/nowadays#English,kk: ни один вариант не в Glosbe (там: осы)
+136,off,adverb,human,,both,выключено; прочь,https://en.wiktionary.org/wiki/off#English,"kk: в Wiktionary нет перевода для «adverb», в Glosbe тоже нет"
+137,online,adverb,human,,human,,,kk: ни один вариант не в Glosbe (там: желіде; қосылған; Қосылған) | ru: в Wiktionary нет перевода для «adverb»
+138,oppose,verb,human,,both,выступать против; возражать,https://en.wiktionary.org/wiki/oppose#English,"kk: в Wiktionary нет перевода для «verb», в Glosbe тоже нет"
+139,orphan,noun,v2,жетім,both,сирота,https://en.wiktionary.org/wiki/orphan#English,kk и ru подтверждены Wiktionary
+140,other,pronoun,v1,басқа; өзге,human,,https://glosbe.com/en/kk/other,kk: по Glosbe (без учёта части речи) | ru: в Wiktionary нет перевода для «pronoun»
+141,over,adverb,human,,human,,,kk: ни один вариант не в Glosbe (там: аса; әрі; үст; арт) | ru: ни один вариант не в Wiktionary (там: на ночь; сно́ва; опя́ть)
+142,overseas,adverb,human,,both,за границей; за морем,https://en.wiktionary.org/wiki/overseas#English,kk: ни один вариант не в Glosbe (там: шетелдік)
+143,overweight,adjective,human,,human,,,"kk: в Wiktionary нет перевода для «adjective», в Glosbe тоже нет | ru: ни один вариант не в Wiktionary (там: гру́зный; ту́чный; [[страда́ющий]] [[ожире́нием]]; перегру́женный)"
+144,own,pronoun,human,,human,,,kk: ни один вариант не в Glosbe (там: меншікті; меншіктең) | ru: в Wiktionary нет перевода для «pronoun»
+145,pass,noun,human,,both,пропуск; перевал,https://en.wiktionary.org/wiki/pass#English,kk: ни один вариант не в Glosbe (там: өт)
+146,patient,noun,v1,пациент; емделуші,both,пациент; больной,https://en.wiktionary.org/wiki/patient#English,kk и ru подтверждены Wiktionary
+147,pc,noun,human,,human,,,kk: ни один вариант не в Glosbe (там: ДК) | ru: ни один вариант не в Wiktionary (там: шт.; пк)
+148,penfriend/pen friend,noun,human,,human,,,"kk: в Wiktionary нет перевода для «noun», в Glosbe тоже нет | ru: в Wiktionary нет перевода для «noun»"
+149,petrol station,noun,human,,human,,,"kk: в Wiktionary нет перевода для «noun», в Glosbe тоже нет | ru: в Wiktionary нет перевода для «noun»"
+150,photography,noun,human,,both,фотография (искусство),https://en.wiktionary.org/wiki/photography#English,kk: ни один вариант не в Wiktionary (там: фотография)
+151,physically,adverb,human,,both,физически,https://en.wiktionary.org/wiki/physically#English,kk: ни один вариант не в Glosbe (там: физикалы)
+152,plastic,adjective,human,,both,пластиковый,https://en.wiktionary.org/wiki/plastic#English,kk: ни один вариант не в Glosbe (там: пластмасса; Пластмасса)
+153,playground,noun,both,ойын алаңы,both,игровая площадка,https://en.wiktionary.org/wiki/playground#English,kk и ru подтверждены Wiktionary
+154,pleased,adjective,v1,риза; қуанышты,both,довольный,https://en.wiktionary.org/wiki/pleased#English https://glosbe.com/en/kk/pleased,kk: по Glosbe (без учёта части речи)
+155,pleasing,adjective,human,,both,приятный,https://en.wiktionary.org/wiki/pleasing#English,"kk: в Wiktionary нет перевода для «adjective», в Glosbe тоже нет"
+156,plenty,noun,v1,молшылық; көп,both,изобилие; множество,https://en.wiktionary.org/wiki/plenty#English https://glosbe.com/en/kk/plenty,kk: по Glosbe (без учёта части речи)
+157,police officer,noun,v1,полицей,both,полицейский,https://en.wiktionary.org/wiki/police_officer#English,kk и ru подтверждены Wiktionary
+158,policewoman,noun,human,,human,,,"kk: в Wiktionary нет перевода для «noun», в Glosbe тоже нет | ru: ни один вариант не в Wiktionary (там: полице́йская; [[же́нщина]]-[[полице́йский]]; [[сотру́дница]] [[полиция)"
+159,post office,noun,v1,пошта,both,почта,https://en.wiktionary.org/wiki/post_office#English,kk и ru подтверждены Wiktionary
+160,pro,noun,human,,both,профессионал,https://en.wiktionary.org/wiki/pro#English,"kk: в Wiktionary нет перевода для «noun», в Glosbe тоже нет"
+161,progressive,adjective,v2,озық; үдемелі,human,,https://glosbe.com/en/kk/progressive,kk: по Glosbe (без учёта части речи) | ru: в Wiktionary нет перевода для «adjective»
+162,pronunciation,noun,human,,both,произношение,https://en.wiktionary.org/wiki/pronunciation#English,kk: ни один вариант не в Wiktionary (там: айту)
+163,pursue,verb,v2,ұмтылу; қуу,both,преследовать; следовать (цели),https://en.wiktionary.org/wiki/pursue#English https://glosbe.com/en/kk/pursue,kk: по Glosbe (без учёта части речи)
+164,quite,adverb,v1,өте; айтарлықтай,both,вполне; довольно,https://en.wiktionary.org/wiki/quite#English https://glosbe.com/en/kk/quite,kk: по Glosbe (без учёта части речи)
+165,raincoat,noun,v1,сулық; плащ,both,плащ; дождевик,https://en.wiktionary.org/wiki/raincoat#English,kk и ru подтверждены Wiktionary
+166,receptionist,noun,human,,both,администратор,https://en.wiktionary.org/wiki/receptionist#English,kk: ни один вариант не в Glosbe (там: қабылдау)
+167,record,verb,human,,v1,записывать,https://en.wiktionary.org/wiki/record#English,kk: ни один вариант не в Glosbe (там: жазба; хаттама; жаз)
+168,retired,adjective,human,,human,,,"kk: в Wiktionary нет перевода для «adjective», в Glosbe тоже нет | ru: ни один вариант не в Wiktionary (там: отставно́й)"
+169,return,noun,both,оралу; қайтару,both,возвращение; возврат,https://en.wiktionary.org/wiki/return#English https://glosbe.com/en/kk/return,kk: по Glosbe (без учёта части речи)
+170,reunion,noun,human,,human,,,kk: ни один вариант не в Glosbe (там: бірігу) | ru: в Wiktionary нет перевода для «noun»
+171,robin,noun,v2,таңшымшық,both,малиновка,https://en.wiktionary.org/wiki/robin#English https://glosbe.com/en/kk/robin,kk: по Glosbe (без учёта части речи)
+172,romance,noun,human,,both,роман (любовный),https://en.wiktionary.org/wiki/romance#English,kk: ни один вариант не в Glosbe (там: Романс; романс)
+173,romantic,adjective,both,романтикалық,both,романтичный,https://en.wiktionary.org/wiki/romantic#English,kk и ru подтверждены Wiktionary
+174,roundabout,noun,human,,v2,круговое движение; карусель,https://en.wiktionary.org/wiki/roundabout#English,"kk: в Wiktionary нет перевода для «noun», в Glosbe тоже нет"
+175,rush,noun,v2,асығыстық; қарбалас,both,спешка,https://en.wiktionary.org/wiki/rush#English https://glosbe.com/en/kk/rush,kk: по Glosbe (без учёта части речи)
+176,schoolwork,noun,human,,both,учёба; школьные задания,https://en.wiktionary.org/wiki/schoolwork#English,"kk: в Wiktionary нет перевода для «noun», в Glosbe тоже нет"
+177,scream,noun,v1,айқай; шыңғыру,both,крик; визг,https://en.wiktionary.org/wiki/scream#English https://glosbe.com/en/kk/scream,kk: по Glosbe (без учёта части речи)
+178,senior,noun,human,,both,пожилой человек; старший,https://en.wiktionary.org/wiki/senior#English,kk: ни один вариант не в Glosbe (там: үлкен)
+179,seriously,adverb,v2,байыпты; қатты,both,серьезно,https://en.wiktionary.org/wiki/seriously#English https://glosbe.com/en/kk/seriously,kk: по Glosbe (без учёта части речи)
+180,serve,verb,human,,both,служить; подавать,https://en.wiktionary.org/wiki/serve#English,kk: ни один вариант не в Glosbe (там: қызмет; Беру; беру)
+181,shall,modal auxiliary,human,,v1,должен; следует (в вопросах),https://en.wiktionary.org/wiki/shall#English,"kk: в Wiktionary нет перевода для «modal auxiliary», в Glosbe тоже нет"
+182,shop assistant,noun,v2,сатушы,v2,продавец,https://en.wiktionary.org/wiki/shop_assistant#English,kk и ru подтверждены Wiktionary
+183,short/shorts,noun,human,,human,,,kk: ни один вариант не в Glosbe (там: қысқа; қысқаша; кіші) | ru: в Wiktionary нет перевода для «noun»
+184,shot,noun,human,,both,выстрел; кадр,https://en.wiktionary.org/wiki/shot#English,kk: ни один вариант не в Glosbe (там: оқ; бытыра)
+185,singular,adjective,human,,v2,единственный; исключительный,https://en.wiktionary.org/wiki/singular#English,"kk: в Wiktionary нет перевода для «adjective», в Glosbe тоже нет"
+186,sitting room,noun,human,,human,,,"kk: в Wiktionary нет перевода для «noun», в Glosbe тоже нет | ru: в Wiktionary нет перевода для «noun»"
+187,skateboarding,noun,v2,скейтбординг,both,скейтбординг,https://en.wiktionary.org/wiki/skateboarding#English,kk и ru подтверждены Wiktionary
+188,skiing,noun,human,,both,катание на лыжах,https://en.wiktionary.org/wiki/skiing#English,"kk: в Wiktionary нет перевода для «noun», в Glosbe тоже нет"
+189,sleepy,adjective,v1,ұйқылы,both,сонный,https://en.wiktionary.org/wiki/sleepy#English,kk и ru подтверждены Wiktionary
+190,snowboarding,noun,v1,сноубординг,both,сноубординг,https://en.wiktionary.org/wiki/snowboarding#English,kk и ru подтверждены Wiktionary
+191,so,adverb,human,,human,,,"kk: в Wiktionary нет перевода для «adverb», в Glosbe тоже нет | ru: в Wiktionary нет перевода для «adverb»"
+192,spell,verb,human,,human,,,"kk: в Wiktionary нет перевода для «verb», в Glosbe тоже нет | ru: ни один вариант не в Wiktionary (там: [[произноси́ть]] по [[буква; [[писа́ть]] по [[буква)"
+193,sports center/sports centre,noun,human,,human,,,"kk: в Wiktionary нет перевода для «noun», в Glosbe тоже нет | ru: в Wiktionary нет перевода для «noun»"
+194,square,adjective,human,,both,квадратный,https://en.wiktionary.org/wiki/square#English,"kk: в Wiktionary нет перевода для «adjective», в Glosbe тоже нет"
+195,stamp,noun,both,марка; мөр,both,марка; печать,https://en.wiktionary.org/wiki/stamp#English,kk и ru подтверждены Wiktionary
+196,still,adverb,human,,both,всё ещё,https://en.wiktionary.org/wiki/still#English,"kk: в Wiktionary нет перевода для «adverb», в Glosbe тоже нет"
+197,stomachache,noun,v2,асқазан ауруы; іштің ауруы,both,боль в животе,https://en.wiktionary.org/wiki/stomachache#English,kk и ru подтверждены Wiktionary
+198,succeed,verb,human,,human,,,"kk: в Wiktionary нет перевода для «verb», в Glosbe тоже нет | ru: ни один вариант не в Wiktionary (там: сле́довать; преуспе́ть; достига́ть це́ли; дости́чь це́ли)"
+199,such,determiner,human,,both,такой,https://en.wiktionary.org/wiki/such#English,"kk: в Wiktionary нет перевода для «determiner», в Glosbe тоже нет"
+200,such,pronoun,human,,both,такой,https://en.wiktionary.org/wiki/such#English,"kk: в Wiktionary нет перевода для «pronoun», в Glosbe тоже нет"
+201,sudden,adjective,human,,both,внезапный; неожиданный,https://en.wiktionary.org/wiki/sudden#English,"kk: в Wiktionary нет перевода для «adjective», в Glosbe тоже нет"
+202,suitcase,noun,v2,шабадан,both,чемодан,https://en.wiktionary.org/wiki/suitcase#English,kk и ru подтверждены Wiktionary
+203,summary,noun,human,,v2,резюме; краткое изложение,https://en.wiktionary.org/wiki/summary#English,kk: ни один вариант не в Wiktionary (там: түйіндеме)
+204,surf,verb,human,,both,заниматься серфингом; сидеть в интернете,https://en.wiktionary.org/wiki/surf#English,"kk: в Wiktionary нет перевода для «verb», в Glosbe тоже нет"
+205,surprised,adjective,human,,both,удивлённый,https://en.wiktionary.org/wiki/surprised#English,"kk: в Wiktionary нет перевода для «adjective», в Glosbe тоже нет"
+206,surprising,adjective,human,,both,удивительный,https://en.wiktionary.org/wiki/surprising#English,"kk: в Wiktionary нет перевода для «adjective», в Glosbe тоже нет"
+207,sweetheart,noun,human,,both,возлюбленный/возлюбленная; милый,https://en.wiktionary.org/wiki/sweetheart#English,"kk: в Wiktionary нет перевода для «noun», в Glosbe тоже нет"
+208,swimsuit,noun,v1,шомылу киімі,both,купальник,https://en.wiktionary.org/wiki/swimsuit#English,kk и ru подтверждены Wiktionary
+209,teenage,adjective,human,,both,подростковый,https://en.wiktionary.org/wiki/teenage#English,"kk: в Wiktionary нет перевода для «adjective», в Glosbe тоже нет"
+210,telephone,verb,v1,телефон соғу,human,,https://en.wiktionary.org/wiki/telephone#English,ru: ни один вариант не в Wiktionary (там: телефони́ровать; звони́ть; [[позвони́ть]] по [[телефон)
+211,terrify,verb,human,,both,ужасать,https://en.wiktionary.org/wiki/terrify#English,"kk: в Wiktionary нет перевода для «verb», в Glosbe тоже нет"
+212,text message,noun,human,,human,,,"kk: в Wiktionary нет перевода для «noun», в Glosbe тоже нет | ru: ни один вариант не в Wiktionary (там: сообще́ние; ме́сседж; эс-эм-э́с; эсэмэ́ска)"
+213,thunderstorm,noun,human,,both,гроза,https://en.wiktionary.org/wiki/thunderstorm#English,kk: ни один вариант не в Wiktionary (там: найзағай)
+214,tidy,verb,human,,human,,,"kk: в Wiktionary нет перевода для «verb», в Glosbe тоже нет | ru: в Wiktionary нет перевода для «verb»"
+215,title,noun,human,,both,название; заголовок,https://en.wiktionary.org/wiki/title#English,"kk: в Wiktionary нет перевода для «noun», в Glosbe тоже нет"
+216,toast,noun,human,,v2,тост,https://en.wiktionary.org/wiki/toast#English,"kk: в Wiktionary нет перевода для «noun», в Glosbe тоже нет"
+217,toe,noun,human,,human,,,kk: ни один вариант не в Wiktionary (там: башпай) | ru: ни один вариант не в Wiktionary (там: па́лец; [[па́лец]] [[нога; [[па́лец]] [[на]] [[нога; носо́к)
+218,tonight,noun,human,,human,,,"kk: в Wiktionary нет перевода для «noun», в Glosbe тоже нет | ru: ни один вариант не в Wiktionary (там: [[сегодняшний]] [[вечер]]; [[наступающий)"
+219,traffic,noun,human,,v1,движение (дорожное),https://en.wiktionary.org/wiki/traffic#English,kk: ни один вариант не в Wiktionary (там: қозғалыс)
+220,truly,adverb,human,,both,действительно; искренне,https://en.wiktionary.org/wiki/truly#English,"kk: в Wiktionary нет перевода для «adverb», в Glosbe тоже нет"
+221,uneasy,adjective,human,,human,,,"kk: в Wiktionary нет перевода для «adjective», в Glosbe тоже нет | ru: в Wiktionary нет перевода для «adjective»"
+222,uniform,adjective,human,,v1,единообразный,https://en.wiktionary.org/wiki/uniform#English,"kk: в Wiktionary нет перевода для «adjective», в Glosbe тоже нет"
+223,uniform,noun,v1,форма (киім),both,форма; униформа,https://en.wiktionary.org/wiki/uniform#English,kk и ru подтверждены Wiktionary
+224,unimportant,adjective,human,,both,неважный,https://en.wiktionary.org/wiki/unimportant#English,"kk: в Wiktionary нет перевода для «adjective», в Glosbe тоже нет"
+225,upstairs,adverb,human,,both,наверху; вверх по лестнице,https://en.wiktionary.org/wiki/upstairs#English,"kk: в Wiktionary нет перевода для «adverb», в Glosbe тоже нет"
+226,value,noun,v2,құндылық; маңыз,both,ценность; стоимость,https://en.wiktionary.org/wiki/value#English,kk и ru подтверждены Wiktionary
+227,video game,noun,v2,бейне ойын,both,видеоигра,https://en.wiktionary.org/wiki/video_game#English,kk и ru подтверждены Wiktionary
+228,violent,adjective,human,,both,жестокий; насильственный,https://en.wiktionary.org/wiki/violent#English,"kk: в Wiktionary нет перевода для «adjective», в Glosbe тоже нет"
+229,wander,verb,human,,both,бродить,https://en.wiktionary.org/wiki/wander#English,"kk: в Wiktionary нет перевода для «verb», в Glosbe тоже нет"
+230,web page,noun,human,,both,веб-страница,https://en.wiktionary.org/wiki/web_page#English,kk: ни один вариант не в Wiktionary (там: веб-парақ)
+231,website,noun,both,сайт,both,сайт,https://en.wiktionary.org/wiki/website#English,kk и ru подтверждены Wiktionary
+232,well-known,adjective,human,,human,,,"kk: страница Wiktionary не найдена, в Glosbe тоже нет | ru: страница Wiktionary не найдена"
+233,wet,adjective,both,ылғал; су,both,мокрый; влажный,https://en.wiktionary.org/wiki/wet#English,kk и ru подтверждены Wiktionary
+234,whatever,determiner,human,,v2,какой бы ни; любой,https://en.wiktionary.org/wiki/whatever#English,"kk: в Wiktionary нет перевода для «determiner», в Glosbe тоже нет"
+235,wheelchair,noun,human,,both,инвалидная коляска,https://en.wiktionary.org/wiki/wheelchair#English,"kk: в Wiktionary нет перевода для «noun», в Glosbe тоже нет"
+236,while,conjunction,human,,both,в то время как; пока,https://en.wiktionary.org/wiki/while#English,"kk: в Wiktionary нет перевода для «conjunction», в Glosbe тоже нет"
+237,wonder,verb,human,,both,интересоваться; удивляться,https://en.wiktionary.org/wiki/wonder#English,"kk: в Wiktionary нет перевода для «verb», в Glosbe тоже нет"
+238,wooden,adjective,human,,both,деревянный,https://en.wiktionary.org/wiki/wooden#English,"kk: в Wiktionary нет перевода для «adjective», в Glosbe тоже нет"
+239,worried,adjective,human,,both,обеспокоенный; взволнованный,https://en.wiktionary.org/wiki/worried#English,"kk: в Wiktionary нет перевода для «adjective», в Glosbe тоже нет"
+240,worse,adjective,human,,both,хуже,https://en.wiktionary.org/wiki/worse#English,"kk: в Wiktionary нет перевода для «adjective», в Glosbe тоже нет"
+241,worse,adverb,human,,both,хуже,https://en.wiktionary.org/wiki/worse#English,"kk: в Wiktionary нет перевода для «adverb», в Glosbe тоже нет"
+242,worst,adjective,human,,both,наихудший; самый плохой,https://en.wiktionary.org/wiki/worst#English,"kk: в Wiktionary нет перевода для «adjective», в Glosbe тоже нет"

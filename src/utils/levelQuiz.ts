@@ -18,6 +18,16 @@ function rng(seed: number) {
   };
 }
 
+/** Fisher–Yates with the seeded generator: the same order in every engine. */
+function shuffle<T>(items: readonly T[], rand: () => number): T[] {
+  const a = [...items];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(rand() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
 export function buildLevelQuiz(text: string, count: number = LEVEL_QUIZ_QUESTIONS): Question[] {
   const sentences = text.match(/[^.!?]+[.!?]+["”]?/g)?.map((s) => s.trim()) ?? [];
   // Skip names and sentence starters: any word the text ever capitalises.
@@ -38,12 +48,16 @@ export function buildLevelQuiz(text: string, count: number = LEVEL_QUIZ_QUESTION
     const answer = words.reduce((a, b) => (b.length > a.length ? b : a));
     used.add(answer);
 
-    const distractors = pool
+    // Random numbers are drawn in a fixed order before sorting, and the sort only
+    // compares them: a comparator that calls rand() gives a different quiz in each
+    // JS engine (V8, SpiderMonkey, JavaScriptCore sort differently).
+    const ranked = pool
       .filter((w) => w !== answer)
-      .sort((a, b) => Math.abs(a.length - answer.length) - Math.abs(b.length - answer.length) || rand() - 0.5)
+      .map((w) => ({ w, d: Math.abs(w.length - answer.length), k: rand() }))
+      .sort((a, b) => a.d - b.d || a.k - b.k)
       .slice(0, 6)
-      .sort(() => rand() - 0.5)
-      .slice(0, 3);
+      .map((x) => x.w);
+    const distractors = shuffle(ranked, rand).slice(0, 3);
     if (distractors.length < 3) continue;
 
     const options = [...distractors];
