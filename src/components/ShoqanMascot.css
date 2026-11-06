@@ -84,8 +84,8 @@
 .cloud1{animation:shq-drift 70s linear infinite alternate}
 .cloud2{animation:shq-drift 95s linear infinite alternate-reverse}
 .rays{transform-box:fill-box;transform-origin:center;animation:shq-spin 60s linear infinite}
-.smoke{transform-box:fill-box;transform-origin:center bottom;animation:shq-smoke 5s ease-out infinite}
-.flicker{animation:shq-flicker 1.8s ease-in-out infinite alternate}
+.shq-smokep{transform-box:fill-box;transform-origin:center bottom;animation:shq-smoke 5s ease-out infinite}
+.shq-m-sad .shq-door-glow{animation:shq-flicker 1.8s ease-in-out infinite alternate}
 .shq-eagle g{animation:shq-glide 38s linear infinite}
 .shq-puff{transform-box:fill-box;transform-origin:center;animation:shq-puff 3.2s ease-out infinite}
 @keyframes shq-pokea{0%{transform:scale(1,1)}20%{transform:scale(1.07,.9)}50%{transform:translateY(-22px) scale(.97,1.05)}80%{transform:scale(1.03,.96)}100%{transform:scale(1,1)}}
@@ -122,3 +122,6 @@
 @keyframes shq-glide{from{transform:translateX(-80px)}to{transform:translateX(720px)}}
 @keyframes shq-puff{0%{transform:translate(0,0) scale(.3);opacity:0}25%{opacity:.8}100%{transform:translate(18px,-26px) scale(1.5);opacity:0}}
 @media (prefers-reduced-motion: reduce){.shq svg *{animation:none!important;transition:none!important}}
+
+.shq .shq-yurt{position:absolute;right:8px;bottom:6px;width:min(46%,150px);height:auto;pointer-events:none}
+.shq-m-happy .shq-smokep,.shq-m-calm .shq-smokep{display:none}
