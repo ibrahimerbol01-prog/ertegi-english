@@ -60,7 +60,7 @@ The user. While a student is in a class, that class's teacher sees: nickname, XP
 - the class code and the chosen role while signing in (the role for up to 15 minutes);
 - the position of the Shoqan button.
 
-The browser also keeps the site's files and fonts for offline use. They contain no personal data.
+The browser also keeps the site's files and fonts (served by our own site, not Google) for offline use. They contain no personal data.
 
 ### 5. Other services
 
@@ -70,7 +70,6 @@ The browser also keeps the site's files and fonts for offline use. They contain 
 - **Google Gemini** — Shoqan. Receives the student's messages, "Oi izi" and debate texts for feedback, the level and the hint step. Name and email are not sent. [ASK OWNER: the key's plan; on a free plan Google may use the texts to improve its services.]
 - **Anthropic Claude** — Shoqan's fallback, only if Gemini is not set up. Receives the same.
 - **Microsoft Azure Speech** — reading tales aloud (the tale text is sent) and the pronunciation check in "Dybys". During the check, microphone audio goes from the browser directly to Microsoft. We do not keep the recording.
-- **Google Fonts** — the site's fonts load from Google's servers, so Google receives the IP address and browser details.
 
 Data is not sold and not shared with advertisers.
 

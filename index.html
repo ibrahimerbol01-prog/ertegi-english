@@ -12,9 +12,9 @@
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
     <meta name="apple-mobile-web-app-title" content="Ertegi" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Nunito:wght@700;800;900&display=swap" rel="stylesheet" />
+    <!-- The intro heading (Nunito 900, Kazakh) is the LCP element: fetch its fonts before the CSS asks. -->
+    <link rel="preload" href="/fonts/nunito-cyrillic.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/nunito-cyrillic-ext.woff2" as="font" type="font/woff2" crossorigin />
     <meta
       name="description"
       content="Ertegi English — learn English through Kazakh steppe folklore. Read adaptive A1–C1 tales, build vocabulary, take quizzes, and practice pronunciation."
