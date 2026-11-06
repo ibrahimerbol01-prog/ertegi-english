@@ -2,6 +2,9 @@
    intro and sign-in screens load without the tales and the dictionary. */
 export const DICT = {
   kk: {
+    wlLanguage: "Тіл",
+    wlHaveAccount: "Аккаунтым бар — кіру",
+    wlNext: "Келесі қадам: тіркелу немесе кіру.",
     skip: "Өткізіп жіберу",
     enter: "Бастау",
     greeting: "Сәлем, оқушы!",
@@ -69,6 +72,9 @@ export const DICT = {
     wbTrReview: "Аударма тексерілуде"
   },
   en: {
+    wlLanguage: "Language",
+    wlHaveAccount: "I have an account — sign in",
+    wlNext: "Next: create an account or sign in.",
     skip: "Skip",
     enter: "Get started",
     greeting: "Welcome back!",

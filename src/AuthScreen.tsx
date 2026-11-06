@@ -10,8 +10,8 @@ import { orChunkError } from "./utils/lazyChunk";
 // The policy text is its own chunk: it loads when someone opens it.
 const PrivacyPolicySheet = lazy(() => orChunkError(import("./components/PrivacyPolicy").then((m) => m.PrivacyPolicySheet)));
 
-export default function AuthScreen() {
-  const [mode, setMode] = useState<"signin" | "signup" | "forgot">("signup");
+export default function AuthScreen({ initialMode = "signup" }: { initialMode?: "signup" | "signin" } = {}) {
+  const [mode, setMode] = useState<"signin" | "signup" | "forgot">(initialMode);
   const [resetSent, setResetSent] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");

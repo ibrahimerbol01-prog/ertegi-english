@@ -4,6 +4,8 @@ import { supabase } from "./lib/supabase";
 import AuthScreen from "./AuthScreen";
 import { SetPasswordScreen } from "./components/SetPassword";
 import { IntroScreen } from "./components/IntroScreen";
+import { WelcomeScreen } from "./components/WelcomeScreen";
+import { RESEARCH_MODE } from "./research/mode";
 import { DICT } from "./dict";
 import { loadLang } from "./lang";
 import { capturePendingClass, peekPendingClass } from "./utils/classes";
@@ -30,6 +32,8 @@ export default function App() {
   // the marketing/hero landing ("BASTAU"), not part of the authenticated
   // product itself, so it doesn't need to know about sessions at all.
   const [introSeen, setIntroSeen] = useState(false);
+  // Which form the first screen asked for: create an account, or sign in to one.
+  const [authMode, setAuthMode] = useState<"signup" | "signin">("signup");
   // Bumped after a role is saved on this device only, so the app re-reads it.
   const [, setRoleTick] = useState(0);
   // Set when the account was just deleted: a goodbye screen instead of the sign-in form.
@@ -123,9 +127,10 @@ export default function App() {
   }
 
   if (!introSeen) {
-    return (
-      <IntroScreen onFinish={() => setIntroSeen(true)} t={DICT[loadLang()]} />
-    );
+    // R4: the research site keeps its first screen exactly as it was (docs/product/landing-audit.md).
+    return RESEARCH_MODE
+      ? <IntroScreen onFinish={() => setIntroSeen(true)} t={DICT[loadLang()]} />
+      : <WelcomeScreen onStart={(mode) => { setAuthMode(mode); setIntroSeen(true); }} />;
   }
 
   if (accountDeleted) {
@@ -140,7 +145,7 @@ export default function App() {
 
   if (!session) {
     return (
-      <AuthScreen />
+      <AuthScreen initialMode={authMode} />
     );
   }
 
