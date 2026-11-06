@@ -19,6 +19,10 @@ const FlashcardsScreen = lazy(() => loadWords().then((m) => ({ default: m.Flashc
 const MatchingGame = lazy(() => loadWords().then((m) => ({ default: m.MatchingGame })));
 // «Сөздік қоры», ordinary site only (R4); its data is a lazy chunk per level (src/data/wordbank).
 const WordbankScreen = RESEARCH_MODE ? null : lazy(() => import("./components/screens/WordbankScreen"));
+// Nickname and avatar editor, ordinary site only (R4; alias to ProfileEditor.off in the research build).
+const ProfileEditor = RESEARCH_MODE ? null : lazy(() => import("./components/ProfileEditor"));
+// Placement check v1, ordinary site only (R4; alias to PlacementCheck.off in the research build).
+const PlacementCheck = RESEARCH_MODE ? null : lazy(() => import("./components/PlacementCheck"));
 const QuizSetup = lazy(() => loadQuiz().then((m) => ({ default: m.QuizSetup })));
 const QuizScreen = lazy(() => loadQuiz().then((m) => ({ default: m.QuizScreen })));
 const SpeakScreen = lazy(() => loadSpeak().then((m) => ({ default: m.SpeakScreen })));
@@ -61,6 +65,10 @@ export default function KazakhTalesApp({ session, role, onRoleChange }: { sessio
   const userEmail: string = session.user.email || "";
   const [displayName, setDisplayName] = useState<string>(
     (session.user.user_metadata?.display_name as string | undefined) || userEmail.split("@")[0] || "Learner"
+  );
+  // The chosen avatar id (src/utils/profileEdit.ts); not shown in the research build.
+  const [avatar, setAvatar] = useState<string | null>(
+    RESEARCH_MODE ? null : ((session.user.user_metadata?.avatar as string | undefined) ?? null)
   );
   const [dataLoaded, setDataLoaded] = useState(false);
   const scrollRef = useRef<HTMLDivElement | null>(null);
@@ -401,6 +409,9 @@ export default function KazakhTalesApp({ session, role, onRoleChange }: { sessio
     };
   }, []);
 
+  // Placement check result: open the first tale at the suggested level.
+  const readAtLevel = (level: string) => { setSelectedStory(STORIES[0].id); setSelectedLevel(level); setTab("read"); };
+
   const handleSaveWord = (word: string, translation: string, source: "reader" | "daily" | "wordbank" = "reader") => {
     if (savedWords.some((w) => w.word === word)) return;
     track("word_save", {
@@ -584,6 +595,9 @@ export default function KazakhTalesApp({ session, role, onRoleChange }: { sessio
                   userId={userId}
                   onReward={addXp}
                   onOpenCards={() => setTab("cards")}
+                  placement={!RESEARCH_MODE && PlacementCheck && !teacher ? (
+                    <Suspense fallback={null}><PlacementCheck userId={userId} lang={lang} place="home" onRead={readAtLevel} /></Suspense>
+                  ) : undefined}
                   onStartRead={(storyId: string, level?: string) => {
                     setSelectedStory(storyId);
                     setSelectedLevel(level ?? null);
@@ -694,6 +708,16 @@ export default function KazakhTalesApp({ session, role, onRoleChange }: { sessio
                   kilim={<OyuKilim progress={progress} lang={lang} maqalCount={loadMaqals(userId).length} />}
                   classes={<MyClassesSection lang={lang} userId={userId} defaultName={classNick} />}
                   roleSwitch={<RoleSwitchRow kk={lang === "kk"} to="teacher" onSwitch={onRoleChange} />}
+                  avatar={avatar}
+                  placement={!RESEARCH_MODE && PlacementCheck ? (
+                    <Suspense fallback={null}><PlacementCheck userId={userId} lang={lang} place="profile" onRead={readAtLevel} /></Suspense>
+                  ) : undefined}
+                  editor={!RESEARCH_MODE && ProfileEditor ? (
+                    <Suspense fallback={null}>
+                      <ProfileEditor userId={userId} lang={lang} name={displayName} avatar={avatar}
+                        onSaved={(n, a) => { setDisplayName(n); setAvatar(a); }} />
+                    </Suspense>
+                  ) : undefined}
                 />
               )}
               {tab === "teacher" && teacher && <TeacherScreen lang={lang} />}
