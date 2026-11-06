@@ -66,8 +66,8 @@
 .shq-glance{transform:translate(var(--gx,0px),var(--gy,0px));transition-duration:.14s!important}
 .shq-look{transform-origin:0px -272px;transform:rotate(var(--hr,0deg));transition-duration:.22s!important}
 .shq-figpoke{transform-origin:0 0}
-.poke-a .shq-figpoke{animation:shq-pokea .75s cubic-bezier(.3,.8,.4,1)}
-.poke-b .shq-figpoke{animation:shq-pokeb .75s cubic-bezier(.3,.8,.4,1)}
+.shq-poke-a .shq-figpoke{animation:shq-pokea .75s cubic-bezier(.3,.8,.4,1)}
+.shq-poke-b .shq-figpoke{animation:shq-pokeb .75s cubic-bezier(.3,.8,.4,1)}
 .cfp{opacity:0;transform-box:fill-box;transform-origin:center}
 .cf-a .cfp{animation:shq-cfa 1.9s cubic-bezier(.2,.7,.3,1) forwards}
 .cf-b .cfp{animation:shq-cfb 1.9s cubic-bezier(.2,.7,.3,1) forwards}
@@ -125,3 +125,15 @@
 
 .shq .shq-yurt{position:absolute;right:8px;bottom:6px;width:min(46%,150px);height:auto;pointer-events:none}
 .shq-m-happy .shq-smokep,.shq-m-calm .shq-smokep{display:none}
+
+/* Tap reaction: he speaks (mouth moves, head bobs, arm lifts) and a small burst flies out. */
+.shq-talk .shq-mouth-calm,.shq-talk .shq-mouth-sad{opacity:0}
+.shq-talk .shq-mouth-open{opacity:1;transform-box:fill-box;transform-origin:center top;animation:shq-flap .24s ease-in-out infinite alternate}
+.shq-talk .shq-nod{animation:shq-talknod .5s ease-in-out infinite alternate}
+.shq-talk .shq-blush{opacity:.85}
+.shq-talk .shq-armR{transform:rotate(-14deg)}
+.shq-burst{opacity:0}
+.shq-bp{opacity:0;transform-box:fill-box;transform-origin:center;animation:shq-burst 1.1s cubic-bezier(.2,.7,.3,1) forwards}
+@keyframes shq-flap{from{transform:scaleY(.35)}to{transform:scaleY(1.05)}}
+@keyframes shq-talknod{from{transform:rotate(-2.2deg) translateY(0)}to{transform:rotate(2.4deg) translateY(-2px)}}
+@keyframes shq-burst{0%{opacity:0;transform:translate(0,0) scale(.3) rotate(0)}15%{opacity:1}100%{opacity:0;transform:translate(var(--bx),var(--by)) scale(1.1) rotate(var(--br))}}

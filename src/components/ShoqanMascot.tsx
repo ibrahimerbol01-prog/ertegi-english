@@ -41,6 +41,9 @@ const TEXT = {
 // Fixed positions, so the snow and dust look the same on every render.
 const SNOW = Array.from({ length: 14 }, (_, i) => ({ x: -100 + ((i * 53) % 200), r: 1.4 + (i % 3) * 0.8, dur: 6 + (i % 5), dx: (i % 2 ? 1 : -1) * (8 + (i % 4) * 5), d: -((i * 7) % 10) }));
 const MOTES = Array.from({ length: 8 }, (_, i) => ({ x: -90 + ((i * 47) % 180), y: -140 + ((i * 31) % 120), r: 1.2 + (i % 3) * 0.6, dur: 5 + (i % 4), dx: (i % 2 ? 1 : -1) * 10, d: -((i * 3) % 8) }));
+// Burst on tap: stars and hearts fly out from his head in fixed directions.
+const HEART = "M0 4 C-9 -3 -6 -10 0 -5 C6 -10 9 -3 0 4 Z";
+const BURST = [[-62, -52, -30], [-30, -78, 10], [18, -84, -20], [58, -56, 25], [74, -14, 40], [-76, -10, -40]].map(([x, y, r], i) => ({ x, y, r, heart: i % 2 === 0, d: i * 0.05 }));
 const SPARKS = [[-70, -250], [70, -200], [-60, -120], [76, -300], [0, -410]].map(([x, y], i) => {
   const s = 7 + (i % 3) * 3, q = s * 0.25;
   return { x, y, d: i * 0.22, path: `M0 ${-s} L${q} ${-q} L${s} 0 L${q} ${q} L0 ${s} L${-q} ${q} L${-s} 0 L${-q} ${-q} Z` };
@@ -87,11 +90,15 @@ export default function ShoqanMascot({ daysAway, lang }: { daysAway: number | nu
   const [pokes, setPokes] = useState(0);
   const [poked, setPoked] = useState(false);
   const [pokeIdx, setPokeIdx] = useState(0);
+  const [talking, setTalking] = useState(false);
+  const talkTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
+  useEffect(() => () => clearTimeout(talkTimer.current), []);
+  const speak = () => { setTalking(true); clearTimeout(talkTimer.current); talkTimer.current = setTimeout(() => setTalking(false), 1500); };
 
   // First action of the day while the app is open: a little celebration.
   const prev = useRef(daysAway);
   useEffect(() => {
-    if (prev.current !== null && prev.current > 0 && daysAway === 0) { setPokes((n) => n + 1); setPoked(false); }
+    if (prev.current !== null && prev.current > 0 && daysAway === 0) { setPokes((n) => n + 1); setPoked(false); speak(); }
     prev.current = daysAway;
   }, [daysAway]);
 
@@ -110,7 +117,7 @@ export default function ShoqanMascot({ daysAway, lang }: { daysAway: number | nu
 
   const lines = mood === "sad" ? T.poke.sad : T.poke.ok;
   const say = poked ? lines[pokeIdx % lines.length] : T.say[mood];
-  const poke = () => { setPokes((n) => n + 1); setPoked(true); setPokeIdx((i) => (i + 1) % 3); };
+  const poke = () => { setPokes((n) => n + 1); setPoked(true); setPokeIdx((i) => (i + 1) % 3); speak(); };
   const g = (id: string) => `url(#${uid}-${id})`;
 
   return (
@@ -118,7 +125,7 @@ export default function ShoqanMascot({ daysAway, lang }: { daysAway: number | nu
       aria-label={T.name}
       onPointerMove={onMove}
       onPointerLeave={() => setGaze({ x: 0, y: 0, r: 0 })}
-      className={`shq shq-m-${mood} ${pokes ? (pokes % 2 ? "shq-poke-a" : "shq-poke-b") : ""} relative overflow-hidden rounded-2xl border-2 border-line flex items-stretch gap-3 min-h-[280px]`}
+      className={`shq shq-m-${mood} ${pokes ? (pokes % 2 ? "shq-poke-a" : "shq-poke-b") : ""} ${talking ? "shq-talk" : ""} relative overflow-hidden rounded-2xl border-2 border-line flex items-stretch gap-3 min-h-[280px]`}
       style={{ ["--gx" as string]: `${gx}px`, ["--gy" as string]: `${gaze.y}px`, ["--hr" as string]: `${hr}deg`, background: mood === "sad" ? "linear-gradient(#CFE3EE,#9DBBCB)" : mood === "happy" ? "linear-gradient(#FFE7A6,#FFF6D8)" : "linear-gradient(#BFE6F2,#EEF8FA)" }}
     >
       <div className="relative shrink-0 w-[132px] sm:w-[160px]">
@@ -224,6 +231,15 @@ export default function ShoqanMascot({ daysAway, lang }: { daysAway: number | nu
           <g className="shq-breath"><ellipse className="shq-puff" cx="12" cy="-282" rx="9" ry="6" fill="#EAF6FB"/><ellipse className="shq-puff" style={{ animationDelay: "1.6s" }} cx="14" cy="-282" rx="8" ry="5" fill="#EAF6FB"/></g>
           </g></g>
           </g></g></g>
+          {pokes > 0 && (
+            <g key={pokes} className="shq-burst" transform="translate(0 -330)">
+              {BURST.map((b, i) => (
+                <g key={i} className="shq-bp" style={{ ["--bx" as string]: `${b.x}px`, ["--by" as string]: `${b.y}px`, ["--br" as string]: `${b.r}deg`, animationDelay: `${b.d}s` }}>
+                  {b.heart ? <path d={HEART} fill="#E5736A" transform="scale(1.5)" /> : <path d={SPARKS[i % SPARKS.length].path} fill="#FFC93C" />}
+                </g>
+              ))}
+            </g>
+          )}
           <g className="shq-sparkles" fill="#FFC93C">
             {SPARKS.map((s, i) => <g key={i} transform={`translate(${s.x} ${s.y})`}><path className="shq-tw" style={{ animationDelay: `${s.d}s` }} d={s.path} /></g>)}
           </g>
