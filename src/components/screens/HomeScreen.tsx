@@ -91,11 +91,13 @@ export interface HomeScreenProps {
   onOpenCards?: () => void;
   /** The teacher's assignments card, shown first on the path. */
   assignments?: ReactNode;
+  /** Shoqan the mascot (ordinary site only, KazakhTalesApp.tsx). */
+  mascot?: ReactNode;
   /** The placement check offer or result (ordinary site only, KazakhTalesApp.tsx). */
   placement?: ReactNode;
 }
 
-export function HomeScreen({ onStartRead, onStartQuiz, t, lang, userName = "", sessionXp = 0, dailyGoal = DAILY_GOAL_XP, progress = new Set<string>(), userId, onReward = () => {}, onOpenCards = () => {}, assignments = null, placement = null }: HomeScreenProps) {
+export function HomeScreen({ onStartRead, onStartQuiz, t, lang, userName = "", sessionXp = 0, dailyGoal = DAILY_GOAL_XP, progress = new Set<string>(), userId, onReward = () => {}, onOpenCards = () => {}, assignments = null, placement = null, mascot = null }: HomeScreenProps) {
   // Next step on the path: first level or quiz not yet finished, in order.
   const steps = STORIES.flatMap((s) => [...LEVEL_DETAILS.map((l) => ({ story: s, step: l.id })), { story: s, step: "quiz" }]);
   const current = steps.find((x) => !progress.has(`${x.story.id}:${x.step}`)) || null;
@@ -114,6 +116,8 @@ export function HomeScreen({ onStartRead, onStartQuiz, t, lang, userName = "", s
         <h1 className="large-title">{lang === "kk" ? "Сәлем" : "Hi"}{firstName ? `, ${firstName}` : ""}!</h1>
         <p className="text-[15px] text-ink-2 mt-2 leading-relaxed">{t.homeSubtitle}</p>
       </div>
+
+      {mascot}
 
       {/* Daily goal — on wide screens this lives in the right rail */}
       <div className="card p-4 flex items-center gap-4 xl:hidden">
