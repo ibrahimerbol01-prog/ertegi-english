@@ -10,7 +10,7 @@ import { XP_PER_LEVEL } from "../../research/params";
 import { DeleteAccountCard, PolicyRow } from "../AccountRows";
 
 /* --- 8. PROFILE SCREEN --- */
-export function ProfileScreen({ xp, t, lang = "kk", setLang, savedWordsCount = 0, unlockedAchievements = [], userName = "Learner", onSignOut, streakDays = 0, quizzesCompleted = 0, kilim, classes, roleSwitch, avatar = null, editor }: {
+export function ProfileScreen({ xp, t, lang = "kk", setLang, savedWordsCount = 0, unlockedAchievements = [], userName = "Learner", onSignOut, streakDays = 0, quizzesCompleted = 0, kilim, classes, roleSwitch, avatar = null, editor, placement }: {
   xp: number;
   t: Record<string, string>;
   lang?: string;
@@ -28,6 +28,8 @@ export function ProfileScreen({ xp, t, lang = "kk", setLang, savedWordsCount = 0
   avatar?: string | null;
   /** The edit-profile button; absent in the research build (KazakhTalesApp.tsx). */
   editor?: React.ReactNode;
+  /** The placement check, to take it again (ordinary site only). */
+  placement?: React.ReactNode;
 }) {
   const [showBuklet, setShowBuklet] = useState(false);
   // Levels count from 1: 0–99 XP is level 1.
@@ -75,6 +77,8 @@ export function ProfileScreen({ xp, t, lang = "kk", setLang, savedWordsCount = 0
           </div>
         </div>
       </div>
+
+      {placement}
 
       {/* Stats */}
       <div>

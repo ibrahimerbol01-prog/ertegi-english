@@ -91,9 +91,11 @@ export interface HomeScreenProps {
   onOpenCards?: () => void;
   /** The teacher's assignments card, shown first on the path. */
   assignments?: ReactNode;
+  /** The placement check offer or result (ordinary site only, KazakhTalesApp.tsx). */
+  placement?: ReactNode;
 }
 
-export function HomeScreen({ onStartRead, onStartQuiz, t, lang, userName = "", sessionXp = 0, dailyGoal = DAILY_GOAL_XP, progress = new Set<string>(), userId, onReward = () => {}, onOpenCards = () => {}, assignments = null }: HomeScreenProps) {
+export function HomeScreen({ onStartRead, onStartQuiz, t, lang, userName = "", sessionXp = 0, dailyGoal = DAILY_GOAL_XP, progress = new Set<string>(), userId, onReward = () => {}, onOpenCards = () => {}, assignments = null, placement = null }: HomeScreenProps) {
   // Next step on the path: first level or quiz not yet finished, in order.
   const steps = STORIES.flatMap((s) => [...LEVEL_DETAILS.map((l) => ({ story: s, step: l.id })), { story: s, step: "quiz" }]);
   const current = steps.find((x) => !progress.has(`${x.story.id}:${x.step}`)) || null;
@@ -128,6 +130,7 @@ export function HomeScreen({ onStartRead, onStartQuiz, t, lang, userName = "", s
 
       {/* The teacher's assignments come first: they have a due date. */}
       {assignments}
+      {placement}
 
       {/* Continue card: only once there is progress, otherwise the first island is the start */}
       {progress.size > 0 && (
