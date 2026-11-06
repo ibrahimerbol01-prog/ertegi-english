@@ -36,7 +36,7 @@ const open = (onClose = vi.fn()) => {
   };
 };
 /** The main action: "Delete for good", then "Deleting…", then "Try again" on failure. Same element throughout. */
-const confirmButton = () => screen.getAllByRole("button").find((b) => /delete for good|deleting|try again/i.test(b.textContent ?? ""))!;
+const confirmButton = () => screen.getAllByRole("button").find((b) => /delete for good|deleting|try again/i.test(b.textContent ?? "")) as HTMLButtonElement;
 
 describe("Delete account sheet (DOM)", () => {
   it("is a dialog; the delete button stays off until the confirm word is typed", () => {
