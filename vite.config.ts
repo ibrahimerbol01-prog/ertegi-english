@@ -33,6 +33,7 @@ return {
         { find: /^(.*)\/components\/ProfileEditor$/, replacement: '$1/components/ProfileEditor.off' },
         { find: /^(.*)\/components\/PlacementCheck$/, replacement: '$1/components/PlacementCheck.off' },
         { find: /^(.*)\/lib\/supabase$/, replacement: '$1/lib/research/supabase' },
+        { find: /^(.*)\/components\/ShoqanMascot$/, replacement: '$1/components/ShoqanMascot.off' },
       ]
     : [{ find: /^(.*)\/research\/testEntry$/, replacement: '$1/research/testEntry.off' }] },
   plugins: [
