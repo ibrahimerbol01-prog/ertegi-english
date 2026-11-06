@@ -10,19 +10,6 @@ const pkgVersion: string = JSON.parse(readFileSync(new URL('./package.json', imp
 const commit = (process.env.VERCEL_GIT_COMMIT_SHA || '').slice(0, 7)
 const appVersion = commit ? `${pkgVersion}+${commit}` : pkgVersion
 
-// The Google Fonts stylesheet in index.html blocks the first paint (Lighthouse:
-// render-blocking). In the ordinary build index.html only preloads it, and
-// src/loadFonts.ts (imported by main.tsx) turns it into a stylesheet: no inline
-// script, so the CSP's script-src 'self' holds (vercel.json). Fonts use
-// display=swap. The research build keeps index.html exactly as it is and
-// loadFonts does nothing there, so the study's groups get the same page.
-export const FONTS_LINK = '<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Nunito:wght@700;800;900&display=swap" rel="stylesheet" />'
-export function nonBlockingFonts(html: string): string {
-  if (!html.includes(FONTS_LINK)) throw new Error('index.html: the Google Fonts link changed; update FONTS_LINK in vite.config.ts')
-  const href = FONTS_LINK.match(/href="([^"]+)"/)![1]
-  return html.replace(FONTS_LINK, `<link rel="preload" as="style" href="${href}" data-fonts />\n    <noscript>${FONTS_LINK}</noscript>`)
-}
-
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => {
 // R4 research build (src/research/mode.ts, docs/research-build.md): fixed as
@@ -45,7 +32,6 @@ return {
   plugins: [
     react(),
     tailwindcss(),
-    { name: 'ertegi-non-blocking-fonts', transformIndexHtml: (html: string) => (research ? html : nonBlockingFonts(html)) },
     // Installable app with an offline shell: the code and the tales are cached
     // on the device, so a reload without internet opens the app instead of
     // the browser's error page. A new version replaces the old one on the
@@ -82,9 +68,10 @@ return {
         cleanupOutdatedCaches: true,
         runtimeCaching: [
           {
-            urlPattern: ({ url }) => url.origin === 'https://fonts.googleapis.com' || url.origin === 'https://fonts.gstatic.com',
-            handler: 'StaleWhileRevalidate',
-            options: { cacheName: 'google-fonts', expiration: { maxEntries: 20, maxAgeSeconds: 60 * 60 * 24 * 365 } },
+            // Self-hosted fonts (src/fonts.css): cached when a page first uses a subset.
+            urlPattern: /\/fonts\/[a-z-]+\.woff2$/,
+            handler: 'CacheFirst',
+            options: { cacheName: 'fonts', expiration: { maxEntries: 16, maxAgeSeconds: 60 * 60 * 24 * 365 } },
           },
           {
             urlPattern: /\/assets\/microsoft\.cognitiveservices\.speech\.sdk-.*\.js$/,
