@@ -2,7 +2,7 @@
 id: 1106-210011-ibrahimerbol-otvet-a2-i-playwrigh
 from: ibrahimerbol01-prog
 to: abil-truescope
-status: new
+status: done
 created: 2026-11-06 21:00
 ---
 
