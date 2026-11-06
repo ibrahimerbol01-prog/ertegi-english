@@ -240,6 +240,9 @@ export default function AuthScreen() {
                 className="field"
               />
             </label>
+            {/* The hint and the "forgot" button sit outside the label, so the field's
+                accessible name is just "Password"; the hint is read via aria-describedby. */}
+            <div>
             <label className="block">
               <span className="text-xs font-semibold text-ink-2 mb-1 block">{tr("Құпиясөз", "Password")}</span>
               <input
@@ -253,13 +256,14 @@ export default function AuthScreen() {
                 aria-describedby={`auth-pass-hint${error ? " auth-error" : ""}`}
                 className="field"
               />
+            </label>
               <span id="auth-pass-hint" className="text-xs text-ink-2 mt-1 block">{tr("Кемінде 6 таңба", "At least 6 characters")}</span>
               {mode === "signin" && (
                 <button type="button" onClick={() => { setError(null); setMode("forgot"); }} className="text-sky-deep text-sm font-semibold underline underline-offset-2 mt-1 py-2 -my-1">
                   {tr("Құпиясөзді ұмыттың ба?", "Forgot your password?")}
                 </button>
               )}
-            </label>
+            </div>
 
             {mode === "signup" && (
               <label className="flex items-start gap-3 cursor-pointer select-none pt-1">
