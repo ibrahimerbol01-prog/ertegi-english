@@ -2,7 +2,7 @@
 id: 1106-093638-ibrahimerbol-zadanie-12-prioritet
 from: ibrahimerbol01-prog
 to: abil-truescope
-status: new
+status: done
 created: 2026-11-06 09:36
 ---
 
