@@ -1,11 +1,13 @@
 import { useState } from "react";
 import { ArrowRight } from "lucide-react";
 import { BrandMark } from "./UIHelpers";
-import { Shanyraq, Tumar, SteppeBackground, KilimStrip, QoshqarMuyiz } from "./Ornaments";
+import { SteppeBackground, KilimStrip } from "./Ornaments";
+import { StoryCover } from "./StoryCover";
+import { PREVIEW_TALE } from "../data/previewTale";
 import { DICT } from "../dict";
 import { loadLang, saveLang, type Lang } from "../lang";
 
-/* The first screen of the ORDINARY site (docs/product/landing-audit.md, variant A).
+/* The first screen of the ORDINARY site (docs/product/landing-audit.md, variant B: variant A + a tale preview).
    The research site keeps IntroScreen.tsx unchanged (App.tsx chooses by RESEARCH_MODE).
    Changes from IntroScreen: language switch, the main button fits a 360×640 screen,
    a second button for people who already have an account (it opens sign-in, not
@@ -30,15 +32,15 @@ export function WelcomeScreen({ onStart }: { onStart: (mode: "signup" | "signin"
         </div>
 
         <div className="my-auto py-8 [@media(max-height:700px)]:py-4 text-center">
-          <div className="relative mx-auto w-[220px] h-[220px] mb-9 [@media(max-height:700px)]:w-[140px] [@media(max-height:700px)]:h-[140px] [@media(max-height:700px)]:mb-5">
-            <div className="absolute inset-0 rounded-full bg-sun-soft" />
-            <div className="absolute inset-[9%] rounded-full bg-sky shadow-[0_8px_0_var(--color-sky-deep)] flex items-center justify-center">
-              <Shanyraq className="w-1/2 h-1/2 text-white" strokeWidth={3.2} />
-            </div>
-            <QoshqarMuyiz className="absolute -left-3 top-[11%] w-[25%] h-[15%] text-felt -rotate-[18deg]" strokeWidth={4.5} />
-            <QoshqarMuyiz className="absolute -right-3 bottom-[15%] w-[25%] h-[15%] text-jade rotate-[160deg]" strokeWidth={4.5} />
-            <Tumar className="absolute right-3 top-1 w-7 h-7 text-sun-deep" strokeWidth={3} />
-          </div>
+          {/* Variant B: a real tale instead of an abstract emblem. Title and levels are
+              the app's own (WelcomeScreen.dom.test.tsx checks them against STORIES). */}
+          <figure className="mx-auto w-full max-w-[300px] card overflow-hidden mb-7 [@media(max-height:700px)]:mb-4 text-left">
+            <StoryCover id={PREVIEW_TALE.id} className="w-full h-[120px] [@media(max-height:700px)]:h-[80px]" wide />
+            <figcaption className="px-4 py-3">
+              <p lang="en" className="font-display font-extrabold text-[15px] text-ink leading-snug">{PREVIEW_TALE.title}</p>
+              <p className="text-sm text-ink-2 mt-0.5">{t.wlLevels}</p>
+            </figcaption>
+          </figure>
 
           <h1 className="font-display font-black text-[40px] [@media(max-height:700px)]:text-[34px] leading-[1.05] tracking-tight text-ink">
             Дала аңыздары<br />

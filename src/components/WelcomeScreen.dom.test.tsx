@@ -46,3 +46,18 @@ describe("WelcomeScreen (DOM)", () => {
     expect(readFileSync(join(root, "src/components/WelcomeScreen.tsx"), "utf8")).not.toMatch(/animate-/);
   });
 });
+
+describe("variant B: tale preview", () => {
+  it("shows a real tale of the app with its real levels", async () => {
+    const { STORIES } = await import("../constants");
+    const { displayTitle } = await import("../utils/text");
+    const { PREVIEW_TALE } = await import("../data/previewTale");
+    const tale = STORIES.find((s) => s.id === PREVIEW_TALE.id)!;
+    expect(tale).toBeTruthy();
+    expect(PREVIEW_TALE.title.toLowerCase()).toBe(displayTitle(tale.title).toLowerCase());
+    expect(Object.keys(tale.levels)).toEqual(["A1", "A2", "B1", "B2", "C1"]);
+    render(<WelcomeScreen onStart={vi.fn()} />);
+    expect(screen.getByText(PREVIEW_TALE.title)).toBeTruthy();
+    expect(screen.getByText(/5 деңгей: A1, A2, B1, B2, C1/)).toBeTruthy();
+  });
+});

@@ -3,6 +3,7 @@
 export const DICT = {
   kk: {
     wlLanguage: "Тіл",
+    wlLevels: "5 деңгей: A1, A2, B1, B2, C1",
     wlHaveAccount: "Аккаунтым бар — кіру",
     wlNext: "Келесі қадам: тіркелу немесе кіру.",
     skip: "Өткізіп жіберу",
@@ -73,6 +74,7 @@ export const DICT = {
   },
   en: {
     wlLanguage: "Language",
+    wlLevels: "5 levels: A1, A2, B1, B2, C1",
     wlHaveAccount: "I have an account — sign in",
     wlNext: "Next: create an account or sign in.",
     skip: "Skip",
