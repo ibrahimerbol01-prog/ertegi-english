@@ -62,10 +62,16 @@ export const posGroup = (pos: string): PosGroup =>
 export const cardWord = (headword: string) => headword.split("/")[0].trim();
 
 /** Translation files per level (src/utils/wordbankTranslations.ts). A missing file is skipped. */
-export const WORDBANK_TRANSLATION_FILES: Partial<Record<WordbankLevel, { agreed: string; review: string; arbitration: string }>> = {
+export const WORDBANK_TRANSLATION_FILES: Partial<Record<WordbankLevel, { agreed: string; review: string; arbitration?: string }>> = {
   A1: {
     agreed: "research/wordbank-translations/a1-agreed.csv",
     review: "research/wordbank-translations/a1-review.csv",
     arbitration: "research/wordbank-translations/a1-arbitration.csv",
+  },
+  // A2: only the agreed translations for now (dispatcher, 06.11.2026). a2-arbitration.csv
+  // (#97) is not applied until that is decided; the other words stay without a translation.
+  A2: {
+    agreed: "research/wordbank-translations/a2-agreed.csv",
+    review: "research/wordbank-translations/a2-review.csv",
   },
 };

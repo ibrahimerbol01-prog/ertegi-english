@@ -103,7 +103,7 @@ describe("A1.json holds what the translation files say", () => {
   it("the counts match the files (agreed, needs-review, human, ai-reviewed)", () => {
     const count = (tr: string) => a1.filter((e) => e.tr === tr).length;
     const human = rows(files.review).filter((r) => r.kk_final && r.ru_final).length;
-    const arb = existsSync(join(root, files.arbitration));
+    const arb = !!files.arbitration && existsSync(join(root, files.arbitration));
     expect(count("human")).toBe(human);
     if (!arb) {
       expect(count("ai-reviewed")).toBe(0);
@@ -116,5 +116,35 @@ describe("A1.json holds what the translation files say", () => {
   it("the review sheet has the columns for the person: kk_final, ru_final, reviewer", () => {
     const [h] = parseCsv(read(files.review));
     expect(h.slice(-3)).toEqual(["kk_final", "ru_final", "reviewer"]);
+  });
+});
+
+describe("A2.json holds the agreed translations and nothing else", () => {
+  const files = WORDBANK_TRANSLATION_FILES.A2!;
+  const a2 = JSON.parse(read("src/data/wordbank/A2.json")) as WordbankEntry[];
+  const [h, ...body] = parseCsv(read(files.agreed));
+  const agreed = new Map(body.map((x) => { const r = Object.fromEntries(h.map((c, i) => [c.trim(), (x[i] ?? "").trim()])); return [pairKey(r.headword, r.pos), r]; }));
+
+  it("the dispatcher's decision: agreed only, no arbitration or review for A2 yet", () => {
+    expect(files.arbitration).toBeUndefined();
+    expect(existsSync(join(root, files.review))).toBe(false);
+    expect(a2.some((e) => e.tr && e.tr !== "agreed")).toBe(false);
+  });
+
+  it("every agreed row lands on its A2 word with the same kk and ru", () => {
+    expect(agreed.size).toBe(body.length);
+    const hit = a2.filter((e) => e.tr === "agreed");
+    expect(hit.length).toBe(agreed.size);
+    for (const e of hit) {
+      const r = agreed.get(pairKey(e.word, e.pos));
+      expect(r, e.word).toBeDefined();
+      expect([e.kk, e.ru]).toEqual([r!.kk, r!.ru]);
+    }
+  });
+
+  it("the other A2 words stay without a translation, so the screen offers no card for them", () => {
+    const rest = a2.filter((e) => !e.tr);
+    expect(rest.length).toBe(a2.length - agreed.size);
+    expect(rest.every((e) => e.kk === "" && e.ru === "")).toBe(true);
   });
 });
