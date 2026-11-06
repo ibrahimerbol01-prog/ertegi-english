@@ -17,7 +17,7 @@ export default function ProfileEditor({ userId, lang, name, avatar, onSaved }: {
   avatar: string | null;
   onSaved: (name: string, avatar: string | null) => void;
 }) {
-  const t = DICT[lang === "kk" ? "kk" : "en"];
+  const t = DICT[lang];
   const [open, setOpen] = useState(false);
   const [draft, setDraft] = useState(name);
   const [pick, setPick] = useState<string | null>(avatar);

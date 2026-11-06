@@ -16,7 +16,7 @@ import { useLang } from "../../lang";
 /* Words tab switcher shared by flashcards, matching and the wordbank (ordinary site only). */
 export function WordsHeader({ mode, setMode, trailing }: { mode?: string; setMode?: (m: string) => void; trailing?: React.ReactNode }) {
   const tr = useTr();
-  const t = DICT[useLang() === "kk" ? "kk" : "en"];
+  const t = DICT[useLang()];
   const title = mode === "match" ? tr("Жұбын тап", "Find the pair") : mode === "bank" && !RESEARCH_MODE ? t.wbTitle : tr("Карточкалар", "Flashcards");
   return (
     <>

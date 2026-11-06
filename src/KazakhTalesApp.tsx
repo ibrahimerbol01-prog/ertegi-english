@@ -36,7 +36,7 @@ import { APP_STORIES as STORIES } from "./research/stories";
 import { StudyGate } from "./research/StudyGate";
 // R5: the vocabulary test exists only in the research build (no chunk in the ordinary one).
 import { TestScreen } from "./research/testEntry";
-import { LangContext, loadLang, saveLang, type Lang } from "./lang";
+import { LangContext, RU_UI_READY, loadLang, saveLang, toLang, type Lang } from "./lang";
 import type { SavedWord } from "./types";
 import { supabase } from "./lib/supabase";
 import { saveToSupabase } from "./utils/supabase-save";
@@ -87,7 +87,7 @@ export default function KazakhTalesApp({ session, role, onRoleChange }: { sessio
   const [xp, setXp] = useState(0);
   const [lang, setLangState] = useState<Lang>(loadLang);
   const setLang = (next: string) => {
-    const l: Lang = next === "en" ? "en" : "kk";
+    const l: Lang = toLang(next);
     setLangState(l);
     saveLang(l);
   };
@@ -498,8 +498,9 @@ export default function KazakhTalesApp({ session, role, onRoleChange }: { sessio
     ) : null;
 
   const LangToggle = () => (
-    <div className="segmented w-[104px]" role="group" aria-label={lang === "kk" ? "Тіл" : "Language"}>
+    <div className={`segmented ${RU_UI_READY ? "w-[148px]" : "w-[104px]"}`} role="group" aria-label={lang === "kk" ? "Тіл" : lang === "ru" ? "Язык" : "Language"}>
       <button aria-pressed={lang === "kk"} onClick={() => setLang("kk")}>ҚАЗ</button>
+      {RU_UI_READY && <button aria-pressed={lang === "ru"} onClick={() => setLang("ru")} lang="ru">РУС</button>}
       <button aria-pressed={lang === "en"} onClick={() => setLang("en")}>ENG</button>
     </div>
   );

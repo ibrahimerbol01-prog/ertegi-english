@@ -32,7 +32,7 @@ export default function WordbankScreen({ savedWords, onAdd, mode, setMode }: {
   setMode?: (m: string) => void;
 }) {
   const lang = useLang();
-  const t = DICT[lang === "kk" ? "kk" : "en"];
+  const t = DICT[lang];
   const [level, setLevel] = useState<WordbankLevel>("A1");
   const [group, setGroup] = useState<PosGroup>("noun");
   const [data, setData] = useState<{ level: WordbankLevel; words: WordbankEntry[] } | null>(null);

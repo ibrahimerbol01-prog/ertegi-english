@@ -17,7 +17,7 @@ export default function PlacementCheck({ userId, lang, place, onRead }: {
   place: "home" | "profile";
   onRead: (level: PlacementLevel) => void;
 }) {
-  const t = DICT[lang === "kk" ? "kk" : "en"];
+  const t = DICT[lang];
   const [state, setState] = useState(() => readPlacement(store(), userId));
   const [running, setRunning] = useState(false);
   const [i, setI] = useState(0);

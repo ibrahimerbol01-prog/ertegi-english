@@ -31,7 +31,7 @@ describe("DICT translations", () => {
   });
 
   it("no translation string is empty", () => {
-    for (const [lang, dict] of Object.entries({ kk, en })) {
+    for (const [lang, dict] of Object.entries({ kk, en, ru: DICT.ru as Record<string, unknown> })) {
       for (const [key, val] of Object.entries(dict)) {
         if (KNOWN_GAPS.includes(key)) continue;
         if (typeof val === "string") {
@@ -66,6 +66,17 @@ describe("DICT translations", () => {
           )}], en has [${enPlaceholders.join(", ")}]`
         ).toEqual(enPlaceholders);
       }
+    }
+  });
+
+  it("ru has the same keys and placeholders as kk, and is written in Cyrillic", () => {
+    const ru = DICT.ru as Record<string, unknown>;
+    expect(Object.keys(ru).sort()).toEqual(Object.keys(kk).sort());
+    const ph = (v: unknown) => (typeof v === "string" ? (v.match(/\{[a-zA-Z0-9_]+\}/g) ?? []).sort() : []);
+    for (const key of Object.keys(kk)) {
+      expect(ph(ru[key]), `placeholders of "${key}"`).toEqual(ph(kk[key]));
+      // Every ru text must contain Cyrillic (catches an English string left in by mistake).
+      expect(String(ru[key]), `ru "${key}" has no Cyrillic`).toMatch(/[А-Яа-яЁё]/);
     }
   });
 });

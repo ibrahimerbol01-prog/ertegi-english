@@ -29,6 +29,13 @@ const TEXT = {
     label: { happy: "Шоқан қуанып тұр", calm: "Шоқан тыныш тұр", sad: "Шоқан тоңып тұр" },
     tap: "Шоқанға қол тигізу",
   },
+  ru: {
+    name: "Шокан",
+    say: { happy: "Здорово! Сегодня мы сделали ещё один шаг.", calm: "Привет! Почитаем сказку?", sad: "Здесь холодно… Я тебя жду. Одну короткую сказку?" },
+    poke: { ok: ["Ха-ха, щекотно!", "Я здесь!", "Вернёмся к сказке?"], sad: ["Брр… какие у тебя тёплые руки.", "Сказка бы меня согрела."] },
+    label: { happy: "Шокан радуется", calm: "Шокан стоит спокойно", sad: "Шокан замёрз" },
+    tap: "Потрогать Шокана",
+  },
   en: {
     name: "Shoqan",
     say: { happy: "Great! One more step today.", calm: "Hi! Shall we read a tale?", sad: "It is chilly here… I am waiting for you. One short tale?" },
@@ -47,7 +54,7 @@ const SPARKS = [[-70, -250], [70, -200], [-60, -120], [76, -300], [0, -410]].map
 });
 
 export default function ShoqanMascot({ daysAway, lang }: { daysAway: number | null; lang: Lang }) {
-  const T = TEXT[lang === "kk" ? "kk" : "en"];
+  const T = TEXT[lang];
   const mood = moodFor(daysAway);
   const uid = useId().replace(/:/g, "");
   const [gaze, setGaze] = useState({ x: 0, y: 0, r: 0 });
