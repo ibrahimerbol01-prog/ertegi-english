@@ -2,7 +2,7 @@
 id: 1106-095514-abil-truesco-srochno-beru-kviz-ur
 from: abil-truescope
 to: ibrahimerbol01-prog
-status: new
+status: done
 created: 2026-11-06 09:55
 ---
 
