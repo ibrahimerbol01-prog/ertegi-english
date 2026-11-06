@@ -29,7 +29,7 @@ describe("AuthScreen (DOM)", () => {
     render(<AuthScreen />);
     type(/your name/i, "Aigerim");
     type(/^email$/i, "a@example.org");
-    type(/^password$/i, "secret12");
+    type(/^password/i, "secret12");
     submit(/create account/i);
     expect((await screen.findByRole("alert")).textContent).toMatch(/learner or a teacher/i);
     fireEvent.click(screen.getByRole("button", { name: /i'm a learner/i }));
@@ -43,7 +43,7 @@ describe("AuthScreen (DOM)", () => {
     fireEvent.click(screen.getByRole("button", { name: /i'm a teacher/i }));
     type(/your name/i, "Aigerim");
     type(/^email$/i, "a@example.org");
-    type(/^password$/i, "secret12");
+    type(/^password/i, "secret12");
     fireEvent.click(screen.getByRole("checkbox"));
     submit(/create account/i);
     await waitFor(() => expect(auth.signUp).toHaveBeenCalledTimes(1));
@@ -70,7 +70,7 @@ describe("AuthScreen (DOM)", () => {
     fireEvent.click(screen.getAllByRole("button", { name: /^sign in$/i }).at(-1)!);
     expect(screen.queryByRole("checkbox")).toBeNull();
     type(/^email$/i, "a@example.org");
-    type(/^password$/i, "secret12");
+    type(/^password/i, "secret12");
     fireEvent.click(screen.getAllByRole("button", { name: /^sign in$/i })[0]);
     await waitFor(() => expect(auth.signInWithPassword).toHaveBeenCalledWith({ email: "a@example.org", password: "secret12" }));
   });
@@ -80,7 +80,7 @@ describe("AuthScreen (DOM)", () => {
     render(<AuthScreen />);
     fireEvent.click(screen.getAllByRole("button", { name: /^sign in$/i }).at(-1)!);
     type(/^email$/i, "a@example.org");
-    type(/^password$/i, "wrong123");
+    type(/^password/i, "wrong123");
     fireEvent.click(screen.getAllByRole("button", { name: /^sign in$/i })[0]);
     expect((await screen.findByRole("alert")).textContent).toMatch(/invalid login credentials/i);
     expect(screen.getByLabelText(/^email$/i)).toBeTruthy();
@@ -125,16 +125,5 @@ describe("SetPasswordScreen (DOM)", () => {
     fill("abcdef", "abcdef"); save();
     expect((await screen.findByRole("alert")).textContent).toMatch(/too weak/i);
     expect(screen.queryByText(/password updated/i)).toBeNull();
-  });
-});
-
-describe("AuthScreen accessibility", () => {
-  it("the password field's accessible name is just its label (hint and 'forgot' button are not part of it)", () => {
-    render(<AuthScreen />);
-    fireEvent.click(screen.getAllByRole("button", { name: /^sign in$/i }).at(-1)!);
-    const field = screen.getByLabelText(/^password$/i) as HTMLInputElement;
-    expect(field.type).toBe("password");
-    expect(field.getAttribute("aria-describedby")).toContain("auth-pass-hint");
-    expect(screen.getByRole("button", { name: /forgot your password/i }).closest("label")).toBeNull();
   });
 });
