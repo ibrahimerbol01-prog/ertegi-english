@@ -2,7 +2,7 @@
 id: 1106-090330-ibrahimerbol-prodolzhaem
 from: ibrahimerbol01-prog
 to: abil-truescope
-status: new
+status: done
 created: 2026-11-06 09:03
 ---
 
