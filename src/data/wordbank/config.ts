@@ -68,10 +68,11 @@ export const WORDBANK_TRANSLATION_FILES: Partial<Record<WordbankLevel, { agreed:
     review: "research/wordbank-translations/a1-review.csv",
     arbitration: "research/wordbank-translations/a1-arbitration.csv",
   },
-  // A2: only the agreed translations for now (dispatcher, 06.11.2026). a2-arbitration.csv
-  // (#97) is not applied until that is decided; the other words stay without a translation.
+  // A2: the agreed translations and the decided pairs of the arbitration (dispatcher,
+  // 06.11.2026); the other words stay without a translation until a person checks them.
   A2: {
     agreed: "research/wordbank-translations/a2-agreed.csv",
     review: "research/wordbank-translations/a2-review.csv",
+    arbitration: "research/wordbank-translations/a2-arbitration.csv",
   },
 };

@@ -119,16 +119,25 @@ describe("A1.json holds what the translation files say", () => {
   });
 });
 
-describe("A2.json holds the agreed translations and nothing else", () => {
+describe("A2.json holds the agreed translations and the decided arbitration pairs", () => {
   const files = WORDBANK_TRANSLATION_FILES.A2!;
   const a2 = JSON.parse(read("src/data/wordbank/A2.json")) as WordbankEntry[];
   const [h, ...body] = parseCsv(read(files.agreed));
   const agreed = new Map(body.map((x) => { const r = Object.fromEntries(h.map((c, i) => [c.trim(), (x[i] ?? "").trim()])); return [pairKey(r.headword, r.pos), r]; }));
 
-  it("the dispatcher's decision: agreed only, no arbitration or review for A2 yet", () => {
-    expect(files.arbitration).toBeUndefined();
+  it("the dispatcher's decision: agreed + arbitration, no review sheet for A2 yet", () => {
+    expect(existsSync(join(root, files.arbitration!))).toBe(true);
     expect(existsSync(join(root, files.review))).toBe(false);
-    expect(a2.some((e) => e.tr && e.tr !== "agreed")).toBe(false);
+    expect(a2.every((e) => !e.tr || e.tr === "agreed" || e.tr === "ai-reviewed")).toBe(true);
+  });
+
+  it("ai-reviewed = arbitration rows where both kk and ru are decided, with those values", () => {
+    const [ah, ...ab] = parseCsv(read(files.arbitration!));
+    const arb = ab.map((x) => Object.fromEntries(ah.map((c, i) => [c.trim(), (x[i] ?? "").trim()]))).filter((r) => r.kk_final && r.ru_final);
+    const ai = a2.filter((e) => e.tr === "ai-reviewed");
+    expect(ai.length).toBe(arb.length);
+    const byKey = new Map(arb.map((r) => [pairKey(r.headword, r.pos), r]));
+    for (const e of ai) expect([e.kk, e.ru], e.word).toEqual([byKey.get(pairKey(e.word, e.pos))!.kk_final, byKey.get(pairKey(e.word, e.pos))!.ru_final]);
   });
 
   it("every agreed row lands on its A2 word with the same kk and ru", () => {
@@ -144,7 +153,7 @@ describe("A2.json holds the agreed translations and nothing else", () => {
 
   it("the other A2 words stay without a translation, so the screen offers no card for them", () => {
     const rest = a2.filter((e) => !e.tr);
-    expect(rest.length).toBe(a2.length - agreed.size);
+    expect(rest.length).toBe(a2.length - agreed.size - a2.filter((e) => e.tr === "ai-reviewed").length);
     expect(rest.every((e) => e.kk === "" && e.ru === "")).toBe(true);
   });
 });
