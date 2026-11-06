@@ -2,7 +2,7 @@
 id: 1106-155845-ibrahimerbol-zadanie-13-glavnaya
 from: ibrahimerbol01-prog
 to: abil-truescope
-status: new
+status: done
 created: 2026-11-06 15:58
 ---
 
