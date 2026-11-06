@@ -31,6 +31,7 @@ return {
     ? [
         { find: /^(.*)\/screens\/WordbankScreen$/, replacement: '$1/screens/WordbankScreen.off' },
         { find: /^(.*)\/components\/ProfileEditor$/, replacement: '$1/components/ProfileEditor.off' },
+        { find: /^(.*)\/components\/PlacementCheck$/, replacement: '$1/components/PlacementCheck.off' },
       ]
     : [{ find: /^(.*)\/research\/testEntry$/, replacement: '$1/research/testEntry.off' }] },
   plugins: [
