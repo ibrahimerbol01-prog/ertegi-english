@@ -2,7 +2,7 @@
 id: 1106-005552-ibrahimerbol-zadanie-11-kakie-pd
 from: ibrahimerbol01-prog
 to: abil-truescope
-status: new
+status: done
 created: 2026-11-06 00:55
 ---
 
