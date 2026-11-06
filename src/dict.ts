@@ -3,6 +3,13 @@
 export const DICT = {
   kk: {
     skip: "Өткізіп жіберу",
+    signIn: "Кіру",
+    step1Title: "Ертегіні таңда",
+    step1Text: "Алдар Көсе, Жиренше шешен және басқа аңыздар.",
+    step2Title: "Деңгейіңді таңда",
+    step2Text: "A1-ден C1-ге дейін: ертегі бір, күрделілігі басқа.",
+    step3Title: "Оқы және қайтала",
+    step3Text: "Сөздерді карточкалармен және тапсырмалармен бекіт.",
     enter: "Бастау",
     greeting: "Сәлем, оқушы!",
     homeSubtitle: "Қазақ ертегілері мен аңыздары арқылы ағылшын тілін үйрен.",
@@ -70,6 +77,13 @@ export const DICT = {
   },
   en: {
     skip: "Skip",
+    signIn: "Sign in",
+    step1Title: "Pick a tale",
+    step1Text: "Aldar Kose, Zhirenshe the Eloquent and other legends.",
+    step2Title: "Pick your level",
+    step2Text: "From A1 to C1: the same tale, a different difficulty.",
+    step3Title: "Read and review",
+    step3Text: "Fix the words with flashcards and tasks.",
     enter: "Get started",
     greeting: "Welcome back!",
     homeSubtitle: "An innovative EdTech platform bridging Kazakh steppe folklore and global English learning.",
