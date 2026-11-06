@@ -2,7 +2,7 @@
 id: 1106-202809-ibrahimerbol-otvet-a2-testovyy-ak
 from: ibrahimerbol01-prog
 to: abil-truescope
-status: new
+status: done
 created: 2026-11-06 20:28
 ---
 
