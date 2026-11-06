@@ -1,0 +1,124 @@
+
+.shq svg *{transition-property:opacity,transform,fill;transition-duration:.9s;transition-timing-function:cubic-bezier(.35,.8,.3,1)}
+.shq .shq-sky-gold,.shq .shq-sky-night,.shq .shq-moon,.shq .shq-stars,.shq .shq-snow,.shq .shq-cold,.shq .shq-snowcover,.shq .shq-door-glow-hi,.shq .shq-eyes-happy,.shq .shq-mouth-open,.shq .shq-mouth-sad,.shq .shq-nose-red,.shq .shq-sparkles,.shq .shq-breath{opacity:0}
+.shq .shq-sun,.shq .shq-motes,.shq .shq-eagle{opacity:1}
+.shq .shq-door-glow{opacity:.35}
+.shq .shq-mouth-calm{opacity:1}
+.shq .shq-cast{opacity:.9}
+.shq-m-sad .shq-cast{opacity:.3}
+.shq-coat-cold{opacity:0}
+.shq-m-sad .shq-coat-cold{opacity:.5}
+.shq .shq-blush{opacity:.3}
+.shq-m-happy .shq-sky-gold{opacity:1}
+.shq-m-sad .shq-sky-night{opacity:1}
+.shq-m-sad .shq-sun,.shq-m-sad .shq-eagle,.shq-m-sad .shq-motes{opacity:0}
+.shq-m-sad .shq-sun{transform:translateY(90px)}
+.shq-m-sad .shq-moon,.shq-m-sad .shq-stars,.shq-m-sad .shq-snow,.shq-m-sad .shq-cold,.shq-m-sad .shq-snowcover,.shq-m-sad .shq-door-glow-hi,.shq-m-sad .shq-nose-red,.shq-m-sad .shq-mouth-sad,.shq-m-sad .shq-breath{opacity:1}
+.shq-m-sad .shq-cold{opacity:.34}
+.shq-m-sad .shq-snowcover{opacity:.88}
+.shq-m-sad .shq-door-glow{opacity:.95}
+.shq-m-sad .shq-mouth-calm,.shq-m-happy .shq-mouth-calm{opacity:0}
+.shq-m-sad .shq-blush{opacity:.1}
+.shq-m-happy .shq-blush{opacity:.62}
+.shq-m-happy .shq-eyes-happy,.shq-m-happy .shq-mouth-open,.shq-m-happy .shq-sparkles{opacity:1}
+.shq-m-happy .shq-eyes-open{opacity:0}
+.shq-m-happy .shq-sun{transform:scale(1.12)}
+.shq-sun{transform-box:fill-box;transform-origin:center}
+.shq-moon{transform:translateY(-50px)}
+.shq-m-sad .shq-moon{transform:translateY(0)}
+.shq-m-sad .shq-eyes-lid{transform:scaleY(.6) translateY(2px)}
+.shq-eyes-lid{transform-box:fill-box;transform-origin:center}
+.shq-browL{transform-box:fill-box;transform-origin:center}
+.shq-browR{transform-box:fill-box;transform-origin:center}
+.shq-m-sad .shq-browL{transform:rotate(-15deg) translateY(1px)}
+.shq-m-sad .shq-browR{transform:rotate(15deg) translateY(1px)}
+.shq-m-happy .shq-browL,.shq-m-happy .shq-browR{transform:translateY(-3px)}
+.shq-armL,.shq-armR{transition-duration:1s!important;transition-timing-function:cubic-bezier(.3,1.35,.5,1)!important}
+.shq-armL{transform-origin:-56px -244px;transform:rotate(7deg)}
+.shq-armR{transform-origin:56px -244px;transform:rotate(-7deg)}
+.shq-m-happy .shq-armL{transform:rotate(150deg)}
+.shq-m-happy .shq-armR{transform:rotate(-22deg)}
+.shq-m-sad .shq-armL{transform:rotate(-46deg)}
+.shq-m-sad .shq-armR{transform:rotate(46deg)}
+.shq-book{transform-box:fill-box;transform-origin:center}
+.shq-m-happy .shq-book{transform:rotate(22deg)}
+.shq-m-sad .shq-book{transform:rotate(-8deg)}
+.shq-waveL{transform-origin:-56px -244px}
+.shq-m-happy .shq-waveL{animation:shq-wave .7s ease-in-out infinite alternate}
+.shq-hover{animation:shq-hover 4.2s ease-in-out infinite}
+.shq-m-happy .shq-hover{animation:shq-hop 1.15s cubic-bezier(.3,.8,.4,1) infinite}
+.shq-m-sad .shq-hover{animation:none}
+.shadow{transform-box:fill-box;transform-origin:center;animation:shq-shadow 4.2s ease-in-out infinite}
+.shq-m-happy .shadow{animation:shq-shadowhop 1.15s cubic-bezier(.3,.8,.4,1) infinite}
+.shq-m-sad .shadow{animation:none}
+.shq-shiver{animation:none}
+.shq-m-sad .shq-shiver{animation:shq-shiver .2s linear infinite}
+.shq-breathe{transform-origin:0px -60px;animation:shq-breathe 3.8s ease-in-out infinite}
+.shq-nod{transform-origin:0px -272px;animation:shq-nod 6s ease-in-out infinite}
+.shq-m-sad .shq-nod{animation:none;transform:rotate(5deg) translateY(4px)}
+.shq-blink{transform-box:fill-box;transform-origin:center;animation:shq-blink 6.5s infinite}
+.shq-m-happy .shq-hem{animation:shq-hemhop 1.15s ease-in-out infinite}
+.shq-m-calm .shq-book{animation:shq-bookpeek 7s ease-in-out infinite}
+.shq-m-sad .shq-bootL{animation:shq-stomp .55s ease-in-out infinite}
+.shq-bootL{transform-box:fill-box;transform-origin:50% 100%}
+.shq-pageflip{transform-box:fill-box;transform-origin:left center;animation:shq-flip 7s ease-in-out infinite}
+.shq-m-happy .shq-pageflip,.shq-m-sad .shq-pageflip{animation:none}
+.shq-glance{transform:translate(var(--gx,0px),var(--gy,0px));transition-duration:.14s!important}
+.shq-look{transform-origin:0px -272px;transform:rotate(var(--hr,0deg));transition-duration:.22s!important}
+.shq-figpoke{transform-origin:0 0}
+.poke-a .shq-figpoke{animation:shq-pokea .75s cubic-bezier(.3,.8,.4,1)}
+.poke-b .shq-figpoke{animation:shq-pokeb .75s cubic-bezier(.3,.8,.4,1)}
+.cfp{opacity:0;transform-box:fill-box;transform-origin:center}
+.cf-a .cfp{animation:shq-cfa 1.9s cubic-bezier(.2,.7,.3,1) forwards}
+.cf-b .cfp{animation:shq-cfb 1.9s cubic-bezier(.2,.7,.3,1) forwards}
+.bubble{transform-origin:50% 100%}
+.bp-a .bubble{animation:shq-bpa .45s cubic-bezier(.3,1.4,.5,1)}
+.bp-b .bubble{animation:shq-bpb .45s cubic-bezier(.3,1.4,.5,1)}
+.feather{transform-origin:32px -372px;animation:shq-feather 3.4s ease-in-out infinite alternate}
+.shq-hem{transform-origin:0px -46px;animation:shq-hem 4.6s ease-in-out infinite alternate}
+.shq-tw{transform-box:fill-box;transform-origin:center;animation:shq-tw 1.3s ease-in-out infinite}
+.shq-star{animation:shq-star 2.6s ease-in-out infinite}
+.shq-snowf{animation:shq-snowf var(--d) linear infinite}
+.shq-mote{animation:shq-mote var(--d) ease-in-out infinite}
+.tuft{transform-box:fill-box;transform-origin:50% 100%;animation:shq-sway 3.4s ease-in-out infinite}
+.cloud1{animation:shq-drift 70s linear infinite alternate}
+.cloud2{animation:shq-drift 95s linear infinite alternate-reverse}
+.rays{transform-box:fill-box;transform-origin:center;animation:shq-spin 60s linear infinite}
+.smoke{transform-box:fill-box;transform-origin:center bottom;animation:shq-smoke 5s ease-out infinite}
+.flicker{animation:shq-flicker 1.8s ease-in-out infinite alternate}
+.shq-eagle g{animation:shq-glide 38s linear infinite}
+.shq-puff{transform-box:fill-box;transform-origin:center;animation:shq-puff 3.2s ease-out infinite}
+@keyframes shq-pokea{0%{transform:scale(1,1)}20%{transform:scale(1.07,.9)}50%{transform:translateY(-22px) scale(.97,1.05)}80%{transform:scale(1.03,.96)}100%{transform:scale(1,1)}}
+@keyframes shq-pokeb{0%{transform:scale(1,1)}20%{transform:scale(1.07,.9)}50%{transform:translateY(-22px) scale(.97,1.05)}80%{transform:scale(1.03,.96)}100%{transform:scale(1,1)}}
+@keyframes shq-cfa{0%{opacity:0;transform:translate(0,0) rotate(0) scale(.4)}10%{opacity:1}60%{opacity:1;transform:translate(var(--dx),var(--dy)) rotate(var(--rot)) scale(1)}100%{opacity:0;transform:translate(calc(var(--dx) * 1.15),calc(var(--dy) + 190px)) rotate(calc(var(--rot) * 2)) scale(1)}}
+@keyframes shq-cfb{0%{opacity:0;transform:translate(0,0) rotate(0) scale(.4)}10%{opacity:1}60%{opacity:1;transform:translate(var(--dx),var(--dy)) rotate(var(--rot)) scale(1)}100%{opacity:0;transform:translate(calc(var(--dx) * 1.15),calc(var(--dy) + 190px)) rotate(calc(var(--rot) * 2)) scale(1)}}
+@keyframes shq-bpa{0%{opacity:.2;transform:scale(.9)}100%{opacity:1;transform:scale(1)}}
+@keyframes shq-bpb{0%{opacity:.2;transform:scale(.9)}100%{opacity:1;transform:scale(1)}}
+@keyframes shq-hover{0%,100%{transform:translateY(0)}50%{transform:translateY(-9px)}}
+@keyframes shq-hop{0%{transform:translateY(0) scale(1,1)}10%{transform:translateY(0) scale(1.06,.92)}45%{transform:translateY(-36px) scale(.97,1.05)}88%{transform:translateY(0) scale(1.05,.93)}100%{transform:translateY(0) scale(1,1)}}
+@keyframes shq-shadow{0%,100%{transform:scaleX(1);opacity:.9}50%{transform:scaleX(.86);opacity:.65}}
+@keyframes shq-shadowhop{0%,100%{transform:scaleX(1);opacity:.9}45%{transform:scaleX(.62);opacity:.45}}
+@keyframes shq-shiver{0%,100%{transform:translateX(-1.6px)}50%{transform:translateX(1.6px)}}
+@keyframes shq-breathe{0%,100%{transform:scale(1,1)}50%{transform:scale(1.012,1.018)}}
+@keyframes shq-nod{0%,100%{transform:rotate(-1.2deg)}50%{transform:rotate(1.6deg)}}
+@keyframes shq-blink{0%,90%,100%{transform:scaleY(1)}92%{transform:scaleY(.08)}94%{transform:scaleY(1)}96%{transform:scaleY(.08)}98%{transform:scaleY(1)}}
+@keyframes shq-hemhop{0%,100%{transform:skewX(0)}30%{transform:skewX(-2.4deg)}60%{transform:skewX(2.4deg)}}
+@keyframes shq-bookpeek{0%,55%,100%{transform:rotate(0) translateY(0)}65%,85%{transform:rotate(-10deg) translateY(-14px)}}
+@keyframes shq-stomp{0%,70%,100%{transform:translateY(0) rotate(0)}30%{transform:translateY(-5px) rotate(-4deg)}}
+@keyframes shq-flip{0%,66%{transform:scaleX(1)}76%{transform:scaleX(-1)}100%{transform:scaleX(-1)}}
+@keyframes shq-glance{0%,40%{transform:translateX(0)}50%,70%{transform:translateX(2.2px)}80%,100%{transform:translateX(-1.6px)}}
+@keyframes shq-wave{from{transform:rotate(-10deg)}to{transform:rotate(12deg)}}
+@keyframes shq-feather{from{transform:rotate(-3deg)}to{transform:rotate(4deg)}}
+@keyframes shq-hem{from{transform:skewX(-1.2deg)}to{transform:skewX(1.2deg)}}
+@keyframes shq-tw{0%,100%{transform:scale(.4);opacity:.2}50%{transform:scale(1.1);opacity:1}}
+@keyframes shq-star{0%,100%{opacity:.25}50%{opacity:1}}
+@keyframes shq-snowf{0%{transform:translate(0,-30px)}100%{transform:translate(var(--dx),700px)}}
+@keyframes shq-mote{0%{transform:translate(0,0);opacity:0}25%{opacity:.8}100%{transform:translate(var(--dx),-90px);opacity:0}}
+@keyframes shq-sway{0%,100%{transform:rotate(-4deg)}50%{transform:rotate(5deg)}}
+@keyframes shq-drift{from{transform:translateX(-30px)}to{transform:translateX(50px)}}
+@keyframes shq-spin{to{transform:rotate(360deg)}}
+@keyframes shq-smoke{0%{transform:translateY(0) scale(.5);opacity:0}25%{opacity:.7}100%{transform:translateY(-70px) scale(1.6);opacity:0}}
+@keyframes shq-flicker{from{opacity:.8}to{opacity:1}}
+@keyframes shq-glide{from{transform:translateX(-80px)}to{transform:translateX(720px)}}
+@keyframes shq-puff{0%{transform:translate(0,0) scale(.3);opacity:0}25%{opacity:.8}100%{transform:translate(18px,-26px) scale(1.5);opacity:0}}
+@media (prefers-reduced-motion: reduce){.shq svg *{animation:none!important;transition:none!important}}
