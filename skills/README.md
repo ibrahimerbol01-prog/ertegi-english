@@ -19,3 +19,7 @@
 Навыки `react-testing`, `tdd-workflow`, `verification-loop`, `typescript-patterns`, `eval-harness`,
 `research-ops`, `security-review` — из Everything Claude Code (github.com/affaan-m/ECC, MIT, см.
 ECC-LICENSE). Где они противоречат EXECUTOR.md или правилам проекта, главнее EXECUTOR.md.
+
+
+## Добавлено 06.11 (из ECC, MIT)
+Тесты в браузере: e2e-testing. Доступность: frontend-a11y, accessibility. Скорость: react-performance, seo. Переводы интерфейса: i18n-sync. Рынок и конкуренты: competitive-platform-analysis, competitive-report-structure, market-research. База: database-migrations, postgres-patterns (только описывать SQL, не применять). Исследования: deep-research. Опыт команды: continuous-learning. Дизайн-система: design-system. Правило: прочитай SKILL.md нужного навыка до задачи; навык не отменяет EXECUTOR.md и правило пользы.
