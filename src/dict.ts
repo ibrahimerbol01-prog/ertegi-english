@@ -2,6 +2,17 @@
    intro and sign-in screens load without the tales and the dictionary. */
 export const DICT = {
   kk: {
+    peEdit: "Профильді өзгерту",
+    peName: "Атың",
+    peAvatar: "Сурет",
+    peNoAvatar: "Суретсіз, атымның бірінші әрпі",
+    peSave: "Сақтау",
+    peSaving: "Сақталып жатыр…",
+    peErrEmpty: "Атыңды жаз.",
+    peErrLong: "Ат 30 таңбадан аспасын.",
+    peErrChars: "Тек әріп, сан, бос орын және . ' - белгілері.",
+    peErrBlocked: "Бұл сөзді атқа қоюға болмайды.",
+    peErrSave: "Сақталмады. Интернетті тексеріп, қайта көр.",
     skip: "Өткізіп жіберу",
     enter: "Бастау",
     greeting: "Сәлем, оқушы!",
@@ -69,6 +80,17 @@ export const DICT = {
     wbTrReview: "Аударма тексерілуде"
   },
   en: {
+    peEdit: "Edit profile",
+    peName: "Your name",
+    peAvatar: "Picture",
+    peNoAvatar: "No picture, first letter of my name",
+    peSave: "Save",
+    peSaving: "Saving…",
+    peErrEmpty: "Type your name.",
+    peErrLong: "Up to 30 characters.",
+    peErrChars: "Only letters, digits, spaces and . ' -",
+    peErrBlocked: "This word cannot be used in a name.",
+    peErrSave: "Not saved. Check the internet and try again.",
     skip: "Skip",
     enter: "Get started",
     greeting: "Welcome back!",
