@@ -23,4 +23,27 @@ describe("level checks built from every tale", () => {
     const text = levels[0][1];
     expect(buildLevelQuiz(text)).toEqual(buildLevelQuiz(text));
   });
+
+  it("gives the same quiz whatever sort algorithm the JS engine uses (Chrome, Safari, Firefox)", () => {
+    // A different, correct sort: insertion sort that compares in another order than V8's.
+    const native = Array.prototype.sort;
+    const insertion = function <T>(this: T[], cmp?: (a: T, b: T) => number) {
+      const c = cmp ?? ((a: T, b: T) => (String(a) < String(b) ? -1 : String(a) > String(b) ? 1 : 0));
+      for (let i = 1; i < this.length; i++) {
+        const x = this[i];
+        let j = i - 1;
+        while (j >= 0 && c(x, this[j]) < 0) { this[j + 1] = this[j]; j--; }
+        this[j + 1] = x;
+      }
+      return this;
+    };
+    const before = levels.map(([, text]) => buildLevelQuiz(text));
+    Array.prototype.sort = insertion as typeof native;
+    try {
+      const after = levels.map(([, text]) => buildLevelQuiz(text));
+      expect(after).toEqual(before);
+    } finally {
+      Array.prototype.sort = native;
+    }
+  });
 });
