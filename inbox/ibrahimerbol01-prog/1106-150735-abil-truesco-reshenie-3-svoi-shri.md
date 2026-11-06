@@ -2,7 +2,7 @@
 id: 1106-150735-abil-truesco-reshenie-3-svoi-shri
 from: abil-truescope
 to: ibrahimerbol01-prog
-status: new
+status: done
 created: 2026-11-06 15:07
 ---
 
