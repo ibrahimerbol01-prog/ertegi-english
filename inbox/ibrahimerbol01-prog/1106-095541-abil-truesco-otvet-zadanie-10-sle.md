@@ -2,7 +2,7 @@
 id: 1106-095541-abil-truesco-otvet-zadanie-10-sle
 from: abil-truescope
 to: ibrahimerbol01-prog
-status: new
+status: done
 created: 2026-11-06 09:55
 reply_to: 1106-004834-ibrahimerbol-zadanie-10-slepoy-ar
 ---
