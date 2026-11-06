@@ -2,6 +2,7 @@ import { useState } from "react";
 import { ChevronRight, LogOut, Share2 } from "lucide-react";
 import { Sheet } from "../UIHelpers";
 import { Shanyraq, OrnamentBand } from "../Ornaments";
+import { AvatarBadge } from "../AvatarBadge";
 import { ACHIEVEMENTS } from "../../constants";
 import { IconFlame, IconBolt, IconCards, IconTrophy, Badge } from "../Icons";
 import { PUBLIC_URL } from "../../lib/api";
@@ -9,7 +10,7 @@ import { XP_PER_LEVEL } from "../../research/params";
 import { DeleteAccountCard, PolicyRow } from "../AccountRows";
 
 /* --- 8. PROFILE SCREEN --- */
-export function ProfileScreen({ xp, t, lang = "kk", setLang, savedWordsCount = 0, unlockedAchievements = [], userName = "Learner", onSignOut, streakDays = 0, quizzesCompleted = 0, kilim, classes, roleSwitch }: {
+export function ProfileScreen({ xp, t, lang = "kk", setLang, savedWordsCount = 0, unlockedAchievements = [], userName = "Learner", onSignOut, streakDays = 0, quizzesCompleted = 0, kilim, classes, roleSwitch, avatar = null, editor }: {
   xp: number;
   t: Record<string, string>;
   lang?: string;
@@ -23,6 +24,10 @@ export function ProfileScreen({ xp, t, lang = "kk", setLang, savedWordsCount = 0
   kilim?: React.ReactNode;
   classes?: React.ReactNode;
   roleSwitch?: React.ReactNode;
+  /** Avatar id (src/utils/profileEdit.ts); the first letter of the name when none. */
+  avatar?: string | null;
+  /** The edit-profile button; absent in the research build (KazakhTalesApp.tsx). */
+  editor?: React.ReactNode;
 }) {
   const [showBuklet, setShowBuklet] = useState(false);
   // Levels count from 1: 0–99 XP is level 1.
@@ -61,13 +66,12 @@ export function ProfileScreen({ xp, t, lang = "kk", setLang, savedWordsCount = 0
         <div className="px-5 pb-5 flex items-end gap-4">
           <div className="relative w-[88px] h-[88px] shrink-0 -mt-11">
             <Shanyraq className="absolute -inset-2 w-[104px] h-[104px] text-sun" strokeWidth={2.4} />
-            <div className="absolute inset-0 rounded-full bg-sun border-4 border-card flex items-center justify-center font-display font-black text-4xl text-ink">
-              {initial}
-            </div>
+            <AvatarBadge id={avatar} initial={initial} className="absolute inset-0 border-4 border-card text-4xl" />
           </div>
           <div className="min-w-0 pt-3">
             <h1 className="font-display font-black text-2xl text-ink truncate">{userName}</h1>
             <p className="text-sm text-ink-2">{t.levelStatus} · {lang === "kk" ? `${rank}-деңгей` : `Level ${rank}`}</p>
+            {editor && <div className="mt-2">{editor}</div>}
           </div>
         </div>
       </div>

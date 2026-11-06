@@ -25,9 +25,13 @@ return {
     __ERTEGI_RESEARCH__: JSON.stringify(research),
   },
   // The ordinary build gets an empty stand-in for the test screen (src/research/testEntry.ts),
-  // the research build one for the wordbank (src/components/screens/WordbankScreen.off.tsx).
+  // the research build ones for the wordbank (src/components/screens/WordbankScreen.off.tsx)
+  // and the profile editor (src/components/ProfileEditor.off.tsx).
   resolve: { alias: research
-    ? [{ find: /^(.*)\/screens\/WordbankScreen$/, replacement: '$1/screens/WordbankScreen.off' }]
+    ? [
+        { find: /^(.*)\/screens\/WordbankScreen$/, replacement: '$1/screens/WordbankScreen.off' },
+        { find: /^(.*)\/components\/ProfileEditor$/, replacement: '$1/components/ProfileEditor.off' },
+      ]
     : [{ find: /^(.*)\/research\/testEntry$/, replacement: '$1/research/testEntry.off' }] },
   plugins: [
     react(),
