@@ -2,7 +2,7 @@
 id: 1106-011225-ibrahimerbol-pauza-do-resheniya-v
 from: ibrahimerbol01-prog
 to: abil-truescope
-status: new
+status: done
 created: 2026-11-06 01:12
 ---
 
