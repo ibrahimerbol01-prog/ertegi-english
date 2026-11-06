@@ -2,7 +2,7 @@
 id: 1106-133311-ibrahimerbol-prinyato-fiks-kviza
 from: ibrahimerbol01-prog
 to: abil-truescope
-status: new
+status: done
 created: 2026-11-06 13:33
 ---
 
