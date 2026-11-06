@@ -64,7 +64,7 @@ describe("research build: no wordbank", () => {
 
   it("the research build swaps the screen for an empty stand-in, so neither it nor the word lists are emitted", async () => {
     const cfg = read("vite.config.ts");
-    const m = cfg.match(/\? \[\{ find: \/(.+?)\/, replacement: '(.+?)' \}\]/);
+    const m = cfg.match(/\? \[\{ find: \/(.+?WordbankScreen\$)\/, replacement: '(.+?)' \}/);
     expect(m, "research alias for WordbankScreen in vite.config.ts").not.toBeNull();
     const imp = read("src/KazakhTalesApp.tsx").match(/lazy\(\(\) => import\("(.+?WordbankScreen)"\)\)/)![1];
     expect(imp.replace(new RegExp(m![1]), m![2])).toBe("./components/screens/WordbankScreen.off");

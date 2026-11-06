@@ -27,7 +27,8 @@ return {
   // The ordinary build gets an empty stand-in for the test screen (src/research/testEntry.ts),
   // the research build one for the wordbank (src/components/screens/WordbankScreen.off.tsx).
   resolve: { alias: research
-    ? [{ find: /^(.*)\/screens\/WordbankScreen$/, replacement: '$1/screens/WordbankScreen.off' }]
+    ? [{ find: /^(.*)\/screens\/WordbankScreen$/, replacement: '$1/screens/WordbankScreen.off' },
+       { find: /^(.*)\/lib\/supabase$/, replacement: '$1/lib/research/supabase' }]
     : [{ find: /^(.*)\/research\/testEntry$/, replacement: '$1/research/testEntry.off' }] },
   plugins: [
     react(),
