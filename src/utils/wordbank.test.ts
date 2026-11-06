@@ -48,15 +48,16 @@ describe("wordbank data", () => {
     for (const l of WORDBANK_LEVELS) {
       const keys = new Set<string>();
       const translated = !!WORDBANK_TRANSLATION_FILES[l];
-      const want = ["example", "kk", "level", "pos", "ru", "source", "word", ...(translated ? ["tr"] : [])].sort().join();
       for (const e of data[l]) {
         const id = `${l} ${e.word}|${e.pos}`;
+        // A word with no row in the files of its level (A2 outside agreed) has no tr, as on an untranslated level.
+        const want = ["example", "kk", "level", "pos", "ru", "source", "word", ...(translated && e.tr ? ["tr"] : [])].sort().join();
         if (Object.keys(e).sort().join() !== want) problems.push(`${id}: fields ${Object.keys(e).sort().join()}`);
         if (e.level !== l) problems.push(`${id}: level ${e.level}`);
         if (!levelsOf.get(e.source)?.includes(l)) problems.push(`${id}: source ${e.source}`);
         if (!e.word || e.word.trim() !== e.word) problems.push(`${id}: word`);
-        // A level without translation files has none; a needs-review pair has none either.
-        const empty = !translated || e.tr === "needs-review";
+        // A level without translation files has none; a needs-review pair or a word without tr has none either.
+        const empty = !translated || !e.tr || e.tr === "needs-review";
         if (empty ? e.kk !== "" || e.ru !== "" : !e.kk || !e.ru) problems.push(`${id}: kk/ru`);
         const k = `${e.word.toLowerCase()}|${e.pos}`;
         if (keys.has(k)) problems.push(`${id}: duplicate`);
