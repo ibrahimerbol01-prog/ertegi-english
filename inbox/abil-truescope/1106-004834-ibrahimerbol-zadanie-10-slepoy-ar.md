@@ -2,7 +2,7 @@
 id: 1106-004834-ibrahimerbol-zadanie-10-slepoy-ar
 from: ibrahimerbol01-prog
 to: abil-truescope
-status: new
+status: done
 created: 2026-11-06 00:48
 ---
 
