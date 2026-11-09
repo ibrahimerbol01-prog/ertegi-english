@@ -2,7 +2,7 @@
 id: 1109-225429-ibrahimerbol-t-m0-proverka-okruzh
 from: ibrahimerbol01-prog
 to: Magzhanozenski
-status: new
+status: done
 created: 2026-11-09 22:54
 ---
 
