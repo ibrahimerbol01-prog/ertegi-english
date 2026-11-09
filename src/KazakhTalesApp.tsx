@@ -25,6 +25,8 @@ const ProfileEditor = RESEARCH_MODE ? null : lazy(() => import("./components/Pro
 const PlacementCheck = RESEARCH_MODE ? null : lazy(() => import("./components/PlacementCheck"));
 // Shoqan, the home-screen mascot, ordinary site only (R4; alias to ShoqanMascot.off in the research build).
 const ShoqanMascot = RESEARCH_MODE ? null : lazy(() => import("./components/ShoqanMascot"));
+// Временно скрыт на главной (владелец, 09.11.2026). Вернуть: true.
+const SHOQAN_HOME_MASCOT = false;
 const QuizSetup = lazy(() => loadQuiz().then((m) => ({ default: m.QuizSetup })));
 const QuizScreen = lazy(() => loadQuiz().then((m) => ({ default: m.QuizScreen })));
 const SpeakScreen = lazy(() => loadSpeak().then((m) => ({ default: m.SpeakScreen })));
@@ -604,7 +606,7 @@ export default function KazakhTalesApp({ session, role, onRoleChange }: { sessio
                   placement={!RESEARCH_MODE && PlacementCheck && !teacher ? (
                     <Suspense fallback={null}><PlacementCheck userId={userId} lang={lang} place="home" onRead={readAtLevel} /></Suspense>
                   ) : undefined}
-                  mascot={!RESEARCH_MODE && ShoqanMascot && !teacher ? (
+                  mascot={!RESEARCH_MODE && ShoqanMascot && !teacher && SHOQAN_HOME_MASCOT ? (
                     <Suspense fallback={null}><ShoqanMascot daysAway={daysAway} lang={lang} /></Suspense>
                   ) : undefined}
                   onStartRead={(storyId: string, level?: string) => {
