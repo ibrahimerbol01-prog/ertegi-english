@@ -2,7 +2,7 @@
 id: 1109-230652-ibrahimerbol-t-s3-slova-dlya-pilo
 from: ibrahimerbol01-prog
 to: Madiii55
-status: new
+status: done
 created: 2026-11-09 23:06
 ---
 
