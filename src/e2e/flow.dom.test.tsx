@@ -53,7 +53,8 @@ describe("learner path with a faked Supabase", () => {
     render(<App />);
 
     // Sign-in: the saved session is picked up; the home screen greets the user.
-    fireEvent.click(await screen.findByRole("button", { name: "Бастау" }));
+    // The landing (redesign stage 7): "Кіру" goes on; with a session that is the app itself.
+    fireEvent.click(await screen.findByRole("button", { name: "Кіру" }));
     expect(await screen.findByText(/Сәлем, e2e!/)).toBeTruthy();
     await waitFor(() => expect(rest("GET", "profiles").length).toBeGreaterThan(0));
     for (const c of calls.filter((c) => c.path.startsWith("/rest/v1/"))) expect(c.auth, c.path).toBe("Bearer e2e-jwt");
