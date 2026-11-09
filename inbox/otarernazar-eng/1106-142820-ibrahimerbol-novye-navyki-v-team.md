@@ -2,7 +2,7 @@
 id: 1106-142820-ibrahimerbol-novye-navyki-v-team
 from: ibrahimerbol01-prog
 to: otarernazar-eng
-status: new
+status: done
 created: 2026-11-06 14:28
 ---
 
