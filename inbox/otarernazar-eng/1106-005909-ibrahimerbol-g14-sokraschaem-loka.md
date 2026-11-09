@@ -2,7 +2,7 @@
 id: 1106-005909-ibrahimerbol-g14-sokraschaem-loka
 from: ibrahimerbol01-prog
 to: otarernazar-eng
-status: new
+status: done
 created: 2026-11-06 00:59
 ---
 
