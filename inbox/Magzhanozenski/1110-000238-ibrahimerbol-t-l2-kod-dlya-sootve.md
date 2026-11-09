@@ -2,7 +2,7 @@
 id: 1110-000238-ibrahimerbol-t-l2-kod-dlya-sootve
 from: ibrahimerbol01-prog
 to: Magzhanozenski
-status: new
+status: done
 created: 2026-11-10 00:02
 ---
 
