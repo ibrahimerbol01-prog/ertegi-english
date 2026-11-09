@@ -69,7 +69,8 @@ describe("word saved without network", () => {
     });
     fireEvent.click(word);
     const sheet = await screen.findByRole("dialog", { name: "Сөз" });
-    fireEvent.click(within(sheet).getByRole("button", { name: /Сөздігіме/ }));
+    // «Сөздігіме» before redesign stage 4, «Сөздікке қосу» after.
+    fireEvent.click(within(sheet).getByRole("button", { name: /Сөздігіме|Сөздікке қосу/ }));
 
     // Not sent, but kept on the device, and no "not saved" toast for a word that only waits.
     await waitFor(() => expect(queued()).toEqual(["aldar"]));
