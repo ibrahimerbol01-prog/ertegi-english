@@ -2,7 +2,7 @@
 id: 1109-234959-ibrahimerbol-t-j1-dopolnenie-pere
 from: ibrahimerbol01-prog
 to: otarernazar-eng
-status: new
+status: done
 created: 2026-11-09 23:49
 ---
 
