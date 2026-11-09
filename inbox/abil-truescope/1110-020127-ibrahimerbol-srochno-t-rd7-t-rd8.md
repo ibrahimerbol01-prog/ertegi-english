@@ -2,7 +2,7 @@
 id: 1110-020127-ibrahimerbol-srochno-t-rd7-t-rd8
 from: ibrahimerbol01-prog
 to: abil-truescope
-status: new
+status: done
 created: 2026-11-10 02:01
 ---
 
