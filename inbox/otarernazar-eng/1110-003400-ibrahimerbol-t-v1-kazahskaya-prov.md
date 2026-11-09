@@ -2,7 +2,7 @@
 id: 1110-003400-ibrahimerbol-t-v1-kazahskaya-prov
 from: ibrahimerbol01-prog
 to: otarernazar-eng
-status: new
+status: done
 created: 2026-11-10 00:34
 ---
 
