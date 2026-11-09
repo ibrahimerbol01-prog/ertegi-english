@@ -2,7 +2,7 @@
 id: 1109-230813-ibrahimerbol-dobavleno-t-s3-porya
 from: ibrahimerbol01-prog
 to: Magzhanozenski
-status: new
+status: done
 created: 2026-11-09 23:08
 ---
 
