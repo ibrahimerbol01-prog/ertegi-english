@@ -2,7 +2,7 @@
 id: 1106-213212-ibrahimerbol-reshenie-pravilo-stu
 from: ibrahimerbol01-prog
 to: abil-truescope
-status: new
+status: done
 created: 2026-11-06 21:32
 ---
 
