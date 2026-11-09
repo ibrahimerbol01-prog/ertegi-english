@@ -358,8 +358,8 @@ function CouncilRound({ q, kk, userId, vote, onChange, onPush, onReward }: {
         const sureButWrong = vote.confidence === 0 && vote.first !== q.correct;
         return (
           <>
-            <div className={`mt-4 rounded-[24px] p-5 ${right ? "bg-jade-soft" : "bg-felt-soft"}`}>
-              <p className={`font-display font-black text-xl ${right ? "text-jade-deep" : "text-felt-deep"}`}>
+            <div className={`mt-4 rounded-[24px] p-5 ${right ? "bg-jade-soft" : "bg-rose-soft"}`}>
+              <p className={`font-display font-black text-xl ${right ? "text-jade-deep" : "text-rose-ink"}`}>
                 {right ? (changed ? tr("Ойыңды дұрыс жаққа өзгерттің!", "You changed to the right answer!") : tr("Дұрыс!", "Right!")) : tr("Дұрыс жауап басқа", "The right answer is different")}
               </p>
               <p className="text-[15px] text-ink mt-1"><b>{String.fromCharCode(65 + q.correct)}.</b> {q.options[q.correct]}</p>
@@ -367,7 +367,7 @@ function CouncilRound({ q, kk, userId, vote, onChange, onPush, onReward }: {
                 {tr("1-раунд", "Round 1")}: {String.fromCharCode(65 + (vote.first ?? 0))} · {tr("2-раунд", "Round 2")}: {String.fromCharCode(65 + final)} · <b>+{vote.xp} XP</b>
               </p>
               {sureButWrong && (
-                <p className="text-sm text-felt-deep font-semibold mt-1.5">{tr("Сенімді болдың, бірақ алғашқы жауап қате еді. Мұндай сұрақтарды мұқият оқы.", "You were sure, but your first answer was wrong. Read questions like this carefully.")}</p>
+                <p className="text-sm text-rose-ink font-semibold mt-1.5">{tr("Сенімді болдың, бірақ алғашқы жауап қате еді. Мұндай сұрақтарды мұқият оқы.", "You were sure, but your first answer was wrong. Read questions like this carefully.")}</p>
               )}
             </div>
             {evidence}

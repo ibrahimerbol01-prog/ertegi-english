@@ -7,7 +7,7 @@ import { RESEARCH_MODE } from "../research/mode";
 /* --- 1. INTRO SCREEN --- */
 function ClassicIntro({ onFinish, t }: { onFinish: () => void; t: (typeof DICT)["kk"] }) {
   return (
-    <div className="relative min-h-dvh w-full bg-sand flex flex-col overflow-hidden">
+    <main className="relative min-h-dvh w-full bg-sand flex flex-col overflow-hidden">
       <SteppeBackground />
       <KilimStrip className="absolute top-0 inset-x-0 h-2 w-full z-[1]" />
 
@@ -43,7 +43,7 @@ function ClassicIntro({ onFinish, t }: { onFinish: () => void; t: (typeof DICT)[
           {t.enter} <ArrowRight size={18} strokeWidth={3} />
         </button>
       </div>
-    </div>
+    </main>
   );
 }
 
@@ -56,7 +56,7 @@ function StepsIntro({ onFinish, t }: { onFinish: () => void; t: (typeof DICT)["k
     { n: 3, title: t.step3Title, text: t.step3Text, dot: "bg-jade text-white" },
   ];
   return (
-    <div className="relative min-h-dvh w-full bg-sand flex flex-col overflow-hidden">
+    <main className="relative min-h-dvh w-full bg-sand flex flex-col overflow-hidden">
       <SteppeBackground />
       <KilimStrip className="absolute top-0 inset-x-0 h-2 w-full z-[1]" />
       <div className="relative z-10 flex flex-col flex-1 px-6 pt-[max(env(safe-area-inset-top),28px)] pb-[max(env(safe-area-inset-bottom),24px)] mx-auto w-full max-w-[1040px]">
@@ -90,7 +90,7 @@ function StepsIntro({ onFinish, t }: { onFinish: () => void; t: (typeof DICT)["k
           </ol>
         </div>
       </div>
-    </div>
+    </main>
   );
 }
 

@@ -264,7 +264,7 @@ export const ShoqanChat = ({ hidden = false }: { hidden?: boolean }) => {
                   </div>
                 </div>
               )}
-              {chatError && <p role="alert" className="text-sm text-felt-deep text-center">{chatError}</p>}
+              {chatError && <p role="alert" className="text-sm text-rose-ink text-center">{chatError}</p>}
             </div>
 
             <div className="p-3 bg-card border-t border-line flex items-center gap-2 pb-[max(env(safe-area-inset-bottom),12px)]">

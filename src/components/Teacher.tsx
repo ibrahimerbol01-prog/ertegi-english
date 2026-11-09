@@ -65,8 +65,8 @@ function AccessNote({ status, kk }: { status: Exclude<TeacherStatus, "approved">
 
 function Notice({ error, kk, onRetry }: { error: ClassError; kk: boolean; onRetry?: () => void }) {
   return (
-    <div role="alert" className="card p-4 flex items-start gap-3 border-felt/40">
-      <AlertTriangle size={20} className="text-felt-deep shrink-0 mt-0.5" />
+    <div role="alert" className="card p-4 flex items-start gap-3 border-rose/40">
+      <AlertTriangle size={20} className="text-rose-ink shrink-0 mt-0.5" />
       <div className="flex-1 min-w-0">
         <p className="text-[15px] text-ink">{errorText(error, kk)}</p>
         {onRetry && error !== "missing" && (
@@ -248,7 +248,7 @@ export function TeacherScreen({ lang, onBack }: { lang: string; onBack?: () => v
             />
             <button type="submit" disabled={!name.trim() || busy} className="btn sm:w-auto"><Plus size={18} /> {kk ? "Ашу" : "Create"}</button>
           </div>
-          {createError && <p role="alert" className="mt-3 text-[14px] font-semibold text-felt-deep">{errorText(createError, kk)}</p>}
+          {createError && <p role="alert" className="mt-3 text-[14px] font-semibold text-rose-ink">{errorText(createError, kk)}</p>}
         </form>
       )}
 
@@ -379,10 +379,10 @@ function CellBadge({ cell, kk }: { cell: Cell } & Kk) {
   const map = {
     done: { cls: cell.score !== null && cell.score < QUIZ_PASS_PERCENT ? "bg-sun-soft text-[#8A5A00]" : "bg-jade-soft text-[#0F6E4B]", text: score || "✓", sr: kk ? "орындады" : "done" },
     late: { cls: "bg-sun-soft text-[#8A5A00]", text: score || "✓", sr: kk ? "кеш орындады" : "done late" },
-    overdue: { cls: "bg-felt-soft text-felt-deep", text: "!", sr: kk ? "мерзімі өтті" : "overdue" },
+    overdue: { cls: "bg-rose-soft text-rose-ink", text: "!", sr: kk ? "мерзімі өтті" : "overdue" },
     // Tried but not passed yet: the score shows, in red.
     open: cell.score !== null
-      ? { cls: "bg-felt-soft text-felt-deep", text: score, sr: kk ? "әлі өтпеді" : "not passed yet" }
+      ? { cls: "bg-rose-soft text-rose-ink", text: score, sr: kk ? "әлі өтпеді" : "not passed yet" }
       : { cls: "bg-sand-2 text-ink-2", text: "—", sr: kk ? "әлі жоқ" : "not yet" },
   }[cell.status];
   return (
@@ -448,7 +448,7 @@ function ProgressTab({ kk, cls, members, goneCount, assignments, onOpen, onGoTas
       {help.length > 0 && (
         <section className="card p-4" aria-labelledby="help-title">
           <h2 id="help-title" className="font-display font-extrabold text-ink text-[16px] flex items-center gap-2">
-            <AlertTriangle size={18} className="text-felt-deep" /> {kk ? "Кімге көмек керек" : "Who needs help"}
+            <AlertTriangle size={18} className="text-rose-ink" /> {kk ? "Кімге көмек керек" : "Who needs help"}
           </h2>
           <ul className="mt-2 divide-y divide-line">
             {help.slice(0, 8).map(({ m, flags }) => (
@@ -456,7 +456,7 @@ function ProgressTab({ kk, cls, members, goneCount, assignments, onOpen, onGoTas
                 <button onClick={() => onOpen(m)} className="w-full text-left flex items-center gap-3 py-2.5 min-h-[48px]">
                   <span className="flex-1 min-w-0">
                     <span className="block font-bold text-ink truncate">{m.nickname}</span>
-                    <span className="block text-[13px] text-felt-deep font-semibold">{flags.map(flagText).join(" · ")}</span>
+                    <span className="block text-[13px] text-rose-ink font-semibold">{flags.map(flagText).join(" · ")}</span>
                   </span>
                   <ChevronRight size={18} className="text-ink-3 shrink-0" />
                 </button>
@@ -498,7 +498,7 @@ function ProgressTab({ kk, cls, members, goneCount, assignments, onOpen, onGoTas
                     <th scope="row" className="sticky left-0 z-[1] bg-card px-4 py-2">
                       <button onClick={() => onOpen(m)} title={m.nickname} className="font-bold text-sky-deep text-[15px] text-left min-h-[40px] max-w-[140px] truncate block">{m.nickname}</button>
                     </th>
-                    <td className={`px-2 py-2 text-[13px] whitespace-nowrap ${away === null || away >= 7 ? "text-felt-deep font-semibold" : "text-ink-2"}`}>{awayText(away, kk)}</td>
+                    <td className={`px-2 py-2 text-[13px] whitespace-nowrap ${away === null || away >= 7 ? "text-rose-ink font-semibold" : "text-ink-2"}`}>{awayText(away, kk)}</td>
                     {shown.map((a) => (
                       <td key={a.id} className="px-2 py-2"><CellBadge cell={cellFor(m, a)} kk={kk} /></td>
                     ))}
@@ -515,8 +515,8 @@ function ProgressTab({ kk, cls, members, goneCount, assignments, onOpen, onGoTas
       <p className="text-[12px] text-ink-2 flex flex-wrap gap-x-4 gap-y-1">
         <span><b className="text-[#0F6E4B]">80%</b> {kk ? "орындады, ұпайы" : "done, score"}</span>
         <span><b className="text-[#8A5A00]">⏱</b> {kk ? "кеш орындады" : "done late"}</span>
-        <span><b className="text-felt-deep">!</b> {kk ? "мерзімі өтті" : "overdue"}</span>
-        <span><b className="text-felt-deep">40%</b> {kk ? "тапсырды, бірақ өтпеді" : "tried, not passed"}</span>
+        <span><b className="text-rose-ink">!</b> {kk ? "мерзімі өтті" : "overdue"}</span>
+        <span><b className="text-rose-ink">40%</b> {kk ? "тапсырды, бірақ өтпеді" : "tried, not passed"}</span>
         <span><b>—</b> {kk ? "әлі жоқ" : "not yet"}</span>
       </p>
     </div>
@@ -600,14 +600,14 @@ function TasksTab({ kk, classId, archived, members, assignments, onChanged }: {
           <label className="block">
             <span className="text-sm font-bold text-ink">{kk ? "Мерзімі" : "Due date"}</span>
             <input type="date" value={due} min={today} onChange={(e) => setDue(e.target.value)} className="field mt-1.5" aria-invalid={dueBad} />
-            {dueBad && <span role="alert" className="block text-[13px] text-felt-deep font-semibold mt-1">{kk ? "Өткен күнді таңдауға болмайды." : "Pick today or a later day."}</span>}
+            {dueBad && <span role="alert" className="block text-[13px] text-rose-ink font-semibold mt-1">{kk ? "Өткен күнді таңдауға болмайды." : "Pick today or a later day."}</span>}
           </label>
           <label className="block">
             <span className="text-sm font-bold text-ink">{kk ? "Түсініктеме (міндетті емес)" : "Note (optional)"}</span>
             <input value={note} onChange={(e) => setNote(e.target.value.slice(0, 200))} maxLength={200} className="field mt-1.5" placeholder={kk ? "Мысалы: жаңа сөздерді дәптерге жаз" : "e.g. write the new words in your notebook"} />
           </label>
           {duplicate && <p className="text-[13px] text-[#8A5A00] font-semibold">{kk ? "Бұл тапсырма бұрын да берілген. Қайта беруге болады." : "You've given this one before. You can give it again."}</p>}
-          {error && <p role="alert" className="text-[14px] font-semibold text-felt-deep">{errorText(error, kk)}</p>}
+          {error && <p role="alert" className="text-[14px] font-semibold text-rose-ink">{errorText(error, kk)}</p>}
           <button type="submit" disabled={busy || dueBad} className="btn w-full">
             {saved ? <><Check size={18} strokeWidth={3} aria-hidden /> {kk ? "Берілді" : "Assigned"}</> : <><Plus size={18} aria-hidden /> {kk ? "Тапсырма беру" : "Assign"}</>}
           </button>
@@ -641,8 +641,8 @@ function TasksTab({ kk, classId, archived, members, assignments, onChanged }: {
                   <div className="mt-3 flex flex-wrap items-center gap-2">
                     <span className="text-[14px] text-ink flex-1 min-w-[160px]">{kk ? "Өшіресің бе? Оқушылардың прогресі сақталады." : "Delete it? Learners keep their progress."}</span>
                     <button onClick={() => { setConfirmId(null); setRemoveError(null); }} className="btn btn-ghost btn-sm">{kk ? "Артқа" : "Back"}</button>
-                    <button onClick={() => remove(a.id)} disabled={removing} className="btn btn-felt btn-sm">{kk ? "Өшіру" : "Delete"}</button>
-                    {removeError && <p role="alert" className="basis-full text-[14px] font-semibold text-felt-deep">{errorText(removeError, kk)}</p>}
+                    <button onClick={() => remove(a.id)} disabled={removing} className="btn btn-rose btn-sm">{kk ? "Өшіру" : "Delete"}</button>
+                    {removeError && <p role="alert" className="basis-full text-[14px] font-semibold text-rose-ink">{errorText(removeError, kk)}</p>}
                   </div>
                 )}
               </li>
@@ -756,7 +756,7 @@ function SettingsTab({ kk, cls, gone, onChange, onChanged, onArchived }: {
         {confirm === "archive" ? (
           <div className="flex gap-2 mt-3">
             <button onClick={() => setConfirm(null)} className="btn btn-ghost btn-sm">{kk ? "Артқа" : "Back"}</button>
-            <button onClick={toggleArchive} disabled={busy} className="btn btn-felt btn-sm">{kk ? "Иә, мұрағатқа" : "Yes, archive"}</button>
+            <button onClick={toggleArchive} disabled={busy} className="btn btn-rose btn-sm">{kk ? "Иә, мұрағатқа" : "Yes, archive"}</button>
           </div>
         ) : (
           <button onClick={() => (archived ? toggleArchive() : setConfirm("archive"))} disabled={busy} className="btn btn-ghost btn-sm mt-3">
@@ -854,7 +854,7 @@ function ActivityTab({ kk, cls, report, members, refresh, onOpen }: {
         <p className="basis-full text-[12px] text-ink-2">
           {kk ? "Файлда оқушылардың лақап аты, белсенділігі, прогресі мен ұпайлары бар. Оны тек мектеп ішінде қолдан." : "The file has learners' nicknames, activity, progress and scores. Keep it within your school."}
         </p>
-        {saved === "fail" && <p role="alert" className="basis-full text-[14px] font-semibold text-felt-deep">{kk ? "Файл жүктелмеді. Басқа браузерде көр." : "The file didn't download. Try another browser."}</p>}
+        {saved === "fail" && <p role="alert" className="basis-full text-[14px] font-semibold text-rose-ink">{kk ? "Файл жүктелмеді. Басқа браузерде көр." : "The file didn't download. Try another browser."}</p>}
         <span role="status" className="sr-only">{saved === "ok" ? (kk ? "Файл жүктелді" : "File downloaded") : ""}</span>
       </div>
 
@@ -891,7 +891,7 @@ function ActivityTab({ kk, cls, report, members, refresh, onOpen }: {
                     <button onClick={() => onOpen(m)} className="w-full text-left flex items-center gap-3 py-2.5 min-h-[48px]">
                       <span className="flex-1 min-w-0">
                         <span className="block font-bold text-ink truncate">{e.nickname}</span>
-                        <span className={`block text-[13px] ${e.events === 0 ? "text-felt-deep font-semibold" : "text-ink-2"}`}>
+                        <span className={`block text-[13px] ${e.events === 0 ? "text-rose-ink font-semibold" : "text-ink-2"}`}>
                           {kk ? "Соңғы әрекет" : "Last action"}: {lastText(e.last_at, kk)}
                         </span>
                       </span>
@@ -947,7 +947,7 @@ function ActivityTab({ kk, cls, report, members, refresh, onOpen }: {
                         <p className="text-[14px] text-ink mt-1 [overflow-wrap:anywhere]" lang={text ? "en" : undefined}>
                           {text ?? (Number.isInteger(n) && n > 0 ? (kk ? `Сұрақ №${n}` : `Question ${n}`) : (kk ? "Сұрақ" : "Question"))}
                         </p>
-                        <p className="text-[13px] text-felt-deep font-semibold mt-0.5">
+                        <p className="text-[13px] text-rose-ink font-semibold mt-0.5">
                           {kk
                             ? `${q.answers} жауаптың ${q.wrong} қате · ${q.learners} оқушы`
                             : `${q.wrong} wrong of ${q.answers} answers · ${q.learners} ${q.learners === 1 ? "learner" : "learners"}`}
@@ -1100,7 +1100,7 @@ function StudentSheet({ kk, classId, member, assignments, onClose, onRemoved }: 
                           <li key={i} className="flex items-center gap-3 text-[14px]">
                             <span className="flex-1 min-w-0 flex items-center gap-1.5"><span className="shrink-0 px-1.5 rounded-md bg-sand-2 text-[12px] font-bold text-ink-2">{q.step === "quiz" ? (kk ? "Сынақ" : "Quiz") : q.step}</span><span className="truncate text-ink">{storyTitle(q.story_id)}</span></span>
                             <span className="text-ink-2 text-[12px]">{shortDate(q.created_at)}</span>
-                            <span className={`font-bold ${pct >= QUIZ_PASS_PERCENT ? "text-[#0F6E4B]" : "text-felt-deep"}`}>{q.score}/{q.total}</span>
+                            <span className={`font-bold ${pct >= QUIZ_PASS_PERCENT ? "text-[#0F6E4B]" : "text-rose-ink"}`}>{q.score}/{q.total}</span>
                           </li>
                         );
                       })}
@@ -1114,20 +1114,20 @@ function StudentSheet({ kk, classId, member, assignments, onClose, onRemoved }: 
 
           <div className="pt-1">
             {confirm ? (
-              <div className="rounded-2xl bg-felt-soft/60 p-4">
+              <div className="rounded-2xl bg-rose-soft/60 p-4">
                 <p className="text-[14px] text-ink">
                   {kk ? `${m.nickname} сыныптан шығады, сен оның прогресін енді көрмейсің. Прогресі өзінде қалады. Баптау бөлімінде қайта кіруге рұқсат бере аласың.` : `${m.nickname} leaves the class and you won't see their progress any more. It stays theirs. In Settings you can allow them back.`}
                 </p>
                 <div className="grid grid-cols-2 gap-2 mt-3">
                   <button onClick={() => { setConfirm(false); setRemoveError(null); }} className="btn btn-ghost btn-sm">{kk ? "Артқа" : "Back"}</button>
-                  <button onClick={remove} disabled={removing} className="btn btn-felt btn-sm">{kk ? "Шығару" : "Remove"}</button>
+                  <button onClick={remove} disabled={removing} className="btn btn-rose btn-sm">{kk ? "Шығару" : "Remove"}</button>
                 </div>
-                {removeError && <p role="alert" className="text-[14px] font-semibold text-felt-deep mt-2">{errorText(removeError, kk)}</p>}
+                {removeError && <p role="alert" className="text-[14px] font-semibold text-rose-ink mt-2">{errorText(removeError, kk)}</p>}
               </div>
             ) : (
               <div className="grid grid-cols-2 gap-2">
                 <button onClick={onClose} className="btn btn-ghost btn-sm">{kk ? "Жабу" : "Close"}</button>
-                <button onClick={() => setConfirm(true)} className="btn btn-ghost btn-sm !text-felt-deep">{kk ? "Сыныптан шығару" : "Remove from class"}</button>
+                <button onClick={() => setConfirm(true)} className="btn btn-ghost btn-sm !text-rose-ink">{kk ? "Сыныптан шығару" : "Remove from class"}</button>
               </div>
             )}
           </div>
@@ -1332,7 +1332,7 @@ function ThinkingWork({ kk, classId, userId }: { kk: boolean; classId: string; u
                   {round}: <b className="text-ink">{letter(c.choice)}</b>{q?.options[c.choice] ? <> <span lang="en">{q.options[c.choice]}</span></> : null}
                   {q && (c.choice === q.correct
                     ? <span className="text-jade-deep font-semibold"> · {kk ? "дұрыс" : "right"}</span>
-                    : <span className="text-felt-deep font-semibold"> · {kk ? "қате" : "wrong"}</span>)}
+                    : <span className="text-rose-ink font-semibold"> · {kk ? "қате" : "wrong"}</span>)}
                   {c.confidence !== null && CONFIDENCE[c.confidence] && <> · {kk ? CONFIDENCE[c.confidence].kk : CONFIDENCE[c.confidence].en}</>}
                 </p>
               );
@@ -1361,7 +1361,7 @@ function ThinkingWork({ kk, classId, userId }: { kk: boolean; classId: string; u
                         </span>
                       </button>
                       {failed?.q === qid && (
-                        <p role="alert" className="text-[13px] font-semibold text-felt-deep mt-1">
+                        <p role="alert" className="text-[13px] font-semibold text-rose-ink mt-1">
                           {failed.error === "not_found"
                             ? (kk ? "Бұл дауыс енді табылмады. Терезені жауып, қайта аш." : "This vote is no longer there. Close the card and open it again.")
                             : `${kk ? "Сақталмады." : "Not saved."} ${errorText(failed.error, kk)}`}

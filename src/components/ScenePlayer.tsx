@@ -208,7 +208,7 @@ function Player({ text, lang, onPlay, id: sceneId }: Props) {
             onClick={() => setMuted((m) => !m)}
             aria-pressed={muted}
             aria-label={muted ? (kk ? "Дыбысты қосу" : "Unmute") : (kk ? "Дыбысты өшіру" : "Mute")}
-            className="w-10 h-10 rounded-full text-sky-deep flex items-center justify-center shrink-0 hover:bg-card/70"
+            className="w-11 h-11 rounded-full text-sky-deep flex items-center justify-center shrink-0 hover:bg-card/70"
           >
             <VolumeIcon size={20} />
           </button>

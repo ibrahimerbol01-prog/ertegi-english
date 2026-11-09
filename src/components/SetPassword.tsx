@@ -54,7 +54,7 @@ export function SetPasswordScreen({ lang, onDone }: { lang: Lang; onDone: () => 
               <input type="password" required minLength={MIN_PASSWORD} autoComplete="new-password" value={again}
                 onChange={(e) => setAgain(e.target.value)} className="field" />
             </label>
-            {error && <p id="pw-error" role="alert" className="text-sm text-felt-deep bg-felt-soft rounded-xl px-3 py-2.5 leading-relaxed">{error}</p>}
+            {error && <p id="pw-error" role="alert" className="text-sm text-rose-ink bg-rose-soft rounded-xl px-3 py-2.5 leading-relaxed">{error}</p>}
             <button type="submit" disabled={loading} className="btn w-full !mt-5">{loading ? tr("Күте тұр...", "Please wait...") : tr("Сақтау", "Save")}</button>
           </form>
         )}

@@ -102,7 +102,7 @@ function CardFace({ card, lang, big = false, index = 0 }: { card: LegendCard; la
         <Emblem card={card} size={big ? "l" : "s"} delay={index} onColor />
       </div>
       <div className={`flex-1 flex flex-col justify-center text-center ${big ? "px-4 py-3" : "px-2 py-2"}`}>
-        <p className={`font-bold uppercase tracking-[0.08em] ${big ? "text-xs mb-1" : "text-[9px] mb-0.5"}`} style={{ color: look.text }}>{r[lang]}</p>
+        <p className={`font-bold uppercase tracking-[0.08em] ${big ? "text-[13px] mb-1" : "text-xs mb-0.5"}`} style={{ color: look.text }}>{r[lang]}</p>
         <p className={`font-display font-black text-ink leading-tight ${big ? "text-2xl" : "text-[12px] line-clamp-2"}`}>{lang === "kk" ? card.kk : card.name}</p>
         {big && lang !== "kk" && <p className="text-ink-3 font-semibold mt-0.5 text-sm">{card.kk}</p>}
       </div>
@@ -123,11 +123,11 @@ function CardBack({ card, lang, index = 0 }: { card: LegendCard; lang: Lang; ind
       <div className="h-2" style={{ background: look.face }} />
       <div className="flex-1 flex flex-col items-center justify-center gap-3 pt-2">
         <Emblem card={card} size="m" delay={index} />
-        <span className="flex items-center gap-1 text-[11px] font-black uppercase tracking-[0.08em]" style={{ color: look.text }}>
+        <span className="flex items-center gap-1 text-xs font-black uppercase tracking-[0.08em]" style={{ color: look.text }}>
           <Lock size={12} strokeWidth={3} /> {r[lang]}
         </span>
       </div>
-      <div className="py-2 text-center text-[11px] font-bold flex items-center justify-center gap-1" style={{ color: look.text, background: `${look.face}1F` }}>
+      <div className="py-2 text-center text-[13px] font-bold flex items-center justify-center gap-1" style={{ color: look.text, background: `${look.face}1F` }}>
         <Headphones size={13} strokeWidth={2.6} /> {lang === "kk" ? "Тыңда да аш" : "Listen to unlock"}
       </div>
       <span className="pointer-events-none absolute inset-y-0 left-0 w-1/3 bg-gradient-to-r from-transparent via-white/70 to-transparent animate-card-shine" style={{ animationDelay: `${-(index * 0.9) % 5.5}s` }} />
@@ -256,14 +256,14 @@ function Challenge({ card, lang, onWin, onClose }: { card: LegendCard; lang: Lan
       </ol>
 
       {checked ? (
-        <div className="mt-6 rounded-[20px] bg-felt-soft p-4 animate-pop-in">
-          <p className="font-display font-black text-felt-deep">{score}/{total} · {lang === "kk" ? "Тағы бір рет тыңда" : "Listen once more"}</p>
+        <div className="mt-6 rounded-[20px] bg-rose-soft p-4 animate-pop-in">
+          <p className="font-display font-black text-rose-ink">{score}/{total} · {lang === "kk" ? "Тағы бір рет тыңда" : "Listen once more"}</p>
           <p className="text-sm text-ink-2 mt-1">{lang === "kk" ? `Картаны алу үшін кемінде ${PASS} дұрыс жауап керек.` : `You need at least ${PASS} right to win the card.`}</p>
           <details className="mt-2">
             <summary className="text-sm font-bold text-sky-deep cursor-pointer">{lang === "kk" ? "Мәтінді көр" : "Show the text"}</summary>
             <p lang="en" className="text-sm text-ink mt-2 leading-relaxed">{card.scene}</p>
           </details>
-          <button onClick={retry} className="btn btn-felt w-full mt-4"><RotateCcw size={18} /> {lang === "kk" ? "Қайтадан" : "Try again"}</button>
+          <button onClick={retry} className="btn btn-rose w-full mt-4"><RotateCcw size={18} /> {lang === "kk" ? "Қайтадан" : "Try again"}</button>
         </div>
       ) : (
         <button onClick={check} disabled={!ready} className="btn w-full mt-6">

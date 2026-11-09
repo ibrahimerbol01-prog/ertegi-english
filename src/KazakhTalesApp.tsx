@@ -494,7 +494,7 @@ export default function KazakhTalesApp({ session, role, onRoleChange }: { sessio
 
   const wordsBadge = (id: string) =>
     id === "words" && dueCount > 0 ? (
-      <span className="absolute -top-1 -right-1.5 min-w-[18px] h-[18px] px-1 rounded-full bg-[#C4441E] text-[10px] text-white flex items-center justify-center font-bold ring-2 ring-card">
+      <span className="absolute -top-1 -right-1.5 min-w-[18px] h-[18px] px-1 rounded-full bg-ember text-xs text-white flex items-center justify-center font-bold ring-2 ring-card">
         {dueCount}
       </span>
     ) : null;

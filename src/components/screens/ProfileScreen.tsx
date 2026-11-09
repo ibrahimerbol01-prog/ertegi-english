@@ -163,7 +163,7 @@ export function ProfileScreen({ xp, t, lang = "kk", setLang, savedWordsCount = 0
               ].map((r) => (
                 <div key={r.l} className="rounded-2xl bg-white/10 py-3">
                   <p className="font-display font-black text-xl">{r.v}</p>
-                  <p className="text-[11px] text-white/70 uppercase tracking-[0.06em]">{r.l}</p>
+                  <p className="text-xs text-white/80 uppercase tracking-[0.06em]">{r.l}</p>
                 </div>
               ))}
             </div>

@@ -117,8 +117,8 @@ export function WordCoach({ savedWords, progress, userId, lang, onLearn, onRewar
                 <div className={`h-12 rounded-lg bg-white/10 relative overflow-hidden ${current ? "ring-2 ring-sun" : ""}`}>
                   <span className={`absolute bottom-0 inset-x-0 ${s.done ? "bg-jade" : "bg-sky"}`} style={{ height: `${fill * 100}%` }} />
                 </div>
-                <p className={`text-[11px] font-bold mt-1 ${current ? "text-sun" : "text-white/70"}`}>{s.level}</p>
-                <p className="text-[10px] text-white/50">{s.mastered}/{s.goal}</p>
+                <p className={`text-[13px] font-bold mt-1 ${current ? "text-sun" : "text-white/70"}`}>{s.level}</p>
+                <p className="text-xs text-white/70">{s.mastered}/{s.goal}</p>
               </div>
             );
           })}
@@ -134,13 +134,13 @@ export function WordCoach({ savedWords, progress, userId, lang, onLearn, onRewar
           return (
             <div key={w.word} className={`rounded-2xl border-2 p-4 transition-colors ${isSaved || isKnown ? "border-jade/40 bg-jade-soft/50" : "border-line bg-card"}`}>
               <div className="flex items-start gap-3">
-                <button onClick={() => safePlayVoice(w.word)} aria-label={`Play ${w.word}`} className="w-10 h-10 rounded-xl bg-sky-soft text-sky-deep flex items-center justify-center shrink-0">
+                <button onClick={() => safePlayVoice(w.word)} aria-label={`Play ${w.word}`} className="w-12 h-12 rounded-xl bg-sky-soft text-sky-deep flex items-center justify-center shrink-0">
                   <Volume2 size={19} />
                 </button>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
                     <p className="font-display font-black text-[19px] text-ink leading-none">{w.word}</p>
-                    <span className={`text-[10px] font-bold uppercase tracking-[0.06em] rounded-full px-2 py-0.5 ${stretch ? "bg-sun-soft text-sun-deep" : "bg-sand-2 text-ink-2"}`}>
+                    <span className={`text-xs font-bold uppercase tracking-[0.06em] rounded-full px-2 py-0.5 ${stretch ? "bg-sun-soft text-sun-deep" : "bg-sand-2 text-ink-2"}`}>
                       {w.level}{stretch ? (kk ? " · келесі деңгей" : " · next level") : ""}
                     </span>
                   </div>

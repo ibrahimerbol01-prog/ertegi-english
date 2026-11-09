@@ -195,7 +195,7 @@ export function HomeScreen({ onStartRead, onStartQuiz, t, lang, userName = "", s
                 {lang === "kk" ? `${si + 1}-бөлім` : `Unit ${si + 1}`}
               </p>
               <div className="flex items-end justify-between gap-3">
-                <h3 className="font-display font-black text-xl leading-tight">{displayTitle(story.title)}</h3>
+                <h2 className="font-display font-black text-xl leading-tight">{displayTitle(story.title)}</h2>
                 <span className="text-sm font-bold bg-black/20 rounded-full px-3 h-7 flex items-center shrink-0">{doneCount}/{LEVEL_DETAILS.length + 1}</span>
               </div>
             </div>

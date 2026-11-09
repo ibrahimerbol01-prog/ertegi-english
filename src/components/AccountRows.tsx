@@ -28,9 +28,9 @@ export function DeleteAccountCard({ lang, teacher = false }: { lang: string; tea
   return (
     <div className="card overflow-hidden">
       <button onClick={() => setOpen(true)} aria-haspopup="dialog" className="w-full flex items-center gap-3 px-4 min-h-[56px] text-left hover:bg-sand/60">
-        <span className="w-8 h-8 rounded-lg bg-felt-soft flex items-center justify-center"><Trash2 size={16} className="text-felt-deep" aria-hidden="true" /></span>
+        <span className="w-8 h-8 rounded-lg bg-rose-soft flex items-center justify-center"><Trash2 size={16} className="text-rose-ink" aria-hidden="true" /></span>
         <span className="flex-1 min-w-0">
-          <span className="block text-[16px] text-felt-deep font-medium">{kk ? "Аккаунтты өшіру" : "Delete account"}</span>
+          <span className="block text-[16px] text-rose-ink font-medium">{kk ? "Аккаунтты өшіру" : "Delete account"}</span>
           <span className="block text-[13px] text-ink-2">{kk ? "Барлық деректер біржола өшеді" : "All your data is removed for good"}</span>
         </span>
         <ChevronRight size={18} className="text-ink-3" aria-hidden="true" />

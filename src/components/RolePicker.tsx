@@ -93,7 +93,7 @@ export function RoleScreen({ initial, onPick, onSignOut }: {
           </p>
         </div>
         <RolePicker value={role} onChange={(r) => { setRole(r); setMissing(false); }} kk={kk} describedBy="role-hint" />
-        {missing && <p role="alert" className="text-sm text-felt-deep bg-felt-soft rounded-xl px-3 py-2.5">{kk ? "Біреуін таңда." : "Pick one to continue."}</p>}
+        {missing && <p role="alert" className="text-sm text-rose-ink bg-rose-soft rounded-xl px-3 py-2.5">{kk ? "Біреуін таңда." : "Pick one to continue."}</p>}
         <button onClick={go} disabled={busy} className="btn w-full">
           {busy ? (kk ? "Күте тұр..." : "Please wait...") : (kk ? "Жалғастыру" : "Continue")}
         </button>
@@ -137,7 +137,7 @@ export function RoleSwitchRow({ kk, to, onSwitch }: { kk: boolean; to: Role; onS
         {busy && <span className="text-[13px] text-ink-2">{kk ? "Күте тұр..." : "Wait..."}</span>}
       </button>
       {failed && (
-        <p role="alert" className="px-4 pb-3 text-[14px] font-semibold text-felt-deep">
+        <p role="alert" className="px-4 pb-3 text-[14px] font-semibold text-rose-ink">
           {kk ? "Ауыстыру сәтсіз болды. Интернетті тексеріп, қайталап көр." : "Couldn't switch. Check your connection and try again."}
         </p>
       )}
