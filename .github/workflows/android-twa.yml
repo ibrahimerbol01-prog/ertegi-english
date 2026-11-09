@@ -49,6 +49,8 @@ jobs:
             echo "BUBBLEWRAP_KEY_PASSWORD=$DEMO_PASS" >> "$GITHUB_ENV"
             echo "::warning::Demo signing key (not for Google Play)."
           fi
+      - name: Android SDK packages
+        run: yes | sdkmanager --licenses >/dev/null && sdkmanager "platform-tools" "platforms;android-36" "build-tools;36.0.0"
       - name: Bubblewrap config
         run: |
           mkdir -p ~/.bubblewrap
