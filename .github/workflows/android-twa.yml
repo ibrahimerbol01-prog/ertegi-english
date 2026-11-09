@@ -50,7 +50,7 @@ jobs:
             echo "::warning::Demo signing key (not for Google Play)."
           fi
       - name: Android SDK packages
-        run: yes | sdkmanager --licenses >/dev/null && sdkmanager "platform-tools" "platforms;android-36" "build-tools;36.0.0"
+        run: yes | sdkmanager --licenses >/dev/null && sdkmanager "platform-tools" "platforms;android-36" "build-tools;36.1.0"; mkdir -p "$ANDROID_HOME/tools" || sudo mkdir -p "$ANDROID_HOME/tools"
       - name: Bubblewrap config
         run: |
           mkdir -p ~/.bubblewrap
