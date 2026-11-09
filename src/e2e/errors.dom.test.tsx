@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { cleanup, configure, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { cleanup, configure, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 
 /* Error states a learner meets without network (docs/error-states.md, findings 1, 3, 4).
    Same setup as flow.dom.test.tsx: a saved session and a fake fetch. Here the fake can
@@ -45,6 +45,15 @@ const start = async () => {
   expect(await screen.findByText(/Сәлем, err!/)).toBeTruthy();
 };
 
+// The saved words: a "Сөздер" tab in the 7-tab navigation, "Жаттығу" → "Сөздер" in the 5-tab one (redesign stage 2).
+const openSavedWords = async () => {
+  const old = screen.queryAllByRole("button", { name: "Сөздер" });
+  if (old.length) { fireEvent.click(old[0]); return; }
+  fireEvent.click(screen.getAllByRole("button", { name: "Жаттығу" })[0]);
+  const kinds = await screen.findByRole("tablist");
+  fireEvent.click(within(kinds).getByRole("tab", { name: "Сөздер" }));
+};
+
 describe("error states", () => {
   it("offline: a banner says so, and unread saved words are not shown as zero", async () => {
     setOnline(false);
@@ -53,7 +62,7 @@ describe("error states", () => {
 
     expect(screen.getByRole("status").textContent).toMatch(/^Желі жоқ\./);
 
-    fireEvent.click(screen.getAllByRole("button", { name: "Сөздер" })[0]);
+    await openSavedWords();
     expect((await screen.findByRole("alert")).textContent).toMatch(/Сақталған сөздер жүктелмеді/);
     expect(screen.queryByText(/Әзірге сөз сақталмаған/)).toBeNull();
 
