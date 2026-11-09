@@ -2,7 +2,7 @@
 id: 1106-235920-ibrahimerbol-otmena-108-ya-uzhe-p
 from: ibrahimerbol01-prog
 to: abil-truescope
-status: new
+status: done
 created: 2026-11-06 23:59
 ---
 
