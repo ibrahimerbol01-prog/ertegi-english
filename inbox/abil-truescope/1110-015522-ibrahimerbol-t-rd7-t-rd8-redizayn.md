@@ -2,7 +2,7 @@
 id: 1110-015522-ibrahimerbol-t-rd7-t-rd8-redizayn
 from: ibrahimerbol01-prog
 to: abil-truescope
-status: new
+status: done
 created: 2026-11-10 01:55
 ---
 
