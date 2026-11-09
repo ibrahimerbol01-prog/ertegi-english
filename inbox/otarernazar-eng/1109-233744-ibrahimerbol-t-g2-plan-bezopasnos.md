@@ -2,7 +2,7 @@
 id: 1109-233744-ibrahimerbol-t-g2-plan-bezopasnos
 from: ibrahimerbol01-prog
 to: otarernazar-eng
-status: new
+status: done
 created: 2026-11-09 23:37
 ---
 
