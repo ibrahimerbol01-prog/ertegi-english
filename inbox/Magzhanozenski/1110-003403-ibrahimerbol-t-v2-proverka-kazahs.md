@@ -2,7 +2,7 @@
 id: 1110-003403-ibrahimerbol-t-v2-proverka-kazahs
 from: ibrahimerbol01-prog
 to: Magzhanozenski
-status: new
+status: done
 created: 2026-11-10 00:34
 ---
 
