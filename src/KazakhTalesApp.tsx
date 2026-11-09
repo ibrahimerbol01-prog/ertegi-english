@@ -1,6 +1,7 @@
 import { lazy, Suspense, useState, useRef, useEffect } from "react";
 import type { Session } from "@supabase/supabase-js";
-import { IconYurt, IconBook, IconTrophy, IconCards, IconShield, IconMic, IconLearner, IconFlame, IconBolt, IconBoard } from "./components/Icons";
+import { IconYurt, IconBook, IconTrophy, IconCards, IconShield, IconLearner, IconTarget, IconFlame, IconBolt, IconBoard } from "./components/Icons";
+import { ChevronRight } from "lucide-react";
 import {
   LevelUpModal, AchievementBanner, XpToast,
   StaticOrnamentBg, SaveErrorToast, BrandMark, DailyGoalRing
@@ -102,6 +103,7 @@ export default function KazakhTalesApp({ session, role, onRoleChange }: { sessio
   const [savedWords, setSavedWords] = useState<SavedWord[]>([]);
   const [progress, setProgress] = useState<Set<string>>(new Set());
   const [wordsMode, setWordsMode] = useState("cards");
+  const [lastPractice, setLastPractice] = useState<"words" | "speak" | "quiz">("words");
 
   const [sessionXp, setSessionXp] = useState(0);
   const DAILY_GOAL = DAILY_GOAL_XP;
@@ -479,21 +481,42 @@ export default function KazakhTalesApp({ session, role, onRoleChange }: { sessio
     { id: "test",    label: lang === "kk" ? "Тест" : "Test", Icon: IconBoard },
     { id: "profile", label: t.navProfile, Icon: IconLearner },
   ] : [
-    { id: "home",    label: t.navHome,    Icon: IconYurt },
-    { id: "read",    label: t.navRead,    Icon: IconBook },
-    { id: "quiz",    label: t.navQuiz,    Icon: IconTrophy },
-    { id: "words",   label: lang === "kk" ? "Сөздер" : "Words", Icon: IconCards },
-    { id: "cards",   label: lang === "kk" ? "Карталар" : "Cards", Icon: IconShield },
-    { id: "speak",   label: t.navSpeak,   Icon: IconMic },
-    { id: "profile", label: t.navProfile, Icon: IconLearner },
+    // Shanyraq 2.0: five tabs. Practice holds word review, speaking and the quiz; Words is the word bank;
+    // the hero cards open from Me. Inner tab ids stay as they were, so every setTab() call keeps working.
+    { id: "home",     label: t.navHome,     Icon: IconYurt },
+    { id: "read",     label: t.navTales,    Icon: IconBook },
+    { id: "practice", label: t.navPractice, Icon: IconTarget },
+    { id: "bank",     label: t.navBank,     Icon: IconCards },
+    { id: "profile",  label: t.navMe,       Icon: IconLearner },
   ];
+  const fiveTabs = !teacher && !RESEARCH_MODE;
+  const inPractice = tab === "quiz" || tab === "speak" || (tab === "words" && wordsMode !== "bank");
   // A teacher's quiz opens from a tale, so "Tales" stays lit there.
-  const isActive = (id: string) => tab === id || (teacher && tab === "quiz" && id === "read");
+  const isActive = (id: string) => {
+    if (!fiveTabs) return tab === id || (teacher && tab === "quiz" && id === "read");
+    if (id === "practice") return inPractice;
+    if (id === "bank") return tab === "words" && wordsMode === "bank";
+    if (id === "profile") return tab === "profile" || tab === "cards";
+    return tab === id;
+  };
+  const openQuiz = () => { setQuizLevel(null); setQuizStarted(false); setTab("quiz"); };
+  const openPractice = (sub: "words" | "speak" | "quiz") => {
+    setLastPractice(sub);
+    if (sub === "quiz") return openQuiz();
+    if (sub === "words" && wordsMode === "bank") setWordsMode("cards");
+    setTab(sub);
+  };
+  const navTo = (id: string) => {
+    if (id === "practice") return openPractice(lastPractice);
+    if (id === "bank") { setWordsMode("bank"); return setTab("words"); }
+    if (id === "quiz") return openQuiz();
+    setTab(id);
+  };
 
   const dueCount = savedWords.filter((w) => isDue(w.nextReviewAt)).length;
 
   const wordsBadge = (id: string) =>
-    id === "words" && dueCount > 0 ? (
+    id === (fiveTabs ? "practice" : "words") && dueCount > 0 ? (
       <span className="absolute -top-1 -right-1.5 min-w-[18px] h-[18px] px-1 rounded-full bg-ember text-xs text-white flex items-center justify-center font-bold ring-2 ring-card">
         {dueCount}
       </span>
@@ -553,15 +576,15 @@ export default function KazakhTalesApp({ session, role, onRoleChange }: { sessio
             return (
               <button
                 key={id}
-                onClick={() => { if (id === "quiz") { setQuizLevel(null); setQuizStarted(false); } setTab(id); }}
+                onClick={() => navTo(id)}
                 aria-current={active ? "page" : undefined}
-                className={`flex items-center gap-4 px-4 min-h-[52px] rounded-2xl border-2 transition-colors w-full ${active ? "bg-sky-soft border-sky/60 text-sky-deep" : "border-transparent text-ink-2 hover:bg-sand-2"}`}
+                className={`flex items-center gap-4 px-4 min-h-[52px] rounded-2xl border-2 transition-colors w-full ${active ? (fiveTabs ? "bg-ember-soft border-ember/40 text-ember-ink" : "bg-sky-soft border-sky/60 text-sky-deep") : "border-transparent text-ink-2 hover:bg-sand-2"}`}
               >
                 <span className="relative">
                   <Icon size={30} />
                   {wordsBadge(id)}
                 </span>
-                <span className="font-display text-[15px] font-extrabold tracking-wide uppercase">{label}</span>
+                <span className="font-display text-[16px] font-extrabold">{label}</span>
               </button>
             );
           })}
@@ -595,6 +618,18 @@ export default function KazakhTalesApp({ session, role, onRoleChange }: { sessio
                       : `This link is for learners (code ${pendingCode}). To join as a learner, choose "Switch to learner" in your profile.`}
                   </p>
                   <button onClick={() => { clearPendingClass(); setPendingCode(null); }} className="btn btn-ghost btn-sm shrink-0">{lang === "kk" ? "Жабу" : "Close"}</button>
+                </div>
+              )}
+              {fiveTabs && inPractice && !(tab === "quiz" && quizStarted) && (
+                <div role="tablist" aria-label={t.practiceSwitch} className="segmented mb-5 grid grid-cols-3">
+                  {(["words", "speak", "quiz"] as const).map((sub) => {
+                    const on = sub === "words" ? tab === "words" : tab === sub;
+                    return (
+                      <button key={sub} role="tab" aria-selected={on} aria-pressed={on} onClick={() => openPractice(sub)} className="min-h-[44px] text-[15px] font-semibold">
+                        {sub === "words" ? t.practiceWords : sub === "speak" ? t.practiceSpeak : t.practiceTest}
+                      </button>
+                    );
+                  })}
                 </div>
               )}
               {tab === "home" && (
@@ -717,6 +752,16 @@ export default function KazakhTalesApp({ session, role, onRoleChange }: { sessio
                   streakDays={streakDays}
                   quizzesCompleted={quizzesCompleted}
                   kilim={<OyuKilim progress={progress} lang={lang} maqalCount={loadMaqals(userId).length} />}
+                  cardsEntry={fiveTabs ? (
+                    <button onClick={() => setTab("cards")} className="card w-full p-4 flex items-center gap-4 text-left min-h-[64px]">
+                      <IconShield size={36} />
+                      <span className="flex-1">
+                        <span className="block font-display font-extrabold text-ink text-[17px]">{t.cardsEntryTitle}</span>
+                        <span className="block text-sm text-ink-2">{t.cardsEntryHint}</span>
+                      </span>
+                      <ChevronRight size={20} className="text-ink-3" aria-hidden="true" />
+                    </button>
+                  ) : undefined}
                   classes={<MyClassesSection lang={lang} userId={userId} defaultName={classNick} />}
                   roleSwitch={<RoleSwitchRow kk={lang === "kk"} to="teacher" onSwitch={onRoleChange} />}
                   avatar={avatar}
@@ -751,7 +796,7 @@ export default function KazakhTalesApp({ session, role, onRoleChange }: { sessio
                   {savedWords.length} {lang === "kk" ? "сөз сақталды" : "words saved"}
                   {dueCount > 0 && <> · <b className="text-felt">{dueCount} {lang === "kk" ? "қайталауға" : "due"}</b></>}
                 </p>
-                <button onClick={() => setTab("words")} className="btn btn-ghost btn-sm w-full mt-4">
+                <button onClick={() => (fiveTabs ? openPractice("words") : setTab("words"))} className="btn btn-ghost btn-sm w-full mt-4">
                   {lang === "kk" ? "Қайталау" : "Practice"}
                 </button>
               </div>
@@ -761,22 +806,22 @@ export default function KazakhTalesApp({ session, role, onRoleChange }: { sessio
 
         {/* Tab bar — mobile only, Apple frosted */}
         <nav className="md:hidden fixed bottom-0 inset-x-0 z-30 glass border-t border-line/70 pb-[max(env(safe-area-inset-bottom),8px)] pt-1.5">
-          <div className={`grid ${teacher ? "grid-cols-3" : RESEARCH_MODE ? "grid-cols-6" : "grid-cols-7"}`}>
+          <div className={`grid ${teacher ? "grid-cols-3" : RESEARCH_MODE ? "grid-cols-6" : "grid-cols-5"}`}>
             {tabs.map(({ id, label, Icon }) => {
               const active = isActive(id);
               return (
                 <button
                   key={id}
-                  onClick={() => { if (id === "quiz") { setQuizLevel(null); setQuizStarted(false); } setTab(id); }}
+                  onClick={() => navTo(id)}
                   aria-current={active ? "page" : undefined}
-                  className={`flex flex-col items-center justify-center gap-0.5 min-h-[50px] ${active ? "text-sky-ink" : "text-ink-2"}`}
+                  className={`flex flex-col items-center justify-center gap-0.5 min-h-[50px] ${active ? (fiveTabs ? "text-ember-ink" : "text-sky-ink") : "text-ink-2"}`}
                 >
                   {/* The active tab is in colour on a soft pill; the rest stay grey, so the state reads at a glance. */}
-                  <span className={`relative px-2 py-0.5 rounded-full transition-colors ${active ? "bg-sky-soft" : ""}`}>
+                  <span className={`relative px-2 py-0.5 rounded-full transition-colors ${active ? (fiveTabs ? "bg-ember-soft" : "bg-sky-soft") : ""}`}>
                     <Icon size={28} muted={!active} className={`transition-transform duration-200 ${active ? "scale-110" : ""}`} />
                     {wordsBadge(id)}
                   </span>
-                  <span className={`text-[9px] min-[360px]:text-[10px] max-w-full truncate px-0.5 ${active ? "font-bold" : "font-medium"}`}>{label}</span>
+                  <span className={`${fiveTabs ? "text-xs" : "text-[10px]"} max-w-full truncate px-0.5 ${active ? "font-bold" : "font-medium"}`}>{label}</span>
                 </button>
               );
             })}
