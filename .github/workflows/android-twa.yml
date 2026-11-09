@@ -1,7 +1,10 @@
 name: android-twa
 # Demo APK of the web app as a Trusted Web Activity. Run by hand: Actions → android-twa → Run workflow.
 # Without the KEYSTORE_B64 secret a throw-away demo key is made: fine for showing the app, NOT for Google Play.
-on: workflow_dispatch
+on:
+  workflow_dispatch:
+  push:
+    branches: [feat/android-twa] # remove after merge to main
 
 permissions:
   contents: read
