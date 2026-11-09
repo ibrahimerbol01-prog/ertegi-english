@@ -8,7 +8,7 @@ export default defineConfig({
   define: { __ERTEGI_RESEARCH__: "false" },
   test: {
     environment: "node",
-    include: ["src/**/*.test.ts", "api/**/*.test.js"],
+    include: ["src/**/*.test.ts", "src/**/*.test.tsx", "api/**/*.test.js", "research/**/*.test.ts"],
     setupFiles: ["test/setup.ts"],
     restoreMocks: true,
   },

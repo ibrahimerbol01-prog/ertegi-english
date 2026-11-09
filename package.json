@@ -12,9 +12,12 @@
     "test:watch": "vitest",
     "preview": "vite preview",
     "perf": "node scripts/perf-measure.cjs http://localhost:4173/ 3",
-    "corpus": "node scripts/corpus-report.mjs"
+    "corpus": "node scripts/corpus-report.mjs",
+    "wordbank": "node scripts/wordbank-build.mjs"
   },
   "dependencies": {
+    "@supabase/auth-js": "2.116.0",
+    "@supabase/postgrest-js": "2.116.0",
     "@supabase/supabase-js": "^2.116.0",
     "@tailwindcss/vite": "^4.3.3",
     "lucide-react": "^1.46.0",
@@ -24,10 +27,13 @@
     "tailwindcss": "^4.3.3"
   },
   "devDependencies": {
+    "@testing-library/dom": "^10.4.2",
+    "@testing-library/react": "^16.3.3",
     "@types/node": "^24.13.3",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.7",
     "@vitejs/plugin-react": "^6.1.1",
+    "jsdom": "^31.0.0",
     "oxlint": "^1.81.0",
     "typescript": "~6.0.2",
     "vite": "^8.3.0",

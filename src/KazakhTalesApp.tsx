@@ -17,6 +17,16 @@ const loadSpeak = () => import("./components/screens/SpeakScreen");
 const loadProfile = () => import("./components/screens/ProfileScreen");
 const FlashcardsScreen = lazy(() => loadWords().then((m) => ({ default: m.FlashcardsScreen })));
 const MatchingGame = lazy(() => loadWords().then((m) => ({ default: m.MatchingGame })));
+// «Сөздік қоры», ordinary site only (R4); its data is a lazy chunk per level (src/data/wordbank).
+const WordbankScreen = RESEARCH_MODE ? null : lazy(() => import("./components/screens/WordbankScreen"));
+// Nickname and avatar editor, ordinary site only (R4; alias to ProfileEditor.off in the research build).
+const ProfileEditor = RESEARCH_MODE ? null : lazy(() => import("./components/ProfileEditor"));
+// Placement check v1, ordinary site only (R4; alias to PlacementCheck.off in the research build).
+const PlacementCheck = RESEARCH_MODE ? null : lazy(() => import("./components/PlacementCheck"));
+// Shoqan, the home-screen mascot, ordinary site only (R4; alias to ShoqanMascot.off in the research build).
+const ShoqanMascot = RESEARCH_MODE ? null : lazy(() => import("./components/ShoqanMascot"));
+// Временно скрыт на главной (владелец, 09.11.2026). Вернуть: true.
+const SHOQAN_HOME_MASCOT = false;
 const QuizSetup = lazy(() => loadQuiz().then((m) => ({ default: m.QuizSetup })));
 const QuizScreen = lazy(() => loadQuiz().then((m) => ({ default: m.QuizScreen })));
 const SpeakScreen = lazy(() => loadSpeak().then((m) => ({ default: m.SpeakScreen })));
@@ -60,6 +70,10 @@ export default function KazakhTalesApp({ session, role, onRoleChange }: { sessio
   const [displayName, setDisplayName] = useState<string>(
     (session.user.user_metadata?.display_name as string | undefined) || userEmail.split("@")[0] || "Learner"
   );
+  // The chosen avatar id (src/utils/profileEdit.ts); not shown in the research build.
+  const [avatar, setAvatar] = useState<string | null>(
+    RESEARCH_MODE ? null : ((session.user.user_metadata?.avatar as string | undefined) ?? null)
+  );
   const [dataLoaded, setDataLoaded] = useState(false);
   const scrollRef = useRef<HTMLDivElement | null>(null);
 
@@ -81,6 +95,8 @@ export default function KazakhTalesApp({ session, role, onRoleChange }: { sessio
   };
 
   const [streakDays, setStreakDays] = useState(0);
+  // Days since the learner last did anything (null = never). Drives the mascot's mood; no data is stored for it.
+  const [daysAway, setDaysAway] = useState<number | null>(null);
   const lastActiveDateRef = useRef<string | null>(null);
 
   const [savedWords, setSavedWords] = useState<SavedWord[]>([]);
@@ -183,6 +199,7 @@ export default function KazakhTalesApp({ session, role, onRoleChange }: { sessio
       const streak = last && daysBetween(last, localDay()) <= 1 ? (row?.streak_days ?? 0) : 0;
       setStreakDays(streak);
       latestStreakRef.current = { streak_days: streak, last_active_date: last ?? "" };
+      setDaysAway(last ? Math.max(0, daysBetween(last, localDay())) : null);
       if (row?.display_name) setDisplayName(row.display_name);
       profileReadyRef.current = true;
       // Progress made while the profile was unreachable is written once, on top of the server values.
@@ -281,6 +298,7 @@ export default function KazakhTalesApp({ session, role, onRoleChange }: { sessio
     if (lastActiveDateRef.current && daysBetween(lastActiveDateRef.current, today) === 1) nextStreak = latestStreakRef.current.streak_days + 1;
 
     lastActiveDateRef.current = today;
+    setDaysAway(0);
     setStreakDays(nextStreak);
     latestStreakRef.current = { streak_days: nextStreak, last_active_date: today };
     saveProfile(() => latestStreakRef.current);
@@ -399,7 +417,10 @@ export default function KazakhTalesApp({ session, role, onRoleChange }: { sessio
     };
   }, []);
 
-  const handleSaveWord = (word: string, translation: string, source: "reader" | "daily" = "reader") => {
+  // Placement check result: open the first tale at the suggested level.
+  const readAtLevel = (level: string) => { setSelectedStory(STORIES[0].id); setSelectedLevel(level); setTab("read"); };
+
+  const handleSaveWord = (word: string, translation: string, source: "reader" | "daily" | "wordbank" = "reader") => {
     if (savedWords.some((w) => w.word === word)) return;
     track("word_save", {
       object_type: "word", object_id: word,
@@ -582,6 +603,12 @@ export default function KazakhTalesApp({ session, role, onRoleChange }: { sessio
                   userId={userId}
                   onReward={addXp}
                   onOpenCards={() => setTab("cards")}
+                  placement={!RESEARCH_MODE && PlacementCheck && !teacher ? (
+                    <Suspense fallback={null}><PlacementCheck userId={userId} lang={lang} place="home" onRead={readAtLevel} /></Suspense>
+                  ) : undefined}
+                  mascot={!RESEARCH_MODE && ShoqanMascot && !teacher && SHOQAN_HOME_MASCOT ? (
+                    <Suspense fallback={null}><ShoqanMascot daysAway={daysAway} lang={lang} /></Suspense>
+                  ) : undefined}
                   onStartRead={(storyId: string, level?: string) => {
                     setSelectedStory(storyId);
                     setSelectedLevel(level ?? null);
@@ -653,10 +680,12 @@ export default function KazakhTalesApp({ session, role, onRoleChange }: { sessio
                   {!RESEARCH_MODE && <div className="mb-8">
                     <WordCoach savedWords={savedWords} progress={progress} userId={userId} lang={lang} onLearn={(w, tr) => handleSaveWord(w, tr, "daily")} onReward={addXp} />
                   </div>}
-                  {wordsMode === "cards" ? (
-                    <FlashcardsScreen savedWords={savedWords} onReview={handleReview} lang={lang} mode={wordsMode} setMode={setWordsMode} />
-                  ) : (
+                  {!RESEARCH_MODE && WordbankScreen && wordsMode === "bank" ? (
+                    <WordbankScreen savedWords={savedWords} onAdd={(w, tr) => handleSaveWord(w, tr, "wordbank")} mode={wordsMode} setMode={setWordsMode} />
+                  ) : wordsMode === "match" ? (
                     <MatchingGame savedWords={savedWords} onReward={addXp} mode={wordsMode} setMode={setWordsMode} />
+                  ) : (
+                    <FlashcardsScreen savedWords={savedWords} onReview={handleReview} lang={lang} mode={wordsMode} setMode={setWordsMode} />
                   )}
                   {!RESEARCH_MODE && <div className="mt-8"><TurkicWords lang={lang} /></div>}
                 </div>
@@ -690,6 +719,16 @@ export default function KazakhTalesApp({ session, role, onRoleChange }: { sessio
                   kilim={<OyuKilim progress={progress} lang={lang} maqalCount={loadMaqals(userId).length} />}
                   classes={<MyClassesSection lang={lang} userId={userId} defaultName={classNick} />}
                   roleSwitch={<RoleSwitchRow kk={lang === "kk"} to="teacher" onSwitch={onRoleChange} />}
+                  avatar={avatar}
+                  placement={!RESEARCH_MODE && PlacementCheck ? (
+                    <Suspense fallback={null}><PlacementCheck userId={userId} lang={lang} place="profile" onRead={readAtLevel} /></Suspense>
+                  ) : undefined}
+                  editor={!RESEARCH_MODE && ProfileEditor ? (
+                    <Suspense fallback={null}>
+                      <ProfileEditor userId={userId} lang={lang} name={displayName} avatar={avatar}
+                        onSaved={(n, a) => { setDisplayName(n); setAvatar(a); }} />
+                    </Suspense>
+                  ) : undefined}
                 />
               )}
               {tab === "teacher" && teacher && <TeacherScreen lang={lang} />}
