@@ -65,6 +65,8 @@ export function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, s
   const tr = useTr();
   const [isPlaying, setIsPlaying] = useState(true);
   const [activeWord, setActiveWord] = useState<string | null>(null);
+  // Token index of the tapped word, to show its sentence in the word sheet.
+  const [activeIndex, setActiveIndex] = useState<number | null>(null);
   const [translation, setTranslation] = useState("");
   const [showChoiceModal, setShowChoiceModal] = useState(false);
   const [choiceMade, setChoiceMade] = useState(false);
@@ -232,12 +234,13 @@ export function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, s
     return lo;
   };
 
-  const handleWordClick = (word: string) => {
+  const handleWordClick = (word: string, index: number | null = null) => {
     // Try the word as written ("didn't"), then without a possessive ("man's" -> "man"), then letters only.
     const { translation: found, event } = wordTap(word, WORD_TRANSLATIONS, currentStory.id, selectedLevel, isReadAlongPlaying);
     track("word_tap", event);
     if (isReadAlongPlaying) { stopNarration(); setIsReadAlongPlaying(false); }
     setActiveWord(word);
+    setActiveIndex(index);
     setTranslation(found || "Аудармасы әзірге жоқ");
     safePlayVoice(word);
   };
@@ -362,6 +365,13 @@ export function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, s
   const savedInText = new Set(tokens.map(cleanTok).filter((w: string) => savedMastery.has(w))).size;
   const { week } = currentWeek();
   const activeWeekWord = !RESEARCH_MODE && activeWord ? weekWordOf(week, activeWord) : null;
+  // Word sheet (Shanyraq 2.0): the word's state comes from the saved words, read only, so the
+  // spaced-repetition logic is unchanged; and the sentence of the tale it was tapped in.
+  const activeMastery = cleanActive ? savedMastery.get(cleanActive) : undefined;
+  const activeState = activeMastery === undefined ? "new" : activeMastery >= MAX_MASTERY ? "known" : "learning";
+  const activeSentence = activeIndex !== null && sentenceOf[activeIndex] !== undefined
+    ? sentences[sentenceOf[activeIndex]].filter((ti, k, all) => !(k === 0 && !tokens[ti].trim()) && !(k === all.length - 1 && !tokens[ti].trim()))
+    : null;
   const weekInText = !RESEARCH_MODE && tokens.some((tok: string) => !savedMastery.has(cleanTok(tok)) && !!weekWordOf(week, tok));
 
   return (
@@ -451,13 +461,13 @@ export function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, s
           <p className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs font-semibold text-ink-2 mb-3">
             {weekInText && <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded border-b-2 border-dashed border-sky" />{lang === "kk" ? "Апта сөзі" : "Word of the week"}</span>}
             {savedInText > 0 && <>
-              <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded bg-sun-soft border-b-2 border-sun-deep/60" />{lang === "kk" ? "Үйреніп жатырсың" : "Learning"}</span>
+              <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded border-b-[3px] border-sun" />{lang === "kk" ? "Үйреніп жатырсың" : "Learning"}</span>
               <span className="flex items-center gap-1.5"><span className="w-3 h-3 rounded border-b-2 border-jade" />{lang === "kk" ? "Меңгерілді" : "Mastered"}</span>
               <span className="text-ink-3">{savedInText} {lang === "kk" ? "сақталған сөз осы мәтінде" : "saved words in this text"}</span>
             </>}
           </p>
         )}
-        <p lang="en" className="text-[18px] text-ink leading-[1.9]">
+        <p lang="en" className="text-[20px] text-ink leading-[1.8]">
           {tokens.map((tok: string, i: number) => {
             const isWord = /[a-zA-Z]/.test(tok);
             const inSentence = readAlongSentence !== null && sentenceOf[i] === readAlongSentence;
@@ -468,10 +478,10 @@ export function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, s
             const savedCls = !RESEARCH_MODE && mastery === undefined && weekWordOf(week, tok)
               ? "font-bold text-sky-deep hover:bg-sky-soft decoration-sky decoration-dashed decoration-2 underline underline-offset-[6px]"
               : mastery === undefined
-              ? "hover:bg-sky-soft decoration-ink-3/40 decoration-dotted underline underline-offset-[6px]"
+              ? "hover:bg-sky-soft"
               : mastery >= MAX_MASTERY
               ? "hover:bg-jade-soft decoration-jade decoration-2 underline underline-offset-[6px]"
-              : "bg-sun-soft hover:bg-sun/40 decoration-sun-deep/60 decoration-2 underline underline-offset-[6px]";
+              : "hover:bg-sun-soft decoration-sun decoration-[3px] underline underline-offset-[6px]";
             return (
               <span
                 key={i}
@@ -480,18 +490,18 @@ export function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, s
                 tabIndex={i === tabWord ? 0 : -1}
                 onFocus={() => setRovingWord(i)}
                 onKeyDown={(e) => {
-                  if (e.key === "Enter" || e.key === " ") { e.preventDefault(); handleWordClick(tok); }
+                  if (e.key === "Enter" || e.key === " ") { e.preventDefault(); handleWordClick(tok, i); }
                   else if (e.key === "ArrowRight" || e.key === "ArrowDown") { e.preventDefault(); moveWord(i, 1); }
                   else if (e.key === "ArrowLeft" || e.key === "ArrowUp") { e.preventDefault(); moveWord(i, -1); }
                 }}
-                onClick={() => handleWordClick(tok)}
+                onClick={() => handleWordClick(tok, i)}
                 className={`rounded-md px-0.5 -mx-0.5 cursor-pointer transition-colors duration-200 ${
                   isCurrentlyRead
                     ? "bg-sun text-ink"
                     : inSentence
                     ? "bg-sun-soft"
                     : isActive
-                    ? "bg-sky-soft text-sky-deep"
+                    ? "bg-sun-hl ring-2 ring-sun text-ink"
                     : savedCls
                 }`}
               >
@@ -517,34 +527,59 @@ export function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, s
       {!RESEARCH_MODE && <TrailButton storyId={currentStory.id} level={selectedLevel} text={text} lang={lang} userId={userId} onReward={onReward} />}
 
       {/* Word sheet */}
-      <Sheet open={!!activeWord} onClose={() => setActiveWord(null)} label={tr("Сөз", "Word")}>
+      <Sheet open={!!activeWord} onClose={() => { setActiveWord(null); setActiveIndex(null); }} label={tr("Сөз", "Word")}>
         {activeWord && (
-          <div className="p-6 pt-4">
+          <div className="p-6 pt-4 space-y-4">
             <div className="flex items-start justify-between gap-3">
-              <div>
+              <div className="min-w-0">
                 <p className="eyebrow">{tr("Ағылшынша", "English")}</p>
-                <h3 className="font-display font-black text-[32px] text-ink leading-tight">{cleanActive}</h3>
-                <p className="text-lg text-sky-deep font-semibold mt-1">{translation}</p>
-                {activeWeekWord && (
-                  <p className="mt-2 inline-flex flex-wrap items-center gap-x-2 rounded-xl bg-sky-soft px-2.5 py-1 text-[13px] font-semibold text-sky-deep">
-                    <span className="font-black">{tr("Апта сөзі", "Word of the week")}</span>
-                    <span>{activeWeekWord.family}</span>
-                  </p>
-                )}
+                <h3 className="font-display font-black text-[36px] text-ink leading-tight break-words">{cleanActive}</h3>
               </div>
-              <button onClick={() => safePlayVoice(activeWord)} aria-label={tr("Тыңдау", "Listen")} className="w-12 h-12 rounded-full bg-sky-soft text-sky flex items-center justify-center shrink-0">
-                <Volume2 size={22} />
+              <button onClick={() => safePlayVoice(activeWord)} aria-label={tr("Тыңдау", "Listen")} className="w-14 h-14 rounded-full bg-sky-soft text-sky-ink flex items-center justify-center shrink-0">
+                <Volume2 size={24} />
               </button>
             </div>
-            <div className="grid grid-cols-2 gap-3 mt-6">
-              <button onClick={() => setActiveWord(null)} className="btn btn-ghost">{t.closeBuklet}</button>
+            <p className="font-display font-black text-[22px] text-ember-ink leading-snug">{translation}</p>
+            {activeSentence && (
+              <p lang="en" className="text-[15px] text-ink-2 leading-relaxed">
+                <span lang="kk">{tr("Ертегіде", "In the tale")}: </span>«{activeSentence.map((ti) => ti === activeIndex
+                  ? <b key={ti} className="text-ink">{tokens[ti]}</b>
+                  : <span key={ti}>{tokens[ti]}</span>)}»
+              </p>
+            )}
+            <div className="flex flex-wrap items-center gap-2">
+              <span className={`inline-flex items-center rounded-full px-3 py-1 text-[13px] font-bold ${activeState === "new" ? "bg-sky-soft text-sky-ink" : activeState === "learning" ? "bg-sun-soft text-word-learning" : "bg-jade-soft text-word-known"}`}>
+                {activeState === "new" ? tr("Жаңа", "New") : activeState === "learning" ? tr("Үйреніп жүрмін", "Learning") : tr("Білемін", "Known")}
+              </span>
+              {activeWeekWord && (
+                <span className="inline-flex flex-wrap items-center gap-x-2 rounded-full bg-sky-soft px-3 py-1 text-[13px] font-semibold text-sky-ink">
+                  <span className="font-black">{tr("Апта сөзі", "Word of the week")}</span>
+                  <span>{activeWeekWord.family}</span>
+                </span>
+              )}
+            </div>
+            <div className="grid grid-cols-1 min-[420px]:grid-cols-2 gap-3 pt-1">
               <button
                 onClick={() => !alreadySaved && onSaveWord && onSaveWord(cleanActive, translation)}
                 disabled={alreadySaved}
-                className="btn btn-jade"
+                className="btn btn-ember"
               >
-                {alreadySaved ? <><Check size={18} strokeWidth={3} /> {tr("Сақталды", "Saved")}</> : <><Plus size={18} strokeWidth={3} /> {tr("Сөздігіме", "My words")}</>}
+                {alreadySaved ? <><Check size={18} strokeWidth={3} aria-hidden="true" /> {tr("Сақталды", "Saved")}</> : <><Plus size={18} strokeWidth={3} aria-hidden="true" /> {tr("Сөздікке қосу", "Add to words")}</>}
               </button>
+              {!RESEARCH_MODE ? (
+                <button
+                  onClick={() => {
+                    const sentence = activeSentence ? activeSentence.map((ti) => tokens[ti]).join("").trim() : "";
+                    setActiveWord(null); setActiveIndex(null);
+                    window.dispatchEvent(new CustomEvent("shoqan:open", { detail: sentence ? `What does "${cleanActive}" mean in: "${sentence}"?` : `What does "${cleanActive}" mean?` }));
+                  }}
+                  className="btn btn-ghost"
+                >
+                  {tr("Шоқаннан сұрау", "Ask Shoqan")}
+                </button>
+              ) : (
+                <button onClick={() => { setActiveWord(null); setActiveIndex(null); }} className="btn btn-ghost">{t.closeBuklet}</button>
+              )}
             </div>
           </div>
         )}
