@@ -2,7 +2,7 @@
 id: 1109-233642-ibrahimerbol-t-m2-i-t-m3-revyu-pr
 from: ibrahimerbol01-prog
 to: Magzhanozenski
-status: new
+status: done
 created: 2026-11-09 23:36
 ---
 
