@@ -41,30 +41,30 @@ describe("wordbank data", () => {
   });
 
   it("every entry is well formed, in the file of its level, from a known source; translations only from the translation files", () => {
-    const ids = new Set(WORDBANK_SOURCES.map((s) => s.id));
+    // About 10 000 entries: problems are collected and checked once (one expect per entry
+    // took ~7 s under a full parallel run, over vitest's 5 s limit).
+    const levelsOf = new Map(WORDBANK_SOURCES.map((s) => [s.id, s.levels as readonly string[]]));
+    const problems: string[] = [];
     for (const l of WORDBANK_LEVELS) {
       const keys = new Set<string>();
       const translated = !!WORDBANK_TRANSLATION_FILES[l];
       for (const e of data[l]) {
-        expect(Object.keys(e).sort()).toEqual(["example", "kk", "level", "pos", "ru", "source", "word", ...(translated ? ["tr"] : [])].sort());
-        expect(e.level).toBe(l);
-        expect(ids.has(e.source)).toBe(true);
-        expect(WORDBANK_SOURCES.find((s) => s.id === e.source)!.levels).toContain(l);
-        expect(e.word.trim()).toBe(e.word);
-        expect(e.word).not.toBe("");
-        // A level without translation files has none; a needs-review pair has none either.
-        if (!translated || e.tr === "needs-review") {
-          expect(e.kk).toBe("");
-          expect(e.ru).toBe("");
-        } else {
-          expect(e.kk).not.toBe("");
-          expect(e.ru).not.toBe("");
-        }
+        const id = `${l} ${e.word}|${e.pos}`;
+        // A word with no row in the files of its level (A2 outside agreed) has no tr, as on an untranslated level.
+        const want = ["example", "kk", "level", "pos", "ru", "source", "word", ...(translated && e.tr ? ["tr"] : [])].sort().join();
+        if (Object.keys(e).sort().join() !== want) problems.push(`${id}: fields ${Object.keys(e).sort().join()}`);
+        if (e.level !== l) problems.push(`${id}: level ${e.level}`);
+        if (!levelsOf.get(e.source)?.includes(l)) problems.push(`${id}: source ${e.source}`);
+        if (!e.word || e.word.trim() !== e.word) problems.push(`${id}: word`);
+        // A level without translation files has none; a needs-review pair or a word without tr has none either.
+        const empty = !translated || !e.tr || e.tr === "needs-review";
+        if (empty ? e.kk !== "" || e.ru !== "" : !e.kk || !e.ru) problems.push(`${id}: kk/ru`);
         const k = `${e.word.toLowerCase()}|${e.pos}`;
-        expect(keys.has(k), `duplicate ${k}`).toBe(false);
+        if (keys.has(k)) problems.push(`${id}: duplicate`);
         keys.add(k);
       }
     }
+    expect(problems.slice(0, 20)).toEqual([]);
   });
 
   it("every word is in its source with that level and part of speech", () => {

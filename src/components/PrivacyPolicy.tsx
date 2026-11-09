@@ -6,7 +6,7 @@ import { Sheet } from "./UIHelpers";
    The text follows the code: if a feature starts collecting something new or
    sends data to a new service, this file changes in the same PR. */
 
-export const POLICY_UPDATED = "05.11.2026";
+export const POLICY_UPDATED = "06.11.2026";
 type PolicyLang = "kk" | "ru" | "en";
 
 const KK = `
@@ -47,7 +47,6 @@ const KK = `
 - Google Gemini (Шоқан): Шоқанға жазған хабарламаларың мен «Ой ізі», дебат мәтіндеріне кері байланыс алу үшін мәтін Google-ға жіберіледі. Атың мен поштаң жіберілмейді. Тегін нұсқада Google бұл мәтіндерді өз қызметтерін жақсарту үшін пайдалануы мүмкін. Сондықтан Шоқанға аты-жөніңді, мекенжайыңды, телефоныңды немесе басқа жеке мәліметті жазба.
 - Anthropic Claude: Шоқанның қосалқы нұсқасы. Әкімші қосқан кезде ғана іске қосылады, сонда жоғарыдағы мәтіндер Anthropic-қа жіберіледі.
 - Microsoft Azure Speech: ертегіні дауыстап оқу (ертегі мәтіні жіберіледі) және «Дыбыс» бөлімінде айтылымды бағалау. Бағалау кезінде микрофондағы дауысың тікелей Microsoft-қа жіберіледі, бағаланады; біз дауысты сақтамаймыз.
-- Google Fonts: сайттың қаріптері Google серверінен жүктеледі.
 Жоғарыда жазылғаннан басқа, оқу деректеріңді Google-ға, Meta-ға немесе жарнамашыларға бермейміз.
 
 5. 18 ЖАСҚА ТОЛМАСАҢ
@@ -99,7 +98,6 @@ const RU = `
 - Google Gemini (Шоқан): твои сообщения Шоқану и тексты «Ой ізі» и дебата для отзыва отправляются в Google. Имя и почта не отправляются. В бесплатной версии Google может использовать эти тексты для улучшения своих сервисов. Поэтому не пиши Шоқану своё имя и фамилию, адрес, телефон и другие личные данные.
 - Anthropic Claude: запасной вариант Шоқана. Работает, только если его включил администратор; тогда эти тексты отправляются в Anthropic.
 - Microsoft Azure Speech: озвучка сказок (отправляется текст сказки) и оценка произношения в разделе «Дыбыс». Во время оценки звук с микрофона идёт напрямую в Microsoft и оценивается; мы запись не храним.
-- Google Fonts: шрифты сайта загружаются с серверов Google.
 Кроме того, что написано выше, твои учебные данные мы не передаём Google, Meta или рекламодателям.
 
 5. ЕСЛИ ТЕБЕ НЕТ 18 ЛЕТ
@@ -151,7 +149,6 @@ A copy of your learning data is also kept on this device (in the browser), so th
 - Google Gemini (Shoqan): messages you write to Shoqan, and Thinking trail and debate texts sent for feedback, go to Google. Your name and email are not sent. On the free tier Google may use these texts to improve its services, so do not tell Shoqan your full name, address, phone or other personal details.
 - Anthropic Claude: Shoqan's backup. Used only if the admin switches it on; then these texts go to Anthropic.
 - Microsoft Azure Speech: reading tales aloud (the tale text is sent) and scoring pronunciation in Speak. While scoring, the sound from your microphone goes straight to Microsoft to be scored; we do not keep the recording.
-- Google Fonts: the site's fonts load from Google's servers.
 Apart from what is listed above, we do not share your learning data with Google, Meta or any advertiser.
 
 5. IF YOU ARE UNDER 18

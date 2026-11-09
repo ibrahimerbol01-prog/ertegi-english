@@ -1,0 +1,11 @@
+TITLE: Maqta Qyz and the Cat
+LEVEL: B2
+TARGETS: cat, tail, milk, egg, tree, grain, mouse, leaves, raisin, shopkeeper
+---
+[1] Maqta Qyz had been tidying her home when she noticed a single raisin. It was only one small raisin, but it looked sweet, and she thought it would be nicer to share it. "Cat!" she called. The cat, however, did not come. When no answer came, she ate the raisin herself and told the cat that it could stay away for good.
+[2] When the cat finally appeared and asked why it had been called, Maqta Qyz would not explain. Offended, the cat warned her that it would knock over her qatyq, a sour milk drink. "If you do," the girl replied, "I will cut off your tail." Neither of them gave way. The qatyq was spilled, and the cat's tail was cut off.
+[3] Without its tail the cat felt foolish and sorry. "Please give it back," it begged. Maqta Qyz agreed, but only on one condition: the cat had to replace the milk it had wasted. The cat hurried to the cow, who said she would gladly give milk if she were not so hungry; she needed fresh leaves. The tree had leaves, but it was thirsty and wanted water. Some girls had water, yet they would only share it for chewing gum. The shopkeeper who sold the gum asked for an egg, and the hen who could lay the egg asked for grain.
+[4] Standing on the dusty road, the cat wondered whether it had been wise to start at all. Every gift it needed seemed to depend on another one. Should it give up and live without a tail, or should it keep walking until the chain was complete?
+[5] It decided to keep walking. Before long it came across a mouse that was digging a new home. The mouse had a plate of millet beside it. It gave the cat a handful of grain and asked for nothing in return.
+[6] From that moment the chain was undone link by link. The grain was given to the hen, who laid an egg. The egg was taken to the shopkeeper, who handed over the gum. The gum was given to the girls, who poured out water. The tree was watered and let some leaves fall, the cow ate them, and fresh milk was poured for the cat. When it finally placed the sour milk in front of Maqta Qyz, she gave back its tail, and the long quarrel had ended.
+[7] A quarrel that starts over a single raisin can only be mended by patient work and by the kindness of others.

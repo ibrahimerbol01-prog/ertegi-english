@@ -53,9 +53,11 @@ describe("privacy policy names every outside service", () => {
   });
   it.each(bodies)("%s text", (_name, body) => {
     expect(body.length).toBeGreaterThan(1000);
-    for (const s of ["Supabase", "Vercel", "Google Gemini", "Anthropic Claude", "Microsoft Azure Speech", "Google Fonts", "POLICY_UPDATED"]) {
+    for (const s of ["Supabase", "Vercel", "Google Gemini", "Anthropic Claude", "Microsoft Azure Speech", "POLICY_UPDATED"]) {
       expect(body, s).toContain(s);
     }
+    // Fonts are self-hosted (src/fonts.css): Google Fonts is no longer an outside service.
+    expect(body).not.toContain("Google Fonts");
   });
-  it("the update date is 05.11.2026", () => expect(policy).toContain('POLICY_UPDATED = "05.11.2026"'));
+  it("the update date is 06.11.2026", () => expect(policy).toContain('POLICY_UPDATED = "06.11.2026"'));
 });

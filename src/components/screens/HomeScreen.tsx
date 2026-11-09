@@ -1,4 +1,5 @@
 import { useState } from "react";
+import ShoqanFace from "../ShoqanFace";
 import { Play, Trophy, Check, BookOpen, Lock } from "lucide-react";
 import { DailyGoalRing } from "../UIHelpers";
 import { displayTitle } from "../../utils/text";
@@ -91,9 +92,13 @@ export interface HomeScreenProps {
   onOpenCards?: () => void;
   /** The teacher's assignments card, shown first on the path. */
   assignments?: ReactNode;
+  /** Shoqan the mascot (ordinary site only, KazakhTalesApp.tsx). */
+  mascot?: ReactNode;
+  /** The placement check offer or result (ordinary site only, KazakhTalesApp.tsx). */
+  placement?: ReactNode;
 }
 
-export function HomeScreen({ onStartRead, onStartQuiz, t, lang, userName = "", sessionXp = 0, dailyGoal = DAILY_GOAL_XP, progress = new Set<string>(), userId, onReward = () => {}, onOpenCards = () => {}, assignments = null }: HomeScreenProps) {
+export function HomeScreen({ onStartRead, onStartQuiz, t, lang, userName = "", sessionXp = 0, dailyGoal = DAILY_GOAL_XP, progress = new Set<string>(), userId, onReward = () => {}, onOpenCards = () => {}, assignments = null, placement = null, mascot = null }: HomeScreenProps) {
   // Next step on the path: first level or quiz not yet finished, in order.
   const steps = STORIES.flatMap((s) => [...LEVEL_DETAILS.map((l) => ({ story: s, step: l.id })), { story: s, step: "quiz" }]);
   const current = steps.find((x) => !progress.has(`${x.story.id}:${x.step}`)) || null;
@@ -113,6 +118,8 @@ export function HomeScreen({ onStartRead, onStartQuiz, t, lang, userName = "", s
         <p className="text-[15px] text-ink-2 mt-2 leading-relaxed">{t.homeSubtitle}</p>
       </div>
 
+      {mascot}
+
       {/* Daily goal — on wide screens this lives in the right rail */}
       <div className="card p-4 flex items-center gap-4 xl:hidden">
         <DailyGoalRing current={sessionXp} goal={dailyGoal} size={60} />
@@ -128,6 +135,7 @@ export function HomeScreen({ onStartRead, onStartQuiz, t, lang, userName = "", s
 
       {/* The teacher's assignments come first: they have a due date. */}
       {assignments}
+      {placement}
 
       {/* Continue card: only once there is progress, otherwise the first island is the start */}
       {progress.size > 0 && (
@@ -152,7 +160,7 @@ export function HomeScreen({ onStartRead, onStartQuiz, t, lang, userName = "", s
 
       {/* Shoqan by the path, like Duolingo's owl: tip of the day + a ready question */}
       {!RESEARCH_MODE && <div className="flex items-end gap-3">
-        <img src="/shoqan-avatar.webp" width={128} height={128} decoding="async" alt="Shoqan" className="w-16 h-16 rounded-full object-cover border-[3px] border-sun shadow-[0_4px_0_var(--color-sun-deep)] shrink-0" />
+        <div className="w-16 h-16 rounded-full overflow-hidden border-[3px] border-sun shadow-[0_4px_0_var(--color-sun-deep)] shrink-0"><ShoqanFace label="Shoqan" /></div>
         <div className="relative flex-1 card p-4 rounded-bl-md">
           <p className="eyebrow text-sun-deep">{lang === "kk" ? "Шоқанның кеңесі" : "Shoqan's tip"}</p>
           <p className="text-[15px] text-ink mt-1 leading-snug">{tip[lang === "kk" ? "kk" : "en"]}</p>

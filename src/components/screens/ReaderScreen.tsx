@@ -18,7 +18,7 @@ import type { SavedWord } from "../../types";
 import { LEVEL_COLORS, useTr, type UiText } from "./shared";
 import { READ_SPEEDS } from "../../research/params";
 import { track } from "../../utils/events";
-import { glossKey, glossKeys } from "../../utils/gloss";
+import { wordTap } from "../../utils/wordTap";
 import { CORPUS_META } from "../../data/corpusMeta";
 
 /* Small video tile with a night-sky fallback. */
@@ -234,13 +234,8 @@ export function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, s
 
   const handleWordClick = (word: string) => {
     // Try the word as written ("didn't"), then without a possessive ("man's" -> "man"), then letters only.
-    const key = glossKey(word, WORD_TRANSLATIONS);
-    const found = key ? WORD_TRANSLATIONS[key] : undefined;
-    track("word_tap", {
-      object_type: "word", object_id: key ?? glossKeys(word)[2],
-      story_id: currentStory.id, level: selectedLevel,
-      result: { has_translation: !!found, during_audio: isReadAlongPlaying },
-    });
+    const { translation: found, event } = wordTap(word, WORD_TRANSLATIONS, currentStory.id, selectedLevel, isReadAlongPlaying);
+    track("word_tap", event);
     if (isReadAlongPlaying) { stopNarration(); setIsReadAlongPlaying(false); }
     setActiveWord(word);
     setTranslation(found || "Аудармасы әзірге жоқ");

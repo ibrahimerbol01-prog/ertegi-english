@@ -1,0 +1,167 @@
+{
+ "version": "placement-v1",
+ "sample": true,
+ "note": "Draft: rule and pseudowords to be checked by a teacher (docs/product/profile-and-placement.md).",
+ "items": [
+  {
+   "id": "A1-1",
+   "word": "clothes",
+   "level": "A1",
+   "pos": "noun",
+   "pseudo": false,
+   "from_tale": true
+  },
+  {
+   "id": "P-1",
+   "word": "flimber",
+   "level": null,
+   "pos": null,
+   "pseudo": true,
+   "from_tale": false
+  },
+  {
+   "id": "A2-1",
+   "word": "cost",
+   "level": "A2",
+   "pos": "verb",
+   "pseudo": false,
+   "from_tale": true
+  },
+  {
+   "id": "B1-1",
+   "word": "courage",
+   "level": "B1",
+   "pos": "noun",
+   "pseudo": false,
+   "from_tale": true
+  },
+  {
+   "id": "P-2",
+   "word": "drostle",
+   "level": null,
+   "pos": null,
+   "pseudo": true,
+   "from_tale": false
+  },
+  {
+   "id": "A1-2",
+   "word": "long",
+   "level": "A1",
+   "pos": "adjective",
+   "pseudo": false,
+   "from_tale": true
+  },
+  {
+   "id": "B2-1",
+   "word": "decade",
+   "level": "B2",
+   "pos": "noun",
+   "pseudo": false,
+   "from_tale": true
+  },
+  {
+   "id": "A2-2",
+   "word": "notice",
+   "level": "A2",
+   "pos": "noun",
+   "pseudo": false,
+   "from_tale": true
+  },
+  {
+   "id": "P-3",
+   "word": "quandrel",
+   "level": null,
+   "pos": null,
+   "pseudo": true,
+   "from_tale": false
+  },
+  {
+   "id": "C1-1",
+   "word": "crumble",
+   "level": "C1",
+   "pos": "verb",
+   "pseudo": false,
+   "from_tale": true
+  },
+  {
+   "id": "B1-2",
+   "word": "lift",
+   "level": "B1",
+   "pos": "noun",
+   "pseudo": false,
+   "from_tale": true
+  },
+  {
+   "id": "A1-3",
+   "word": "summer",
+   "level": "A1",
+   "pos": "noun",
+   "pseudo": false,
+   "from_tale": true
+  },
+  {
+   "id": "P-4",
+   "word": "brintish",
+   "level": null,
+   "pos": null,
+   "pseudo": true,
+   "from_tale": false
+  },
+  {
+   "id": "B2-2",
+   "word": "lid",
+   "level": "B2",
+   "pos": "noun",
+   "pseudo": false,
+   "from_tale": true
+  },
+  {
+   "id": "A2-3",
+   "word": "sudden",
+   "level": "A2",
+   "pos": "adjective",
+   "pseudo": false,
+   "from_tale": true
+  },
+  {
+   "id": "C1-2",
+   "word": "profound",
+   "level": "C1",
+   "pos": "adjective",
+   "pseudo": false,
+   "from_tale": true
+  },
+  {
+   "id": "P-5",
+   "word": "mepsy",
+   "level": null,
+   "pos": null,
+   "pseudo": true,
+   "from_tale": false
+  },
+  {
+   "id": "B1-3",
+   "word": "slope",
+   "level": "B1",
+   "pos": "noun",
+   "pseudo": false,
+   "from_tale": true
+  },
+  {
+   "id": "B2-3",
+   "word": "thinker",
+   "level": "B2",
+   "pos": "noun",
+   "pseudo": false,
+   "from_tale": true
+  },
+  {
+   "id": "C1-3",
+   "word": "untangle",
+   "level": "C1",
+   "pos": "verb",
+   "pseudo": false,
+   "from_tale": true
+  }
+ ]
+}

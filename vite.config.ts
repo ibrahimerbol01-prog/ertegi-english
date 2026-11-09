@@ -25,9 +25,16 @@ return {
     __ERTEGI_RESEARCH__: JSON.stringify(research),
   },
   // The ordinary build gets an empty stand-in for the test screen (src/research/testEntry.ts),
-  // the research build one for the wordbank (src/components/screens/WordbankScreen.off.tsx).
+  // the research build ones for the wordbank (src/components/screens/WordbankScreen.off.tsx)
+  // and the profile editor (src/components/ProfileEditor.off.tsx).
   resolve: { alias: research
-    ? [{ find: /^(.*)\/screens\/WordbankScreen$/, replacement: '$1/screens/WordbankScreen.off' }]
+    ? [
+        { find: /^(.*)\/screens\/WordbankScreen$/, replacement: '$1/screens/WordbankScreen.off' },
+        { find: /^(.*)\/components\/ProfileEditor$/, replacement: '$1/components/ProfileEditor.off' },
+        { find: /^(.*)\/components\/PlacementCheck$/, replacement: '$1/components/PlacementCheck.off' },
+        { find: /^(.*)\/lib\/supabase$/, replacement: '$1/lib/research/supabase' },
+        { find: /^(.*)\/components\/ShoqanMascot$/, replacement: '$1/components/ShoqanMascot.off' },
+      ]
     : [{ find: /^(.*)\/research\/testEntry$/, replacement: '$1/research/testEntry.off' }] },
   plugins: [
     react(),
@@ -68,9 +75,10 @@ return {
         cleanupOutdatedCaches: true,
         runtimeCaching: [
           {
-            urlPattern: ({ url }) => url.origin === 'https://fonts.googleapis.com' || url.origin === 'https://fonts.gstatic.com',
-            handler: 'StaleWhileRevalidate',
-            options: { cacheName: 'google-fonts', expiration: { maxEntries: 20, maxAgeSeconds: 60 * 60 * 24 * 365 } },
+            // Self-hosted fonts (src/fonts.css): cached when a page first uses a subset.
+            urlPattern: /\/fonts\/[a-z-]+\.woff2$/,
+            handler: 'CacheFirst',
+            options: { cacheName: 'fonts', expiration: { maxEntries: 16, maxAgeSeconds: 60 * 60 * 24 * 365 } },
           },
           {
             urlPattern: /\/assets\/microsoft\.cognitiveservices\.speech\.sdk-.*\.js$/,
