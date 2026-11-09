@@ -2,7 +2,7 @@
 id: 1106-005549-ibrahimerbol-g14-prioritet-sroki
 from: ibrahimerbol01-prog
 to: otarernazar-eng
-status: new
+status: done
 created: 2026-11-06 00:55
 ---
 
