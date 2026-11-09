@@ -2,7 +2,7 @@
 id: 1110-000235-ibrahimerbol-t-l1-yuridicheskie-d
 from: ibrahimerbol01-prog
 to: otarernazar-eng
-status: new
+status: done
 created: 2026-11-10 00:02
 ---
 
