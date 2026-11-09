@@ -2,7 +2,7 @@
 id: 1106-232143-ibrahimerbol-zadanie-peredelay-10
 from: ibrahimerbol01-prog
 to: abil-truescope
-status: new
+status: done
 created: 2026-11-06 23:21
 ---
 
