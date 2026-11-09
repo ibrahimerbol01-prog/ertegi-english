@@ -548,11 +548,6 @@ export default function KazakhTalesApp({ session, role, onRoleChange }: { sessio
       {/* R4: no Shoqan in the research build. */}
       {!RESEARCH_MODE && <ShoqanChat hidden={(tab === "quiz" && quizStarted) || (teacher && tab !== "read")} />}
       <SaveErrorToast show={showSaveError} message={t.saveError} onClose={() => setShowSaveError(false)} />
-      {!online && (
-        <p role="status" className="fixed top-2 left-1/2 -translate-x-1/2 z-[70] max-w-[360px] w-[calc(100%-24px)] bg-ink text-white text-[13px] leading-snug rounded-2xl px-4 py-2 shadow-lg text-center pointer-events-none">
-          {t.offline}
-        </p>
-      )}
       <JoinClassSheet
         open={!!pendingCode && !teacher}
         onClose={() => { clearPendingClass(); setPendingCode(null); }}
@@ -602,6 +597,12 @@ export default function KazakhTalesApp({ session, role, onRoleChange }: { sessio
           <div className="md:hidden"><LangToggle /></div>
           {!teacher && <div className="ml-auto"><StatChips /></div>}
         </header>
+        {/* A strip under the header, not an overlay: it never covers the achievement banner or the quiz. */}
+        {!online && (
+          <p role="status" className="shrink-0 bg-ink text-white text-[13px] leading-snug px-4 py-2 text-center">
+            {t.offline}
+          </p>
+        )}
 
         <div ref={scrollRef} className="flex-1 overflow-y-auto">
           <div className="mx-auto w-full max-w-[1040px] flex gap-8 px-4 md:px-8 pt-4 xl:pt-10 pb-44 md:pb-36">
