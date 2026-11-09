@@ -1,0 +1,129 @@
+word,pos,story_id,level,sentence_no,sentence,current_example,verdict,found
+about,adverb,,,,,"People talked about the clever shepherd, so the khan called him to the palace.",не найдено в сказках,нет
+about,preposition,ayaz_bi,A2,4,"People talked about the clever shepherd, so the khan called him to the palace.","People talked about the clever shepherd, so the khan called him to the palace.",текущий пример подходит,да
+above,adverb,alpamys,C1,10,"It was a prison without doors, where the only window was a circle of sky far above.","From that day forward, Zhirenshe's counsel is sought above all others, and his reputation as the wisest man on the steppe continues to grow with each passing year.",замена,да
+above,preposition,zhirenshe,B2,11,"From that day forward, Zhirenshe's counsel is sought above all others, and his reputation as the wisest man on the steppe continues to grow with each passing year.","From that day forward, Zhirenshe's counsel is sought above all others, and his reputation as the wisest man on the steppe continues to grow with each passing year.",текущий пример подходит,да
+all,determiner,er_tostik,B1,21,"When the dragon turned to attack him, he fought it with all his strength.","Zhirenshe replies, ""Sleep after a long day of hard work is the sweetest thing of all.",замена,да
+all,pronoun,zhirenshe,A2,7,"Zhirenshe replies, ""Sleep after a long day of hard work is the sweetest thing of all.","Zhirenshe replies, ""Sleep after a long day of hard work is the sweetest thing of all.",текущий пример подходит,да
+answer,noun,zhirenshe,A2,5,The khan is quite surprised by this clever answer.,The khan is quite surprised by this clever answer.,текущий пример подходит,да
+answer,verb,asan_kaigy,C1,15,The question before him was simple to ask and painful to answer.,The khan is quite surprised by this clever answer.,замена,да
+any,determiner,alpamys,A1,24,Hope is stronger than any pit.,Hope is stronger than any pit.,текущий пример подходит,да
+any,pronoun,,,,,Hope is stronger than any pit.,не найдено в сказках,нет
+back,adverb,aldar_kose,A2,12,"He rides the horse back to his village, laughing quietly.","He rides the horse back to his village, laughing quietly.",текущий пример подходит,да
+back,noun,,,,,"He rides the horse back to his village, laughing quietly.",не найдено в сказках,нет
+before,adverb,,,,,"Zhirenshe considers carefully before answering, ""A cruel word is the heaviest thing, because people carry it in their hearts for many long years.",не найдено в сказках,нет
+before,preposition,zhirenshe,A2,10,"Zhirenshe considers carefully before answering, ""A cruel word is the heaviest thing, because people carry it in their hearts for many long years.","Zhirenshe considers carefully before answering, ""A cruel word is the heaviest thing, because people carry it in their hearts for many long years.",текущий пример подходит,да
+behind,adverb,aldar_kose,B2,6,"He sprints away without a backward glance, leaving both horse and coat behind.",He looks behind the rich man.,замена,да
+behind,preposition,aldar_kose,A1,9,He looks behind the rich man.,He looks behind the rich man.,текущий пример подходит,да
+below,adverb,er_tostik,C1,9,"Shalkuiryk, loyal to the last, followed him below.","Shalkuiryk, loyal to the last, followed him below.",текущий пример подходит,да
+below,preposition,,,,,"Shalkuiryk, loyal to the last, followed him below.",не найдено в сказках,нет
+black,adjective,tazsha_bala,C1,14,"At dawn he followed the footprints to a ring of black rocks, where the giant was warming his huge hands over a fire.","At dawn he followed the footprints to a ring of black rocks, where the giant was warming his huge hands over a fire.",текущий пример подходит,да
+black,noun,,,,,"At dawn he followed the footprints to a ring of black rocks, where the giant was warming his huge hands over a fire.",не найдено в сказках,нет
+both,adverb,aldar_kose,B2,6,"He sprints away without a backward glance, leaving both horse and coat behind.","He sprints away without a backward glance, leaving both horse and coat behind.",текущий пример подходит; both…and,да
+both,determiner,,,,,"He sprints away without a backward glance, leaving both horse and coat behind.",не найдено в сказках,нет
+both,pronoun,asan_kaigy,C1,23,"Each place had its gift and its flaw, and he named both with the same honesty.","He sprints away without a backward glance, leaving both horse and coat behind.",замена,да
+close,adjective,,,,,"The courtiers crowded close behind, barely able to hide their eagerness, as the lock clicked and the heavy lid creaked open.",не найдено в сказках; текущий пример: close — наречие (crowded close behind),нет
+close,verb,,,,,"The courtiers crowded close behind, barely able to hide their eagerness, as the lock clicked and the heavy lid creaked open.",не найдено в сказках; текущий пример: close — наречие,нет
+cold,adjective,asan_kaigy,A2,5,"Winters were cold, and some families were hungry and sad.","Winters were cold, and some families were hungry and sad.",текущий пример подходит,да
+cold,noun,,,,,"Winters were cold, and some families were hungry and sad.",не найдено в сказках,нет
+color/colour,noun,tazsha_bala,C1,38,"The giant stared, and his face slowly lost its colour.","The giant stared, and his face slowly lost its colour.",текущий пример подходит,да
+color/colour,verb,,,,,"The giant stared, and his face slowly lost its colour.",не найдено в сказках,нет
+each,determiner,ayaz_bi,B1,23,"Each time, he said to himself, ""Ayaz, alindi bil.","Each time, he said to himself, ""Ayaz, alindi bil.",текущий пример подходит,да
+each,pronoun,asan_kaigy,B1,22,"A land became good when people looked after its water, grass and trees, and when they helped each other.","Each time, he said to himself, ""Ayaz, alindi bil.",замена; each other,да
+fast,adjective,asan_kaigy,A1,3,"He has a fast camel, Zhelmaya.",He runs away fast.,замена,да
+fast,adverb,aldar_kose,A1,14,He runs away fast.,He runs away fast.,текущий пример подходит,да
+favorite/favourite,adjective,ayaz_bi,C1,15,"Little by little, they began to whisper in the khan's ear that his favourite judge had been quietly helping himself to the royal gold and hoarding it in that chest.","Little by little, they began to whisper in the khan's ear that his favourite judge had been quietly helping himself to the royal gold and hoarding it in that chest.",текущий пример подходит,да
+favorite/favourite,noun,,,,,"Little by little, they began to whisper in the khan's ear that his favourite judge had been quietly helping himself to the royal gold and hoarding it in that chest.",не найдено в сказках,нет
+first,adjective,zhirenshe,B1,3,"The first question is, ""What is the fastest thing in the world?","First, he asks, ""What is the fastest thing in the world?",замена,да
+first,adverb,zhirenshe,A2,3,"First, he asks, ""What is the fastest thing in the world?","First, he asks, ""What is the fastest thing in the world?",текущий пример подходит,да
+gray/grey,adjective,tazsha_bala,B1,11,"To show it, he picked up a grey stone and began to squeeze it.","To show it, he picked up a grey stone and began to squeeze it.",текущий пример подходит,да
+gray/grey,noun,,,,,"To show it, he picked up a grey stone and began to squeeze it.",не найдено в сказках,нет
+hard,adjective,zhirenshe,A1,4,The khan asks three hard questions.,The khan asks three hard questions.,текущий пример подходит,да
+hard,adverb,tazsha_bala,A2,22,"He squeezed the cheese hard, and water ran down his hand.",The khan asks three hard questions.,замена,да
+her,determiner,er_tostik,A2,25,She saw the dragon and her safe babies.,She saw the dragon and her safe babies.,текущий пример подходит,да
+her,pronoun,,,,,She saw the dragon and her safe babies.,не найдено в сказках,нет
+his,determiner,aldar_kose,A1,15,He drops his warm coat on the ground.,He drops his warm coat on the ground.,текущий пример подходит,да
+his,pronoun,,,,,He drops his warm coat on the ground.,не найдено в сказках,нет
+its,determiner,er_tostik,A1,21,A brave and kind heart finds its way home.,A brave and kind heart finds its way home.,текущий пример подходит,да
+its,pronoun,,,,,A brave and kind heart finds its way home.,не найдено в сказках,нет
+key,adjective,,,,,Only he has the key.,не найдено в сказках,нет
+key,noun,ayaz_bi,A2,9,Only he has the key.,Only he has the key.,текущий пример подходит,да
+light,adjective,,,,,"She carried Er Tostik on her strong wings, out of the darkness and up to the world of light.",не найдено в сказках,нет
+light,noun,er_tostik,B1,27,"She carried Er Tostik on her strong wings, out of the darkness and up to the world of light.","She carried Er Tostik on her strong wings, out of the darkness and up to the world of light.",текущий пример подходит,да
+like,preposition,tazsha_bala,A1,19,It looks like a stone.,It looks like a stone.,текущий пример подходит,да
+like,verb,,,,,It looks like a stone.,не найдено в сказках,нет
+little,adjective,er_tostik,A2,20,The little birds need you.,The little birds need you.,текущий пример подходит,да
+little,adverb,,,,,The little birds need you.,не найдено в сказках; кандидат: tazsha_bala C1 3 «owned little more than» — проверить,нет
+look,noun,,,,,"He shouts, ""Look!",не найдено в сказках,нет
+look,verb,ayaz_bi,A1,16,"Ayaz says, ""I look at my old clothes every day.","He shouts, ""Look!",замена,да
+love,noun,alpamys,C1,3,"Alpamys was in love with the beautiful Gulbarshyn, and their promise to each other was known across the whole steppe.",They love his clever tricks.,замена,да
+love,verb,aldar_kose,A1,22,They love his clever tricks.,They love his clever tricks.,текущий пример подходит,да
+many,determiner,zhirenshe,A1,17,People carry it in their hearts for many years.,People carry it in their hearts for many years.,текущий пример подходит,да
+many,pronoun,,,,,People carry it in their hearts for many years.,не найдено в сказках,нет
+more,determiner,,,,,He trusts Ayaz more.,не найдено в сказках; текущий пример: more — наречие (trusts Ayaz more),нет
+more,pronoun,,,,,He trusts Ayaz more.,не найдено в сказках; текущий пример: more — наречие,нет
+much,adverb,tazsha_bala,B1,3,"He was smaller and thinner than everyone in the village, but he was much more clever than he looked.","He was smaller and thinner than everyone in the village, but he was much more clever than he looked.",текущий пример подходит,да
+much,determiner,,,,,"He was smaller and thinner than everyone in the village, but he was much more clever than he looked.",не найдено в сказках,нет
+much,pronoun,alpamys,B2,21,"When Alpamys reached home, he discovered that much had changed.","He was smaller and thinner than everyone in the village, but he was much more clever than he looked.",замена,да
+no,adverb,,,,,He has no coat.,не найдено в сказках,нет
+no,determiner,aldar_kose,A1,2,He has no coat.,He has no coat.,текущий пример подходит,да
+one,determiner,aldar_kose,A1,5,One day he sees a rich man on the road.,One day he sees a rich man on the road.,текущий пример подходит,да
+one,number,zhirenshe,A1,7,It can go anywhere in one second.,One day he sees a rich man on the road.,замена,да
+only,adjective,,,,,There are only old clothes and boots.,не найдено в сказках,нет
+only,adverb,ayaz_bi,A1,15,There are only old clothes and boots.,There are only old clothes and boots.,текущий пример подходит,да
+open,adjective,asan_kaigy,B2,13,"Out on the open steppe there would be only wind, snow and silence.",The giant's mouth fell open.,замена,да
+open,verb,ayaz_bi,B2,21,So he chose a different way: he would simply open it and let the truth speak for itself.,The giant's mouth fell open.,замена,да
+orange,adjective,tazsha_bala,B2,28,In the orange firelight it looked exactly like a smooth river stone.,In the orange firelight it looked exactly like a smooth river stone.,текущий пример подходит,да
+orange,noun,,,,,In the orange firelight it looked exactly like a smooth river stone.,не найдено в сказках,нет
+past,adverb,er_tostik,A1,12,Does he run past or help?,Does he run past or help?,текущий пример подходит,да
+past,preposition,,,,,Does he run past or help?,не найдено в сказках,нет
+rain,noun,alpamys,C1,17,"He recalled the voices of his people, the smell of the open steppe after rain and the face of Gulbarshyn.","He recalled the voices of his people, the smell of the open steppe after rain and the face of Gulbarshyn.",текущий пример подходит,да
+rain,verb,,,,,"He recalled the voices of his people, the smell of the open steppe after rain and the face of Gulbarshyn.",не найдено в сказках,нет
+real,adjective,tazsha_bala,C1,2,"His real name has long been forgotten; everyone simply called him Tazsha, the bald boy, because his head was as bare and smooth as an egg.","His real name has long been forgotten; everyone simply called him Tazsha, the bald boy, because his head was as bare and smooth as an egg.",текущий пример подходит,да
+real,adverb,,,,,"His real name has long been forgotten; everyone simply called him Tazsha, the bald boy, because his head was as bare and smooth as an egg.",не найдено в сказках,нет
+ride,noun,,,,,Should he stay with the khan or ride his camel into the steppe?,не найдено в сказках,нет
+ride,verb,asan_kaigy,A2,14,Should he stay with the khan or ride his camel into the steppe?,Should he stay with the khan or ride his camel into the steppe?,текущий пример подходит,да
+run,noun,,,,,Does he run past or help?,не найдено в сказках,нет
+run,verb,er_tostik,A1,12,Does he run past or help?,Does he run past or help?,текущий пример подходит,да
+same,adjective,asan_kaigy,C1,23,"Each place had its gift and its flaw, and he named both with the same honesty.",Ayaz promised himself that he would judge rich and poor in exactly the same way.,замена,да
+same,adverb,,,,,Ayaz promised himself that he would judge rich and poor in exactly the same way.,не найдено в сказках,нет
+same,pronoun,tazsha_bala,C1,27,"He was afraid, certainly, yet fear, he reminded himself, is not the same as defeat.",Ayaz promised himself that he would judge rich and poor in exactly the same way.,замена,да
+some,determiner,ayaz_bi,A1,6,Some men are angry.,Some men are angry.,текущий пример подходит,да
+some,pronoun,tazsha_bala,A2,5,Tazsha always carried some in his bag.,Some men are angry.,замена,да
+stop,noun,,,,,The witch could not stop him now.,не найдено в сказках,нет
+stop,verb,er_tostik,B1,28,The witch could not stop him now.,The witch could not stop him now.,текущий пример подходит,да
+than,conjunction,tazsha_bala,B1,3,"He was smaller and thinner than everyone in the village, but he was much more clever than he looked.",A clever head is stronger than a big body.,замена,да
+than,preposition,tazsha_bala,A1,26,A clever head is stronger than a big body.,A clever head is stronger than a big body.,текущий пример подходит,да
+that,conjunction,aldar_kose,B1,4,"Aldar Köse decides that he wants that coat for himself, so he comes up with a clever plan.","From that day, Zhirenshe becomes the khan's most trusted advisor.",замена,да
+that,determiner,zhirenshe,A1,20,"From that day, Zhirenshe becomes the khan's most trusted advisor.","From that day, Zhirenshe becomes the khan's most trusted advisor.",текущий пример подходит,да
+that,pronoun,,,,,"From that day, Zhirenshe becomes the khan's most trusted advisor.",не найдено в сказках,нет
+these,determiner,ayaz_bi,C1,16,"For a while the khan dismissed these rumours, but a whisper, repeated often enough, has a way of taking root.",These are not even my chicks.,замена,да
+these,pronoun,er_tostik,B2,17,These are not even my chicks.,These are not even my chicks.,текущий пример подходит,да
+this,determiner,asan_kaigy,A1,13,"He says, ""This land has good water.","He says, ""This land has good water.",текущий пример подходит,да
+this,pronoun,er_tostik,A2,18,"""This is not my fight.","He says, ""This land has good water.",замена,да
+those,determiner,er_tostik,C1,24,Those words struck home.,Those words struck home.,текущий пример подходит,да
+those,pronoun,,,,,Those words struck home.,не найдено в сказках,нет
+to,infinitive-to,zhirenshe,A1,3,"One day, the khan wants to test him.","One day, the khan wants to test him.",текущий пример подходит,да
+to,preposition,ayaz_bi,A2,4,"People talked about the clever shepherd, so the khan called him to the palace.","One day, the khan wants to test him.",замена,да
+turn,noun,tazsha_bala,C1,22,"""Your turn.","""Your turn.",текущий пример подходит,да
+turn,verb,ayaz_bi,C1,20,"He could turn on his accusers in fury, yet anger, he knew, would only make him look guilty.","""Your turn.",замена,да
+walk,noun,,,,,"From that day forward, Zhirenshe's counsel is sought above all others', and his legend as the wisest man ever to walk the steppe continues to grow with every passing generation.",не найдено в сказках,нет
+walk,verb,zhirenshe,C1,10,"From that day forward, Zhirenshe's counsel is sought above all others', and his legend as the wisest man ever to walk the steppe continues to grow with every passing generation.","From that day forward, Zhirenshe's counsel is sought above all others', and his legend as the wisest man ever to walk the steppe continues to grow with every passing generation.",текущий пример подходит,да
+watch,noun,,,,,"""Watch me,"" he said.",не найдено в сказках,нет
+watch,verb,tazsha_bala,A2,20,"""Watch me,"" he said.","""Watch me,"" he said.",текущий пример подходит,да
+well,adjective,,,,,"Ayaz answered every question so well that the khan made him a bi, a judge and adviser.",не найдено в сказках,нет
+well,adverb,ayaz_bi,B1,6,"Ayaz answered every question so well that the khan made him a bi, a judge and adviser.","Ayaz answered every question so well that the khan made him a bi, a judge and adviser.",текущий пример подходит,да
+what,determiner,,,,,"""What is the fastest thing in the world?",не найдено в сказках,нет
+what,pronoun,zhirenshe,A1,5,"""What is the fastest thing in the world?","""What is the fastest thing in the world?",текущий пример подходит,да
+when,adverb,,,,,"When the villagers hear the story, they laugh too and praise Aldar Köse for his clever trick.",не найдено в сказках,нет
+when,conjunction,aldar_kose,A2,13,"When the villagers hear the story, they laugh too and praise Aldar Köse for his clever trick.","When the villagers hear the story, they laugh too and praise Aldar Köse for his clever trick.",текущий пример подходит,да
+where,adverb,,,,,Remember where you come from.,не найдено в сказках,нет
+where,conjunction,ayaz_bi,A2,27,Remember where you come from.,Remember where you come from.,текущий пример подходит,да
+which,determiner,,,,,"A huge dragon was crawling up the trunk, and its hungry eyes were fixed on the helpless chicks, which were screaming for help.",не найдено в сказках,нет
+which,pronoun,er_tostik,B2,22,"He rushed to the tree and shouted at the dragon, which turned away from the nest and came down to attack him.","A huge dragon was crawling up the trunk, and its hungry eyes were fixed on the helpless chicks, which were screaming for help.",замена,да
+white,adjective,tazsha_bala,A1,4,She makes soft white cheese.,She makes soft white cheese.,текущий пример подходит,да
+white,noun,,,,,She makes soft white cheese.,не найдено в сказках,нет
+whose,determiner,er_tostik,B2,10,"After they had wandered for many days, they reached a gigantic tree whose branches seemed to hold up the dark sky.","After they had wandered for many days, they reached a gigantic tree whose branches seemed to hold up the dark sky.",текущий пример подходит,да
+whose,pronoun,,,,,"After they had wandered for many days, they reached a gigantic tree whose branches seemed to hold up the dark sky.",не найдено в сказках,нет
+work,noun,zhirenshe,A1,11,"Zhirenshe says, ""Sleep after hard work is the sweetest thing.","Zhirenshe says, ""Sleep after hard work is the sweetest thing.",текущий пример подходит,да
+work,verb,,,,,"Zhirenshe says, ""Sleep after hard work is the sweetest thing.",не найдено в сказках,нет
