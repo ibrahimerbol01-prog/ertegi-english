@@ -2,7 +2,7 @@
 id: 1109-230810-ibrahimerbol-pauza-po-limitu-t-s3
 from: ibrahimerbol01-prog
 to: Madiii55
-status: new
+status: done
 created: 2026-11-09 23:08
 ---
 
