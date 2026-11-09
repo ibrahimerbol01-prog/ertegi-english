@@ -57,6 +57,7 @@ import { AssignmentsCard, JoinClassSheet, MyClassesSection } from "./components/
 import { clearPendingClass, flushQuizResults, peekPendingClass, saveQuizResult } from "./utils/classes";
 import { setEventsUser, track } from "./utils/events";
 import { setSyncUser } from "./utils/learnerSync";
+import { useOnline } from "./utils/useOnline";
 import {
   loadProgress, saveProgress, progressKey, loadLocalReviews, saveReview,
   nextReview, lapse, localDay, daysBetween, isDue, MAX_MASTERY, type ProgressStep, type CardDirection
@@ -100,6 +101,9 @@ export default function KazakhTalesApp({ session, role, onRoleChange }: { sessio
   const lastActiveDateRef = useRef<string | null>(null);
 
   const [savedWords, setSavedWords] = useState<SavedWord[]>([]);
+  // Saved words could not be read: say so instead of showing "0 words".
+  const [wordsLoadFailed, setWordsLoadFailed] = useState(false);
+  const online = useOnline();
   const [progress, setProgress] = useState<Set<string>>(new Set());
   const [wordsMode, setWordsMode] = useState("cards");
 
@@ -239,10 +243,17 @@ export default function KazakhTalesApp({ session, role, onRoleChange }: { sessio
       // Words saved while the list was still loading stay in it.
       setSavedWords((prev) => [...fromServer, ...prev.filter((w) => !fromServer.some((x) => x.word === w.word))]);
       wordsReadyRef.current = true;
+      setWordsLoadFailed(false);
     };
     // A failed load must not look like "no words yet": try again a few times.
+    let retryWhenOnline: (() => void) | null = null;
     const retryWords = (attempt: number) => {
-      if (attempt >= 4) return;
+      if (attempt >= 4) {
+        // Gave up for now: one more round as soon as the network comes back.
+        retryWhenOnline = () => { retryWhenOnline = null; retryWords(0); };
+        window.addEventListener("online", retryWhenOnline, { once: true });
+        return;
+      }
       setTimeout(async () => {
         if (cancelled) return;
         const res = await supabase.from("saved_words").select("*").eq("user_id", userId).order("created_at", { ascending: true });
@@ -265,7 +276,7 @@ export default function KazakhTalesApp({ session, role, onRoleChange }: { sessio
       if (profileRes.error) retryProfile(0);
       else applyProfile(profileRes.data as ProfileRow | null);
       setProgress(progressSet);
-      if (wordsRes.error || !wordsRes.data) retryWords(0);
+      if (wordsRes.error || !wordsRes.data) { setWordsLoadFailed(true); retryWords(0); }
       else applyWords(wordsRes.data);
       if (achievementsRes.data) {
         setUnlockedAchievements(achievementsRes.data.map((row: { achievement_id: string }) => row.achievement_id));
@@ -276,9 +287,13 @@ export default function KazakhTalesApp({ session, role, onRoleChange }: { sessio
     loadUserData().catch(() => {
       setDataLoaded(true);
       if (!profileReadyRef.current) retryProfile(0);
+      if (!wordsReadyRef.current) { setWordsLoadFailed(true); retryWords(0); }
     });
 
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+      if (retryWhenOnline) window.removeEventListener("online", retryWhenOnline);
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userId]);
 
@@ -404,7 +419,8 @@ export default function KazakhTalesApp({ session, role, onRoleChange }: { sessio
       newlyUnlocked.forEach((a) => {
         saveToSupabase(
           async () => supabase.from("user_achievements").upsert({ user_id: userId, achievement_id: a.id }, { onConflict: "user_id,achievement_id", ignoreDuplicates: true }),
-          onSaveError
+          // No error toast: an unsaved achievement is unlocked again from the stats on the
+          // next sign-in, so nothing is lost (docs/error-states.md, finding 3).
         );
       });
     }
@@ -532,6 +548,11 @@ export default function KazakhTalesApp({ session, role, onRoleChange }: { sessio
       {/* R4: no Shoqan in the research build. */}
       {!RESEARCH_MODE && <ShoqanChat hidden={(tab === "quiz" && quizStarted) || (teacher && tab !== "read")} />}
       <SaveErrorToast show={showSaveError} message={t.saveError} onClose={() => setShowSaveError(false)} />
+      {!online && (
+        <p role="status" className="fixed top-2 left-1/2 -translate-x-1/2 z-[70] max-w-[360px] w-[calc(100%-24px)] bg-ink text-white text-[13px] leading-snug rounded-2xl px-4 py-2 shadow-lg text-center pointer-events-none">
+          {t.offline}
+        </p>
+      )}
       <JoinClassSheet
         open={!!pendingCode && !teacher}
         onClose={() => { clearPendingClass(); setPendingCode(null); }}
@@ -685,7 +706,7 @@ export default function KazakhTalesApp({ session, role, onRoleChange }: { sessio
                   ) : wordsMode === "match" ? (
                     <MatchingGame savedWords={savedWords} onReward={addXp} mode={wordsMode} setMode={setWordsMode} />
                   ) : (
-                    <FlashcardsScreen savedWords={savedWords} onReview={handleReview} lang={lang} mode={wordsMode} setMode={setWordsMode} />
+                    <FlashcardsScreen savedWords={savedWords} loadFailed={wordsLoadFailed} onReview={handleReview} lang={lang} mode={wordsMode} setMode={setWordsMode} />
                   )}
                   {!RESEARCH_MODE && <div className="mt-8"><TurkicWords lang={lang} /></div>}
                 </div>
@@ -748,7 +769,9 @@ export default function KazakhTalesApp({ session, role, onRoleChange }: { sessio
               <div className="card p-5">
                 <p className="font-display font-extrabold text-ink">{lang === "kk" ? "Сөздік" : "Vocabulary"}</p>
                 <p className="text-sm text-ink-2 mt-1">
-                  {savedWords.length} {lang === "kk" ? "сөз сақталды" : "words saved"}
+                  {wordsLoadFailed && savedWords.length === 0
+                    ? t.wordsNotLoaded
+                    : <>{savedWords.length} {lang === "kk" ? "сөз сақталды" : "words saved"}</>}
                   {dueCount > 0 && <> · <b className="text-felt">{dueCount} {lang === "kk" ? "қайталауға" : "due"}</b></>}
                 </p>
                 <button onClick={() => setTab("words")} className="btn btn-ghost btn-sm w-full mt-4">

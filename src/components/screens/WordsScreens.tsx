@@ -45,8 +45,10 @@ function EmptyState({ text }: { text: string }) {
 }
 
 /* --- 3.5 FLASHCARDS SCREEN: spaced repetition (Leitner boxes) --- */
-export function FlashcardsScreen({ savedWords, onReview, lang = "kk", mode, setMode }: {
+export function FlashcardsScreen({ savedWords, onReview, lang = "kk", mode, setMode, loadFailed = false }: {
   savedWords: SavedWord[];
+  /** Saved words could not be read from the server (yet). */
+  loadFailed?: boolean;
   onReview: (word: string, known: boolean, direction: CardDirection) => void;
   lang?: string;
   mode?: string;
@@ -72,7 +74,9 @@ export function FlashcardsScreen({ savedWords, onReview, lang = "kk", mode, setM
     return (
       <div className="animate-pop-in">
         <WordsHeader mode={mode} setMode={setMode} />
-        <EmptyState text={kk ? "Әзірге сөз сақталмаған. Ертегіні оқып отырып, кез келген сөзді бассаң, ол осында сақталады." : "No words saved yet. Tap any word while reading a story to save it here."} />
+        {loadFailed
+          ? <p role="alert" className="card p-4 text-[15px] text-ink-2">{DICT[kk ? "kk" : "en"].wordsNotLoaded}</p>
+          : <EmptyState text={kk ? "Әзірге сөз сақталмаған. Ертегіні оқып отырып, кез келген сөзді бассаң, ол осында сақталады." : "No words saved yet. Tap any word while reading a story to save it here."} />}
       </div>
     );
   }
