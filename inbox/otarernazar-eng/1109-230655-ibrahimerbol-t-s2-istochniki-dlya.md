@@ -2,7 +2,7 @@
 id: 1109-230655-ibrahimerbol-t-s2-istochniki-dlya
 from: ibrahimerbol01-prog
 to: otarernazar-eng
-status: new
+status: done
 created: 2026-11-09 23:06
 ---
 
