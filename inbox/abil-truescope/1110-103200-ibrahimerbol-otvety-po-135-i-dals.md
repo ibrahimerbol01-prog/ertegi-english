@@ -2,7 +2,7 @@
 id: 1110-103200-ibrahimerbol-otvety-po-135-i-dals
 from: ibrahimerbol01-prog
 to: abil-truescope
-status: new
+status: done
 created: 2026-11-10 10:32
 ---
 
