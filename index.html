@@ -17,8 +17,8 @@
 @font-face{font-family:Inter;src:url(inter-cyrillic-ext.woff2) format("woff2");font-weight:400 700;unicode-range:U+0460-052F,U+1C80-1C88,U+20B4,U+2DE0-2DFF,U+A640-A69F,U+FE2E-FE2F}
 html,body{margin:0;background:#1F2B4D}
 #loading{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;color:#FBF6EE;font:700 20px Nunito,sans-serif;z-index:10;background:#1F2B4D}
-#tip{position:fixed;left:0;right:0;bottom:0;z-index:5;padding:14px 18px calc(14px + env(safe-area-inset-bottom));background:#1F2B4D;color:#FBF6EE;font:700 18px Nunito,sans-serif;display:none;pointer-events:none}
-#tip b{font-size:26px;font-weight:900}#tip i{color:#FFB81F;font-style:normal;margin-left:10px}
+#tip{position:fixed;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom));z-index:5;padding:14px 20px;background:#FFFFFF;color:#1C2333;border:1px solid #EADFCB;border-radius:20px;box-shadow:0 8px 24px rgba(28,35,51,.18);font:800 18px Nunito,sans-serif;display:none;pointer-events:none}
+#tip b{font-size:26px;font-weight:900;color:#C2410C}#tip i{color:#1C2333;font-style:normal;margin-left:12px}
 </style>
 </head>
 <body>
@@ -34,13 +34,21 @@ const SENTS = STORY.match(/[^.!?]+[.!?]+["”]?/g).map(x=>x.trim());
 
 function canvas(w,h){const c=document.createElement('canvas');c.width=w;c.height=h;return c;}
 
+function rr(g,x,y,w,h,r){g.beginPath();g.roundRect(x,y,w,h,r);}
+function cardBg(g,w,h,fill){g.clearRect(0,0,w,h);
+  g.fillStyle='rgba(28,35,51,0.10)';rr(g,6,14,w-12,h-16,44);g.fill();
+  g.fillStyle=fill;rr(g,4,4,w-8,h-14,40);g.fill();
+  g.strokeStyle='#EADFCB';g.lineWidth=4;rr(g,4,4,w-8,h-14,40);g.stroke();}
+function pill(g,x,y,text,font,bg,fg,padX,h){g.font=font;const tw=g.measureText(text).width;g.fillStyle=bg;rr(g,x,y,tw+padX*2,h,h/2);g.fill();g.fillStyle=fg;g.textBaseline='middle';g.fillText(text,x+padX,y+h/2+2);g.textBaseline='alphabetic';return tw+padX*2;}
 function drawStory(c){
   const g=c.getContext('2d');
-  g.fillStyle='#FBF6EE';g.fillRect(0,0,W,H);
-  g.fillStyle='#C2410C';g.font='800 40px Nunito';g.fillText('АЛДАР КӨСЕ · A1',PAD,110);g.textAlign='right';g.fillStyle='#5E6573';g.font='800 34px Nunito';g.fillText('ERTEGI ENGLISH · VR КОНЦЕПТ',W-PAD,110);g.textAlign='left';
-  g.fillStyle='#5E6573';g.font='600 34px Inter';g.fillText('Сөзді бассаң, аудармасы мен айтылуы шығады',PAD,165);
+  cardBg(g,W,H,'#FBF6EE');
+  pill(g,PAD,62,'АЛДАР КӨСЕ · A1','800 38px Nunito','#FFE9E1','#B93A12',30,66);
+  g.textAlign='right';g.fillStyle='#5E6573';g.font='800 30px Nunito';g.fillText('ERTEGI ENGLISH · VR КОНЦЕПТ',W-PAD,108);g.textAlign='left';
+  g.fillStyle='#5E6573';g.font='600 34px Inter';g.fillText('Сөзді бассаң, аудармасы мен айтылуы шығады',PAD,184);
+  g.fillStyle='#EADFCB';g.fillRect(PAD,214,W-PAD*2,3);
   g.font=SIZE+'px Inter';
-  const toks=STORY.split(/(\s+)/);let x=PAD,y=280;words=[];let si=0,consumed='';
+  const toks=STORY.split(/(\s+)/);let x=PAD,y=310;words=[];let si=0,consumed='';
   for(const t of toks){
     if(/^\s+$/.test(t)){x+=g.measureText(' ').width;continue;}
     const w=g.measureText(t).width;
@@ -48,20 +56,33 @@ function drawStory(c){
     const clean=t.toLowerCase().replace(/[^a-zö]/g,'');
     const i=words.length;words.push({t,clean,x,y,w,si});
     consumed+=(consumed?' ':'')+t; if(SENTS[si]&&consumed.length>=SENTS[si].length){si++;consumed='';}
-    if(words[i].si===reading){g.fillStyle='#FFF1C7';g.fillRect(x-6,y-SIZE+4,w+12+g.measureText(' ').width,SIZE+18);}
-    if(i===selected){g.fillStyle='#FFE7A3';g.fillRect(x-8,y-SIZE+4,w+16,SIZE+18);g.strokeStyle='#FFB81F';g.lineWidth=5;g.strokeRect(x-8,y-SIZE+4,w+16,SIZE+18);}
+    if(words[i].si===reading){g.fillStyle='#FFF1C7';g.fillRect(x-6,y-SIZE+2,w+12+g.measureText(' ').width,SIZE+22);}
+    if(i===selected){g.fillStyle='#FFE7A3';rr(g,x-10,y-SIZE+2,w+20,SIZE+22,14);g.fill();g.fillStyle='#C2410C';rr(g,x-4,y+14,w+8,7,4);g.fill();}
     g.fillStyle='#1C2333';g.fillText(t,x,y);x+=w;
   }
+  // progress dots per sentence
+  const n=SENTS.length,gap=34,dx=W/2-(n-1)*gap/2,dy=H-90;
+  for(let k=0;k<n;k++){g.fillStyle=k===reading?'#C2410C':(reading>=0&&k<reading?'#F2B49C':'#E4D9C5');g.beginPath();g.arc(dx+k*gap,dy,k===reading?11:8,0,7);g.fill();}
 }
 function drawCard(c,word){
   const g=c.getContext('2d');const cw=c.width,ch=c.height;
-  g.fillStyle='#1F2B4D';g.fillRect(0,0,cw,ch);
-  if(!word){g.fillStyle='#C9CFDF';g.font='700 44px Nunito';g.fillText('Сөзге бас',60,140);return;}
-  g.fillStyle='#FF7A4D';g.font='800 30px Nunito';g.fillText('АҒЫЛШЫНША',60,80);
-  g.fillStyle='#FBF6EE';g.font='900 84px Nunito';g.fillText(word.clean,60,175);
-  g.fillStyle='#FFB81F';g.font='800 56px Nunito';
+  cardBg(g,cw,ch,'#FFFFFF');
+  if(!word){g.fillStyle='#5E6573';g.font='800 52px Nunito';g.fillText('Сөзге бас',64,ch/2+10);
+    g.fillStyle='#FFE9E1';g.beginPath();g.arc(cw-110,ch/2-6,52,0,7);g.fill();g.fillStyle='#C2410C';g.font='900 50px Nunito';g.textAlign='center';g.fillText('👆',cw-110,ch/2+12);g.textAlign='left';return;}
+  pill(g,60,44,'АҒЫЛШЫНША','800 26px Nunito','#FFE9E1','#B93A12',22,48);
+  g.fillStyle='#C2410C';g.font='900 92px Nunito';g.fillText(word.clean,60,200);
+  g.fillStyle='#1C2333';g.font='800 54px Nunito';
   const tr=DICT[word.clean]||'Аудармасы әзірге жоқ';
-  let line='',y=270;for(const part of tr.split(' ')){if(g.measureText(line+part).width>cw-120){g.fillText(line,60,y);line='';y+=66;}line+=part+' ';}g.fillText(line,60,y);
+  let line='',y=290;for(const part of tr.split(' ')){if(g.measureText(line+part).width>cw-250){g.fillText(line,60,y);line='';y+=64;}line+=part+' ';}g.fillText(line,60,y);
+  g.fillStyle='#E3F4EC';g.beginPath();g.arc(cw-110,150,62,0,7);g.fill();
+  g.fillStyle='#157A56';g.beginPath();g.moveTo(cw-128,118);g.lineTo(cw-128,182);g.lineTo(cw-78,150);g.closePath();g.fill();
+}
+function drawShoqan(c,img){
+  const g=c.getContext('2d');const cw=c.width,ch=c.height;
+  cardBg(g,cw,ch,'#FBF6EE');
+  g.save();rr(g,40,40,cw-80,cw-80,32);g.clip();if(img)g.drawImage(img,40,40,cw-80,cw-80);g.restore();
+  g.fillStyle='#1C2333';g.font='900 64px Nunito';g.textAlign='center';g.fillText('Шоқан',cw/2,cw+40);
+  g.fillStyle='#5E6573';g.font='800 28px Nunito';g.fillText('ERTEGI ENGLISH',cw/2,cw+88);g.textAlign='left';
 }
 function say(t){try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang='en-US';u.rate=0.85;speechSynthesis.speak(u);}catch(e){}}
 
@@ -69,7 +90,7 @@ AFRAME.registerComponent('story-panel',{
   init(){
     this.c=canvas(W,H);drawStory(this.c);
     this.tex=new THREE.CanvasTexture(this.c);this.tex.colorSpace=THREE.SRGBColorSpace;this.tex.anisotropy=8;
-    const m=this.el.getObject3D('mesh');m.material=new THREE.MeshBasicMaterial({map:this.tex});
+    const m=this.el.getObject3D('mesh');m.material=new THREE.MeshBasicMaterial({map:this.tex,transparent:true,alphaTest:0.02});
     this.el.addEventListener('click',e=>{
       const uv=e.detail.intersection&&e.detail.intersection.uv;if(!uv)return;
       const px=uv.x*W,py=(1-uv.y)*H;
@@ -83,22 +104,32 @@ AFRAME.registerComponent('word-card',{
   init(){
     this.c=canvas(1024,512);drawCard(this.c,null);
     this.tex=new THREE.CanvasTexture(this.c);this.tex.colorSpace=THREE.SRGBColorSpace;
-    this.el.getObject3D('mesh').material=new THREE.MeshBasicMaterial({map:this.tex});
+    this.el.getObject3D('mesh').material=new THREE.MeshBasicMaterial({map:this.tex,transparent:true,alphaTest:0.02});
     this.el.addEventListener('word',e=>{drawCard(this.c,e.detail);this.tex.needsUpdate=true;
       const t=document.getElementById('tip');t.innerHTML='<b></b><i></i>';t.firstChild.textContent=e.detail.clean;t.lastChild.textContent=DICT[e.detail.clean]||'Аудармасы әзірге жоқ';t.style.display='block';});
     this.el.addEventListener('click',()=>{if(selected>=0)say(words[selected].clean);});
   }
 });
+AFRAME.registerComponent('shoqan-card',{
+  init(){this.c=canvas(512,640);drawShoqan(this.c,null);this.tex=new THREE.CanvasTexture(this.c);this.tex.colorSpace=THREE.SRGBColorSpace;
+    this.el.getObject3D('mesh').material=new THREE.MeshBasicMaterial({map:this.tex,transparent:true,alphaTest:0.02});
+    const im=new Image();im.onload=()=>{drawShoqan(this.c,im);this.tex.needsUpdate=true;};im.src='shoqan-avatar.webp';}
+});
 AFRAME.registerComponent('listen-btn',{
   init(){
     this.c=canvas(512,160);this.tex=new THREE.CanvasTexture(this.c);this.tex.colorSpace=THREE.SRGBColorSpace;
     this.el.getObject3D('mesh').material=new THREE.MeshBasicMaterial({map:this.tex,transparent:true});
-    this.draw();
+    this.hover=false;this.draw();
+    const on=()=>{this.hover=true;this.draw();},off=()=>{this.hover=false;this.draw();};
+    for(const ev of ['mouseenter','raycaster-intersected'])this.el.addEventListener(ev,on);
+    for(const ev of ['mouseleave','raycaster-intersected-cleared'])this.el.addEventListener(ev,off);
     this.el.addEventListener('click',()=>{ if(reading>=0){this.halt();} else {this.speakAt(0);} });
   },
-  draw(){const g=this.c.getContext('2d');g.clearRect(0,0,512,160);g.fillStyle=reading>=0?'#1F2B4D':'#C2410C';
-    g.beginPath();g.roundRect(8,8,496,144,40);g.fill();g.fillStyle='#FFFFFF';g.font='900 64px Nunito';g.textAlign='center';
-    g.fillText((reading>=0?'■ ':'▶ ')+'Тыңдау',256,102);this.tex.needsUpdate=true;},
+  draw(){const g=this.c.getContext('2d');g.clearRect(0,0,512,160);const on=reading>=0;
+    g.fillStyle='rgba(143,47,8,0.35)';rr(g,10,18,492,138,69);g.fill();
+    g.fillStyle=on?(this.hover?'#2C3A63':'#1F2B4D'):(this.hover?'#D9531F':'#C2410C');rr(g,8,6,496,138,69);g.fill();
+    g.fillStyle='#FFFFFF';g.font='900 60px Nunito';g.textAlign='center';
+    g.fillText((on?'■ ':'▶ ')+'Тыңдау',256,96);g.textAlign='left';this.tex.needsUpdate=true;},
   speakAt(i){
     const story=document.querySelector('#story').components['story-panel'];
     if(i>=SENTS.length){this.halt();return;}
@@ -150,24 +181,44 @@ function sandykTex(){const c=canvas(1024,512),g=c.getContext('2d');g.fillStyle='
   g.fillStyle='#E8C66A';g.fillRect(492,40,40,90);return c;}
 function stripeTex(cols){const c=canvas(256,64),g=c.getContext('2d');cols.forEach((col,i)=>{g.fillStyle=col;g.fillRect(0,i*64/cols.length,256,64/cols.length+1);});
   g.fillStyle='rgba(255,255,255,.18)';for(let x=0;x<256;x+=32)g.fillRect(x,0,3,64);return c;}
+
+function carpetTex(pal,w,h){const c=canvas(w||512,h||768),g=c.getContext('2d');const W2=c.width,H2=c.height;
+  g.fillStyle=pal[0];g.fillRect(0,0,W2,H2);
+  g.fillStyle=pal[2];g.fillRect(14,14,W2-28,H2-28);g.fillStyle=pal[1];g.fillRect(34,34,W2-68,H2-68);
+  g.fillStyle=pal[0];g.fillRect(70,70,W2-140,H2-140);
+  for(let x=46;x<W2-30;x+=36){g.fillStyle=pal[3];g.save();g.translate(x,52);g.rotate(Math.PI/4);g.fillRect(-6,-6,12,12);g.restore();g.save();g.translate(x,H2-52);g.rotate(Math.PI/4);g.fillRect(-6,-6,12,12);g.restore();}
+  const cx=W2/2,cy=H2/2,mr=Math.min(W2,H2)*0.32;
+  g.fillStyle=pal[1];g.beginPath();g.moveTo(cx,cy-mr*1.3);g.lineTo(cx+mr,cy);g.lineTo(cx,cy+mr*1.3);g.lineTo(cx-mr,cy);g.closePath();g.fill();
+  g.fillStyle=pal[2];g.beginPath();g.moveTo(cx,cy-mr*0.8);g.lineTo(cx+mr*0.6,cy);g.lineTo(cx,cy+mr*0.8);g.lineTo(cx-mr*0.6,cy);g.closePath();g.fill();
+  horn(g,cx,cy+8,mr/90,pal[0],10);
+  for(const [x,y] of [[110,110],[W2-110,110],[110,H2-110],[W2-110,H2-110]])horn(g,x,y,0.5,pal[3],8);
+  for(let i=0;i<1500;i++){g.fillStyle=`rgba(0,0,0,${Math.random()*0.06})`;g.fillRect(Math.random()*W2,Math.random()*H2,2,2);}
+  return c;}
+function wallCarpets(){const pals=[['#A3172B','#1F2B4D','#F4E3C1','#E0A526'],['#1F2B4D','#A3172B','#F4E3C1','#E0A526'],['#8E1B29','#2E6B4F','#F4E3C1','#E0A526']];
+  const c=canvas(1536,768),g=c.getContext('2d');pals.forEach((p,i)=>g.drawImage(carpetTex(p,512,768),i*512,0));return c;}
+function domeCurve(R,WH,SR,SH,off){const p1=new THREE.Vector2(R-0.06+off,WH-0.05),c=new THREE.Vector2(R*0.8+off,SH-0.45),p2=new THREE.Vector2(SR+0.02+off,SH);
+  return t=>new THREE.Vector2((1-t)*(1-t)*p1.x+2*(1-t)*t*c.x+t*t*p2.x,(1-t)*(1-t)*p1.y+2*(1-t)*t*c.y+t*t*p2.y);}
 AFRAME.registerComponent('yurt',{init(){
   const root=this.el.object3D, R=4.2, WH=2.1, SH=4.35, SR=0.62;
   const add=(geo,m,pos,rot)=>{const me=new THREE.Mesh(geo,m);if(pos)me.position.set(...pos);if(rot)me.rotation.set(...rot);root.add(me);return me;};
   // floor: felt + round tekemet
-  add(new THREE.CircleGeometry(R,64),mat(tex(feltTex(),6,6),{color:'#8C6A48'}),[0,0,0],[-Math.PI/2,0,0]);
+  add(new THREE.CircleGeometry(R,64),mat(tex(feltTex(),6,6),{color:'#5E7A4A'}),[0,0,0],[-Math.PI/2,0,0]);
   add(new THREE.CircleGeometry(2.3,64),mat(tex(rugTex())),[0,0.01,0],[-Math.PI/2,0,0]);
+  for(const [x,z,ry,w,h,pal] of [[-2.2,0.6,0.3,1.6,2.4,['#1F2B4D','#A3172B','#F4E3C1','#E0A526']],[2.3,0.4,-0.25,1.5,2.3,['#8E1B29','#2E6B4F','#F4E3C1','#E0A526']],[0,2.6,0,2.2,1.4,['#A3172B','#1F2B4D','#F4E3C1','#E0A526']]])
+    add(new THREE.PlaneGeometry(w,h),mat(tex(carpetTex(pal,512,768)),{roughness:1}),[x,0.006,z],[-Math.PI/2,0,ry]);
   // kerege lattice wall
   add(new THREE.CylinderGeometry(R,R,WH,64,1,true),mat(tex(keregeTex(),22,4.2)),[0,WH/2,0]);
+  add(new THREE.CylinderGeometry(R-0.04,R-0.04,1.55,64,1,true),mat(tex(wallCarpets(),4,1),{roughness:1}),[0,0.8,0]);
   // baskur belt
   add(new THREE.CylinderGeometry(R-0.02,R-0.02,0.32,64,1,true),mat(tex(baskurTex(),10,1),{roughness:1}),[0,WH-0.12,0]);
   // roof felt inside
-  const roofH=SH-WH; add(new THREE.CylinderGeometry(SR,R,roofH,64,1,true),mat(tex(feltTex(),8,2),{color:'#F6EEDD'}),[0,WH+roofH/2,0]);
+  {const f=domeCurve(R,WH,SR,SH,0.05);const pts=[];for(let i=0;i<=24;i++)pts.push(f(i/24));pts.unshift(new THREE.Vector2(R,WH-0.05));
+   root.add(new THREE.Mesh(new THREE.LatheGeometry(pts,64),mat(tex(feltTex(),8,3),{color:'#FBF7EE'})));}
   // uyk poles
   const pm=new THREE.MeshStandardMaterial({color:'#A63A16',roughness:0.55}); const N=60;
   for(let k=0;k<N;k++){const a=k/N*Math.PI*2;
-    const p1=new THREE.Vector3(Math.cos(a)*(R-0.06),WH-0.05,Math.sin(a)*(R-0.06)),p2=new THREE.Vector3(Math.cos(a)*(SR+0.02),SH,Math.sin(a)*(SR+0.02));
-    const curve=new THREE.QuadraticBezierCurve3(p1,new THREE.Vector3(Math.cos(a)*((R+SR)/2-0.28),(WH+SH)/2-0.05,Math.sin(a)*((R+SR)/2-0.28)),p2);
-    root.add(new THREE.Mesh(new THREE.TubeGeometry(curve,8,0.035,5,false),pm));}
+    const f=domeCurve(R,WH,SR,SH,0);const curve=new THREE.CatmullRomCurve3([0,0.15,0.35,0.6,0.85,1].map(t=>{const v=f(t);return new THREE.Vector3(Math.cos(a)*v.x,v.y,Math.sin(a)*v.y*0+Math.sin(a)*v.x);}));
+    root.add(new THREE.Mesh(new THREE.TubeGeometry(curve,10,0.035,5,false),pm));}
   // shanyrak ring + kuldreuish arches
   const wood=new THREE.MeshStandardMaterial({color:'#7A3E17',roughness:0.55});
   const ring=add(new THREE.TorusGeometry(SR,0.08,10,48),wood,[0,SH,0],[Math.PI/2,0,0]);
@@ -179,8 +230,8 @@ AFRAME.registerComponent('yurt',{init(){
   add(new THREE.CircleGeometry(SR,48),new THREE.MeshBasicMaterial({color:'#8FD0F5'}),[0,SH+0.5,0],[Math.PI/2,0,0]);
   const beam=add(new THREE.CylinderGeometry(SR*0.95,1.5,SH,40,1,true),new THREE.MeshBasicMaterial({color:'#FFF2C9',transparent:true,opacity:0.07,depthWrite:false,side:THREE.DoubleSide,blending:THREE.AdditiveBlending}),[0,SH/2,0]);
   // door behind the viewer
-  const dm=mat(tex(doorTex()));add(new THREE.PlaneGeometry(1.0,1.75),dm,[0,0.88,R-0.03],[0,Math.PI,0]);
-  add(new THREE.BoxGeometry(1.2,0.12,0.12),wood,[0,1.8,R-0.05]);
+  const dm=mat(tex(doorTex()));add(new THREE.PlaneGeometry(1.0,1.75),dm,[0,0.88,R-0.1],[0,Math.PI,0]);
+  add(new THREE.BoxGeometry(1.2,0.12,0.12),wood,[0,1.8,R-0.12]);
   // sandyk + korpe stacks on both sides of tor
   const korpe=[['#B42335','#FFB81F','#B42335'],['#1F2B4D','#C2410C','#1F2B4D'],['#157A56','#FFE7A3','#157A56'],['#C2410C','#FBF6EE','#C2410C'],['#8E1B29','#FFB81F','#8E1B29']];
   for(const side of [-1,1]){const a=-Math.PI/2+side*0.72, x=Math.cos(a)*(R-0.45), z=Math.sin(a)*(R-0.45), ry=-a-Math.PI/2;
@@ -206,7 +257,7 @@ function build(){
   <a-plane id="story" story-panel class="clickable" width="2.6" height="1.65" position="0 1.65 -2.4"></a-plane>
   <a-plane id="listen" listen-btn class="clickable" width="0.62" height="0.195" position="0 0.66 -2.38"></a-plane>
   <a-plane id="card" word-card class="clickable" width="1.3" height="0.65" position="1.75 1.6 -1.85" rotation="0 -30 0"></a-plane>
-  <a-image src="shoqan-avatar.webp" width="0.7" height="0.7" position="-1.95 1.8 -1.75" rotation="0 35 0"></a-image>
+  <a-plane shoqan-card width="0.64" height="0.8" position="-1.95 1.72 -1.75" rotation="0 35 0"></a-plane>
   <a-image src="icon.png" width="0.3" height="0.3" position="0 2.7 -2.38"></a-image>
 
   <a-entity id="rig" position="0 0 0.3">
