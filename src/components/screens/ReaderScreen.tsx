@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { Play, Pause, Volume2, ChevronRight, RotateCcw, Compass, Check, Plus } from "lucide-react";
+import { Play, Pause, Volume2, ChevronLeft, ChevronRight, RotateCcw, Compass, Check, Plus } from "lucide-react";
 import { ScreenHeader, Sheet } from "../UIHelpers";
 import { displayTitle, foldAccents } from "../../utils/text";
 import { Shanyraq } from "../Ornaments";
@@ -376,17 +376,40 @@ export function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, s
 
   return (
     <div className="space-y-4 animate-pop-in relative">
-      <ScreenHeader
-        onBack={() => setSelectedLevel(null)}
-        backLabel={t.changeLevel}
-        eyebrow={lang === "kk" ? currentStory.sceneLabelKk : displayTitle(currentStory.sceneLabel)}
-        title={displayTitle(currentStory.title)}
-        trailing={
-          <span className={`shrink-0 w-12 h-12 rounded-2xl ${levelColor.bg} ${levelColor.edge} flex items-center justify-center font-display font-black text-white`}>
+      {/* Reader header (redesign Q1): back 44×44, one-line title, level chip, and a 6 px bar of
+          how far the read-along has got (its existing position; no new state, no events). */}
+      <header className="pt-2">
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => setSelectedLevel(null)}
+            aria-label={t.changeLevel}
+            className="shrink-0 -ml-2 w-11 h-11 rounded-full flex items-center justify-center text-sky-ink hover:bg-sand-2"
+          >
+            <ChevronLeft size={26} strokeWidth={2.5} aria-hidden="true" />
+          </button>
+          <div className="min-w-0 flex-1">
+            <p className="eyebrow truncate">{lang === "kk" ? currentStory.sceneLabelKk : displayTitle(currentStory.sceneLabel)}</p>
+            <h1 tabIndex={-1} className="font-display font-black text-ink text-[22px] leading-tight truncate outline-none">{displayTitle(currentStory.title)}</h1>
+          </div>
+          <span className={`shrink-0 h-9 min-w-11 px-3 rounded-full ${levelColor.bg} flex items-center justify-center font-display font-black text-white text-[15px]`}>
             {selectedLevel}
           </span>
-        }
-      />
+        </div>
+        <div
+          role="progressbar"
+          aria-label={tr("Бірге оқу", "Read along")}
+          aria-valuemin={0}
+          aria-valuemax={sentences.length}
+          aria-valuenow={readAlongSentence === null ? 0 : Math.min(readAlongSentence + 1, sentences.length)}
+          className="mt-3 h-1.5 rounded-full bg-sand-3 overflow-hidden"
+        >
+          <div
+            className="h-full rounded-full bg-ember transition-[width] duration-300 motion-reduce:transition-none"
+            style={{ width: `${sentences.length && readAlongSentence !== null ? Math.round(((readAlongSentence + 1) / sentences.length) * 100) : 0}%` }}
+          />
+        </div>
+      </header>
 
       {/* Only Aldar Köse has an animated scene so far; the other tales show their cover. */}
       <div className="relative rounded-[24px] overflow-hidden h-48 sm:h-56">
