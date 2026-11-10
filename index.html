@@ -44,7 +44,7 @@ html,body{margin:0;background:#1F2B4D}
   <div class="ch"><b style="background:#FFE7A3;color:#8A5A00">🏆 РКНП 2026 · 1 орын</b><b style="background:#E3F4EC;color:#157A56">100 / 100</b><b style="background:#FFE9E1;color:#B93A12">Батырлар карталары · 13</b></div>
   <div class="motto">Біз үшін — кішкентай қадам, Қазақстан үшін — үлкен мүмкіндік</div>
   <button id="go" disabled style="opacity:.5">Бастау</button>
-  <div class="who">ERTEGI ENGLISH · Aldar Coders · VR · v7 руки</div>
+  <div class="who">ERTEGI ENGLISH · Aldar Coders · VR · v8 голос</div>
 </div></div>
 
 <div id="loading">Ertegi English VR · жүктелуде…</div>
@@ -114,7 +114,12 @@ function drawShoqan(c,img){
   g.fillStyle='#1C2333';g.font='900 64px Nunito';g.textAlign='center';g.fillText('Шоқан',cw/2,cw+40);
   g.fillStyle='#5E6573';g.font='800 28px Nunito';g.fillText('ERTEGI ENGLISH',cw/2,cw+88);g.textAlign='left';
 }
-function say(t){try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang='en-US';u.rate=0.85;speechSynthesis.speak(u);}catch(e){}}
+const AU=new Audio();AU.preload='auto';
+function ttsFallback(t,done){if(done){const d0=done;let f=false;done=()=>{if(!f){f=true;d0();}};setTimeout(done,Math.max(1500,t.length*65));}try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang='en-US';u.rate=0.85;if(done){u.onend=done;u.onerror=done;}speechSynthesis.speak(u);}catch(e){done&&setTimeout(done,2000);}}
+function playClip(url,text,done){try{speechSynthesis.cancel();}catch(e){}try{HI.pause();}catch(e){}
+  AU.onended=done||null;AU.onerror=()=>{AU.onerror=null;ttsFallback(text,done);};AU.src=url;const p=AU.play();if(p&&p.catch)p.catch(()=>{AU.onerror=null;ttsFallback(text,done);});}
+function stopAudio(){AU.onended=null;AU.onerror=null;try{AU.pause();}catch(e){}try{speechSynthesis.cancel();}catch(e){}}
+function say(t){playClip('w/'+encodeURIComponent(t)+'.mp3',t,null);}
 
 
 function wrapText(g,text,x,y,maxW,lh,maxLines){const ws=text.split(' ');let line='',n=0;for(const w of ws){if(g.measureText(line+w).width>maxW&&line){g.fillText(line.trim(),x,y);y+=lh;line='';n++;if(maxLines&&n>=maxLines)return y;}line+=w+' ';}g.fillText(line.trim(),x,y);return y+lh;}
@@ -283,12 +288,10 @@ AFRAME.registerComponent('listen-btn',{
     const story=document.querySelector('#story').components['story-panel'];
     if(i>=SENTS.length){this.halt();return;}
     reading=i;drawStory(story.c);story.tex.needsUpdate=true;this.draw();
-    try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(SENTS[i]);u.lang='en-US';u.rate=0.85;
-      const t0=Date.now(), next=()=>{if(reading!==i)return;const min=SENTS[i].length*55;const left=min-(Date.now()-t0);setTimeout(()=>{if(reading===i)this.speakAt(i+1);},Math.max(250,left));};
-      u.onend=next;u.onerror=next;speechSynthesis.speak(u);}
-    catch(e){setTimeout(()=>{if(reading===i)this.speakAt(i+1);},2500);}
+    const t0=Date.now();let fired=false;const next=()=>{if(fired||reading!==i)return;fired=true;setTimeout(()=>{if(reading===i)this.speakAt(i+1);},250);};
+    playClip('a/'+TALE.id+'-'+i+'.mp3',SENTS[i],next);
   },
-  halt(){reading=-1;try{speechSynthesis.cancel();}catch(e){}const story=document.querySelector('#story').components['story-panel'];drawStory(story.c);story.tex.needsUpdate=true;this.draw();}
+  halt(){reading=-1;stopAudio();const story=document.querySelector('#story').components['story-panel'];drawStory(story.c);story.tex.needsUpdate=true;this.draw();}
 });
 
 function horn(g,x,y,s,col,lw){g.save();g.translate(x,y);g.scale(s,s);g.strokeStyle=col;g.lineWidth=lw/s;g.lineCap='round';
