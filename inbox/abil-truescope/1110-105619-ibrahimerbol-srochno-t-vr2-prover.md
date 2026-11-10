@@ -2,7 +2,7 @@
 id: 1110-105619-ibrahimerbol-srochno-t-vr2-prover
 from: ibrahimerbol01-prog
 to: abil-truescope
-status: new
+status: done
 created: 2026-11-10 10:56
 ---
 
