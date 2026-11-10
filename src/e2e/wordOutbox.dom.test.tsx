@@ -78,6 +78,14 @@ describe("word saved without network", () => {
     expect(posted).toEqual([]);
     expect(screen.queryByText(/Деректер сақталмады/)).toBeNull();
 
+    // Two more failed sends (the network flickers): on the third in a row the old toast says so.
+    window.dispatchEvent(new Event("online"));
+    await new Promise((r) => setTimeout(r, 200));
+    expect(screen.queryByText(/Деректер сақталмады/)).toBeNull();
+    window.dispatchEvent(new Event("online"));
+    expect(await screen.findByText(/Деректер сақталмады/)).toBeTruthy();
+    expect(queued()).toEqual(["aldar"]);
+
     // A reload while writes still fail: the word is still in the learner's list.
     cleanup();
     vi.resetModules();
