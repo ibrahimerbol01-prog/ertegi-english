@@ -96,9 +96,12 @@ export interface HomeScreenProps {
   mascot?: ReactNode;
   /** The placement check offer or result (ordinary site only, KazakhTalesApp.tsx). */
   placement?: ReactNode;
+  /** Saved words due for review today, and how to open the review (ordinary site only). */
+  dueWords?: number;
+  onOpenReview?: () => void;
 }
 
-export function HomeScreen({ onStartRead, onStartQuiz, t, lang, userName = "", sessionXp = 0, dailyGoal = DAILY_GOAL_XP, progress = new Set<string>(), userId, onReward = () => {}, onOpenCards = () => {}, assignments = null, placement = null, mascot = null }: HomeScreenProps) {
+export function HomeScreen({ onStartRead, onStartQuiz, t, lang, userName = "", sessionXp = 0, dailyGoal = DAILY_GOAL_XP, progress = new Set<string>(), userId, onReward = () => {}, onOpenCards = () => {}, assignments = null, placement = null, mascot = null, dueWords = 0, onOpenReview = () => {} }: HomeScreenProps) {
   // Next step on the path: first level or quiz not yet finished, in order.
   const steps = STORIES.flatMap((s) => [...LEVEL_DETAILS.map((l) => ({ story: s, step: l.id })), { story: s, step: "quiz" }]);
   const current = steps.find((x) => !progress.has(`${x.story.id}:${x.step}`)) || null;
@@ -109,6 +112,12 @@ export function HomeScreen({ onStartRead, onStartQuiz, t, lang, userName = "", s
 
   const firstName = (userName || "").split(/[\s@]/)[0];
   const [tip] = useState(() => SHOQAN_TIPS[Math.floor(Date.now() / 86400000) % SHOQAN_TIPS.length]);
+  // Shanyraq 2.0 (docs/design-audit-2026-11.md): one "continue" card first, the extras folded away.
+  // The research build keeps the earlier home screen unchanged.
+  const v2 = !RESEARCH_MODE;
+  const featuredSteps = [...LEVEL_DETAILS.map((l) => l.id), "quiz"];
+  const featuredDone = featuredSteps.filter((st) => progress.has(`${featured.id}:${st}`)).length;
+  const goContinue = () => (current?.step === "quiz" ? onStartQuiz(featured.id) : onStartRead(featured.id, featuredLevel?.id));
 
   return (
     <div className="space-y-6 animate-pop-in">
@@ -120,8 +129,45 @@ export function HomeScreen({ onStartRead, onStartQuiz, t, lang, userName = "", s
 
       {mascot}
 
+      {/* Shanyraq 2.0 home: continue, today (goal + due words), then the rest. */}
+      {v2 && (
+        <section className="relative overflow-hidden rounded-[26px] bg-night text-white p-5 shadow-[0_18px_40px_-18px_rgba(31,43,77,0.6)]">
+          <OrnamentBand className="absolute top-3 inset-x-0 h-3 w-full text-white/10" />
+          <StoryCover id={featured.id} className="absolute top-5 right-5 w-20 h-20 rounded-[18px] rotate-3" />
+          <p className="eyebrow !text-[#FF7A4D] pr-24">{progress.size > 0 ? (lang === "kk" ? "Жалғастыру" : "Continue") : t.startReading}</p>
+          <h2 className="font-display font-black text-[24px] leading-tight mt-2 pr-24">{displayTitle(featured.title)}</h2>
+          <p className="text-[15px] text-white/80 mt-1 pr-24">
+            {featuredLevel ? `${featuredLevel.id} · ${lang === "kk" ? featuredLevel.kkTitle : featuredLevel.title}` : current?.step === "quiz" ? t.takeQuiz : ""}
+          </p>
+          <div className="mt-4 flex items-center gap-3">
+            <div className="flex-1 h-2 rounded-full bg-white/15 overflow-hidden" role="progressbar" aria-valuemin={0} aria-valuemax={featuredSteps.length} aria-valuenow={featuredDone} aria-label={displayTitle(featured.title)}>
+              <div className="h-full rounded-full bg-sun" style={{ width: `${(featuredDone / featuredSteps.length) * 100}%` }} />
+            </div>
+            <span className="text-sm font-bold text-white/80">{featuredDone}/{featuredSteps.length}</span>
+          </div>
+          <button onClick={goContinue} className="btn btn-ember w-full mt-4 min-h-[56px] text-[18px]">
+            <Play size={16} className="fill-white" aria-hidden="true" /> {progress.size > 0 ? (lang === "kk" ? "Жалғастыру" : "Continue") : t.startReading}
+          </button>
+        </section>
+      )}
+
+      {v2 && (
+        <div className="grid grid-cols-2 gap-3 xl:hidden">
+          <div className="card p-4 flex flex-col gap-2">
+            <DailyGoalRing current={sessionXp} goal={dailyGoal} size={56} />
+            <p className="font-display font-extrabold text-ink text-[16px] leading-tight">{lang === "kk" ? "Күнделікті мақсат" : "Daily goal"}</p>
+            <p className="text-sm text-ink-2">{Math.min(sessionXp, dailyGoal)} / {dailyGoal} XP</p>
+          </div>
+          <button onClick={onOpenReview} className="card p-4 flex flex-col gap-2 text-left bg-sun-soft">
+            <span className="font-display font-black text-[32px] leading-none text-ink">{dueWords}</span>
+            <span className="font-display font-extrabold text-ink text-[16px] leading-tight">{lang === "kk" ? "Сөздер" : "Words"}</span>
+            <span className="text-sm text-ink-2">{dueWords > 0 ? (lang === "kk" ? "қайталауға" : "due") : (lang === "kk" ? "Қайталау" : "Practice")}</span>
+          </button>
+        </div>
+      )}
+
       {/* Daily goal — on wide screens this lives in the right rail */}
-      <div className="card p-4 flex items-center gap-4 xl:hidden">
+      {!v2 && <div className="card p-4 flex items-center gap-4 xl:hidden">
         <DailyGoalRing current={sessionXp} goal={dailyGoal} size={60} />
         <div className="flex-1 min-w-0">
           <p className="font-display font-extrabold text-ink text-[17px]">{lang === "kk" ? "Күнделікті мақсат" : "Daily goal"}</p>
@@ -131,14 +177,14 @@ export function HomeScreen({ onStartRead, onStartQuiz, t, lang, userName = "", s
               : `${dailyGoal - sessionXp} XP ${lang === "kk" ? "қалды" : "to go"}`}
           </p>
         </div>
-      </div>
+      </div>}
 
       {/* The teacher's assignments come first: they have a due date. */}
       {assignments}
       {placement}
 
       {/* Continue card: only once there is progress, otherwise the first island is the start */}
-      {progress.size > 0 && (
+      {!v2 && progress.size > 0 && (
       <button
         onClick={() => (current?.step === "quiz" ? onStartQuiz(featured.id) : onStartRead(featured.id, featuredLevel?.id))}
         className="group relative w-full text-left rounded-[28px] overflow-hidden bg-night shadow-[0_6px_0_#121a31] active:translate-y-[3px] active:shadow-[0_3px_0_#121a31] transition-transform"
@@ -174,12 +220,20 @@ export function HomeScreen({ onStartRead, onStartQuiz, t, lang, userName = "", s
       </div>}
 
       {/* R4: the research build keeps the core loop only. */}
-      {!RESEARCH_MODE && <>
-        <WeekWordsCard lang={lang} userId={userId} progress={progress} onReward={onReward} />
-        <MaqalCard lang={lang} userId={userId} onReward={onReward} />
-        <LegendDeckEntry lang={lang} userId={userId} onOpen={onOpenCards} />
-        <CouncilCard lang={lang} userId={userId} progress={progress} onReward={onReward} />
-      </>}
+      {!RESEARCH_MODE && (
+        <details className="group card p-0 overflow-hidden">
+          <summary className="list-none cursor-pointer min-h-[56px] px-5 flex items-center justify-between font-display font-extrabold text-[17px] text-ink">
+            {lang === "kk" ? "Тағы" : "More"}
+            <span aria-hidden="true" className="text-ink-3 transition-transform group-open:rotate-90">›</span>
+          </summary>
+          <div className="space-y-6 p-4 pt-0">
+            {!RESEARCH_MODE && <WeekWordsCard lang={lang} userId={userId} progress={progress} onReward={onReward} />}
+            {!RESEARCH_MODE && <MaqalCard lang={lang} userId={userId} onReward={onReward} />}
+            {!RESEARCH_MODE && <LegendDeckEntry lang={lang} userId={userId} onOpen={onOpenCards} />}
+            {!RESEARCH_MODE && <CouncilCard lang={lang} userId={userId} progress={progress} onReward={onReward} />}
+          </div>
+        </details>
+      )}
 
       {/* Caravan path: one unit per story, islands are CEFR levels */}
       {STORIES.map((story, si) => {

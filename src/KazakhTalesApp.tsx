@@ -529,7 +529,7 @@ export default function KazakhTalesApp({ session, role, onRoleChange }: { sessio
     </div>
   );
 
-  const StatChips = () => (
+  const StatChips = () => (fiveTabs && streakDays === 0 && xp === 0) ? null : (
     <div className="flex items-center gap-2">
       <span className="chip text-felt" title={t.streakLabel}>
         <IconFlame size={18} /> {streakDays}
@@ -553,7 +553,7 @@ export default function KazakhTalesApp({ session, role, onRoleChange }: { sessio
       {/* The quiz is a focus mode: Shoqan steps aside so he never covers the answer buttons. */}
       {/* Teachers meet Shoqan only while previewing a tale, as their learners do. */}
       {/* R4: no Shoqan in the research build. */}
-      {!RESEARCH_MODE && <ShoqanChat hidden={(tab === "quiz" && quizStarted) || (teacher && tab !== "read")} />}
+      {!RESEARCH_MODE && <ShoqanChat hidden={(tab === "quiz" && quizStarted) || (teacher && tab !== "read") || (fiveTabs && tab !== "read")} />}
       <SaveErrorToast show={showSaveError} message={t.saveError} onClose={() => setShowSaveError(false)} />
       <JoinClassSheet
         open={!!pendingCode && !teacher}
@@ -638,6 +638,8 @@ export default function KazakhTalesApp({ session, role, onRoleChange }: { sessio
                   userId={userId}
                   onReward={addXp}
                   onOpenCards={() => setTab("cards")}
+                  dueWords={dueCount}
+                  onOpenReview={() => openPractice("words")}
                   placement={!RESEARCH_MODE && PlacementCheck && !teacher ? (
                     <Suspense fallback={null}><PlacementCheck userId={userId} lang={lang} place="home" onRead={readAtLevel} /></Suspense>
                   ) : undefined}
