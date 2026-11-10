@@ -67,7 +67,7 @@ export function ProfileScreen({ xp, t, lang = "kk", setLang, savedWordsCount = 0
         <div className="relative h-20 bg-sky">
           <OrnamentBand className="absolute bottom-1 inset-x-0 h-4 w-full text-white/25" />
         </div>
-        <div className="px-5 pb-5 flex items-end gap-4">
+        <div className={`px-5 ${editor ? "pb-3" : "pb-5"} flex items-end gap-4`}>
           <div className="relative w-[88px] h-[88px] shrink-0 -mt-11">
             <Shanyraq className="absolute -inset-2 w-[104px] h-[104px] text-sun" strokeWidth={2.4} />
             <AvatarBadge id={avatar} initial={initial} className="absolute inset-0 border-4 border-card text-4xl" />
@@ -75,16 +75,25 @@ export function ProfileScreen({ xp, t, lang = "kk", setLang, savedWordsCount = 0
           <div className="min-w-0 pt-3">
             <h1 className="font-display font-black text-2xl text-ink truncate">{userName}</h1>
             <p className="text-sm text-ink-2">{t.levelStatus} · {lang === "kk" ? `${rank}-деңгей` : `Level ${rank}`}</p>
-            {editor && <div className="mt-2">{editor}</div>}
           </div>
         </div>
+        {/* A row of its own (redesign Q3): beside the avatar the column is too narrow at 360 px
+            and «Профильді өзгерту» broke into two lines. */}
+        {editor && <div className="px-5 pb-5 [&_button]:whitespace-nowrap">{editor}</div>}
       </div>
 
       {placement}
 
+      {/* Heroes' cards above the numbers (redesign Q3). */}
+      {cardsEntry}
+
       {/* Stats */}
       <div>
         <h2 className="font-display font-black text-xl text-ink mb-3">{lang === "kk" ? "Статистика" : "Statistics"}</h2>
+        {/* A new learner has only zeros: say so once instead of four empty tiles. */}
+        {stats.every((x) => x.value === 0) ? (
+          <p className="tile p-4 text-[15px] text-ink-2">{t.noDataYet}</p>
+        ) : (
         <div className="grid grid-cols-2 gap-3">
           {stats.map(({ label, value, Icon }) => (
             <div key={label} className="tile p-4 flex items-center gap-3">
@@ -96,9 +105,9 @@ export function ProfileScreen({ xp, t, lang = "kk", setLang, savedWordsCount = 0
             </div>
           ))}
         </div>
+        )}
       </div>
 
-      {cardsEntry}
       {kilim}
 
       {/* Achievements */}
