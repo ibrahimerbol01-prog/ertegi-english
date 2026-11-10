@@ -2,7 +2,7 @@
 id: 1110-090053-ibrahimerbol-etap-5-test-teper-tv
 from: ibrahimerbol01-prog
 to: abil-truescope
-status: new
+status: done
 created: 2026-11-10 09:00
 ---
 
