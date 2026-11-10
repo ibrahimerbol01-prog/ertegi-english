@@ -79,12 +79,13 @@ describe("learner path with a faked Supabase", () => {
     // Quiz: from the tale to the setup, then four questions to the result.
     fireEvent.click(button(/^Сынақтан өту/));
     fireEvent.click(await screen.findByRole("button", { name: "Бастау" }));
-    expect(await screen.findByText("1/4")).toBeTruthy();
+    expect(await screen.findByText("1 / 4")).toBeTruthy();
     // Pick the first open option; a wrong pick rules it out and allows another try.
     for (let step = 0; step < 20 && !screen.queryByText("Сынақ өтті"); step++) {
-      const next = screen.queryAllByRole("button").find((b) => /^(Жалғастыру|Нәтижені көру)$/.test(b.textContent?.trim() ?? ""));
+      const next = screen.queryAllByRole("button").find((b) => /^(Келесі|Жалғастыру|Нәтижені көру)$/.test(b.textContent?.trim() ?? ""));
       if (next) { fireEvent.click(next); continue; }
-      const opt = [...document.querySelectorAll("button.tile[aria-pressed]")].find((b) => !b.closest("[role=group]") && !(b as HTMLButtonElement).disabled);
+      // Options are radios since redesign stage 5 (were aria-pressed buttons); same pick.
+      const opt = [...document.querySelectorAll("[role=radiogroup] button.tile[role=radio]")].find((b) => !(b as HTMLButtonElement).disabled);
       if (!opt) { await new Promise((r) => setTimeout(r, 50)); continue; }
       fireEvent.click(opt);
       const sure = screen.queryAllByRole("button").find((b) => b.textContent?.trim() === "Сенімдімін");
