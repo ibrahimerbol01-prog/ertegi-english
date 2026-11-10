@@ -109,11 +109,13 @@ export const DICT = {
     classTopWordsNote: "Тізім тек жинақталған сан көрсетеді, жеке оқушыны атамайды.",
     noDataYet: "Деректер әлі жоқ",
     learnersUnit: "оқушы",
-    // Practice → Words overview (redesign stage 6). Kazakh verbatim from the brief / owner.
-    reviewToday: "Бүгін қайталау",
-    startReview: "Қайталауды бастау",
-    wordLearning: "Үйреніп жүрмін",
-    wordKnown: "Білемін",
+    copyCode: "Көшіру",
+    // Quiz feedback (redesign stage 5). Kazakh verbatim from the brief.
+    quizNotYet: "Әзірге дұрыс емес. Ертегіге қара:",
+    quizTryAgain: "Тағы бір рет",
+    quizTriesLeft: "{n} мүмкіндік қалды · уақыт шектеусіз",
+    quizRight: "Дұрыс!",
+    quizNext: "Келесі",
     interactiveChoiceTitle: "Сюжетті таңда",
     choicePrompt: "Алдар Көсе осы жағдайда не істеуі керек?",
     artifactUnlocked: "Жаңа мұра артефакті ашылды! 🏛️",
@@ -140,7 +142,12 @@ export const DICT = {
     wbSources: "Сөз тізімдерінің дереккөздері",
     wbAutoTr: "автоаударма",
     wbAutoTrHint: "Машиналық аударма. Адам әлі тексерген жоқ.",
-    wbTrReview: "Аударма тексерілуде"
+    wbTrReview: "Аударма тексерілуде",
+    // Practice → Words overview (redesign stage 6). Kazakh verbatim from the brief / owner.
+    reviewToday: "Бүгін қайталау",
+    startReview: "Қайталауды бастау",
+    wordLearning: "Үйреніп жүрмін",
+    wordKnown: "Білемін",
   },
   en: {
     plTitle: "Check your level",
@@ -247,10 +254,12 @@ export const DICT = {
     classTopWordsNote: "The list shows totals only and names no single learner.",
     noDataYet: "No data yet",
     learnersUnit: "learners",
-    reviewToday: "Review today",
-    startReview: "Start review",
-    wordLearning: "Learning",
-    wordKnown: "Known",
+    copyCode: "Copy",
+    quizNotYet: "Not yet. Look at the tale:",
+    quizTryAgain: "Try again",
+    quizTriesLeft: "{n} tries left · no time limit",
+    quizRight: "Right!",
+    quizNext: "Next",
     interactiveChoiceTitle: "Choose the plot",
     choicePrompt: "What should Aldar Köse do in this situation?",
     artifactUnlocked: "New cultural artefact unlocked! 🏛️",
@@ -277,6 +286,10 @@ export const DICT = {
     wbSources: "Sources of the word lists",
     wbAutoTr: "machine translation",
     wbAutoTrHint: "Machine translation, not yet checked by a person.",
-    wbTrReview: "Translation being checked"
+    wbTrReview: "Translation being checked",
+    reviewToday: "Review today",
+    startReview: "Start review",
+    wordLearning: "Learning",
+    wordKnown: "Known"
   }
 };

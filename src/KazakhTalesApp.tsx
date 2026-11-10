@@ -46,7 +46,7 @@ import { LangContext, loadLang, saveLang, type Lang } from "./lang";
 import type { SavedWord } from "./types";
 import { supabase } from "./lib/supabase";
 import { saveToSupabase } from "./utils/supabase-save";
-import { flushWords, pendingWords, queueWord } from "./utils/wordOutbox";
+import { flushWords, pendingWords, queueWord, WARN_AFTER_FAILURES } from "./utils/wordOutbox";
 import { buildLevelQuiz } from "./utils/levelQuiz";
 import { DAILY_GOAL_XP, QUIZ_LEVEL_UNLOCK_SHARE, REVIEW_KNOWN_XP, SAVE_WORD_XP, XP_PER_LEVEL } from "./research/params";
 import { BataModal, OyuKilim, TurkicWords } from "./components/Culture";
@@ -466,7 +466,7 @@ export default function KazakhTalesApp({ session, role, onRoleChange }: { sessio
     queueWord(userId, { word, translation });
     void flushWords(userId).then((res) => {
       if (!known && res.added.includes(word)) addXp(SAVE_WORD_XP);
-      if (res.refused.includes(word)) onSaveError();
+      if (res.refused.includes(word) || res.failedInARow === WARN_AFTER_FAILURES) onSaveError();
     });
   };
 
@@ -478,9 +478,13 @@ export default function KazakhTalesApp({ session, role, onRoleChange }: { sessio
 
   // Quiz scores and words saved offline go up on start and whenever the connection returns.
   useEffect(() => {
+    // Words still stuck after WARN_AFTER_FAILURES sends in a row: the old toast, once per streak.
+    const sendWords = () => void flushWords(userId).then((res) => {
+      if (res.failedInARow === WARN_AFTER_FAILURES) onSaveError();
+    });
     void flushQuizResults(userId);
-    void flushWords(userId);
-    const online = () => { void flushQuizResults(userId); void flushWords(userId); };
+    sendWords();
+    const online = () => { void flushQuizResults(userId); sendWords(); };
     window.addEventListener("online", online);
     return () => window.removeEventListener("online", online);
   }, [userId]);

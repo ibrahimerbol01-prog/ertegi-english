@@ -109,6 +109,14 @@ export function QuizSetup({ storyId, level, onChange, onStart, progress, lang, t
 /* --- 6. QUIZ SCREEN --- */
 // No timer and no hearts: a wrong answer sends the learner back to the tale
 // for one more try, and only then shows the right answer with its sentence.
+/* The line from the tale with the question's own words marked, so the eye finds the place.
+   Only words of the question (4+ letters): marking an option could give the answer away. */
+function marked(line: string, question: string): { text: string; hit: boolean }[] {
+  const norm = (w: string) => w.toLowerCase().replace(/[^\p{L}\p{N}']/gu, "");
+  const keys = new Set(question.split(/\s+/).map(norm).filter((w) => w.length >= 4));
+  return line.split(/(\s+)/).map((text) => ({ text, hit: keys.has(norm(text)) }));
+}
+
 type QuizQuestion = { type?: string; q?: string; sentence?: string; options: string[]; correct: number };
 
 export function QuizScreen({ onReward, t, onQuizFinish, questions, storyTitle, onExit, sourceTexts = [], eventInfo }: {
@@ -340,15 +348,22 @@ export function QuizScreen({ onReward, t, onQuizFinish, questions, storyTitle, o
 
   return (
     <div className="animate-pop-in">
-      {/* Exit + progress */}
-      <div className="flex items-center gap-4 pt-2">
+      {/* Close + one segment per question (redesign stage 5): jade right, rose missed,
+          ember the current one, sand ahead. The "n / total" text carries it for screen readers. */}
+      <div className="flex items-center gap-3 pt-2">
         {onExit && (
-          <button onClick={onExit} aria-label={tr("Сынақтан шығу", "Leave quiz")} className="w-9 h-9 -ml-1 rounded-full text-ink-3 hover:bg-sand-2 flex items-center justify-center shrink-0">
-            <X size={22} strokeWidth={2.6} />
+          <button onClick={onExit} aria-label={t.closeBuklet} className="w-11 h-11 -ml-2 rounded-full text-ink-2 hover:bg-sand-2 flex items-center justify-center shrink-0">
+            <X size={24} strokeWidth={2.6} aria-hidden="true" />
           </button>
         )}
-        <div className="track flex-1"><span style={{ width: `${((pos + (done ? 1 : 0)) / round.length) * 100}%` }} /></div>
-        <span className="text-sm font-bold text-ink-2 tabular-nums shrink-0">{pos + 1}/{round.length}</span>
+        <ol className="flex-1 flex gap-1.5" aria-hidden="true">
+          {round.map((_, i) => {
+            const r = results[i];
+            const fill = r === "missed" ? "bg-rose" : r ? "bg-jade-ink" : i === pos ? "bg-ember" : "bg-sand-3";
+            return <li key={i} className={`h-2 flex-1 rounded-full ${fill}`} />;
+          })}
+        </ol>
+        <span className="text-[15px] font-bold text-ink-2 tabular-nums shrink-0">{pos + 1} / {round.length}</span>
       </div>
 
       <div className="flex items-center justify-between gap-3 mt-5">
@@ -365,41 +380,45 @@ export function QuizScreen({ onReward, t, onQuizFinish, questions, storyTitle, o
       <div className="mt-3 mb-6">
         {isGap ? (
           <>
-            <h2 className="font-display font-black text-[22px] text-ink">{tr("Бос орынды толтыр", "Fill in the blank")}</h2>
+            <h2 id="quiz-q" className="font-display font-black text-[22px] text-ink">{tr("Бос орынды толтыр", "Fill in the blank")}</h2>
             <p lang="en" className="text-[18px] text-ink leading-relaxed mt-3">
               {(question.sentence || "").split("___")[0]}
-              <span className={`inline-block min-w-[72px] border-b-[3px] mx-1 text-center font-bold ${done ? (status === "correct" ? "border-jade text-jade-deep" : "border-felt text-rose-ink") : "border-sky text-sky-deep"}`}>
+              <span className={`inline-block min-w-[72px] border-b-[3px] mx-1 text-center font-bold ${done ? (status === "correct" ? "border-jade text-jade-deep" : "border-rose text-rose-ink") : "border-sky text-sky-deep"}`}>
                 {blank}
               </span>
               {(question.sentence || "").split("___")[1]}
             </p>
           </>
         ) : (
-          <h2 lang="en" className="font-display font-black text-[22px] leading-snug text-ink">{question.q}</h2>
+          <h2 id="quiz-q" lang="en" className="font-display font-black text-[22px] leading-snug text-ink">{question.q}</h2>
         )}
       </div>
 
-      <div lang="en" className="space-y-3">
+      {/* Options: radios in a radiogroup, tiles at least 60 px (redesign stage 5). A wrong
+          pick is rose with ✕ (never colour alone), the right one jade-ink with ✓. */}
+      <div lang="en" role="radiogroup" aria-labelledby="quiz-q" className="space-y-3">
         {question.options.map((opt: string, idx: number) => {
           const ruledOut = wrongPicks.includes(idx);
           let state = "text-ink hover:border-sky/40";
           let anim = "";
           if (selected === idx) state = "tile-selected";
           if (ruledOut) {
-            state = "tile-wrong opacity-70";
+            state = "!bg-rose-soft !border-rose !text-rose";
             if (!done && idx === wrongPicks[wrongPicks.length - 1]) anim = "animate-answer-wrong";
           }
           if (done) {
-            if (idx === question.correct) { state = "tile-correct"; anim = "animate-answer-correct"; }
+            if (idx === question.correct) { state = "tile-correct !text-jade-ink"; anim = "animate-answer-correct"; }
             else if (!ruledOut) state = "text-ink-3";
           }
           return (
             <button
               key={idx}
+              type="button"
+              role="radio"
+              aria-checked={selected === idx}
               disabled={done || ruledOut}
               onClick={() => setSelected(idx)}
-              aria-pressed={selected === idx}
-              className={`tile w-full text-left p-3.5 flex items-center gap-3.5 ${state} ${anim}`}
+              className={`tile w-full min-h-[60px] text-left p-3.5 flex items-center gap-3.5 ${state} ${anim}`}
             >
               <span className="w-8 h-8 rounded-lg border-2 border-current/25 flex items-center justify-center font-display font-black text-sm shrink-0 opacity-70">
                 {idx + 1}
@@ -411,27 +430,6 @@ export function QuizScreen({ onReward, t, onQuizFinish, questions, storyTitle, o
           );
         })}
       </div>
-
-      {/* One more try: point back to the tale without naming the answer. */}
-      {!done && wrongPicks.length > 0 && (
-        <div className="mt-6 rounded-[24px] p-5 bg-sun-soft animate-pop-in" aria-live="polite">
-          <p className="font-display font-black text-lg text-ink">{tr("Қате. Тағы бір мүмкіндік бар", "Not quite. You have one more try")}</p>
-          {isGap ? (
-            <>
-              <p className="text-[15px] text-ink-2 mt-1">{tr("Сөйлемді тыңдап, жетіспейтін сөзді тап.", "Listen to the sentence and catch the missing word.")}</p>
-              <button onClick={() => safePlayVoice(fullSentence || "")} className="btn btn-ghost btn-sm mt-3"><Volume2 size={16} /> {tr("Сөйлемді тыңдау", "Listen to the sentence")}</button>
-            </>
-          ) : evidence ? (
-            <>
-              <p className="text-[15px] text-ink-2 mt-1">{tr("Ертегіде осылай делінген:", "Here is what the tale says:")}</p>
-              <blockquote className="mt-2 border-l-4 border-sun-deep pl-3 text-[16px] text-ink leading-relaxed italic">{evidence}</blockquote>
-              <button onClick={() => safePlayVoice(evidence)} className="btn btn-ghost btn-sm mt-3"><Volume2 size={16} /> {tr("Тыңдау", "Listen")}</button>
-            </>
-          ) : (
-            <p className="text-[15px] text-ink-2 mt-1">{tr("Ертегіні есіңе түсір: кім, не істеді, неге? Қалған нұсқалардан таңда.", "Think back to the tale: who did what, and why? Pick from the options left.")}</p>
-          )}
-        </div>
-      )}
 
       {/* How sure? Asked on some questions before checking (I1, hypercorrection). */}
       {askConf && !done && (
@@ -445,10 +443,92 @@ export function QuizScreen({ onReward, t, onQuizFinish, questions, storyTitle, o
           </div>
         </div>
       )}
+      {/* Feedback panel (redesign stage 5): one live region that is always there, so a
+          screen reader hears each verdict. Same hints as before: the line from the tale,
+          the sentence to listen to for a gap (its text would give the answer away), or
+          "think back"; then «Тағы бір рет» back to the options. */}
+      <div aria-live="polite" className="mt-6">
+        {!done && wrongPicks.length > 0 && (
+          <div className="rounded-[24px] p-5 bg-rose-soft animate-pop-in">
+            <p className="font-display font-black text-lg text-rose-ink flex items-center gap-2">
+              <X size={20} strokeWidth={3} aria-hidden="true" /> {t.quizNotYet}
+            </p>
+            {isGap ? (
+              <>
+                <p className="text-[15px] text-ink mt-1">{tr("Сөйлемді тыңдап, жетіспейтін сөзді тап.", "Listen to the sentence and catch the missing word.")}</p>
+                <button onClick={() => safePlayVoice(fullSentence || "")} className="btn btn-ghost btn-sm mt-3"><Volume2 size={16} /> {tr("Сөйлемді тыңдау", "Listen to the sentence")}</button>
+              </>
+            ) : evidence ? (
+              <>
+                <blockquote lang="en" className="mt-2 rounded-2xl bg-card p-3 text-[16px] text-ink leading-relaxed">
+                  {marked(evidence, question.q || "").map((part, i) => part.hit
+                    ? <mark key={i} className="bg-sun-hl text-ink rounded px-0.5">{part.text}</mark>
+                    : <span key={i}>{part.text}</span>)}
+                </blockquote>
+                <button onClick={() => safePlayVoice(evidence)} className="btn btn-ghost btn-sm mt-3"><Volume2 size={16} /> {tr("Тыңдау", "Listen")}</button>
+              </>
+            ) : (
+              <p className="text-[15px] text-ink mt-1">{tr("Ертегіні есіңе түсір: кім, не істеді, неге? Қалған нұсқалардан таңда.", "Think back to the tale: who did what, and why? Pick from the options left.")}</p>
+            )}
+            {selected === null && (
+              <button
+                type="button"
+                onClick={() => document.querySelector<HTMLButtonElement>('[role=radiogroup] [role=radio]:not(:disabled)')?.focus()}
+                className="btn btn-ember w-full mt-4 min-h-[56px]"
+              >
+                {t.quizTryAgain}
+              </button>
+            )}
+            <p className="text-[13px] text-rose-ink mt-2 text-center">{t.quizTriesLeft.replace("{n}", String(maxTries - wrongPicks.length))}</p>
+          </div>
+        )}
 
-      {!done ? (
+        {done && (
+          <div className={`rounded-[24px] p-5 animate-pop-in ${status === "correct" ? "bg-jade-soft" : "bg-rose-soft"}`}>
+            <div className="flex items-start gap-3">
+              <span className={`w-11 h-11 rounded-full bg-card flex items-center justify-center shrink-0 ${status === "correct" ? "text-jade-ink" : "text-rose"}`}>
+                {status === "correct" ? <Check size={24} strokeWidth={3.5} aria-hidden="true" /> : <X size={24} strokeWidth={3.5} aria-hidden="true" />}
+              </span>
+              <div className="min-w-0 flex-1">
+                <p className={`font-display font-black text-xl ${status === "correct" ? "text-jade-ink" : "text-rose-ink"}`}>
+                  {status === "correct" ? t.quizRight : tr("Дұрыс жауап:", "The right answer:")}
+                </p>
+                {status === "revealed" && <p className="text-[15px] text-rose-ink font-semibold">{answer}</p>}
+                {!practice && (
+                  <p className="text-sm font-bold text-ink-2 mt-0.5">
+                    {status === "correct" ? `+${wrongPicks.length ? QUIZ_XP_SECOND_TRY : QUIZ_XP_FIRST_TRY} XP` : myConf === "sure"
+                      ? tr("Сенімді едің: бұл сұрақ соңында бірінші болып қайта шығады", "You were sure: this one comes back first at the end")
+                      : tr("Бұл сұрақ сынақ соңында қайта шығады", "This one comes back at the end of the quiz")}
+                  </p>
+                )}
+              </div>
+            </div>
+            {why ? (
+              <div className="mt-3 rounded-2xl bg-card p-3">
+                <p className="text-[13px] font-bold text-ink-2">{tr("Неге? Ертегіде былай делінген:", "Why? Here is what the tale says:")}</p>
+                <p lang="en" className="text-[15px] text-ink leading-relaxed italic mt-1">{why}</p>
+                <button onClick={() => safePlayVoice(why)} className="mt-2 min-h-11 px-3 rounded-full bg-sand-2 text-ink text-sm font-bold inline-flex items-center gap-1.5">
+                  <Volume2 size={15} aria-hidden="true" /> {tr("Тыңдау", "Listen")}
+                </button>
+              </div>
+            ) : status === "revealed" && (
+              <p className="mt-3 text-[14px] text-ink-2">{tr("Ертегіде бұл жер табылмады. Шоқаннан неге екенін сұрап көр.", "We couldn't find this place in the tale. Ask Shoqan why.")}</p>
+            )}
+            {!RESEARCH_MODE && status === "revealed" && (
+              <button onClick={askShoqan} className="mt-3 min-h-11 px-3 rounded-full bg-card text-rose-ink text-sm font-bold inline-flex items-center gap-1.5">
+                <MessageCircle size={15} aria-hidden="true" /> {tr("Неге? Шоқаннан сұра", "Why? Ask Shoqan")}
+              </button>
+            )}
+            <button onClick={handleNext} className="btn btn-ember w-full mt-4 min-h-[56px]">
+              {pos + 1 >= round.length ? tr("Нәтижені көру", "See results") : status === "correct" ? t.quizNext : tr("Жалғастыру", "Continue")}
+            </button>
+          </div>
+        )}
+      </div>
+
+      {!done && (wrongPicks.length === 0 || selected !== null) && (
         <>
-          <button onClick={handleCheck} disabled={selected === null || needConf} className="btn w-full mt-7">
+          <button onClick={handleCheck} disabled={selected === null || needConf} className="btn btn-ember w-full mt-6 min-h-[56px]">
             {t.checkAnswer}
           </button>
 {!RESEARCH_MODE && (
@@ -457,48 +537,6 @@ export function QuizScreen({ onReward, t, onQuizFinish, questions, storyTitle, o
           </button>
           )}
         </>
-      ) : (
-        <div className={`mt-7 rounded-[24px] p-5 animate-pop-in ${status === "correct" ? "bg-jade-soft" : "bg-rose-soft"}`} aria-live="polite">
-          <div className="flex items-start gap-3">
-            <span className={`w-11 h-11 rounded-full bg-card flex items-center justify-center shrink-0 ${status === "correct" ? "text-jade" : "text-felt"}`}>
-              {status === "correct" ? <Check size={24} strokeWidth={3.5} /> : <X size={24} strokeWidth={3.5} />}
-            </span>
-            <div className="min-w-0 flex-1">
-              <p className={`font-display font-black text-xl ${status === "correct" ? "text-jade-deep" : "text-rose-ink"}`}>
-                {status === "correct"
-                  ? (wrongPicks.length ? tr("Дұрыс, екінші әрекетпен!", "Right, on the second try!") : t.correctMsg)
-                  : tr("Дұрыс жауап:", "The right answer:")}
-              </p>
-              {status === "revealed" && <p className="text-[15px] text-rose-ink font-semibold">{answer}</p>}
-              {!practice && (
-                <p className="text-sm font-bold text-ink-2 mt-0.5">
-                  {status === "correct" ? `+${wrongPicks.length ? QUIZ_XP_SECOND_TRY : QUIZ_XP_FIRST_TRY} XP` : myConf === "sure"
-                    ? tr("Сенімді едің: бұл сұрақ соңында бірінші болып қайта шығады", "You were sure: this one comes back first at the end")
-                    : tr("Бұл сұрақ сынақ соңында қайта шығады", "This one comes back at the end of the quiz")}
-                </p>
-              )}
-            </div>
-          </div>
-          {why ? (
-            <div className="mt-3 rounded-2xl bg-card p-3">
-              <p className="text-[13px] font-bold text-ink-2">{tr("Неге? Ертегіде былай делінген:", "Why? Here is what the tale says:")}</p>
-              <p lang="en" className="text-[15px] text-ink leading-relaxed italic mt-1">{why}</p>
-              <button onClick={() => safePlayVoice(why)} className="mt-2 h-8 px-3 rounded-full bg-sand-2 text-ink text-sm font-bold inline-flex items-center gap-1.5">
-                <Volume2 size={15} /> {tr("Тыңдау", "Listen")}
-              </button>
-            </div>
-          ) : status === "revealed" && (
-            <p className="mt-3 text-[14px] text-ink-2">{tr("Ертегіде бұл жер табылмады. Шоқаннан неге екенін сұрап көр.", "We couldn't find this place in the tale. Ask Shoqan why.")}</p>
-          )}
-          {!RESEARCH_MODE && status === "revealed" && (
-            <button onClick={askShoqan} className="mt-3 h-8 px-3 rounded-full bg-card text-rose-ink text-sm font-bold inline-flex items-center gap-1.5">
-              <MessageCircle size={15} /> {tr("Неге? Шоқаннан сұра", "Why? Ask Shoqan")}
-            </button>
-          )}
-          <button onClick={handleNext} className={`btn w-full mt-4 ${status === "correct" ? "btn-jade" : "btn-rose"}`}>
-            {pos + 1 >= round.length ? tr("Нәтижені көру", "See results") : tr("Жалғастыру", "Continue")}
-          </button>
-        </div>
       )}
     </div>
   );
