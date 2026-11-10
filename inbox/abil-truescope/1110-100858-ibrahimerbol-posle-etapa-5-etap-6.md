@@ -2,7 +2,7 @@
 id: 1110-100858-ibrahimerbol-posle-etapa-5-etap-6
 from: ibrahimerbol01-prog
 to: abil-truescope
-status: new
+status: done
 created: 2026-11-10 10:08
 ---
 
