@@ -1,3 +1,40 @@
-.shq-face .shq-face-eyes{transform-box:fill-box;transform-origin:center;animation:shq-face-blink 5s infinite}
+.shq-face .shq-face-eyes{transform-box:fill-box;transform-origin:center;animation:shq-face-blink 4.6s infinite}
+.shq-face .shq-face-float{transform-origin:0px -270px;animation:shq-face-float 3.8s ease-in-out infinite}
+.shq-face .shq-face-rig{transform-origin:0px -260px;transition:transform .22s cubic-bezier(.3,1.4,.5,1)}
+.shq-face:hover .shq-face-rig{transform:translateY(-3px) rotate(-3deg) scale(1.04)}
+.shq-face:active .shq-face-rig{transform:translateY(2px) scale(1.06,.93)}
+.shq-face .shq-face-eyes-happy,.shq-face .shq-face-mouth-open{opacity:0}
+.shq-face .shq-face-brows,.shq-face .shq-face-stache,.shq-face .shq-face-blush{transform-box:fill-box;transform-origin:center;transition:transform .2s ease,opacity .2s ease}
+.shq-face:hover .shq-face-brows{transform:translateY(-2.5px)}
+.shq-face:hover .shq-face-blush{opacity:.55}
+.shq-face .shq-face-hand{transform-origin:-48px -255px;transform:translateY(28px) rotate(-30deg);opacity:0;transition:transform .25s cubic-bezier(.3,1.4,.5,1),opacity .2s ease}
+.shq-face:hover .shq-face-hand{transform:translateY(0) rotate(8deg);opacity:1}
+
+.shqf-poke-a .shq-face-rig{animation:shq-face-poke-a .72s cubic-bezier(.3,.8,.4,1)}
+.shqf-poke-b .shq-face-rig{animation:shq-face-poke-b .72s cubic-bezier(.3,.8,.4,1)}
+.shqf-poke-a .shq-face-eyes,.shqf-poke-b .shq-face-eyes{animation:shq-face-hide .72s steps(1) forwards,shq-face-blink 4.6s .72s infinite}
+.shqf-poke-a .shq-face-eyes-happy,.shqf-poke-b .shq-face-eyes-happy{animation:shq-face-show .72s ease-out}
+.shqf-poke-a .shq-face-mouth-calm,.shqf-poke-b .shq-face-mouth-calm{animation:shq-face-hide .72s steps(1)}
+.shqf-poke-a .shq-face-mouth-open,.shqf-poke-b .shq-face-mouth-open{animation:shq-face-show .72s ease-out}
+.shqf-poke-a .shq-face-brows,.shqf-poke-b .shq-face-brows{animation:shq-face-brows-up .72s ease-out}
+.shqf-poke-a .shq-face-stache,.shqf-poke-b .shq-face-stache{animation:shq-face-stache .72s ease-in-out}
+.shqf-poke-a .shq-face-blush,.shqf-poke-b .shq-face-blush{animation:shq-face-blush-pop .72s ease-out}
+.shqf-poke-a .shq-face-hand,.shqf-poke-b .shq-face-hand{animation:shq-face-wave .72s ease-in-out}
+
+.shq-face-bp{opacity:0;transform-box:fill-box;transform-origin:center;animation:shq-face-burst .75s cubic-bezier(.2,.8,.3,1) forwards}
+
 @keyframes shq-face-blink{0%,92%,100%{transform:scaleY(1)}95%{transform:scaleY(.1)}}
-@media (prefers-reduced-motion: reduce){.shq-face .shq-face-eyes{animation:none}}
+@keyframes shq-face-float{0%,100%{transform:translateY(0) rotate(0deg)}50%{transform:translateY(-4px) rotate(1.5deg)}}
+@keyframes shq-face-poke-a{0%{transform:scale(1,1)}18%{transform:scale(1.12,.86) translateY(5px)}45%{transform:translateY(-14px) rotate(-6deg) scale(.95,1.06)}72%{transform:translateY(2px) rotate(4deg) scale(1.03,.97)}100%{transform:scale(1,1)}}
+@keyframes shq-face-poke-b{0%{transform:scale(1,1)}18%{transform:scale(1.12,.86) translateY(5px)}45%{transform:translateY(-14px) rotate(6deg) scale(.95,1.06)}72%{transform:translateY(2px) rotate(-4deg) scale(1.03,.97)}100%{transform:scale(1,1)}}
+@keyframes shq-face-show{0%,85%{opacity:1}100%{opacity:0}}
+@keyframes shq-face-hide{0%,85%{opacity:0}100%{opacity:1}}
+@keyframes shq-face-brows-up{0%,100%{transform:translateY(0)}25%,75%{transform:translateY(-4px)}}
+@keyframes shq-face-stache{0%,100%{transform:rotate(0deg)}25%{transform:rotate(-6deg) scaleX(1.08)}50%{transform:rotate(6deg) scaleX(1.08)}75%{transform:rotate(-4deg)}}
+@keyframes shq-face-blush-pop{0%,100%{opacity:.3}20%,80%{opacity:.75}}
+@keyframes shq-face-wave{0%{transform:translateY(28px) rotate(-30deg);opacity:0}15%{transform:translateY(0) rotate(-14deg);opacity:1}35%{transform:translateY(-2px) rotate(18deg);opacity:1}55%{transform:translateY(0) rotate(-14deg);opacity:1}75%{transform:translateY(-2px) rotate(16deg);opacity:1}100%{transform:translateY(28px) rotate(-30deg);opacity:0}}
+@keyframes shq-face-burst{0%{opacity:0;transform:translate(0,0) scale(.3) rotate(0deg)}15%{opacity:1}100%{opacity:0;transform:translate(var(--bx),var(--by)) scale(1.15) rotate(var(--br))}}
+
+@media (prefers-reduced-motion: reduce){
+  .shq-face .shq-face-eyes,.shq-face .shq-face-float,.shqf-poke-a .shq-face-rig,.shqf-poke-b .shq-face-rig,.shq-face-bp{animation:none}
+}

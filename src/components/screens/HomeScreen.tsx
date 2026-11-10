@@ -111,7 +111,8 @@ export function HomeScreen({ onStartRead, onStartQuiz, t, lang, userName = "", s
   const comingSoon = RESEARCH_MODE ? 0 : totalPlanned - STORIES.length;
 
   const firstName = (userName || "").split(/[\s@]/)[0];
-  const [tip] = useState(() => SHOQAN_TIPS[Math.floor(Date.now() / 86400000) % SHOQAN_TIPS.length]);
+  const [tipIdx, setTipIdx] = useState(() => Math.floor(Date.now() / 86400000) % SHOQAN_TIPS.length);
+  const tip = SHOQAN_TIPS[tipIdx];
   // Shanyraq 2.0 (docs/design-audit-2026-11.md): one "continue" card first, the extras folded away.
   // The research build keeps the earlier home screen unchanged.
   const v2 = !RESEARCH_MODE;
@@ -206,8 +207,8 @@ export function HomeScreen({ onStartRead, onStartQuiz, t, lang, userName = "", s
 
       {/* Shoqan by the path, like Duolingo's owl: tip of the day + a ready question */}
       {!RESEARCH_MODE && <div className="flex items-end gap-3">
-        <div className="w-16 h-16 rounded-full overflow-hidden border-[3px] border-sun shadow-[0_4px_0_var(--color-sun-deep)] shrink-0"><ShoqanFace label="Shoqan" /></div>
-        <div className="relative flex-1 card p-4 rounded-bl-md">
+        <div onClick={() => setTipIdx((i) => (i + 1) % SHOQAN_TIPS.length)} title={lang === "kk" ? "Келесі кеңес үшін Шоқанды бас" : "Tap Shoqan for another tip"} className="w-16 h-16 rounded-full overflow-hidden border-[3px] border-sun shadow-[0_4px_0_var(--color-sun-deep)] shrink-0 cursor-pointer transition-transform duration-150 hover:-translate-y-0.5 active:translate-y-[2px] active:shadow-[0_2px_0_var(--color-sun-deep)]"><ShoqanFace label="Shoqan" /></div>
+        <div key={tipIdx} className="relative flex-1 card p-4 rounded-bl-md animate-pop-in">
           <p className="eyebrow text-sun-deep">{lang === "kk" ? "Шоқанның кеңесі" : "Shoqan's tip"}</p>
           <p className="text-[15px] text-ink mt-1 leading-snug">{tip[lang === "kk" ? "kk" : "en"]}</p>
           <button
