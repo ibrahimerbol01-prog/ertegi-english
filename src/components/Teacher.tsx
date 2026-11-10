@@ -19,6 +19,7 @@ import {
   type ClassEvents, type CouncilWork, type StudentWork, type TrailWork,
 } from "../utils/classWork";
 import { ScreenHeader, Sheet } from "./UIHelpers";
+import { DICT } from "../dict";
 import { ClassTopWords } from "./ClassTopWords";
 import { RESEARCH_MODE } from "../research/mode";
 import { dueText, stepLabel, storyTitle } from "../utils/useMyClasses";
@@ -248,7 +249,7 @@ export function TeacherScreen({ lang, onBack }: { lang: string; onBack?: () => v
               maxLength={60}
               autoComplete="off"
             />
-            <button type="submit" disabled={!name.trim() || busy} className="btn sm:w-auto"><Plus size={18} /> {kk ? "Ашу" : "Create"}</button>
+            <button type="submit" disabled={!name.trim() || busy} className="btn btn-ember sm:w-auto"><Plus size={18} /> {kk ? "Ашу" : "Create"}</button>
           </div>
           {createError && <p role="alert" className="mt-3 text-[14px] font-semibold text-rose-ink">{errorText(createError, kk)}</p>}
         </form>
@@ -317,13 +318,14 @@ function ClassView({ cls, kk, onBack, onChange }: { cls: ClassRow; kk: boolean; 
       />
 
       {!archived && (
-        <div className="card p-4 flex flex-wrap items-center gap-3">
-          <div className="flex-1 min-w-[150px]">
+        <div className="card p-5 flex flex-wrap items-center gap-4">
+          <div className="flex-1 min-w-[180px]">
             <p className="eyebrow">{kk ? "Қосылу коды" : "Join code"}</p>
-            <p className="font-display font-black text-3xl tracking-[0.2em] text-ink">{cls.code}</p>
+            {/* The code large (redesign Q4): read aloud and copied off the board in class. */}
+            <p className="font-display font-black text-[40px] sm:text-[48px] leading-none tracking-[0.18em] text-ink mt-1">{cls.code}</p>
           </div>
           <div className="flex flex-wrap gap-2">
-            <CopyButton text={cls.code} label={kk ? "Код" : "Code"} done={kk ? "Көшірілді" : "Copied"} Icon={Copy} />
+            <CopyButton text={cls.code} label={DICT[kk ? "kk" : "en"].copyCode} done={kk ? "Көшірілді" : "Copied"} Icon={Copy} />
             <CopyButton text={classLink(cls.code)} label={kk ? "Сілтеме" : "Link"} done={kk ? "Көшірілді" : "Copied"} Icon={Link2} />
           </div>
         </div>
@@ -434,15 +436,17 @@ function ProgressTab({ kk, cls, members, goneCount, assignments, onOpen, onGoTas
 
   return (
     <div className="space-y-5">
+      {/* Summary tiles (redesign Q4): the same three numbers, larger; «көмек керек» in rose
+          when someone needs help, so it reads first. */}
       <div className="grid grid-cols-3 gap-3">
         {[
-          { v: members.length, l: kk ? "оқушы" : "learners" },
-          { v: members.filter((m) => daysAway(m.last_active_date) !== null && (daysAway(m.last_active_date) ?? 99) < 7).length, l: kk ? "осы аптада белсенді" : "active this week" },
-          { v: help.length, l: kk ? "көмек керек" : "need help" },
+          { v: members.length, l: kk ? "оқушы" : "learners", alert: false },
+          { v: members.filter((m) => daysAway(m.last_active_date) !== null && (daysAway(m.last_active_date) ?? 99) < 7).length, l: kk ? "осы аптада белсенді" : "active this week", alert: false },
+          { v: help.length, l: kk ? "көмек керек" : "need help", alert: help.length > 0 },
         ].map((s) => (
-          <div key={s.l} className="tile p-3 text-center">
-            <p className="font-display font-black text-2xl text-ink leading-none">{s.v}</p>
-            <p className="text-[12px] text-ink-2 mt-1 leading-tight">{s.l}</p>
+          <div key={s.l} className={`rounded-[20px] p-3 sm:p-4 shadow-[var(--elev-1)] ${s.alert ? "bg-rose-soft" : "bg-card"}`}>
+            <p className={`font-display font-black text-[32px] leading-none tabular-nums ${s.alert ? "text-rose-ink" : "text-ink"}`}>{s.v}</p>
+            <p className={`text-[13px] mt-1.5 leading-tight ${s.alert ? "text-rose-ink font-semibold" : "text-ink-2"}`}>{s.l}</p>
           </div>
         ))}
       </div>
@@ -471,7 +475,7 @@ function ProgressTab({ kk, cls, members, goneCount, assignments, onOpen, onGoTas
       {assignments.length === 0 && (
         <div className="card p-4 flex items-center gap-3">
           <p className="flex-1 text-[15px] text-ink-2">{kk ? "Тапсырма берсең, мұнда кім орындағаны көрінеді." : "Give an assignment to see here who has done it."}</p>
-          <button onClick={onGoTasks} className="btn btn-sm"><Plus size={16} /> {kk ? "Тапсырма" : "Assign"}</button>
+          <button onClick={onGoTasks} className="btn btn-ember btn-sm"><Plus size={16} /> {kk ? "Тапсырма" : "Assign"}</button>
         </div>
       )}
 
@@ -610,7 +614,7 @@ function TasksTab({ kk, classId, archived, members, assignments, onChanged }: {
           </label>
           {duplicate && <p className="text-[13px] text-[#8A5A00] font-semibold">{kk ? "Бұл тапсырма бұрын да берілген. Қайта беруге болады." : "You've given this one before. You can give it again."}</p>}
           {error && <p role="alert" className="text-[14px] font-semibold text-rose-ink">{errorText(error, kk)}</p>}
-          <button type="submit" disabled={busy || dueBad} className="btn w-full">
+          <button type="submit" disabled={busy || dueBad} className="btn btn-ember w-full">
             {saved ? <><Check size={18} strokeWidth={3} aria-hidden /> {kk ? "Берілді" : "Assigned"}</> : <><Plus size={18} aria-hidden /> {kk ? "Тапсырма беру" : "Assign"}</>}
           </button>
           <span role="status" className="sr-only">{saved ? (kk ? "Тапсырма берілді" : "Assignment added") : ""}</span>
