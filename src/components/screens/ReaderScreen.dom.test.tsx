@@ -47,6 +47,26 @@ describe("ReaderScreen (DOM)", () => {
     </LangContext.Provider>,
   );
 
+  it("header (redesign Q1): 44 px back, one-line title, level chip, read-along bar at 0", () => {
+    const setLevel = vi.fn();
+    render(
+      <LangContext.Provider value="en">
+        <ReaderScreen selectedStory="aldar_kose" setSelectedStory={vi.fn()} selectedLevel="A1" setSelectedLevel={setLevel}
+          onQuizGate={vi.fn()} t={DICT.en} lang="en" onReward={vi.fn()} savedWords={[]} onSaveWord={vi.fn()} userId="u1" />
+      </LangContext.Provider>,
+    );
+    const back = screen.getByRole("button", { name: DICT.en.changeLevel });
+    expect(back.className).toMatch(/\bw-11\b/);
+    expect(back.className).toMatch(/\bh-11\b/);
+    fireEvent.click(back);
+    expect(setLevel).toHaveBeenCalledWith(null);
+    expect(screen.getByRole("heading", { level: 1 }).className).toMatch(/\btruncate\b/);
+    expect(screen.getByText("A1", { selector: "header span" })).toBeTruthy();
+    const bar = screen.getByRole("progressbar", { name: "Read along" });
+    expect(bar.getAttribute("aria-valuenow")).toBe("0");
+    expect(Number(bar.getAttribute("aria-valuemax"))).toBeGreaterThan(1);
+  });
+
   it("a tap on a word logs word_tap with the tale and level, says the word and shows its meaning", () => {
     open();
     const word = screen.getAllByRole("button").find((b) => (b.textContent ?? "").trim() === "Aldar")!;
