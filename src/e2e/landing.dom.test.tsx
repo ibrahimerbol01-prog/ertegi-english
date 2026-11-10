@@ -33,7 +33,7 @@ const start = async () => {
 describe("landing", () => {
   it("shows the hero and a sample whose words open their glossary meaning", async () => {
     await start();
-    expect(screen.getByText("РКНП 2026 · 1 орын")).toBeTruthy();
+    expect(screen.getByText("Біз үшін — кішкентай қадам, Қазақстан үшін — үлкен мүмкіндік")).toBeTruthy();
     expect(screen.getByText("Жаңа тіл.")).toBeTruthy();
     expect(screen.getByRole("button", { name: /Тіркелусіз оқып көру/ })).toBeTruthy();
     expect(screen.getByRole("button", { name: "Сынып коды бар ма? Қосылу" })).toBeTruthy();
