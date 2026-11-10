@@ -198,14 +198,49 @@ function wallCarpets(){const pals=[['#A3172B','#1F2B4D','#F4E3C1','#E0A526'],['#
   const c=canvas(1536,768),g=c.getContext('2d');pals.forEach((p,i)=>g.drawImage(carpetTex(p,512,768),i*512,0));return c;}
 function domeCurve(R,WH,SR,SH,off){const p1=new THREE.Vector2(R-0.06+off,WH-0.05),c=new THREE.Vector2(R*0.8+off,SH-0.45),p2=new THREE.Vector2(SR+0.02+off,SH);
   return t=>new THREE.Vector2((1-t)*(1-t)*p1.x+2*(1-t)*t*c.x+t*t*p2.x,(1-t)*(1-t)*p1.y+2*(1-t)*t*c.y+t*t*p2.y);}
+
+function roundedBox(w,h,d,r,seg){const g=new THREE.BoxGeometry(w,h,d,seg||6,seg||4,seg||6);const p=g.attributes.position,v=new THREE.Vector3(),inner=new THREE.Vector3(w/2-r,h/2-r,d/2-r);
+  for(let i=0;i<p.count;i++){v.fromBufferAttribute(p,i);const c=new THREE.Vector3(Math.max(-inner.x,Math.min(inner.x,v.x)),Math.max(-inner.y,Math.min(inner.y,v.y)),Math.max(-inner.z,Math.min(inner.z,v.z)));
+    const n=v.clone().sub(c);if(n.lengthSq()>0)n.normalize().multiplyScalar(r);v.copy(c.add(n));p.setXYZ(i,v.x,v.y,v.z);}g.computeVertexNormals();return g;}
+function kurakTex(pal){const c=canvas(512,256),g=c.getContext('2d');const S=64;
+  for(let x=0;x<512;x+=S)for(let y=0;y<256;y+=S){const a=pal[(x/S+y/S)%pal.length],b=pal[(x/S+y/S+2)%pal.length];
+    g.fillStyle=a;g.fillRect(x,y,S,S);g.fillStyle=b;g.beginPath();if((x/S+y/S)%2){g.moveTo(x,y);g.lineTo(x+S,y);g.lineTo(x,y+S);}else{g.moveTo(x+S,y);g.lineTo(x+S,y+S);g.lineTo(x,y+S);}g.closePath();g.fill();
+    g.fillStyle='rgba(255,255,255,.85)';g.beginPath();g.arc(x+S/2,y+S/2,5,0,7);g.fill();}
+  g.strokeStyle='rgba(255,240,200,.55)';g.lineWidth=2;g.setLineDash([6,5]);for(let x=0;x<=512;x+=S){g.beginPath();g.moveTo(x,0);g.lineTo(x,256);g.stroke();}for(let y=0;y<=256;y+=S){g.beginPath();g.moveTo(0,y);g.lineTo(512,y);g.stroke();}
+  g.setLineDash([]);g.fillStyle=pal[0];g.fillRect(0,0,512,10);g.fillRect(0,246,512,10);return c;}
+function pillowTex(col){const c=canvas(512,256),g=c.getContext('2d');g.fillStyle='#F7F1E4';g.fillRect(0,0,512,256);
+  g.strokeStyle=col;g.lineWidth=16;g.strokeRect(14,14,484,228);g.strokeStyle='#E0A526';g.lineWidth=4;g.strokeRect(34,34,444,188);
+  horn(g,256,140,1.1,col,10);horn(g,120,140,0.6,'#2E6B4F',7);horn(g,392,140,0.6,'#2E6B4F',7);return c;}
+function kilemTex(pal){const W2=1024,H2=1536,c=canvas(W2,H2),g=c.getContext('2d');const [field,border,light,accent,dark]=pal;
+  g.fillStyle=light;g.fillRect(0,0,W2,H2);
+  // fringe
+  g.strokeStyle=light;for(let x=0;x<W2;x+=8){g.lineWidth=3;g.beginPath();g.moveTo(x,0);g.lineTo(x+2,40);g.stroke();g.beginPath();g.moveTo(x,H2);g.lineTo(x+2,H2-40);g.stroke();}
+  const band=(m,col)=>{g.fillStyle=col;g.fillRect(m,m+40,W2-2*m,H2-2*m-80);};
+  band(20,dark);band(34,border);
+  // running border motif
+  g.fillStyle=accent;for(let x=60;x<W2-60;x+=56){horn(g,x+28,110,0.42,accent,7);horn(g,x+28,H2-110,0.42,accent,7);}
+  for(let y=170;y<H2-170;y+=56){g.save();g.translate(80,y+28);g.rotate(-Math.PI/2);horn(g,0,0,0.42,accent,7);g.restore();g.save();g.translate(W2-80,y+28);g.rotate(Math.PI/2);horn(g,0,0,0.42,accent,7);g.restore();}
+  band(128,light);band(140,dark);band(150,field);
+  // field lattice of small diamonds
+  for(let x=190;x<W2-170;x+=70)for(let y=230;y<H2-210;y+=70){g.fillStyle=((x+y)/70)%2?border:dark;g.save();g.translate(x+20,y+20);g.rotate(Math.PI/4);g.fillRect(-9,-9,18,18);g.restore();}
+  // central medallion: octagon layers
+  const cx=W2/2,cy=H2/2;const oct=(r,col)=>{g.fillStyle=col;g.beginPath();for(let k=0;k<8;k++){const a=k*Math.PI/4+Math.PI/8;g.lineTo(cx+Math.cos(a)*r*1.0,cy+Math.sin(a)*r*1.35);}g.closePath();g.fill();};
+  oct(300,dark);oct(282,light);oct(266,border);oct(200,dark);oct(186,accent);oct(170,field);
+  for(let k=0;k<4;k++){g.save();g.translate(cx,cy);g.rotate(k*Math.PI/2);horn(g,0,-95,1.0,light,11);g.restore();}
+  g.fillStyle=light;g.save();g.translate(cx,cy);g.rotate(Math.PI/4);g.fillRect(-22,-22,44,44);g.restore();
+  // corner quarter-medallions
+  for(const [x,y,r] of [[150,190,0],[W2-150,190,Math.PI/2],[W2-150,H2-190,Math.PI],[150,H2-190,-Math.PI/2]]){g.save();g.translate(x,y);g.rotate(r);g.fillStyle=dark;g.beginPath();g.arc(0,0,150,0,Math.PI/2);g.lineTo(0,0);g.fill();g.fillStyle=accent;g.beginPath();g.arc(0,0,110,0,Math.PI/2);g.lineTo(0,0);g.fill();g.restore();}
+  // woven texture: knots + abrash
+  const img=g.getImageData(0,0,W2,H2),d=img.data;for(let i=0;i<d.length;i+=4){const px=(i/4)%W2,py=Math.floor(i/4/W2);const k=((px>>1)+(py>>1))%2?0.93:1.0;const n=0.94+Math.random()*0.1;const ab=1-0.05*Math.sin(py/90);for(let j=0;j<3;j++)d[i+j]=Math.min(255,d[i+j]*k*n*ab);}g.putImageData(img,0,0);
+  return c;}
 AFRAME.registerComponent('yurt',{init(){
   const root=this.el.object3D, R=4.2, WH=2.1, SH=4.35, SR=0.62;
   const add=(geo,m,pos,rot)=>{const me=new THREE.Mesh(geo,m);if(pos)me.position.set(...pos);if(rot)me.rotation.set(...rot);root.add(me);return me;};
   // floor: felt + round tekemet
   add(new THREE.CircleGeometry(R,64),mat(tex(feltTex(),6,6),{color:'#5E7A4A'}),[0,0,0],[-Math.PI/2,0,0]);
-  add(new THREE.CircleGeometry(2.3,64),mat(tex(rugTex())),[0,0.01,0],[-Math.PI/2,0,0]);
-  for(const [x,z,ry,w,h,pal] of [[-2.2,0.6,0.3,1.6,2.4,['#1F2B4D','#A3172B','#F4E3C1','#E0A526']],[2.3,0.4,-0.25,1.5,2.3,['#8E1B29','#2E6B4F','#F4E3C1','#E0A526']],[0,2.6,0,2.2,1.4,['#A3172B','#1F2B4D','#F4E3C1','#E0A526']]])
-    add(new THREE.PlaneGeometry(w,h),mat(tex(carpetTex(pal,512,768)),{roughness:1}),[x,0.006,z],[-Math.PI/2,0,ry]);
+  {const K=[['#9E1B2C','#1F2B4D','#F4E3C1','#E0A526','#2A1A14'],['#1F2B4D','#9E1B2C','#F4E3C1','#E0A526','#2A1A14'],['#7A1F2B','#2E6B4F','#F4E3C1','#E0A526','#2A1A14']];
+   const rug=(pal,w,h,x,z,ry,y)=>{const m=new THREE.Mesh(new THREE.PlaneGeometry(w,h),new THREE.MeshStandardMaterial({map:tex(kilemTex(pal)),roughness:1}));m.position.set(x,y,z);m.rotation.set(-Math.PI/2,0,ry);root.add(m);};
+   rug(K[0],2.6,3.9,0,-0.2,Math.PI/2,0.012);rug(K[1],1.5,2.25,-2.3,0.9,0.35,0.008);rug(K[2],1.5,2.25,2.2,-0.6,-0.3,0.008);rug(K[1],1.4,2.1,0.2,2.6,Math.PI/2,0.008);}
   // kerege lattice wall
   add(new THREE.CylinderGeometry(R,R,WH,64,1,true),mat(tex(keregeTex(),22,4.2)),[0,WH/2,0]);
   add(new THREE.CylinderGeometry(R-0.04,R-0.04,1.55,64,1,true),mat(tex(wallCarpets(),4,1),{roughness:1}),[0,0.8,0]);
@@ -253,12 +288,17 @@ AFRAME.registerComponent('yurt',{init(){
   add(new THREE.CylinderGeometry(0.1,0.13,0.2,20),new THREE.MeshStandardMaterial({color:'#C9A24B',metalness:0.6,roughness:0.3}),[tx-0.05,0.49,tz-0.05]);
   const stool=new THREE.MeshStandardMaterial({color:'#E0A526',roughness:0.5});
   for(const a of [0.4,2.3,4.2]){const sx=tx+Math.cos(a)*0.85,sz=tz+Math.sin(a)*0.85;box(0.3,0.04,0.3,stool,[sx,0.32,sz],a);for(const [ox,oz] of [[-0.11,-0.11],[0.11,-0.11],[-0.11,0.11],[0.11,0.11]])box(0.035,0.3,0.035,stool,[sx+ox,0.15,sz+oz],a);}
-  // tosek mattresses + zhastyk cushions along the side walls
-  const toTex=(p)=>tex(stripeTex(p));
-  for(const [ang,pal] of [[Math.PI*0.95,['#A3172B','#F4E3C1','#1F2B4D','#F4E3C1','#A3172B']],[Math.PI*0.05,['#1F2B4D','#E0A526','#A3172B','#E0A526','#1F2B4D']],[Math.PI*0.72,['#2E6B4F','#F4E3C1','#A3172B','#F4E3C1','#2E6B4F']],[Math.PI*0.28,['#8E1B29','#FFE7A3','#C2410C','#FFE7A3','#8E1B29']]]){
-    const [x,z,ry]=onWall(ang,R-0.55);const g=new THREE.Group();g.position.set(x,0,z);g.rotation.y=ry;root.add(g);
-    for(let i=0;i<3;i++){const m=new THREE.Mesh(new THREE.BoxGeometry(1.6-i*0.04,0.08,0.75),new THREE.MeshStandardMaterial({map:toTex(pal),roughness:1}));m.position.y=0.04+i*0.08;g.add(m);}
-    for(const dx of [-0.5,0,0.5]){const c=new THREE.Mesh(new THREE.SphereGeometry(0.2,16,10),new THREE.MeshStandardMaterial({map:tex(carpetTex(pal.slice(0,4).concat(),256,256)),roughness:1}));c.scale.set(1,0.55,0.35);c.position.set(dx,0.36,0.25);g.add(c);}}
+  // tosek: stacked korpe (kurak patchwork) on a low bed with embroidered pillows
+  const kurakPals=[['#B42335','#E0A526','#1F5FBF','#2E6B4F'],['#C2410C','#1F2B4D','#FFE7A3','#9E1B2C'],['#2E6B4F','#B42335','#F4E3C1','#E0A526'],['#6A2C8E','#E0A526','#B42335','#1F5FBF'],['#1F2B4D','#C2410C','#E0A526','#F4E3C1']];
+  [[Math.PI*0.95,0],[Math.PI*0.05,1],[Math.PI*0.72,2],[Math.PI*0.28,3]].forEach(([ang,si])=>{
+    const [x,z,ry]=onWall(ang,R-0.6);const g=new THREE.Group();g.position.set(x,0,z);g.rotation.y=ry;root.add(g);
+    const bed=new THREE.Mesh(roundedBox(1.75,0.16,0.85,0.04,3),new THREE.MeshStandardMaterial({color:'#5A2E14',roughness:0.7}));bed.position.y=0.08;g.add(bed);
+    let y=0.16;for(let i=0;i<4;i++){const h=0.12+Math.random()*0.02;const pal=kurakPals[(si+i)%kurakPals.length];
+      const t=tex(kurakTex(pal));const m=new THREE.Mesh(roundedBox(1.62-i*0.03,h,0.78-i*0.015,h*0.48,5),new THREE.MeshStandardMaterial({map:t,roughness:0.55,sheen:1}));
+      m.position.set((Math.random()-0.5)*0.04,y+h/2,(Math.random()-0.5)*0.03);m.rotation.y=(Math.random()-0.5)*0.03;g.add(m);y+=h*0.92;}
+    for(const [dx,col] of [[-0.5,'#B42335'],[0,'#1F2B4D'],[0.5,'#2E6B4F']]){const pm=new THREE.MeshStandardMaterial({color:'#F7F1E4',roughness:0.8}),pf=new THREE.MeshStandardMaterial({map:tex(pillowTex(col)),roughness:0.8});
+      const pil=new THREE.Mesh(roundedBox(0.56,0.42,0.2,0.09,5),[pm,pm,pm,pm,pf,pm]);pil.position.set(dx*1.05,y+0.2,-0.22);pil.rotation.x=-0.22;g.add(pil);}
+  });
   // embroidered tus kiiz hangings (white felt with flowers) between carpets
   function tuskiiz(){const c=canvas(512,640),g=c.getContext('2d');g.fillStyle='#F7F1E4';g.fillRect(0,0,512,640);
     g.strokeStyle='#A3172B';g.lineWidth=14;g.strokeRect(20,20,472,600);g.strokeStyle='#2E6B4F';g.lineWidth=5;g.strokeRect(44,44,424,552);
