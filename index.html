@@ -44,7 +44,7 @@ html,body{margin:0;background:#1F2B4D}
   <div class="ch"><b style="background:#FFE7A3;color:#8A5A00">🏆 РКНП 2026 · 1 орын</b><b style="background:#E3F4EC;color:#157A56">100 / 100</b><b style="background:#FFE9E1;color:#B93A12">Батырлар карталары · 13</b></div>
   <div class="motto">Біз үшін — кішкентай қадам, Қазақстан үшін — үлкен мүмкіндік</div>
   <button id="go" disabled style="opacity:.5">Бастау</button>
-  <div class="who">ERTEGI ENGLISH · Aldar Coders · VR · v8 голос</div>
+  <div class="who">ERTEGI ENGLISH · Aldar Coders · VR · v9 видео</div>
 </div></div>
 
 <div id="loading">Ertegi English VR · жүктелуде…</div>
@@ -59,7 +59,7 @@ let words = [], selected = -1, reading = -1;
 window.__vr={get reading(){return reading},get selected(){return selected}};
 const splitS=t=>t.match(/[^.!?]+[.!?]+["”]?/g).map(x=>x.trim());
 let SENTS = splitS(STORY);
-const DICT = Object.assign({},DICT0,DATA.dict);
+const DICT = Object.assign({},DICT0,DATA.dict,{"köse": "Көсе (аты)", "money": "ақша", "freezing": "қақаған суық", "fur": "тері / тон", "shivering": "қалтырап", "smiling": "күлімдеп", "singing": "ән салып", "magic": "сиқырлы", "hole": "тесік", "karashash": "Қарашаш (аты)", "riddles": "жұмбақтар", "riddle": "жұмбақ", "quickly": "тез", "wisely": "даналықпен", "brothers": "ағалары / бауырлары", "monsters": "құбыжықтар", "trials": "сынақтар", "qobylandy": "Қобыланды (аты)", "kurtka": "Құртқа (аты)", "foal": "құлын", "taiburyl": "Тайбурыл (аты)", "enemies": "жаулар", "catch": "ұстау", "drink": "ішу", "escaped": "қашып құтылды", "zhibek": "Жібек (аты)", "tribe": "ру / тайпа", "tolegen": "Төлеген (аты)", "died": "қайтыс болды", "heartbroken": "қайғырған", "sung": "жырланады", "today": "бүгін", "kozy": "Қозы (аты)", "bayan": "Баян (аты)", "fathers": "әкелері", "sarybai": "Сарыбай (аты)", "karabai": "Қарабай (аты)", "sadly": "өкінішке қарай", "tomb": "кесене", "stands": "тұр", "near": "жанында", "ayagoz": "Аягөз (жер аты)", "korkyt": "Қорқыт (аты)", "musician": "күйші / музыкант", "dreamed": "түс көрді", "die": "өлу", "corner": "бұрыш", "death": "ажал / өлім", "everywhere": "барлық жерде", "digging": "қазып жатқан", "grave": "көр / қабір", "syr": "Сыр (өзен аты)", "darya": "Дария (өзен аты)", "kobyz": "қобыз", "wood": "ағаш", "played": "тартты / ойнады", "summers": "жаздар", "searched": "іздеді", "tomiris": "Томирис (аты)", "queen": "патшайым", "massagetae": "массагеттер", "nomads": "көшпенділер", "persian": "парсы", "king": "патша", "cyrus": "Кир (аты)", "army": "әскер", "captured": "тұтқынға алды", "bc": "б.з.д.", "killed": "өлтірді", "abulkhair": "Әбілқайыр (аты)", "two": "екі", "leaders": "басшылар", "kerey": "Керей (аты)", "agree": "келісу", "zhetysu": "Жетісу", "region": "өңір", "rivers": "өзендер", "joined": "қосылды", "beginning": "бастамасы", "khanate": "хандық", "state": "мемлекет", "eighteenth": "он сегізінші", "dzungars": "жоңғарлар", "homes": "үйлер", "abilmansur": "Әбілмансұр (аты)", "dzungar": "жоңғар", "grandfather": "ата", "abylai": "Абылай (аты)", "leader": "басшы", "fighter": "жауынгер", "united": "біріктірді", "shokan": "Шоқан (аты)", "ualikhanov": "Уәлиханов (тегі)", "omsk": "Омбы", "writer": "жазушы", "fyodor": "Федор (аты)", "dostoevsky": "Достоевский (тегі)", "dangerous": "қауіпті", "kashgar": "Қашқар", "dressed": "киініп", "wrote": "жазды", "songs": "әндер", "legends": "аңыздар", "history": "тарих", "peoples": "халықтар", "maps": "карталар", "pictures": "суреттер", "twentynine": "жиырма тоғыз"});
 const BANK=[];
 
 function canvas(w,h){const c=document.createElement('canvas');c.width=w;c.height=h;return c;}
@@ -240,6 +240,20 @@ AFRAME.registerComponent('xr-pointer',{init(){
         for(const js of src.hand.values()){const jp=frame.getJointPose&&frame.getJointPose(js,ref);if(jp){jm.fromArray(jp.transform.matrix).premultiply(rig.matrixWorld);r.joints.setMatrixAt(i,jm);}i++;if(i>=25)break;}
         r.joints.count=i;r.joints.instanceMatrix.needsUpdate=true;r.joints.visible=true;}else if(r.joints)r.joints.visible=false;}
     for(const k in this.rays)if(!seen[k]){this.rays[k].line.visible=false;this.rays[k].dot.visible=false;if(this.rays[k].joints)this.rays[k].joints.visible=false;}}});
+
+AFRAME.registerComponent('video-screen',{init(){
+  const v=this.v=document.createElement('video');v.src='story.mp4';v.crossOrigin='anonymous';v.playsInline=true;v.setAttribute('playsinline','');v.preload='auto';v.loop=false;
+  this.c=canvas(1280,720);this.ptex=tex(this.c);this.vtex=new THREE.VideoTexture(v);this.vtex.colorSpace=THREE.SRGBColorSpace;
+  this.m=new THREE.MeshBasicMaterial({map:this.ptex,side:THREE.DoubleSide});this.el.getObject3D('mesh').material=this.m;
+  const img=new Image();img.onload=()=>{this.img=img;this.drawPoster();};img.src='story-poster.jpg';this.drawPoster();
+  v.addEventListener('ended',()=>{this.m.map=this.ptex;this.m.needsUpdate=true;this.drawPoster();});
+  this.el.addEventListener('click',()=>{if(v.paused){stopAudio();const lb=document.querySelector('#listen');if(reading>=0&&lb)lb.components['listen-btn'].halt();
+      this.m.map=this.vtex;this.m.needsUpdate=true;v.play().catch(()=>{});}else{v.pause();this.drawPoster(true);this.m.map=this.ptex;this.m.needsUpdate=true;}});},
+  drawPoster(paused){const g=this.c.getContext('2d');g.fillStyle='#1F2B4D';g.fillRect(0,0,1280,720);
+    if(paused&&this.v.readyState>=2)g.drawImage(this.v,0,0,1280,720);else if(this.img)g.drawImage(this.img,0,0,1280,720);
+    g.fillStyle='rgba(31,43,77,.35)';g.fillRect(0,0,1280,720);
+    g.fillStyle='#C2410C';g.beginPath();g.arc(640,360,96,0,7);g.fill();g.fillStyle='#FFFFFF';g.beginPath();g.moveTo(612,306);g.lineTo(612,414);g.lineTo(700,360);g.closePath();g.fill();
+    pill(g,40,36,'Алдар Көсе','900 44px Nunito','#FBF6EE','#B93A12',30,72);this.ptex.needsUpdate=true;}});
 AFRAME.registerComponent('story-panel',{
   init(){
     this.c=canvas(W,H);drawStory(this.c);
@@ -488,6 +502,7 @@ function build(){
   <a-plane id="bank" bank-panel class="clickable" width="1.3" height="0.53" position="1.75 1.0 -1.85" rotation="0 -30 0"></a-plane>
   <a-plane id="reward" reward-card width="0.56" height="0.8" position="1.45 1.75 -1.05"></a-plane>
   <a-plane honor-wall width="1.3" height="1.65" position="-1.45 1.95 3.55" rotation="0 156 0"></a-plane>
+  <a-plane id="video" video-screen class="clickable" width="2.1" height="1.18" position="2.15 1.85 1.65" rotation="0 -128 0"></a-plane>
   <a-plane shoqan-card class="clickable" width="0.64" height="0.8" position="-1.95 1.72 -1.75" rotation="0 35 0"></a-plane>
   <a-image src="icon.png" width="0.3" height="0.3" position="0 2.7 -2.38"></a-image>
 
