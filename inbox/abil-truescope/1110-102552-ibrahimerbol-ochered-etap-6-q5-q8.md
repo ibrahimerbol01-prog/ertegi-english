@@ -2,7 +2,7 @@
 id: 1110-102552-ibrahimerbol-ochered-etap-6-q5-q8
 from: ibrahimerbol01-prog
 to: abil-truescope
-status: new
+status: done
 created: 2026-11-10 10:25
 ---
 
