@@ -142,7 +142,12 @@ export const DICT = {
     wbSources: "Сөз тізімдерінің дереккөздері",
     wbAutoTr: "автоаударма",
     wbAutoTrHint: "Машиналық аударма. Адам әлі тексерген жоқ.",
-    wbTrReview: "Аударма тексерілуде"
+    wbTrReview: "Аударма тексерілуде",
+    // Practice → Words overview (redesign stage 6). Kazakh verbatim from the brief / owner.
+    reviewToday: "Бүгін қайталау",
+    startReview: "Қайталауды бастау",
+    wordLearning: "Үйреніп жүрмін",
+    wordKnown: "Білемін",
   },
   en: {
     plTitle: "Check your level",
@@ -281,6 +286,10 @@ export const DICT = {
     wbSources: "Sources of the word lists",
     wbAutoTr: "machine translation",
     wbAutoTrHint: "Machine translation, not yet checked by a person.",
-    wbTrReview: "Translation being checked"
+    wbTrReview: "Translation being checked",
+    reviewToday: "Review today",
+    startReview: "Start review",
+    wordLearning: "Learning",
+    wordKnown: "Known"
   }
 };
