@@ -23,3 +23,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Screenshots from scripts/screens.mjs (Q5)
+screens/
