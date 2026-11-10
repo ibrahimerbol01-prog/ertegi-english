@@ -43,6 +43,7 @@ import { LangContext, loadLang, saveLang, type Lang } from "./lang";
 import type { SavedWord } from "./types";
 import { supabase } from "./lib/supabase";
 import { saveToSupabase } from "./utils/supabase-save";
+import { flushWords, pendingWords, queueWord } from "./utils/wordOutbox";
 import { buildLevelQuiz } from "./utils/levelQuiz";
 import { DAILY_GOAL_XP, QUIZ_LEVEL_UNLOCK_SHARE, REVIEW_KNOWN_XP, SAVE_WORD_XP, XP_PER_LEVEL } from "./research/params";
 import { BataModal, OyuKilim, TurkicWords } from "./components/Culture";
@@ -242,8 +243,13 @@ export default function KazakhTalesApp({ session, role, onRoleChange }: { sessio
         mastery: row.mastery,
         nextReviewAt: row.next_review_at ?? localReviews[row.word] ?? null,
       }));
-      // Words saved while the list was still loading stay in it.
-      setSavedWords((prev) => [...fromServer, ...prev.filter((w) => !fromServer.some((x) => x.word === w.word))]);
+      // Words saved while the list was still loading, or saved offline and not sent yet, stay in it.
+      const waiting: SavedWord[] = pendingWords(userId).map((w) => ({ word: w.word, translation: w.translation, mastery: 0, nextReviewAt: null }));
+      setSavedWords((prev) => {
+        const out = [...fromServer];
+        for (const w of [...prev, ...waiting]) if (!out.some((x) => x.word === w.word)) out.push(w);
+        return out;
+      });
       wordsReadyRef.current = true;
       setWordsLoadFailed(false);
     };
@@ -450,15 +456,13 @@ export default function KazakhTalesApp({ session, role, onRoleChange }: { sessio
     const known = wordsReadyRef.current;
     if (known) addXp(SAVE_WORD_XP);
     setSavedWords((prev: SavedWord[]) => [...prev, { word, translation, mastery: 0, nextReviewAt: null }]);
-    saveToSupabase(async () => {
-      // ignoreDuplicates: a word already saved keeps its mastery and review date.
-      const res = await supabase
-        .from("saved_words")
-        .upsert({ user_id: userId, word, translation, mastery: 0 }, { onConflict: "user_id,word", ignoreDuplicates: true })
-        .select("word");
-      if (!res.error && !known && res.data?.length) addXp(SAVE_WORD_XP);
-      return res;
-    }, onSaveError);
+    // Kept on the device until the server has it, so a word saved offline survives a
+    // reload (utils/wordOutbox.ts). No error toast while it only waits for the network.
+    queueWord(userId, { word, translation });
+    void flushWords(userId).then((res) => {
+      if (!known && res.added.includes(word)) addXp(SAVE_WORD_XP);
+      if (res.refused.includes(word)) onSaveError();
+    });
   };
 
   // The name offered in a class: the first name only, never a surname or the
@@ -467,10 +471,11 @@ export default function KazakhTalesApp({ session, role, onRoleChange }: { sessio
     ? displayName.trim().split(/\s+/)[0].slice(0, 30)
     : "";
 
-  // Quiz scores saved offline go up on start and whenever the connection returns.
+  // Quiz scores and words saved offline go up on start and whenever the connection returns.
   useEffect(() => {
     void flushQuizResults(userId);
-    const online = () => void flushQuizResults(userId);
+    void flushWords(userId);
+    const online = () => { void flushQuizResults(userId); void flushWords(userId); };
     window.addEventListener("online", online);
     return () => window.removeEventListener("online", online);
   }, [userId]);
