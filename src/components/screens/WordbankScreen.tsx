@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Check, Plus, Volume2 } from "lucide-react";
+import { Check, Hand, Plus, Volume2 } from "lucide-react";
 import { safePlayVoice } from "../../utils/voice";
 import { DICT } from "../../dict";
 import { useLang } from "../../lang";
@@ -9,6 +9,9 @@ import { EXCLUDED_UNTIL_DELAYED_TEST, POS_GROUPS, WORDBANK_LEVELS, WORDBANK_SOUR
 import { loadWordbankLevel } from "../../data/wordbank";
 import type { WordbankEntry } from "../../data/wordbank/types";
 import { wordbankMeaning } from "./wordbankMeaning";
+import SignVideoCard from "../SignVideoCard";
+import { findSign, loadSigns, useDeafMode, type SignEntry } from "../../utils/signs";
+import { useSignT } from "../signI18n";
 
 /* «Сөздік қоры»: the CEFR word lists by level and part of speech (ordinary
    site only, never in the research build: KazakhTalesApp.tsx). Each level is
@@ -33,11 +36,23 @@ export default function WordbankScreen({ savedWords, onAdd, mode, setMode }: {
 }) {
   const lang = useLang();
   const t = DICT[lang === "kk" ? "kk" : "en"];
+  const st = useSignT();
   const [level, setLevel] = useState<WordbankLevel>("A1");
   const [group, setGroup] = useState<PosGroup>("noun");
   const [data, setData] = useState<{ level: WordbankLevel; words: WordbankEntry[] } | null>(null);
   const [failed, setFailed] = useState<WordbankLevel | null>(null);
   const [shown, setShown] = useState(PAGE);
+  const [deaf, setDeaf] = useDeafMode();
+  const [signs, setSigns] = useState<Map<string, SignEntry> | null>(null);
+  const [signsFailed, setSignsFailed] = useState(false);
+  const [openSigns, setOpenSigns] = useState<Set<string>>(() => new Set());
+
+  // Sign recordings: a small file of their own; the list works without it.
+  useEffect(() => {
+    let live = true;
+    loadSigns().then((m) => { if (live) setSigns(m); }, () => { if (live) setSignsFailed(true); });
+    return () => { live = false; };
+  }, []);
 
   useEffect(() => {
     let live = true;
@@ -48,6 +63,16 @@ export default function WordbankScreen({ savedWords, onAdd, mode, setMode }: {
     return () => { live = false; };
   }, [level]);
 
+  // Real recordings among this level's words; placeholders and the words kept out of the learning modules do not count.
+  const signed = useMemo(
+    () => (signs && data && data.level === level
+      ? data.words.filter((e) => {
+          const s = findSign(signs, cardWord(e.word), e.pos);
+          return !!s && !s.sample && !excluded.has(cardWord(e.word).toLowerCase());
+        }).length
+      : 0),
+    [signs, data, level],
+  );
   const saved = useMemo(() => new Set(savedWords.map((w) => w.word.toLowerCase())), [savedWords]);
   const list = useMemo(
     () => (data && data.level === level ? data.words.filter((e) => posGroup(e.pos) === group && !excluded.has(cardWord(e.word).toLowerCase())) : null),
@@ -59,6 +84,28 @@ export default function WordbankScreen({ savedWords, onAdd, mode, setMode }: {
   return (
     <div className="animate-pop-in">
       <WordsHeader mode={mode} setMode={setMode} />
+
+      <div className="card p-3 mb-4 flex flex-wrap items-center gap-3">
+        <div className="flex-1 min-w-[12rem]">
+          <p className="font-bold text-[15px] text-ink">{st.mode}</p>
+          <p id="sign-mode-hint" className="text-sm text-ink-2">{st.modeHint}</p>
+          <p className="text-sm text-ink-3 mt-1" aria-live="polite">
+            {deaf && (signsFailed ? st.loadError : signs && data && data.level === level
+              ? (signed === 0 ? st.noneLevel : `${st.countLevel} ${signed}`)
+              : "")}
+          </p>
+        </div>
+        <button
+          type="button"
+          role="switch"
+          aria-checked={deaf}
+          aria-describedby="sign-mode-hint"
+          onClick={() => setDeaf(!deaf)}
+          className={`btn btn-sm shrink-0 ${deaf ? "btn-jade" : "btn-ghost"}`}
+        >
+          <Hand size={16} /><span className="ml-1">{st.mode}: {deaf ? st.on : st.off}</span>
+        </button>
+      </div>
 
       <p className="eyebrow mb-2">{t.wbLevel}</p>
       <div className="segmented mb-4" role="group" aria-label={t.wbLevel}>
@@ -87,9 +134,29 @@ export default function WordbankScreen({ savedWords, onAdd, mode, setMode }: {
               const translation = m.kk;
               const isSaved = saved.has(word.toLowerCase());
               const noAdd = m.reviewing ? t.wbTrReview : t.wbNoTranslation;
+              const sign = findSign(signs, word, e.pos);
+              const signId = `${word.toLowerCase()}|${e.pos}`;
+              const signOpen = !!sign && openSigns.has(signId);
+              const toggleSign = () => setOpenSigns((prev) => {
+                const next = new Set(prev);
+                if (next.has(signId)) next.delete(signId); else next.add(signId);
+                return next;
+              });
+              const signBtn = sign && (
+                <button
+                  type="button"
+                  onClick={toggleSign}
+                  aria-expanded={signOpen}
+                  aria-label={`${st.show}: ${word}`}
+                  className={`btn btn-sm ${deaf ? "btn-jade w-full" : "btn-ghost shrink-0"}`}
+                >
+                  <Hand size={16} />
+                  {deaf && <span className="ml-1">{signOpen ? st.hide : st.show}</span>}
+                </button>
+              );
               return (
-                <li key={`${e.word}|${e.pos}`} className="p-4 flex items-start gap-3">
-                  <div className="flex-1 min-w-0">
+                <li key={`${e.word}|${e.pos}`} className="p-4 flex flex-wrap items-start gap-3">
+                  <div className="flex-1 min-w-[9rem]">
                     <p className="font-display font-extrabold text-[17px] text-ink">
                       <span lang="en">{e.word}</span> <span className="text-sm font-bold text-ink-3">{e.pos}</span>
                     </p>
@@ -107,19 +174,28 @@ export default function WordbankScreen({ savedWords, onAdd, mode, setMode }: {
                       </p>
                     )}
                   </div>
-                  <button type="button" onClick={() => safePlayVoice(word)} aria-label={`${t.wbListen}: ${word}`} className="btn btn-ghost btn-sm shrink-0">
-                    <Volume2 size={16} />
-                  </button>
-                  <button
-                    type="button"
-                    disabled={isSaved || !translation}
-                    onClick={() => onAdd(word, translation)}
-                    aria-label={`${isSaved ? t.wbAdded : translation ? t.wbAdd : noAdd}: ${word}`}
-                    title={isSaved ? t.wbAdded : translation ? t.wbAdd : noAdd}
-                    className="btn btn-ghost btn-sm shrink-0 disabled:opacity-50"
-                  >
-                    {isSaved ? <Check size={16} /> : <Plus size={16} />}
-                  </button>
+                  <div className="flex items-start gap-3 shrink-0">
+                    <button type="button" onClick={() => safePlayVoice(word)} aria-label={`${t.wbListen}: ${word}`} className="btn btn-ghost btn-sm shrink-0">
+                      <Volume2 size={16} />
+                    </button>
+                    {!deaf && signBtn}
+                    <button
+                      type="button"
+                      disabled={isSaved || !translation}
+                      onClick={() => onAdd(word, translation)}
+                      aria-label={`${isSaved ? t.wbAdded : translation ? t.wbAdd : noAdd}: ${word}`}
+                      title={isSaved ? t.wbAdded : translation ? t.wbAdd : noAdd}
+                      className="btn btn-ghost btn-sm shrink-0 disabled:opacity-50"
+                    >
+                      {isSaved ? <Check size={16} /> : <Plus size={16} />}
+                    </button>
+                  </div>
+                  {deaf && signBtn && <div className="basis-full">{signBtn}</div>}
+                  {signOpen && sign && (
+                    <div className="basis-full">
+                      <SignVideoCard entry={sign} word={word} meaning={translation || undefined} autoPlay />
+                    </div>
+                  )}
                 </li>
               );
             })}
