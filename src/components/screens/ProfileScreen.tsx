@@ -10,7 +10,7 @@ import { XP_PER_LEVEL } from "../../research/params";
 import { DeleteAccountCard, PolicyRow } from "../AccountRows";
 
 /* --- 8. PROFILE SCREEN --- */
-export function ProfileScreen({ xp, t, lang = "kk", setLang, savedWordsCount = 0, unlockedAchievements = [], userName = "Learner", onSignOut, streakDays = 0, quizzesCompleted = 0, kilim, classes, roleSwitch, avatar = null, editor, placement }: {
+export function ProfileScreen({ xp, t, lang = "kk", setLang, savedWordsCount = 0, unlockedAchievements = [], userName = "Learner", onSignOut, streakDays = 0, quizzesCompleted = 0, kilim, cardsEntry, classes, roleSwitch, avatar = null, editor, placement }: {
   xp: number;
   t: Record<string, string>;
   lang?: string;
@@ -22,6 +22,8 @@ export function ProfileScreen({ xp, t, lang = "kk", setLang, savedWordsCount = 0
   streakDays?: number;
   quizzesCompleted?: number;
   kilim?: React.ReactNode;
+  /** Entry to the hero cards (five-tab site: the cards left the tab bar). */
+  cardsEntry?: React.ReactNode;
   classes?: React.ReactNode;
   roleSwitch?: React.ReactNode;
   /** Avatar id (src/utils/profileEdit.ts); the first letter of the name when none. */
@@ -96,6 +98,7 @@ export function ProfileScreen({ xp, t, lang = "kk", setLang, savedWordsCount = 0
         </div>
       </div>
 
+      {cardsEntry}
       {kilim}
 
       {/* Achievements */}

@@ -105,6 +105,18 @@ export const IconShield = ({ size, muted, className }: P) => (
 );
 
 /* Speak: a studio microphone. */
+/* Practice: a felt target with a sun centre. */
+export const IconTarget = ({ size, muted, className }: P) => (
+  <Svg size={size} className={className}>
+    <ellipse cx="16" cy="28.8" rx="10" ry="1.4" fill={pick(muted, C.feltDeep, "deep")} opacity=".18" />
+    <circle cx="16" cy="15.6" r="12" fill={pick(muted, C.felt)} />
+    <circle cx="16" cy="15.6" r="8.6" fill={pick(muted, C.card, "light")} />
+    <circle cx="16" cy="15.6" r="5.4" fill={pick(muted, C.felt)} />
+    <circle cx="16" cy="15.6" r="2.4" fill={pick(muted, C.sun, "deep")} />
+    <path d="M8.4 10.2c1.4-2.2 3.6-3.8 6.2-4.4" fill="none" stroke={shine} strokeWidth="1.5" strokeLinecap="round" />
+  </Svg>
+);
+
 export const IconMic = ({ size, muted, className }: P) => (
   <Svg size={size} className={className}>
     <path d="M8 14.4a8 8 0 0 0 16 0" fill="none" stroke={pick(muted, C.jadeDeep, "deep")} strokeWidth="2.4" strokeLinecap="round" />

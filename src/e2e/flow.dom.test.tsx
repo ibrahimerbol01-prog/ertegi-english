@@ -58,8 +58,8 @@ describe("learner path with a faked Supabase", () => {
     await waitFor(() => expect(rest("GET", "profiles").length).toBeGreaterThan(0));
     for (const c of calls.filter((c) => c.path.startsWith("/rest/v1/"))) expect(c.auth, c.path).toBe("Bearer e2e-jwt");
 
-    // Tale: library → Aldar Köse → A1 → the text is there.
-    fireEvent.click(screen.getAllByRole("button", { name: "Оқу" })[0]);
+    // Tale: the Ертегілер tab → Aldar Köse → A1 → the text is there.
+    fireEvent.click(screen.getAllByRole("button", { name: "Ертегілер" })[0]);
     fireEvent.click(await waitFor(() => button(/^I тарау.*Aldar Köse & the Rich/)));
     fireEvent.click(await waitFor(() => button(/^A1/)));
     const word = await waitFor(() => {
@@ -111,11 +111,18 @@ describe("learner path with a faked Supabase", () => {
     expect(order.every((v) => verbs.includes(v))).toBe(true);
     expect(order.map((v) => verbs.indexOf(v))).toEqual(order.map((v) => verbs.indexOf(v)).sort((a, b) => a - b));
 
-    // Wordbank: Words → the wordbank of A1.
-    fireEvent.click(screen.getAllByRole("button", { name: "Сөздер" })[0]);
+    // Wordbank: the Сөздік tab → the wordbank of A1 (five-tab navigation).
+    fireEvent.click(screen.getAllByRole("button", { name: "Сөздік" })[0]);
     fireEvent.click(await waitFor(() => button(/^Сөздік қоры$/)));
     expect(await screen.findByRole("group", { name: "Деңгей" })).toBeTruthy();
     expect(await screen.findByText("action", {}, { timeout: 5000 })).toBeTruthy();
+
+    // Practice: one tab for review, speaking and the quiz, switched inside; the hero cards open from Me.
+    fireEvent.click(screen.getAllByRole("button", { name: /Жаттығу/ })[0]);
+    const kinds = await screen.findByRole("tablist", { name: "Жаттығу түрі" });
+    expect(within(kinds).getAllByRole("tab").map((x) => x.textContent)).toEqual(["Сөздер", "Айтылым", "Тест"]);
+    fireEvent.click(screen.getAllByRole("button", { name: "Мен" })[0]);
+    expect(await screen.findByRole("button", { name: /Батырлар карталары/ })).toBeTruthy();
     for (const c of calls.filter((c) => c.path.startsWith("/rest/v1/"))) expect(c.auth, c.path).toBe("Bearer e2e-jwt");
   }, 60_000);
 });
