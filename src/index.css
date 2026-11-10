@@ -34,6 +34,19 @@
   --color-jade-deep: #178A60;
   --color-jade-soft: #DDF5EA;
 
+  /* Shanyraq 2.0 (docs/design-system.md): ember = brand and the one main action, rose = errors. */
+  --color-ember: #C2410C;        /* main action fill; white label 5.18:1 */
+  --color-ember-deep: #8F2F08;   /* 3D edge of the main action */
+  --color-ember-ink: #B93A12;    /* orange text on sand and white (5.7:1) */
+  --color-ember-soft: #FFE9E1;   /* active tab, icon wells */
+  --color-rose: #B42335;         /* errors: border, fill with white (6.5:1) */
+  --color-rose-ink: #8E1B29;     /* error text on rose-soft */
+  --color-rose-soft: #FDECEE;    /* wrong-answer background */
+  --color-jade-ink: #157A56;     /* correct / "I know it" text and fill with white (5.32:1) */
+  --color-sun-hl: #FFE7A3;       /* selected word in the reader */
+  --color-word-learning: #8A5A00; /* "learning" word chip text on sun-soft */
+  --color-word-known: #0F5E42;   /* "known" word chip text on jade-soft */
+
   --color-night: #1F2B4D;        /* hero story cards (steppe night) */
   --color-night-2: #2B3B66;
 
@@ -116,7 +129,7 @@
   .tile:active:not(:disabled) { transform: translateY(2px); border-bottom-width: 2px; margin-bottom: 2px; box-shadow: var(--elev-press); }
   .tile-selected { background: var(--color-sky-soft); border-color: var(--color-sky); color: var(--color-sky-ink); }
   .tile-correct { background: var(--color-jade-soft); border-color: var(--color-jade); color: #0F6E4B; }
-  .tile-wrong { background: var(--color-felt-soft); border-color: var(--color-felt); color: var(--color-felt-deep); }
+  .tile-wrong { background: var(--color-rose-soft); border-color: var(--color-rose); color: var(--color-rose-ink); }
 
   /* Duolingo 3D button. Colour comes from a modifier. */
   /* Fills are one step deeper than the brand tokens so white labels keep 4.5:1 (WCAG AA). */
@@ -137,9 +150,8 @@
     box-shadow: var(--edge-light), 0 4px 0 var(--e), 0 10px 16px -10px rgb(var(--shadow-rgb) / 0.5);
     font-family: var(--font-display);
     font-weight: 900;
-    font-size: 15px;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
+    font-size: 17px;
+    letter-spacing: 0;
     transition: transform var(--press-ms) ease, box-shadow var(--press-ms) ease, filter 0.15s ease;
     user-select: none;
   }
@@ -149,12 +161,14 @@
   .btn-sun { --b: var(--color-sun); --e: var(--color-sun-deep); --f: var(--color-ink); }
   .btn-jade { --b: #15805A; --e: #0F6446; }
   .btn-felt { --b: #C4441E; --e: #973213; }
+  .btn-ember { --b: var(--color-ember); --e: var(--color-ember-deep); }
+  .btn-rose { --b: var(--color-rose); --e: var(--color-rose-ink); }
   .btn-night { --b: var(--color-night); --e: #121a31; }
   .btn-ghost {
     --b: var(--color-card); --e: var(--color-line-2); --f: var(--color-sky-deep);
     border: 2px solid var(--color-line);
   }
-  .btn-sm { min-height: 44px; padding: 0 14px; font-size: 13px; }
+  .btn-sm { min-height: 44px; padding: 0 14px; font-size: 15px; }
 
   /* Pill chip for stats and labels */
   .chip {

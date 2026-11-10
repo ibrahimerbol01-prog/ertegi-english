@@ -187,7 +187,7 @@ export function OyuKilim({ progress, lang, maqalCount }: { progress: Set<string>
                   </span>
                 </span>
               )}
-              <span className="text-[11px] font-bold text-center px-1 leading-tight">{has ? oyu.name[l] : `${l === "kk" ? "Ертегі" : "Tale"} ${i + 1}`}</span>
+              <span className="text-xs font-bold text-center px-1 leading-tight">{has ? oyu.name[l] : `${l === "kk" ? "Ертегі" : "Tale"} ${i + 1}`}</span>
             </div>
           );
         })}

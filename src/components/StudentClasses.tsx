@@ -86,11 +86,11 @@ export function JoinClassSheet({ open, onClose, lang, defaultName, initialCode =
               aria-describedby={error ? "join-error" : badLetters ? "join-code-hint" : undefined}
             />
             {badLetters && (
-              <p id="join-code-hint" className="text-[13px] text-felt-deep font-semibold mt-1.5">
+              <p id="join-code-hint" className="text-[13px] text-rose-ink font-semibold mt-1.5">
                 {kk ? "Кодта I, O, 0, 1 болмайды: мұғалімнен кодты тексер." : "Codes never have I, O, 0 or 1: check the code with your teacher."}
               </p>
             )}
-            {error && <p id="join-error" role="alert" className="mt-4 text-[14px] font-semibold text-felt-deep">{errorText(error, kk)}</p>}
+            {error && <p id="join-error" role="alert" className="mt-4 text-[14px] font-semibold text-rose-ink">{errorText(error, kk)}</p>}
             <div className="grid grid-cols-2 gap-3 mt-6">
               <button type="button" onClick={onClose} className="btn btn-ghost">{kk ? "Артқа" : "Back"}</button>
               <button type="submit" disabled={!ready || busy} className="btn">{busy ? "…" : kk ? "Қосылу" : "Join"}</button>
@@ -152,7 +152,7 @@ export function AssignmentsCard({ lang, userId, progress, onStartRead, onStartQu
               <li key={a.id}>
                 <button
                   onClick={() => start(a)}
-                  className={`w-full text-left flex items-center gap-3 rounded-2xl border-2 px-3.5 py-3 ${done ? "border-line bg-sand/60" : overdue ? "border-felt/40 bg-felt-soft/50" : "border-line bg-card hover:bg-sand/60"}`}
+                  className={`w-full text-left flex items-center gap-3 rounded-2xl border-2 px-3.5 py-3 ${done ? "border-line bg-sand/60" : overdue ? "border-rose/40 bg-rose-soft/50" : "border-line bg-card hover:bg-sand/60"}`}
                 >
                   <span className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 ${done ? "bg-jade-soft text-jade-deep" : a.step === "quiz" ? "bg-sun-soft text-[#8A5A00]" : "bg-sky-soft text-sky-deep"}`}>
                     {done ? <Check size={18} strokeWidth={3} /> : a.step === "quiz" ? <Trophy size={18} /> : <BookOpen size={18} />}
@@ -161,7 +161,7 @@ export function AssignmentsCard({ lang, userId, progress, onStartRead, onStartQu
                     <span className={`block font-bold text-[15px] truncate ${done ? "text-ink-2 line-through decoration-2" : "text-ink"}`}>
                       {storyTitle(a.story_id)}
                     </span>
-                    <span className={`flex flex-wrap items-center gap-x-1.5 text-[13px] ${overdue ? "text-felt-deep font-semibold" : "text-ink-2"}`}>
+                    <span className={`flex flex-wrap items-center gap-x-1.5 text-[13px] ${overdue ? "text-rose-ink font-semibold" : "text-ink-2"}`}>
                       <b className="font-bold whitespace-nowrap">{stepLabel(a.step, kk)}</b>
                       {done
                         ? <span className="whitespace-nowrap">· {kk ? "орындалды" : "done"}</span>
@@ -217,7 +217,7 @@ export function MyClassesSection({ lang, userId, defaultName }: { lang: string; 
               <span className="block text-[16px] text-ink truncate">{c.name}</span>
               <span className="block text-[13px] text-ink-2 truncate">{kk ? "Атың" : "Your name"}: {c.nickname}{c.archived ? (kk ? " · мұрағатта" : " · archived") : ""}</span>
             </span>
-            <button onClick={() => { setLeaveError(null); setLeaving(c); }} className="btn btn-ghost btn-sm !text-felt-deep">
+            <button onClick={() => { setLeaveError(null); setLeaving(c); }} className="btn btn-ghost btn-sm !text-rose-ink">
               <LogOut size={15} aria-hidden /> {kk ? "Сыныптан шығу" : "Leave"}
             </button>
           </div>
@@ -246,10 +246,10 @@ export function MyClassesSection({ lang, userId, defaultName }: { lang: string; 
                 ? `«${leaving.name}». Сенің прогресің сақталады, бірақ мұғалім оны енді көрмейді. Қайта қосылу үшін код керек.`
                 : `“${leaving.name}”. Your progress stays, but your teacher won't see it any more. You'll need the code to come back.`}
             </p>
-            {leaveError && <p role="alert" className="mt-3 text-[14px] font-semibold text-felt-deep">{errorText(leaveError, kk)}</p>}
+            {leaveError && <p role="alert" className="mt-3 text-[14px] font-semibold text-rose-ink">{errorText(leaveError, kk)}</p>}
             <div className="grid grid-cols-2 gap-3 mt-6">
               <button onClick={() => setLeaving(null)} className="btn btn-ghost">{kk ? "Артқа" : "Back"}</button>
-              <button onClick={confirmLeave} disabled={busy} className="btn btn-felt">{kk ? "Шығу" : "Leave"}</button>
+              <button onClick={confirmLeave} disabled={busy} className="btn btn-rose">{kk ? "Шығу" : "Leave"}</button>
             </div>
           </div>
         )}

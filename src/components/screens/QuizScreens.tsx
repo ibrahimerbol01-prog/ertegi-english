@@ -368,7 +368,7 @@ export function QuizScreen({ onReward, t, onQuizFinish, questions, storyTitle, o
             <h2 className="font-display font-black text-[22px] text-ink">{tr("Бос орынды толтыр", "Fill in the blank")}</h2>
             <p lang="en" className="text-[18px] text-ink leading-relaxed mt-3">
               {(question.sentence || "").split("___")[0]}
-              <span className={`inline-block min-w-[72px] border-b-[3px] mx-1 text-center font-bold ${done ? (status === "correct" ? "border-jade text-jade-deep" : "border-felt text-felt-deep") : "border-sky text-sky-deep"}`}>
+              <span className={`inline-block min-w-[72px] border-b-[3px] mx-1 text-center font-bold ${done ? (status === "correct" ? "border-jade text-jade-deep" : "border-felt text-rose-ink") : "border-sky text-sky-deep"}`}>
                 {blank}
               </span>
               {(question.sentence || "").split("___")[1]}
@@ -405,8 +405,8 @@ export function QuizScreen({ onReward, t, onQuizFinish, questions, storyTitle, o
                 {idx + 1}
               </span>
               <span className={`flex-1 text-[16px] font-semibold ${ruledOut ? "line-through decoration-2" : ""}`}>{opt}</span>
-              {done && idx === question.correct && <Check size={20} strokeWidth={3} className="text-jade" />}
-              {ruledOut && <X size={20} strokeWidth={3} className="text-felt" />}
+              {done && idx === question.correct && <Check size={20} strokeWidth={3} className="text-jade-ink" aria-hidden="true" />}
+              {ruledOut && <X size={20} strokeWidth={3} className="text-rose" aria-hidden="true" />}
             </button>
           );
         })}
@@ -458,18 +458,18 @@ export function QuizScreen({ onReward, t, onQuizFinish, questions, storyTitle, o
           )}
         </>
       ) : (
-        <div className={`mt-7 rounded-[24px] p-5 animate-pop-in ${status === "correct" ? "bg-jade-soft" : "bg-felt-soft"}`} aria-live="polite">
+        <div className={`mt-7 rounded-[24px] p-5 animate-pop-in ${status === "correct" ? "bg-jade-soft" : "bg-rose-soft"}`} aria-live="polite">
           <div className="flex items-start gap-3">
             <span className={`w-11 h-11 rounded-full bg-card flex items-center justify-center shrink-0 ${status === "correct" ? "text-jade" : "text-felt"}`}>
               {status === "correct" ? <Check size={24} strokeWidth={3.5} /> : <X size={24} strokeWidth={3.5} />}
             </span>
             <div className="min-w-0 flex-1">
-              <p className={`font-display font-black text-xl ${status === "correct" ? "text-jade-deep" : "text-felt-deep"}`}>
+              <p className={`font-display font-black text-xl ${status === "correct" ? "text-jade-deep" : "text-rose-ink"}`}>
                 {status === "correct"
                   ? (wrongPicks.length ? tr("Дұрыс, екінші әрекетпен!", "Right, on the second try!") : t.correctMsg)
                   : tr("Дұрыс жауап:", "The right answer:")}
               </p>
-              {status === "revealed" && <p className="text-[15px] text-felt-deep font-semibold">{answer}</p>}
+              {status === "revealed" && <p className="text-[15px] text-rose-ink font-semibold">{answer}</p>}
               {!practice && (
                 <p className="text-sm font-bold text-ink-2 mt-0.5">
                   {status === "correct" ? `+${wrongPicks.length ? QUIZ_XP_SECOND_TRY : QUIZ_XP_FIRST_TRY} XP` : myConf === "sure"
@@ -491,11 +491,11 @@ export function QuizScreen({ onReward, t, onQuizFinish, questions, storyTitle, o
             <p className="mt-3 text-[14px] text-ink-2">{tr("Ертегіде бұл жер табылмады. Шоқаннан неге екенін сұрап көр.", "We couldn't find this place in the tale. Ask Shoqan why.")}</p>
           )}
           {!RESEARCH_MODE && status === "revealed" && (
-            <button onClick={askShoqan} className="mt-3 h-8 px-3 rounded-full bg-card text-felt-deep text-sm font-bold inline-flex items-center gap-1.5">
+            <button onClick={askShoqan} className="mt-3 h-8 px-3 rounded-full bg-card text-rose-ink text-sm font-bold inline-flex items-center gap-1.5">
               <MessageCircle size={15} /> {tr("Неге? Шоқаннан сұра", "Why? Ask Shoqan")}
             </button>
           )}
-          <button onClick={handleNext} className={`btn w-full mt-4 ${status === "correct" ? "btn-jade" : "btn-felt"}`}>
+          <button onClick={handleNext} className={`btn w-full mt-4 ${status === "correct" ? "btn-jade" : "btn-rose"}`}>
             {pos + 1 >= round.length ? tr("Нәтижені көру", "See results") : tr("Жалғастыру", "Continue")}
           </button>
         </div>

@@ -248,22 +248,22 @@ export function SpeakScreen({ onReward, t }: {
       </div>
 
       {speechError && (
-        <div className="rounded-2xl bg-felt-soft text-felt-deep p-4 text-sm font-medium text-center animate-pop-in">
+        <div className="rounded-2xl bg-rose-soft text-rose-ink p-4 text-sm font-medium text-center animate-pop-in">
           {speechError}
         </div>
       )}
 
       {misread && (
         <div className="card p-6 text-center animate-pop-in">
-          <span className="mx-auto w-14 h-14 rounded-full bg-felt-soft text-felt flex items-center justify-center">
+          <span className="mx-auto w-14 h-14 rounded-full bg-rose-soft text-felt flex items-center justify-center">
             <X size={28} strokeWidth={3} />
           </span>
-          <p className="font-display font-black text-xl text-felt-deep mt-3">{tr("Сөйлем дұрыс оқылмады", "That's not the sentence")}</p>
+          <p className="font-display font-black text-xl text-rose-ink mt-3">{tr("Сөйлем дұрыс оқылмады", "That's not the sentence")}</p>
           <p className="text-[15px] text-ink-2 mt-1">{tr("Жоғарыдағы сөйлемге қарап, қайта оқып көр.", "Look at the sentence above and read it again.")}</p>
           {transcript && <p className="text-sm text-ink-3 italic mt-3">{tr("Естілгені", "We heard")}: “{transcript}”</p>}
           <div className="grid grid-cols-2 gap-3 mt-5">
             <button onClick={() => safePlayVoice(targetPhrase)} className="btn btn-ghost btn-sm"><Volume2 size={16} /> {tr("Тыңдау", "Listen")}</button>
-            <button onClick={toggleRecord} className="btn btn-felt btn-sm"><Mic size={16} /> {tr("Қайталау", "Try again")}</button>
+            <button onClick={toggleRecord} className="btn btn-rose btn-sm"><Mic size={16} /> {tr("Қайталау", "Try again")}</button>
           </div>
         </div>
       )}
@@ -292,8 +292,8 @@ export function SpeakScreen({ onReward, t }: {
                 {wordScores.map((w, i) => {
                   const missed = w.error === "Omission";
                   const cls = missed
-                    ? "bg-felt-soft text-felt-deep line-through"
-                    : w.score >= 80 ? "bg-jade-soft text-jade-deep" : w.score >= 60 ? "bg-sun-soft text-ink" : "bg-felt-soft text-felt-deep";
+                    ? "bg-rose-soft text-rose-ink line-through"
+                    : w.score >= 80 ? "bg-jade-soft text-jade-deep" : w.score >= 60 ? "bg-sun-soft text-ink" : "bg-rose-soft text-rose-ink";
                   return (
                     <button key={i} onClick={() => safePlayVoice(w.word)} className={`h-9 px-3 rounded-xl font-semibold text-[15px] flex items-center gap-1.5 ${cls}`}>
                       {w.word}

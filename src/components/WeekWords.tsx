@@ -172,7 +172,7 @@ function DailyCard({ lang, userId, progress = new Set<string>(), onReward = () =
             <span
               key={i}
               aria-hidden="true"
-              className={`h-7 min-w-7 px-1 rounded-full grid place-items-center text-[11px] font-bold ${done[i] ? "bg-[#15805A] text-white" : i === weekday ? "border-2 border-sky text-sky-deep" : "bg-sand-2 text-ink-2"}`}
+              className={`h-7 min-w-7 px-1 rounded-full grid place-items-center text-xs font-bold ${done[i] ? "bg-[#15805A] text-white" : i === weekday ? "border-2 border-sky text-sky-deep" : "bg-sand-2 text-ink-2"}`}
             >
               {done[i] ? <Check size={13} strokeWidth={3.5} /> : d}
             </span>
@@ -294,7 +294,7 @@ function Debate({ kk, week, dilemma, entry, onChange, onSubmit, onReward, seen }
           <p className="text-[15px] text-ink-2 mb-3">{tr("Сенің ойың қандай?", "What do you think?")}</p>
           <div className="grid gap-3">
             {(["yes", "no"] as Side[]).map((s) => (
-              <button key={s} onClick={() => { set({ side: s }); setStep(2); }} className={`btn w-full ${s === "yes" ? "btn-jade" : "btn-felt"}`}>
+              <button key={s} onClick={() => { set({ side: s }); setStep(2); }} className={`btn w-full ${s === "yes" ? "btn-jade" : "btn-rose"}`}>
                 {sideLabel(s)}
               </button>
             ))}
@@ -348,7 +348,7 @@ function Debate({ kk, week, dilemma, entry, onChange, onSubmit, onReward, seen }
           />
           <p className="text-[13px] mt-1.5 min-h-[20px]" aria-live="polite">
             {copied ? (
-              <span className="text-felt-deep font-semibold">{tr("Бұл ертегіден көшірілген сияқты. Өз сөзіңмен жаз.", "This looks copied from the tale. Write it in your own words.")}</span>
+              <span className="text-rose-ink font-semibold">{tr("Бұл ертегіден көшірілген сияқты. Өз сөзіңмен жаз.", "This looks copied from the tale. Write it in your own words.")}</span>
             ) : notEnglish ? (
               <span className="text-sun-deep font-semibold">{tr("Ағылшынша жазып көр. Қазір жіберсең де болады, бірақ XP аз болады.", "Try it in English. You can still send it, for fewer XP.")}</span>
             ) : missing > 0 && hasWords(entry.text) ? (
@@ -398,7 +398,7 @@ function Debate({ kk, week, dilemma, entry, onChange, onSubmit, onReward, seen }
           <p className="text-[15px] text-ink-2 mt-4">{tr("Енді ойың қандай?", "So, what do you think now?")}</p>
           <div className="grid grid-cols-2 gap-3 mt-2">
             {(["yes", "no"] as Side[]).map((s) => (
-              <button key={s} onClick={() => finish(s)} disabled={!hasWords(entry.reply)} className={`btn ${s === "yes" ? "btn-jade" : "btn-felt"}`}>
+              <button key={s} onClick={() => finish(s)} disabled={!hasWords(entry.reply)} className={`btn ${s === "yes" ? "btn-jade" : "btn-rose"}`}>
                 {sideLabel(s)}
               </button>
             ))}

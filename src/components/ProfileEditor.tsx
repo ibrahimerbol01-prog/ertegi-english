@@ -71,7 +71,7 @@ export default function ProfileEditor({ userId, lang, name, avatar, onSaved }: {
                 ))}
               </div>
             </fieldset>
-            {error && <p id="pe-error" role="alert" className="text-sm text-felt-deep bg-felt-soft rounded-xl px-3 py-2.5">{error}</p>}
+            {error && <p id="pe-error" role="alert" className="text-sm text-rose-ink bg-rose-soft rounded-xl px-3 py-2.5">{error}</p>}
             <button type="submit" disabled={busy} className="btn w-full">{busy ? t.peSaving : t.peSave}</button>
           </form>
         </Sheet>

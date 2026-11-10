@@ -119,8 +119,8 @@ export function DeleteAccountSheet({ lang, teacher = false, onClose }: { lang: s
     <Sheet open onClose={close} label={T.title}>
       <div className="p-6 pt-4 flex flex-col">
         <div className="flex items-center gap-3 mb-3">
-          <span className="w-10 h-10 rounded-xl bg-felt-soft flex items-center justify-center shrink-0">
-            <AlertTriangle size={20} className="text-felt-deep" aria-hidden="true" />
+          <span className="w-10 h-10 rounded-xl bg-rose-soft flex items-center justify-center shrink-0">
+            <AlertTriangle size={20} className="text-rose-ink" aria-hidden="true" />
           </span>
           <h3 className="font-display text-xl font-black text-ink">{T.title}</h3>
         </div>
@@ -150,13 +150,13 @@ export function DeleteAccountSheet({ lang, teacher = false, onClose }: { lang: s
 
         <div ref={errRef}>
           {failure && (
-            <p id={`${inputId}-err`} role="alert" className="mt-4 text-sm text-felt-deep bg-felt-soft rounded-xl px-3 py-2.5 leading-relaxed">
+            <p id={`${inputId}-err`} role="alert" className="mt-4 text-sm text-rose-ink bg-rose-soft rounded-xl px-3 py-2.5 leading-relaxed">
               {T.errors[failure]}
             </p>
           )}
           <div className="grid grid-cols-2 gap-3 mt-5">
             <button type="button" onClick={close} disabled={busy} className="btn btn-ghost">{T.cancel}</button>
-            <button type="button" onClick={run} disabled={!ok || busy} aria-busy={busy || undefined} className="btn btn-felt">
+            <button type="button" onClick={run} disabled={!ok || busy} aria-busy={busy || undefined} className="btn btn-rose">
               {busy ? <><Loader2 size={18} className="animate-spin" aria-hidden="true" /> {T.busy}</> : failure ? T.retry : T.confirm}
             </button>
           </div>

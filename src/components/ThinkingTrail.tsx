@@ -285,7 +285,7 @@ function TrailFlow({ kk, claimQ, level, text, past, draft, onDraft, onSave, onFe
             className="mt-2 w-full rounded-2xl border-2 border-line bg-card p-3 text-[16px] text-ink focus:border-sky-deep resize-none"
           />
           <p className="text-[13px] mt-1 min-h-[18px]" aria-live="polite">
-            {claimCopied ? <span className="text-felt-deep font-semibold">{tr("Бұл ертегіден көшірілген сияқты. Өз сөзіңмен жаз.", "This looks copied from the tale. Use your own words.")}</span>
+            {claimCopied ? <span className="text-rose-ink font-semibold">{tr("Бұл ертегіден көшірілген сияқты. Өз сөзіңмен жаз.", "This looks copied from the tale. Use your own words.")}</span>
               : claim && mostlyNotEnglish(claim) ? <span className="text-sun-deep font-semibold">{tr("Ағылшынша байқап көр. Қазақша да қабылданады.", "Try it in English. Kazakh is accepted too.")}</span>
               : !early && choice && words(claim) < TRAIL_CLAIM_MIN_WORDS ? <span className="text-ink-3">{tr("Тағы бірнеше сөз жаз.", "Add a few more words.")}</span>
               : null}
@@ -307,7 +307,7 @@ function TrailFlow({ kk, claimQ, level, text, past, draft, onDraft, onSave, onFe
                   key={i}
                   onClick={() => toggle(i)}
                   aria-pressed={on}
-                  className={`block w-full text-left rounded-xl px-2.5 py-2 text-[15px] leading-relaxed transition-colors duration-300 ${on ? "bg-sun-soft text-ink font-semibold" : dropped === i ? "bg-felt-soft text-ink" : "text-ink-2 hover:bg-sand-2"}`}
+                  className={`block w-full text-left rounded-xl px-2.5 py-2 text-[15px] leading-relaxed transition-colors duration-300 ${on ? "bg-sun-soft text-ink font-semibold" : dropped === i ? "bg-rose-soft text-ink" : "text-ink-2 hover:bg-sand-2"}`}
                 >
                   {s}
                 </button>

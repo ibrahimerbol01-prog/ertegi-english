@@ -187,7 +187,7 @@ export const DailyGoalRing = ({ current, goal, size = 72 }: { current: number; g
         ) : (
           <>
             <span className="font-display text-base font-black text-ink leading-none">{current}</span>
-            <span className="text-[10px] font-semibold text-ink-3 mt-0.5">/ {goal}</span>
+            <span className="text-xs font-semibold text-ink-3 mt-0.5">/ {goal}</span>
           </>
         )}
       </div>

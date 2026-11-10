@@ -135,8 +135,8 @@ export function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, s
             >
               <StoryCover id={story.id} className="w-[72px] h-[72px] rounded-2xl shrink-0 shadow-[0_3px_0_var(--color-line-2)]" />
               <div className="flex-1 min-w-0">
-                <p className="eyebrow text-[11px] text-sky-deep">{lang === "kk" ? story.sceneLabelKk : displayTitle(story.sceneLabel)}</p>
-                <h3 className="font-display font-extrabold text-[17px] text-ink leading-snug mt-0.5">{displayTitle(story.title)}</h3>
+                <p className="eyebrow text-sky-ink">{lang === "kk" ? story.sceneLabelKk : displayTitle(story.sceneLabel)}</p>
+                <h2 className="font-display font-extrabold text-[17px] text-ink leading-snug mt-0.5">{displayTitle(story.title)}</h2>
                 <p className="text-sm text-ink-2 line-clamp-1 mt-0.5">{story.storyDesc[lang] || story.storyDesc.en}</p>
               </div>
               <ChevronRight size={20} className="text-ink-3 shrink-0" />
@@ -179,7 +179,7 @@ export function ReaderScreen({ selectedStory, setSelectedStory, selectedLevel, s
                   {lvl.badge}
                 </span>
                 <div className="flex-1 min-w-0">
-                  <h3 className="font-display font-extrabold text-[17px] text-ink">{lang === "kk" ? lvl.kkTitle : lvl.title}</h3>
+                  <h2 className="font-display font-extrabold text-[17px] text-ink">{lang === "kk" ? lvl.kkTitle : lvl.title}</h2>
                   <p className="text-sm text-ink-2 leading-snug">{lang === "kk" ? lvl.kkDesc : lvl.desc}</p>
                   {metaText && (
                     <p

@@ -58,7 +58,7 @@ export default function PlacementCheck({ userId, lang, place, onRead }: {
         <p className="eyebrow">{t.plTitle}</p>
         <p className="font-display font-extrabold text-[22px] text-ink">{r.level ? `${t.plAbout} ${r.level}` : t.plBelowA1}</p>
         <p className="text-sm text-ink-2">{t.plNotDiagnosis}</p>
-        {!r.reliable && <p role="note" className="text-sm text-felt-deep">{t.plUnreliable}</p>}
+        {!r.reliable && <p role="note" className="text-sm text-rose-ink">{t.plUnreliable}</p>}
         <div className="flex flex-wrap gap-2 pt-1">
           <button type="button" onClick={() => onRead(level)} className="btn btn-sm">{t.plReadAt} {level}</button>
           <button type="button" onClick={start} className="btn btn-ghost btn-sm">{t.plRetake}</button>

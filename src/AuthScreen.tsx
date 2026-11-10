@@ -119,7 +119,7 @@ export default function AuthScreen() {
   };
 
   return (
-    <div className="relative min-h-dvh w-full flex items-center justify-center bg-sand px-4 py-10 overflow-hidden">
+    <main className="relative min-h-dvh w-full flex items-center justify-center bg-sand px-4 py-10 overflow-hidden">
       <SteppeBackground />
       {showPolicy && <Suspense fallback={null}><PrivacyPolicySheet lang={lang} onClose={() => setShowPolicy(false)} /></Suspense>}
       <div className="relative z-10 w-full max-w-[400px] card overflow-hidden px-6 pt-10 pb-7 space-y-5">
@@ -188,7 +188,7 @@ export default function AuthScreen() {
                 <input type="email" required autoComplete="email" inputMode="email" value={email} onChange={(e) => setEmail(e.target.value)}
                   aria-invalid={!!error || undefined} aria-describedby={error ? "auth-error" : undefined} className="field" />
               </label>
-              {error && <p id="auth-error" role="alert" className="text-sm text-felt-deep bg-felt-soft rounded-xl px-3 py-2.5 leading-relaxed">{error}</p>}
+              {error && <p id="auth-error" role="alert" className="text-sm text-rose-ink bg-rose-soft rounded-xl px-3 py-2.5 leading-relaxed">{error}</p>}
               <button type="submit" disabled={loading} className="btn w-full !mt-5">{loading ? tr("Күте тұр...", "Please wait...") : tr("Сілтеме жіберу", "Send the link")}</button>
               <button type="button" onClick={() => { setError(null); setMode("signin"); }} className="btn btn-ghost w-full">{tr("Кіруге оралу", "Back to sign in")}</button>
             </form>
@@ -283,7 +283,7 @@ export default function AuthScreen() {
               </label>
             )}
 
-            {error && <p id="auth-error" role="alert" className="text-sm text-felt-deep bg-felt-soft rounded-xl px-3 py-2.5 leading-relaxed">{error}</p>}
+            {error && <p id="auth-error" role="alert" className="text-sm text-rose-ink bg-rose-soft rounded-xl px-3 py-2.5 leading-relaxed">{error}</p>}
 
             {/* Not disabled without consent: pressing it says what is missing. */}
             <button type="submit" disabled={loading} className="btn w-full !mt-5">
@@ -307,6 +307,6 @@ export default function AuthScreen() {
           </p>
         )}
       </div>
-    </div>
+    </main>
   );
 }
