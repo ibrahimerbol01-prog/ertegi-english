@@ -1,7 +1,7 @@
 import { lazy, Suspense, useState, useRef, useEffect } from "react";
 import type { Session } from "@supabase/supabase-js";
 import { IconYurt, IconBook, IconTrophy, IconCards, IconShield, IconLearner, IconTarget, IconFlame, IconBolt, IconBoard } from "./components/Icons";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, X } from "lucide-react";
 import {
   LevelUpModal, AchievementBanner, XpToast,
   StaticOrnamentBg, SaveErrorToast, BrandMark, DailyGoalRing
@@ -17,6 +17,9 @@ const loadQuiz = () => import("./components/screens/QuizScreens");
 const loadSpeak = () => import("./components/screens/SpeakScreen");
 const loadProfile = () => import("./components/screens/ProfileScreen");
 const FlashcardsScreen = lazy(() => loadWords().then((m) => ({ default: m.FlashcardsScreen })));
+// Practice → Words overview before the review (redesign stage 6). Ordinary build only: the
+// research build gets no chunk (__ERTEGI_RESEARCH__ is a build-time literal).
+const PracticeWordsOverview = __ERTEGI_RESEARCH__ ? null : lazy(() => import("./components/PracticeWordsOverview").then((m) => ({ default: m.PracticeWordsOverview })));
 const MatchingGame = lazy(() => loadWords().then((m) => ({ default: m.MatchingGame })));
 // «Сөздік қоры», ordinary site only (R4); its data is a lazy chunk per level (src/data/wordbank).
 const WordbankScreen = RESEARCH_MODE ? null : lazy(() => import("./components/screens/WordbankScreen"));
@@ -108,6 +111,8 @@ export default function KazakhTalesApp({ session, role, onRoleChange }: { sessio
   const online = useOnline();
   const [progress, setProgress] = useState<Set<string>>(new Set());
   const [wordsMode, setWordsMode] = useState("cards");
+  // The flashcard review was started from the overview (stage 6); back to the overview on leaving.
+  const [reviewing, setReviewing] = useState(false);
   const [lastPractice, setLastPractice] = useState<"words" | "speak" | "quiz">("words");
 
   const [sessionXp, setSessionXp] = useState(0);
@@ -511,6 +516,8 @@ export default function KazakhTalesApp({ session, role, onRoleChange }: { sessio
     { id: "profile",  label: t.navMe,       Icon: IconLearner },
   ];
   const fiveTabs = !teacher && !RESEARCH_MODE;
+  // Practice → Words opens on the overview (stage 6) until a review is started.
+  const wordsOverview = !!PracticeWordsOverview && fiveTabs && !reviewing && wordsMode === "cards" && savedWords.length > 0;
   const inPractice = tab === "quiz" || tab === "speak" || (tab === "words" && wordsMode !== "bank");
   // A teacher's quiz opens from a tale, so "Tales" stays lit there.
   const isActive = (id: string) => {
@@ -523,6 +530,7 @@ export default function KazakhTalesApp({ session, role, onRoleChange }: { sessio
   const openQuiz = () => { setQuizLevel(null); setQuizStarted(false); setTab("quiz"); };
   const openPractice = (sub: "words" | "speak" | "quiz") => {
     setLastPractice(sub);
+    setReviewing(false);
     if (sub === "quiz") return openQuiz();
     if (sub === "words" && wordsMode === "bank") setWordsMode("cards");
     setTab(sub);
@@ -652,7 +660,7 @@ export default function KazakhTalesApp({ session, role, onRoleChange }: { sessio
                   {(["words", "speak", "quiz"] as const).map((sub) => {
                     const on = sub === "words" ? tab === "words" : tab === sub;
                     return (
-                      <button key={sub} role="tab" aria-selected={on} aria-pressed={on} onClick={() => openPractice(sub)} className="min-h-[44px] text-[15px] font-semibold">
+                      <button key={sub} role="tab" aria-selected={on} onClick={() => openPractice(sub)} className="min-h-[44px] text-[15px] font-semibold">
                         {sub === "words" ? t.practiceWords : sub === "speak" ? t.practiceSpeak : t.practiceTest}
                       </button>
                     );
@@ -741,15 +749,30 @@ export default function KazakhTalesApp({ session, role, onRoleChange }: { sessio
               )}
               {tab === "words" && (
                 <div className="animate-pop-in">
-                  {!RESEARCH_MODE && <div className="mb-8">
+                  {/* On the overview (stage 6) «Бүгін қайталау» comes first; the daily words follow it. */}
+                  {!RESEARCH_MODE && !wordsOverview && <div className="mb-8">
                     <WordCoach savedWords={savedWords} progress={progress} userId={userId} lang={lang} onLearn={(w, tr) => handleSaveWord(w, tr, "daily")} onReward={addXp} />
                   </div>}
                   {!RESEARCH_MODE && WordbankScreen && wordsMode === "bank" ? (
                     <WordbankScreen savedWords={savedWords} onAdd={(w, tr) => handleSaveWord(w, tr, "wordbank")} mode={wordsMode} setMode={setWordsMode} />
                   ) : wordsMode === "match" ? (
                     <MatchingGame savedWords={savedWords} onReward={addXp} mode={wordsMode} setMode={setWordsMode} />
+                  ) : PracticeWordsOverview && wordsOverview ? (
+                    <>
+                      <PracticeWordsOverview savedWords={savedWords} dueCount={dueCount} lang={lang} onStart={() => setReviewing(true)} mode={wordsMode} setMode={setWordsMode} />
+                      <div className="mt-8">
+                        <WordCoach savedWords={savedWords} progress={progress} userId={userId} lang={lang} onLearn={(w, tr) => handleSaveWord(w, tr, "daily")} onReward={addXp} />
+                      </div>
+                    </>
                   ) : (
-                    <FlashcardsScreen savedWords={savedWords} loadFailed={wordsLoadFailed} onReview={handleReview} lang={lang} mode={wordsMode} setMode={setWordsMode} />
+                    <>
+                      {PracticeWordsOverview && fiveTabs && reviewing && (
+                        <button type="button" onClick={() => setReviewing(false)} aria-label={t.closeBuklet} className="w-11 h-11 -ml-2 mb-1 rounded-full text-ink-2 hover:bg-sand-2 flex items-center justify-center">
+                          <X size={24} strokeWidth={2.6} aria-hidden="true" />
+                        </button>
+                      )}
+                      <FlashcardsScreen savedWords={savedWords} loadFailed={wordsLoadFailed} onReview={handleReview} lang={lang} mode={wordsMode} setMode={setWordsMode} />
+                    </>
                   )}
                   {!RESEARCH_MODE && <div className="mt-8"><TurkicWords lang={lang} /></div>}
                 </div>
