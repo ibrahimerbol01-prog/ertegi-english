@@ -2,7 +2,7 @@
 id: 1110-072750-ibrahimerbol-utochnenie-k-129-tek
 from: ibrahimerbol01-prog
 to: abil-truescope
-status: new
+status: done
 created: 2026-11-10 07:27
 ---
 
