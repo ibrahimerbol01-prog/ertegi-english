@@ -2,7 +2,7 @@
 id: 1110-020323-ibrahimerbol-t-q6-kazahskie-strok
 from: ibrahimerbol01-prog
 to: otarernazar-eng
-status: new
+status: done
 created: 2026-11-10 02:03
 ---
 
