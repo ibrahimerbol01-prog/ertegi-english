@@ -2,7 +2,7 @@
 id: 1110-082700-ibrahimerbol-signal-q3-q4-i-zapas
 from: ibrahimerbol01-prog
 to: abil-truescope
-status: new
+status: done
 created: 2026-11-10 08:27
 ---
 
