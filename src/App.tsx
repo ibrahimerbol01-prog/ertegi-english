@@ -6,6 +6,7 @@ import { SetPasswordScreen } from "./components/SetPassword";
 import { IntroScreen } from "./components/IntroScreen";
 import { DICT } from "./dict";
 import { loadLang } from "./lang";
+import { RESEARCH_MODE } from "./research/mode";
 import { capturePendingClass, peekPendingClass } from "./utils/classes";
 import { RoleScreen } from "./components/RolePicker";
 import { ACCOUNT_DELETED_EVENT } from "./utils/account";
@@ -18,6 +19,9 @@ const loadApp = () => import("./KazakhTalesApp");
 const KazakhTalesApp = lazy(loadApp);
 const blank = <div className="min-h-dvh w-full bg-sand" />;
 // Its chunk is already loaded by the time it shows: the delete window lives in the same file.
+// "Тіркелусіз оқып көру": the first A1 tale before sign-in (redesign stage 7). Its own chunk.
+// RESEARCH_MODE is a build-time literal: the research build gets no guest chunk at all.
+const GuestReader = __ERTEGI_RESEARCH__ ? () => null : lazy(() => import("./components/GuestReader").then((m) => ({ default: m.GuestReader })));
 const AccountDeletedScreen = lazy(() => import("./components/DeleteAccount").then((m) => ({ default: m.AccountDeletedScreen })));
 
 // A class link (?class=CODE) is remembered before the intro and sign-in, then offered after.
@@ -30,6 +34,8 @@ export default function App() {
   // the marketing/hero landing ("BASTAU"), not part of the authenticated
   // product itself, so it doesn't need to know about sessions at all.
   const [introSeen, setIntroSeen] = useState(false);
+  // Reading the sample tale as a guest: no session, nothing saved (never in the research build).
+  const [guest, setGuest] = useState(false);
   // Bumped after a role is saved on this device only, so the app re-reads it.
   const [, setRoleTick] = useState(0);
   // Set when the account was just deleted: a goodbye screen instead of the sign-in form.
@@ -122,9 +128,27 @@ export default function App() {
     return <SetPasswordScreen lang={loadLang()} onDone={() => { setRecovering(false); setIntroSeen(true); }} />;
   }
 
+  if (!introSeen && guest && !RESEARCH_MODE) {
+    const lang = loadLang();
+    return (
+      <Suspense fallback={blank}>
+        <GuestReader
+          t={DICT[lang]}
+          lang={lang}
+          onBack={() => setGuest(false)}
+          onCreateAccount={() => { setGuest(false); setIntroSeen(true); }}
+        />
+      </Suspense>
+    );
+  }
+
   if (!introSeen) {
     return (
-      <IntroScreen onFinish={() => setIntroSeen(true)} t={DICT[loadLang()]} />
+      <IntroScreen
+        onFinish={() => setIntroSeen(true)}
+        onTry={RESEARCH_MODE || session ? undefined : () => setGuest(true)}
+        t={DICT[loadLang()]}
+      />
     );
   }
 
