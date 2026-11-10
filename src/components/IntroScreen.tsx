@@ -82,7 +82,7 @@ function Landing({ onFinish, onTry, t }: { onFinish: () => void; onTry?: () => v
             </div>
             <div className="mt-10 lg:mt-14 grid gap-8 lg:grid-cols-2 lg:items-center">
               <div>
-                <p className="eyebrow !text-sun">{t.landingBadge}</p>
+                <p className="text-[15px] font-bold leading-snug text-sun max-w-[460px]">{t.landingBadge}</p>
                 <h1 className="mt-3 font-display font-black text-[40px] md:text-[52px] leading-[1.05] tracking-tight">
                   {t.landingTitle1}<br />
                   <span className="text-ember-soft">{t.landingTitle2}</span>

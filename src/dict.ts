@@ -85,7 +85,7 @@ export const DICT = {
     tapWordHint: "Сөзді бассаң, аудармасы мен айтылуы шығады.",
     // Landing and the guest reader (redesign stage 7). Kazakh copy is verbatim from the
     // redesign brief; teachersText is English in both languages until the owner translates it.
-    landingBadge: "РКНП 2026 · 1 орын",
+    landingBadge: "Біз үшін — кішкентай қадам, Қазақстан үшін — үлкен мүмкіндік",
     landingTitle1: "Таныс ертегі.",
     landingTitle2: "Жаңа тіл.",
     landingSub: "Алдар Көсе, Ер Төстік, Аяз би ағылшын тілінде. A1-ден C1-ге дейін.",
@@ -226,7 +226,7 @@ export const DICT = {
     closeBuklet: "Close",
     downloadBuklet: "Share",
     tapWordHint: "Tap any word to see its translation and hear the voice audio.",
-    landingBadge: "RKNP 2026 · 1st place",
+    landingBadge: "A small step for us, a big opportunity for Kazakhstan",
     landingTitle1: "A tale you know.",
     landingTitle2: "A new language.",
     landingSub: "Aldar Köse, Er Töstik and Ayaz Bi in English. From A1 to C1.",
