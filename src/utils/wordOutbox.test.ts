@@ -40,7 +40,7 @@ describe("word outbox", () => {
     vi.resetModules(); m = await load(); // a reload: memory gone, the device keeps the queue
     expect(m.pendingWords(U)).toEqual([{ word: "coat", translation: "шапан" }]);
     mode = "ok";
-    expect(await m.flushWords(U)).toEqual({ added: ["coat"], refused: [], left: 0 });
+    expect(await m.flushWords(U)).toMatchObject({ added: ["coat"], refused: [], left: 0 });
     expect(table.map((r) => r.word)).toEqual(["coat"]);
     expect(m.pendingWords(U)).toEqual([]);
   });
@@ -49,7 +49,7 @@ describe("word outbox", () => {
     const m = await load();
     table.push({ user_id: U, word: "horse", translation: "ат" });
     m.queueWord(U, { word: "horse", translation: "ат" });
-    expect(await m.flushWords(U)).toEqual({ added: [], refused: [], left: 0 });
+    expect(await m.flushWords(U)).toMatchObject({ added: [], refused: [], left: 0 });
   });
 
   it("a server error keeps the queue; a refused word is dropped without holding back the rest", async () => {
@@ -59,7 +59,19 @@ describe("word outbox", () => {
     m.queueWord(U, { word: "good", translation: "y" });
     expect((await m.flushWords(U)).left).toBe(2);
     mode = "refuse-bad";
-    expect(await m.flushWords(U)).toEqual({ added: ["good"], refused: ["bad"], left: 0 });
+    expect(await m.flushWords(U)).toMatchObject({ added: ["good"], refused: ["bad"], left: 0 });
+  });
+
+  it("counts failed sends in a row and starts again after one gets through", async () => {
+    const m = await load();
+    mode = "offline";
+    m.queueWord(U, { word: "coat", translation: "a" });
+    expect((await m.flushWords(U)).failedInARow).toBe(1);
+    expect((await m.flushWords(U)).failedInARow).toBe(2);
+    expect((await m.flushWords(U)).failedInARow).toBe(m.WARN_AFTER_FAILURES);
+    mode = "ok";
+    expect((await m.flushWords(U)).failedInARow).toBe(0);
+    expect((await m.flushWords(U)).failedInARow).toBe(0); // empty queue: nothing failed
   });
 
   it("queues a word once, and per learner", async () => {
