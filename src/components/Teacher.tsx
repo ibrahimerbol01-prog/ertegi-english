@@ -19,6 +19,8 @@ import {
   type ClassEvents, type CouncilWork, type StudentWork, type TrailWork,
 } from "../utils/classWork";
 import { ScreenHeader, Sheet } from "./UIHelpers";
+import { ClassTopWords } from "./ClassTopWords";
+import { RESEARCH_MODE } from "../research/mode";
 import { dueText, stepLabel, storyTitle } from "../utils/useMyClasses";
 import { QUIZ_PASS_PERCENT } from "../research/params";
 import { buildLevelQuiz } from "../utils/levelQuiz";
@@ -906,6 +908,9 @@ function ActivityTab({ kk, cls, report, members, refresh, onOpen }: {
               })}
             </ul>
           </section>
+
+          {/* A new view: the ordinary site only (the research build adds no screens). */}
+          {!RESEARCH_MODE && <ClassTopWords words={data.hard_words} kk={kk} />}
 
           <section className="card p-4" aria-labelledby="act-words">
             <h2 id="act-words" className="font-display font-extrabold text-ink text-[16px]">{kk ? "Қиын сөздер" : "Hard words"}</h2>
