@@ -41,7 +41,8 @@ afterEach(() => { cleanup(); vi.unstubAllGlobals(); localStorage.clear(); setOnl
 const start = async () => {
   const App = (await import("../App")).default;
   render(<App />);
-  fireEvent.click(await screen.findByRole("button", { name: "Бастау" }));
+  // The landing's sign-in button (redesign stage 7); the classic intro said «Бастау».
+  fireEvent.click(await screen.findByRole("button", { name: /^(Бастау|Кіру)$/ }));
   expect(await screen.findByText(/Сәлем, err!/)).toBeTruthy();
 };
 
