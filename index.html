@@ -4,7 +4,6 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Ertegi English VR · концепт</title>
-<link rel="icon" href="icon.png">
 <script src="aframe.min.js"></script>
 <style>
 @font-face{font-family:Nunito;src:url(nunito-latin.woff2) format("woff2");font-weight:700 900;unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
@@ -17,18 +16,17 @@
 @font-face{font-family:Inter;src:url(inter-cyrillic-ext.woff2) format("woff2");font-weight:400 700;unicode-range:U+0460-052F,U+1C80-1C88,U+20B4,U+2DE0-2DFF,U+A640-A69F,U+FE2E-FE2F}
 html,body{margin:0;background:#1F2B4D}
 #loading{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;color:#FBF6EE;font:700 20px Nunito,sans-serif;z-index:10;background:#1F2B4D}
-#tip{position:fixed;left:0;right:0;bottom:0;z-index:5;padding:14px 18px calc(14px + env(safe-area-inset-bottom));background:#1F2B4D;color:#FBF6EE;font:700 18px Nunito,sans-serif;display:none;pointer-events:none}
-#tip b{font-size:26px;font-weight:900}#tip i{color:#FFB81F;font-style:normal;margin-left:10px}
 </style>
 </head>
 <body>
-<div id="tip"></div>
 <div id="loading">Ertegi English VR · жүктелуде…</div>
 <script>
 const STORY = "Aldar Köse is a poor man. He has no coat. He has no horse. But he is very clever. One day he sees a rich man on the road. The rich man has a big warm coat. Aldar Köse wants the coat. He has an idea. He looks behind the rich man. He shouts, \"Look! A wolf!\" The rich man is scared. He jumps down. He runs away fast. He drops his warm coat on the ground. Aldar Köse takes the coat. He puts it on. Now he is warm. He rides the horse home. He tells his friends the story. They laugh and laugh. They love his clever tricks.";
 const DICT = {"a": "бір", "aldar": "Алдар (аты)", "an": "бір (артикль)", "and": "және", "away": "алысқа", "behind": "артында", "big": "үлкен", "but": "бірақ", "clever": "тапқыр / айлакер", "coat": "шапан / сырт киім", "day": "күн", "down": "төмен", "drops": "түсіріп жібереді", "fast": "жылдам", "friends": "достары", "ground": "жер", "has": "бар", "he": "ол", "his": "оның", "home": "үйге", "horse": "ат / жылқы", "idea": "ой / идея", "is": "болып табылады", "it": "ол (зат есім)", "jumps": "секіреді", "laugh": "күледі", "look": "қара!", "looks": "қарайды", "love": "жақсы көреді", "man": "адам", "no": "жоқ", "now": "қазір", "on": "үстінде", "one": "бір", "poor": "кедей", "puts": "киеді", "rich": "бай", "rides": "мінеді", "road": "жол", "runs": "жүгіреді", "scared": "қорыққан", "sees": "көреді", "shouts": "айқайлайды", "story": "әңгіме", "takes": "алады", "tells": "айтып береді", "the": "анықтауыш артикль", "they": "олар", "tricks": "айлалар", "very": "өте", "wants": "қалайды", "warm": "жылы", "wolf": "қасқыр"};
 const W = 2048, H = 1300, PAD = 110, LINE = 92, SIZE = 60;
-let words = [], selected = -1;
+let words = [], selected = -1, reading = -1;
+window.__vr={get reading(){return reading},get selected(){return selected}};
+const SENTS = STORY.match(/[^.!?]+[.!?]+["”]?/g).map(x=>x.trim());
 
 function canvas(w,h){const c=document.createElement('canvas');c.width=w;c.height=h;return c;}
 
@@ -38,13 +36,15 @@ function drawStory(c){
   g.fillStyle='#C2410C';g.font='800 40px Nunito';g.fillText('АЛДАР КӨСЕ · A1',PAD,110);g.textAlign='right';g.fillStyle='#5E6573';g.font='800 34px Nunito';g.fillText('ERTEGI ENGLISH · VR КОНЦЕПТ',W-PAD,110);g.textAlign='left';
   g.fillStyle='#5E6573';g.font='600 34px Inter';g.fillText('Сөзді бассаң, аудармасы мен айтылуы шығады',PAD,165);
   g.font=SIZE+'px Inter';
-  const toks=STORY.split(/(\s+)/);let x=PAD,y=280;words=[];
+  const toks=STORY.split(/(\s+)/);let x=PAD,y=280;words=[];let si=0,consumed='';
   for(const t of toks){
     if(/^\s+$/.test(t)){x+=g.measureText(' ').width;continue;}
     const w=g.measureText(t).width;
     if(x+w>W-PAD){x=PAD;y+=LINE;}
     const clean=t.toLowerCase().replace(/[^a-zö]/g,'');
-    const i=words.length;words.push({t,clean,x,y,w});
+    const i=words.length;words.push({t,clean,x,y,w,si});
+    consumed+=(consumed?' ':'')+t; if(SENTS[si]&&consumed.length>=SENTS[si].length){si++;consumed='';}
+    if(words[i].si===reading){g.fillStyle='#FFF1C7';g.fillRect(x-6,y-SIZE+4,w+12+g.measureText(' ').width,SIZE+18);}
     if(i===selected){g.fillStyle='#FFE7A3';g.fillRect(x-8,y-SIZE+4,w+16,SIZE+18);g.strokeStyle='#FFB81F';g.lineWidth=5;g.strokeRect(x-8,y-SIZE+4,w+16,SIZE+18);}
     g.fillStyle='#1C2333';g.fillText(t,x,y);x+=w;
   }
@@ -70,7 +70,7 @@ AFRAME.registerComponent('story-panel',{
       const uv=e.detail.intersection&&e.detail.intersection.uv;if(!uv)return;
       const px=uv.x*W,py=(1-uv.y)*H;
       const i=words.findIndex(w=>px>=w.x-10&&px<=w.x+w.w+10&&py>=w.y-SIZE&&py<=w.y+24);
-      if(i<0)return;selected=i;drawStory(this.c);this.tex.needsUpdate=true;
+      if(i<0)return;if(reading>=0)document.querySelector('#listen').components['listen-btn'].halt();selected=i;drawStory(this.c);this.tex.needsUpdate=true;
       document.querySelector('#card').emit('word',words[i]);say(words[i].clean);
     });
   }
@@ -80,10 +80,30 @@ AFRAME.registerComponent('word-card',{
     this.c=canvas(1024,512);drawCard(this.c,null);
     this.tex=new THREE.CanvasTexture(this.c);this.tex.colorSpace=THREE.SRGBColorSpace;
     this.el.getObject3D('mesh').material=new THREE.MeshBasicMaterial({map:this.tex});
-    this.el.addEventListener('word',e=>{drawCard(this.c,e.detail);this.tex.needsUpdate=true;
-      const t=document.getElementById('tip');t.innerHTML='<b></b><i></i>';t.firstChild.textContent=e.detail.clean;t.lastChild.textContent=DICT[e.detail.clean]||'Аудармасы әзірге жоқ';t.style.display='block';});
+    this.el.addEventListener('word',e=>{drawCard(this.c,e.detail);this.tex.needsUpdate=true;});
     this.el.addEventListener('click',()=>{if(selected>=0)say(words[selected].clean);});
   }
+});
+AFRAME.registerComponent('listen-btn',{
+  init(){
+    this.c=canvas(512,160);this.tex=new THREE.CanvasTexture(this.c);this.tex.colorSpace=THREE.SRGBColorSpace;
+    this.el.getObject3D('mesh').material=new THREE.MeshBasicMaterial({map:this.tex,transparent:true});
+    this.draw();
+    this.el.addEventListener('click',()=>{ if(reading>=0){this.halt();} else {this.speakAt(0);} });
+  },
+  draw(){const g=this.c.getContext('2d');g.clearRect(0,0,512,160);g.fillStyle=reading>=0?'#1F2B4D':'#C2410C';
+    g.beginPath();g.roundRect(8,8,496,144,40);g.fill();g.fillStyle='#FFFFFF';g.font='900 64px Nunito';g.textAlign='center';
+    g.fillText((reading>=0?'■ ':'▶ ')+'Тыңдау',256,102);this.tex.needsUpdate=true;},
+  speakAt(i){
+    const story=document.querySelector('#story').components['story-panel'];
+    if(i>=SENTS.length){this.halt();return;}
+    reading=i;drawStory(story.c);story.tex.needsUpdate=true;this.draw();
+    try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(SENTS[i]);u.lang='en-US';u.rate=0.85;
+      const t0=Date.now(), next=()=>{if(reading!==i)return;const min=SENTS[i].length*55;const left=min-(Date.now()-t0);setTimeout(()=>{if(reading===i)this.speakAt(i+1);},Math.max(250,left));};
+      u.onend=next;u.onerror=next;speechSynthesis.speak(u);}
+    catch(e){setTimeout(()=>{if(reading===i)this.speakAt(i+1);},2500);}
+  },
+  halt(){reading=-1;try{speechSynthesis.cancel();}catch(e){}const story=document.querySelector('#story').components['story-panel'];drawStory(story.c);story.tex.needsUpdate=true;this.draw();}
 });
 function patternTex(kind){
   const c=canvas(1024,512),g=c.getContext('2d');
@@ -99,8 +119,7 @@ AFRAME.registerComponent('pattern',{schema:{kind:{type:'string'},rx:{default:1},
   init(){const t=patternTex(this.data.kind);t.repeat.set(this.data.rx,this.data.ry);
     const m=this.el.getObject3D('mesh');m.material=new THREE.MeshStandardMaterial({map:t,side:THREE.DoubleSide,roughness:0.95});}});
 
-const TXT='AaБбӘәҒғҚқҢңӨөҰұҮүҺһІі';
-Promise.all(['700','800','900'].map(w=>document.fonts.load(w+' 60px Nunito',TXT)).concat(['400','600'].map(w=>document.fonts.load(w+' 60px Inter',TXT)))).catch(()=>{}).finally(build);
+document.fonts.load('900 60px Nunito').then(()=>document.fonts.load('400 60px Inter')).then(()=>document.fonts.load('400 60px Inter','ӘҒҚҢӨҰҮҺІ')).finally(build);
 function build(){
   document.getElementById('loading').remove();
   const spokes=[...Array(12)].map((_,i)=>`<a-cylinder radius="0.025" height="1.2" rotation="0 ${i*15} 90" color="#9C5B2E"></a-cylinder>`).join('');
@@ -120,6 +139,7 @@ function build(){
   </a-entity>
 
   <a-plane id="story" story-panel class="clickable" width="2.6" height="1.65" position="0 1.65 -2.4"></a-plane>
+  <a-plane id="listen" listen-btn class="clickable" width="0.62" height="0.195" position="0 0.66 -2.38"></a-plane>
   <a-plane id="card" word-card class="clickable" width="1.3" height="0.65" position="1.75 1.6 -1.85" rotation="0 -30 0"></a-plane>
   <a-image src="shoqan-avatar.webp" width="0.7" height="0.7" position="-1.95 1.8 -1.75" rotation="0 35 0"></a-image>
   <a-image src="icon.png" width="0.3" height="0.3" position="0 2.7 -2.38"></a-image>
@@ -132,8 +152,6 @@ function build(){
     <a-entity laser-controls="hand:left" raycaster="objects:.clickable;far:10" line="color:#FF7A4D;opacity:0.8"></a-entity>
   </a-entity>
 </a-scene>`);
-  const sc=document.querySelector('a-scene'),tip=document.getElementById('tip');
-  sc.addEventListener('enter-vr',()=>{tip.style.visibility='hidden'});sc.addEventListener('exit-vr',()=>{tip.style.visibility='visible'});
 }
 </script>
 </body>
