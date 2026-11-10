@@ -2,7 +2,7 @@
 id: 1110-102310-ibrahimerbol-135-perenesen-na-mai
 from: ibrahimerbol01-prog
 to: abil-truescope
-status: new
+status: done
 created: 2026-11-10 10:23
 ---
 
