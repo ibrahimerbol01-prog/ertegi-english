@@ -208,6 +208,33 @@ function drawWall(c,img){const g=c.getContext('2d');const w=c.width,h=c.height;c
 AFRAME.registerComponent('honor-wall',{init(){this.c=canvas(1024,1300);this.tex=tex(this.c);
   this.el.getObject3D('mesh').material=new THREE.MeshBasicMaterial({map:this.tex,transparent:true,alphaTest:0.02});
   const img=new Image();img.onload=()=>{drawWall(this.c,img);this.tex.needsUpdate=true;};img.src='logo-512.png';drawWall(this.c,null);this.tex.needsUpdate=true;}});
+
+// ---- XR pointer: works with HANDS (pinch) and controllers (trigger) via WebXR select ----
+AFRAME.registerComponent('xr-pointer',{init(){
+  this.ray=new THREE.Raycaster();this.ray.far=12;this.tmpM=new THREE.Matrix4();this.o=new THREE.Vector3();this.d=new THREE.Vector3();this.q=new THREE.Quaternion();
+  this.rays={};const sc=this.el;
+  this.mkRay=()=>{const g=new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(),new THREE.Vector3(0,0,-1)]);
+    const line=new THREE.Line(g,new THREE.LineBasicMaterial({color:0xFF7A4D,transparent:true,opacity:0.85}));line.frustumCulled=false;
+    const dot=new THREE.Mesh(new THREE.SphereGeometry(0.018,12,8),new THREE.MeshBasicMaterial({color:0xFFB81F}));dot.visible=false;
+    sc.object3D.add(line);sc.object3D.add(dot);return {line,dot};};
+  sc.addEventListener('enter-vr',()=>{const s=sc.renderer.xr.getSession();if(!s||this.bound===s)return;this.bound=s;
+    s.addEventListener('select',e=>{const pose=this.pose(e.inputSource,e.frame);if(!pose)return;const hit=this.cast(pose);if(hit)hit.el.emit('click',{intersection:hit.hit});});});
+  sc.addEventListener('exit-vr',()=>{for(const k in this.rays){this.rays[k].line.visible=false;this.rays[k].dot.visible=false;}});},
+  pose(src,frame){const ref=this.el.renderer.xr.getReferenceSpace();if(!frame||!ref||!src.targetRaySpace)return null;const p=frame.getPose(src.targetRaySpace,ref);if(!p)return null;
+    this.tmpM.fromArray(p.transform.matrix);const rig=document.getElementById('rig').object3D;rig.updateMatrixWorld();this.tmpM.premultiply(rig.matrixWorld);return this.tmpM.clone();},
+  cast(m){this.o.setFromMatrixPosition(m);this.q.setFromRotationMatrix(m);this.d.set(0,0,-1).applyQuaternion(this.q).normalize();this.ray.set(this.o,this.d);
+    const els=[...document.querySelectorAll('.clickable')].filter(e=>e.object3D.visible);const objs=els.map(e=>e.getObject3D('mesh')).filter(Boolean);
+    const hits=this.ray.intersectObjects(objs,false);if(!hits.length)return null;const h=hits[0];const el=els.find(e=>e.getObject3D('mesh')===h.object);return el?{el,hit:h}:null;},
+  tick(){const sc=this.el;if(!sc.is('vr-mode'))return;const frame=sc.renderer.xr.getFrame&&sc.renderer.xr.getFrame();const s=sc.renderer.xr.getSession();if(!frame||!s)return;
+    const seen={};for(const src of s.inputSources){const key=src.handedness+(src.hand?'h':'c');seen[key]=1;const r=this.rays[key]||(this.rays[key]=this.mkRay());
+      const m=this.pose(src,frame);if(!m){r.line.visible=false;r.dot.visible=false;continue;}const hit=this.cast(m);
+      const len=hit?hit.hit.distance:1.2;r.line.geometry.setFromPoints([this.o.clone(),this.o.clone().add(this.d.clone().multiplyScalar(len))]);r.line.visible=true;
+      if(hit){r.dot.position.copy(hit.hit.point);r.dot.visible=true;}else r.dot.visible=false;
+      if(src.hand){if(!r.joints){r.joints=new THREE.InstancedMesh(new THREE.SphereGeometry(0.009,8,6),new THREE.MeshBasicMaterial({color:0xFBF6EE}),25);r.joints.frustumCulled=false;sc.object3D.add(r.joints);}
+        const ref=sc.renderer.xr.getReferenceSpace();const rig=document.getElementById('rig').object3D;let i=0;const jm=new THREE.Matrix4();
+        for(const js of src.hand.values()){const jp=frame.getJointPose&&frame.getJointPose(js,ref);if(jp){jm.fromArray(jp.transform.matrix).premultiply(rig.matrixWorld);r.joints.setMatrixAt(i,jm);}i++;if(i>=25)break;}
+        r.joints.count=i;r.joints.instanceMatrix.needsUpdate=true;r.joints.visible=true;}else if(r.joints)r.joints.visible=false;}
+    for(const k in this.rays)if(!seen[k]){this.rays[k].line.visible=false;this.rays[k].dot.visible=false;if(this.rays[k].joints)this.rays[k].joints.visible=false;}}});
 AFRAME.registerComponent('story-panel',{
   init(){
     this.c=canvas(W,H);drawStory(this.c);
@@ -442,7 +469,7 @@ Promise.all(['700','800','900'].map(w=>document.fonts.load(w+' 60px Nunito',TXT)
 function build(){
   document.getElementById('loading').remove();
     document.body.insertAdjacentHTML('beforeend',`
-<a-scene renderer="colorManagement:true;antialias:true" vr-mode-ui="enabled:true" background="color:#1F2B4D" loading-screen="enabled:false">
+<a-scene xr-pointer webxr="optionalFeatures: local-floor, hand-tracking" renderer="colorManagement:true;antialias:true" vr-mode-ui="enabled:true" background="color:#1F2B4D" loading-screen="enabled:false">
   <a-entity light="type:hemisphere;color:#FFF8EC;groundColor:#4A2C18;intensity:0.75"></a-entity>
   <a-entity light="type:point;intensity:0.8;distance:10;decay:1;color:#FFE2B8" position="0 2.6 0.6"></a-entity>
   <a-entity light="type:spot;intensity:1.2;angle:28;penumbra:0.6;color:#FFF6DA" position="0 5 0" rotation="-90 0 0"></a-entity>
@@ -464,17 +491,17 @@ function build(){
   <a-entity id="rig" position="0 0 0.3">
     <a-entity camera look-controls wasd-controls="enabled:false" position="0 1.6 0">
       <a-entity cursor="rayOrigin:mouse" raycaster="objects:.clickable"></a-entity>
+      <a-entity id="gaze" visible="false" position="0 0 -1" geometry="primitive:ring;radiusInner:0.012;radiusOuter:0.02" material="color:#FFB81F;shader:flat"
+        animation__fuse="property:scale;startEvents:fusing;from:1 1 1;to:0.35 0.35 0.35;dur:1500;easing:linear" animation__reset="property:scale;startEvents:mouseleave;to:1 1 1;dur:150"></a-entity>
     </a-entity>
-    <a-entity laser-controls="hand:right" raycaster="objects:.clickable;far:10" line="color:#FF7A4D;opacity:0.8"></a-entity>
-    <a-entity laser-controls="hand:left" raycaster="objects:.clickable;far:10" line="color:#FF7A4D;opacity:0.8"></a-entity>
   </a-entity>
 </a-scene>`);
   const sc=document.querySelector('a-scene'),tip=document.getElementById('tip');
-  sc.addEventListener('enter-vr',()=>{tip.style.visibility='hidden';if(!hiPlayed)setTimeout(shoqanHi,1500);});
+  sc.addEventListener('enter-vr',()=>{tip.style.visibility='hidden';if(!hiPlayed)setTimeout(shoqanHi,1500);const gz=document.getElementById('gaze');gz.setAttribute('raycaster','objects:.clickable;far:12');gz.setAttribute('cursor','fuse:true;fuseTimeout:1500;rayOrigin:entity');gz.setAttribute('visible',true);});
 
   const gb=document.getElementById('go');gb.disabled=false;gb.style.opacity=1;
   gb.addEventListener('click',()=>{const w=document.getElementById('welcome');w.classList.add('hide');setTimeout(()=>w.remove(),600);shoqanHi();
-    try{if(navigator.xr)navigator.xr.isSessionSupported('immersive-vr').then(ok=>{if(ok)sc.enterVR();}).catch(()=>{});}catch(e){}});sc.addEventListener('exit-vr',()=>{tip.style.visibility='visible'});
+    try{if(navigator.xr)navigator.xr.isSessionSupported('immersive-vr').then(ok=>{if(ok)sc.enterVR();}).catch(()=>{});}catch(e){}});sc.addEventListener('exit-vr',()=>{tip.style.visibility='visible';const gz=document.getElementById('gaze');gz.removeAttribute('cursor');gz.removeAttribute('raycaster');gz.setAttribute('visible',false);});
 }
 </script>
 </body>
