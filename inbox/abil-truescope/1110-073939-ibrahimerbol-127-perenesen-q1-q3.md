@@ -2,7 +2,7 @@
 id: 1110-073939-ibrahimerbol-127-perenesen-q1-q3
 from: ibrahimerbol01-prog
 to: abil-truescope
-status: new
+status: done
 created: 2026-11-10 07:39
 ---
 
