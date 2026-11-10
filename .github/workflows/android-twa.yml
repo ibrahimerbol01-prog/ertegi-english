@@ -1,0 +1,73 @@
+name: android-twa
+# Demo APK of the web app as a Trusted Web Activity. Run by hand: Actions → android-twa → Run workflow.
+# Without the KEYSTORE_B64 secret a throw-away demo key is made: fine for showing the app, NOT for Google Play.
+on:
+  workflow_dispatch:
+  push:
+    branches: [feat/android-twa] # remove after merge to main
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: 21
+      - uses: android-actions/setup-android@v3
+        with:
+          packages: ''
+      - name: Install Bubblewrap
+        run: npm install -g @bubblewrap/cli@1
+      - name: Signing key
+        env:
+          KEYSTORE_B64: ${{ secrets.KEYSTORE_B64 }}
+          KS_PASS: ${{ secrets.KS_PASS }}
+          KEY_PASS: ${{ secrets.KEY_PASS }}
+        run: |
+          if [ -n "$KEYSTORE_B64" ] && [ -n "$KS_PASS" ]; then
+            echo "$KEYSTORE_B64" | base64 -d > android.keystore
+            echo "BUBBLEWRAP_KEYSTORE_PASSWORD=$KS_PASS" >> "$GITHUB_ENV"
+            echo "BUBBLEWRAP_KEY_PASSWORD=${KEY_PASS:-$KS_PASS}" >> "$GITHUB_ENV"
+            echo "Using the key from secrets."
+          else
+            DEMO_PASS="$(openssl rand -hex 12)"
+            echo "::add-mask::$DEMO_PASS"
+            keytool -genkeypair -noprompt -keystore android.keystore -alias ertegi-demo \
+              -keyalg RSA -keysize 2048 -validity 10000 \
+              -storepass "$DEMO_PASS" -keypass "$DEMO_PASS" \
+              -dname "CN=Ertegi English demo, O=IB Industry, C=KZ"
+            echo "BUBBLEWRAP_KEYSTORE_PASSWORD=$DEMO_PASS" >> "$GITHUB_ENV"
+            echo "BUBBLEWRAP_KEY_PASSWORD=$DEMO_PASS" >> "$GITHUB_ENV"
+            echo "::warning::Demo signing key (not for Google Play)."
+          fi
+      - name: Android SDK packages
+        run: yes | sdkmanager --licenses >/dev/null && sdkmanager "platform-tools" "platforms;android-36" "build-tools;36.1.0"; mkdir -p "$ANDROID_HOME/tools" || sudo mkdir -p "$ANDROID_HOME/tools"
+      - name: Bubblewrap config
+        run: |
+          mkdir -p ~/.bubblewrap
+          printf '{"jdkPath":"%s","androidSdkPath":"%s"}' "$JAVA_HOME" "$ANDROID_HOME" > ~/.bubblewrap/config.json
+      - name: Generate Android project
+        run: yes "" | bubblewrap update --skipVersionUpgrade --manifest=./twa-manifest.json
+      - name: Build
+        run: yes "" | bubblewrap build --skipPwaValidation --manifest=./twa-manifest.json
+      - name: Certificate SHA-256 (for assetlinks.json)
+        run: |
+          keytool -list -v -keystore android.keystore -alias ertegi-demo \
+            -storepass "$BUBBLEWRAP_KEYSTORE_PASSWORD" 2>/dev/null | grep "SHA256:" || true
+          ls -la *.apk *.aab 2>/dev/null
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ertegi-android
+          path: |
+            app-release-signed.apk
+            app-release-bundle.aab
+          if-no-files-found: error
