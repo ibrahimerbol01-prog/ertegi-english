@@ -1,6 +1,8 @@
-import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
+import { existsSync, mkdtempSync, readFileSync, readdirSync, statSync } from "node:fs";
+import { tmpdir } from "node:os";
 import { join, relative } from "node:path";
 import { describe, expect, it } from "vitest";
+import { seoPlugin } from "../vite-seo.ts";
 
 /* Self-hosted fonts (owner's decision 3): no request to Google Fonts, every face
    points at a file in public/fonts, Kazakh letters are covered, the research build
@@ -68,9 +70,25 @@ describe("self-hosted fonts", () => {
 });
 
 describe("robots.txt", () => {
-  it("exists and is a valid robots file (before, the SPA fallback served index.html)", () => {
-    const robots = read("public/robots.txt");
-    expect(robots).toMatch(/^User-agent: \*$/m);
-    expect(robots).not.toMatch(/</);
+  // The build writes robots.txt and sitemap.xml (vite-seo.ts); before that, the SPA fallback served index.html for them.
+  it("is a valid robots file with a sitemap line, and the study build closes the whole site", () => {
+    const dir = mkdtempSync(join(tmpdir(), "seo-"));
+    const cwd = process.cwd();
+    try {
+      process.chdir(dir);
+      for (const research of [false, true]) {
+        (seoPlugin({ research }).closeBundle as () => void)();
+        const robots = readFileSync(join(dir, "dist/robots.txt"), "utf8");
+        expect(robots).toMatch(/^User-agent: \*$/m);
+        expect(robots).not.toMatch(/</);
+        if (research) expect(robots).toMatch(/^Disallow: \/$/m);
+        else {
+          expect(robots).toMatch(/^Sitemap: https:\/\/\S+\/sitemap\.xml$/m);
+          expect(readFileSync(join(dir, "dist/sitemap.xml"), "utf8")).toMatch(/<loc>https:\/\/\S+\/<\/loc>/);
+        }
+      }
+    } finally {
+      process.chdir(cwd);
+    }
   });
 });
