@@ -3,6 +3,7 @@ import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 import { VitePWA } from 'vite-plugin-pwa'
 import { readFileSync } from 'node:fs'
+import { seoPlugin } from './vite-seo.ts'
 
 // Version stamped on every learning event (src/utils/events.ts): package.json
 // version plus the commit Vercel builds from, e.g. "0.0.0+94f5543".
@@ -39,6 +40,7 @@ return {
   plugins: [
     react(),
     tailwindcss(),
+    seoPlugin({ research, siteUrl: env.VITE_SITE_URL, google: env.VITE_GOOGLE_SITE_VERIFICATION, yandex: env.VITE_YANDEX_VERIFICATION, bing: env.VITE_BING_VERIFICATION }),
     // Installable app with an offline shell: the code and the tales are cached
     // on the device, so a reload without internet opens the app instead of
     // the browser's error page. A new version replaces the old one on the
